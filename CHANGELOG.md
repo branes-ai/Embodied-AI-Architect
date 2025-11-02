@@ -136,6 +136,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - DSL serialization for storage and portability
   - Future: C++/Rust transpilation for production deployment
   - Planned reference applications: drone navigation, robot manipulation, autonomous vehicle, legged robot, humanoid balance
+- Multi-Rate Control Framework: Deep research and architecture proposal
+  - Comprehensive research document on multi-rate control systems (docs/research/multi-rate-control-architecture.md)
+  - Analyzed requirements for humanoid/quadruped robots:
+    - Joint control: 100-1000 Hz (tight sensor-control-actuator loops)
+    - Perception: 30-60 Hz (vision, state estimation)
+    - Planning: 1-10 Hz (path planning, high-level decisions)
+  - Selected Zenoh as communication backbone:
+    - Zero-copy, real-time pub/sub
+    - Automotive-grade certified
+    - Open source (Apache 2.0)
+    - Multi-transport (shared memory, UDP, DDS bridge)
+    - Superior to ROS2/DDS for real-time requirements
+  - Evaluated 3 multi-rate scheduling patterns:
+    - Time-triggered (deterministic, simple)
+    - Data-triggered (event-driven, low latency)
+    - Hybrid (selected): Time-triggered with async data caching
+  - Designed component model with declarative I/O:
+    - `@control_loop` decorator for rate specification
+    - `Input`/`Output` descriptors for automatic Zenoh wiring
+    - Explicit rate, priority, deadline, CPU affinity
+  - Hybrid Python/Rust execution strategy:
+    - Python for slow loops (≤ 100 Hz): perception, planning
+    - Rust for fast loops (> 500 Hz): joint control, balance
+    - All communication via Zenoh (language-agnostic)
+  - Phase 1 implementation proposal (docs/plans/phase1-framework-architecture.md):
+    - Core framework classes (Component, Application, Scheduler)
+    - Multi-rate scheduler (one thread per component)
+    - Automatic Zenoh pub/sub creation
+    - Deadline monitoring and diagnostics
+    - 8-week implementation timeline
+  - Example quadruped robot architecture with 4 control rates
+  - Real-time considerations (RT-PREEMPT, CPU isolation, zero-copy)
+- Multi-Rate Framework Prototype: Working validation of architecture
+  - Created minimal working prototype (prototypes/multi_rate_framework/)
+  - Implemented core framework classes (~400 lines):
+    - Component base class with lifecycle hooks
+    - @control_loop decorator for rate specification
+    - Input/Output descriptors for automatic Zenoh wiring
+    - MultiRateScheduler with thread-per-component
+    - Application container
+  - Successfully integrated Zenoh (eclipse-zenoh 1.6.2)
+  - Created two working examples:
+    - Simple: 100 Hz producer, 1 Hz consumer
+    - Multi-rate: 100 Hz sensor, 10 Hz control, 1 Hz planning
+  - Validation tests passed (test_framework.py):
+    - Decorators work correctly
+    - Input/Output descriptors functional
+    - Component lifecycle correct
+    - Timing accuracy < 1% (100.1ms vs 100ms expected)
+  - Architecture validated for full implementation
+  - Demonstrates hybrid time/data triggered pattern
+  - Multi-threading with independent rates working
+  - Clean declarative API validated
 
 ### Changed
 
