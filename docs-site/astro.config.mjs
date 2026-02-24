@@ -67,6 +67,7 @@ export default defineConfig({
 						{ label: 'Hardware Selection', slug: 'features/hardware-selection' },
 						{ label: 'Roofline Analysis', slug: 'features/roofline-analysis' },
 						{ label: 'Constraint Checking', slug: 'features/constraint-checking' },
+						{ label: 'Codebase Analysis', slug: 'features/codebase-analysis' },
 						{ label: 'Deployment', slug: 'features/deployment' },
 					],
 				},
