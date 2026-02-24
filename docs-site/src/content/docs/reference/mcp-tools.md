@@ -173,6 +173,162 @@ Check if all operators meet rate requirements.
 }
 ```
 
+## Optimization Tools
+
+### start_exploration
+
+Start a multi-objective design space exploration. Runs the 3-layer MOO pipeline (MAP-Elites + Bayesian BO) in the background. Returns a `session_id` for tracking progress and querying results.
+
+**Input:**
+```json
+{
+  "goal": "drone perception SoC",
+  "constraints": {
+    "max_power_watts": 5,
+    "max_latency_ms": 33,
+    "max_cost_usd": 25
+  },
+  "config": {
+    "layers": "auto",
+    "max_workers": 8
+  }
+}
+```
+
+**Output:**
+```json
+{
+  "session_id": "opt-abc123",
+  "status": "running",
+  "message": "Optimization started. Use get_exploration_status to track progress."
+}
+```
+
+### get_pareto_front
+
+Get Pareto-optimal design points from a completed exploration. Returns top-N designs for LLM context.
+
+**Input:**
+```json
+{
+  "session_id": "opt-abc123",
+  "top_n": 5
+}
+```
+
+**Output:**
+```json
+{
+  "preview": [
+    {
+      "design_params": {
+        "process_nm": 7,
+        "clock_mhz": 1200,
+        "array_rows": 16,
+        "array_cols": 16,
+        "sram_kb": 512,
+        "num_compute_tiles": 4,
+        "noc_link_width_bits": 256
+      },
+      "objectives": {
+        "power_watts": 3.2,
+        "latency_ms": 28.1,
+        "area_mm2": 42.0,
+        "cost_usd": 18.5
+      }
+    }
+  ],
+  "total_points": 12,
+  "hypervolume": 12.45,
+  "knee_point": { "..." : "..." }
+}
+```
+
+### get_sensitivity
+
+Get parameter sensitivity analysis from a completed exploration. Shows which design parameters most affect each objective. Requires the Bayesian optimization layer.
+
+**Input:**
+```json
+{
+  "session_id": "opt-abc123"
+}
+```
+
+**Output:**
+```json
+{
+  "sensitivity": {
+    "power_watts": {
+      "clock_mhz": { "lengthscale": 0.1234, "importance": 0.8912 },
+      "process_nm": { "lengthscale": 0.2341, "importance": 0.7234 }
+    },
+    "latency_ms": {
+      "array_rows": { "lengthscale": 0.1567, "importance": 0.8456 }
+    }
+  },
+  "layers_used": ["map_elites", "bayesian"]
+}
+```
+
+### explain_tradeoff
+
+Explain the tradeoff between two design points from the Pareto front. Shows what changes in parameters lead to what changes in objectives.
+
+**Input:**
+```json
+{
+  "session_id": "opt-abc123",
+  "point_a_index": 0,
+  "point_b_index": 3
+}
+```
+
+**Output:**
+```json
+{
+  "objective_deltas": {
+    "power_watts": {
+      "point_a": 3.2,
+      "point_b": 1.8,
+      "delta": -1.4,
+      "pct_change": -43.8
+    },
+    "latency_ms": {
+      "point_a": 28.1,
+      "point_b": 30.5,
+      "delta": 2.4,
+      "pct_change": 8.5
+    }
+  },
+  "parameter_changes": {
+    "process_nm": { "from": 7, "to": 5 },
+    "clock_mhz": { "from": 1200, "to": 600 }
+  }
+}
+```
+
+### get_exploration_status
+
+Get the status and progress of an optimization session.
+
+**Input:**
+```json
+{
+  "session_id": "opt-abc123"
+}
+```
+
+**Output:**
+```json
+{
+  "status": "completed",
+  "current_layer": "bayesian",
+  "total_evaluations": 5320,
+  "elapsed_seconds": 45.2
+}
+```
+
 ## Using with Claude Desktop
 
 Add to `claude_desktop_config.json`:

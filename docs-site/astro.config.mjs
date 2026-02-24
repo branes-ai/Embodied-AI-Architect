@@ -69,6 +69,7 @@ export default defineConfig({
 						{ label: 'Roofline Analysis', slug: 'features/roofline-analysis' },
 						{ label: 'Constraint Checking', slug: 'features/constraint-checking' },
 						{ label: 'Codebase Analysis', slug: 'features/codebase-analysis' },
+						{ label: 'Design Optimization', slug: 'features/design-optimization' },
 						{ label: 'Deployment', slug: 'features/deployment' },
 					],
 				},

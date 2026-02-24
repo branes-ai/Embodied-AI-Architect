@@ -122,6 +122,66 @@ embodied-ai codebase assess /path/to/project [OPTIONS]
 | `--power-budget FLOAT` | Maximum power budget in watts |
 | `--latency-target FLOAT` | Target end-to-end latency in milliseconds |
 
+### optimize
+
+Multi-objective design space optimization.
+
+```bash
+embodied-ai optimize [explore|show-front|sensitivity|explain] [OPTIONS]
+```
+
+#### optimize explore
+
+Explore the design space with multi-objective optimization.
+
+```bash
+embodied-ai optimize explore --goal "drone SoC" --power 5 --latency 33
+```
+
+| Option | Description |
+|--------|-------------|
+| `--goal, -g TEXT` | Design goal description (required) |
+| `--power, -p FLOAT` | Power budget in watts |
+| `--latency, -l FLOAT` | Latency target in ms |
+| `--cost, -c FLOAT` | Cost budget in USD |
+| `--area, -a FLOAT` | Area budget in mm² |
+| `--fast` | Fast mode (reduced evaluations, MAP-Elites only) |
+| `--layers TEXT` | Layer selection: auto, map_elites, bayesian, nsga3 (default: auto) |
+| `--workers INT` | Thread pool size (default: 8) |
+| `--json-output` | Output raw JSON |
+
+#### optimize show-front
+
+Show the Pareto front from the last exploration.
+
+```bash
+embodied-ai optimize show-front --top 10
+```
+
+| Option | Description |
+|--------|-------------|
+| `--top INT` | Number of designs to show (default: 10) |
+
+#### optimize sensitivity
+
+Show parameter sensitivity from the last exploration. Requires the Bayesian optimization layer to have run.
+
+```bash
+embodied-ai optimize sensitivity
+```
+
+#### optimize explain
+
+Explain the tradeoff between two Pareto-front designs.
+
+```bash
+embodied-ai optimize explain --points 0,3
+```
+
+| Option | Description |
+|--------|-------------|
+| `--points, -p TEXT` | Two point indices, comma-separated (required) |
+
 ### report
 
 View and manage analysis reports.
