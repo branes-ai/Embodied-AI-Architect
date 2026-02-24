@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Full application codebase analysis pipeline (2026-02-24):
+  - New `codebase/` package: static scanner, LLM-powered 4-pass code analyzer, workload profile converter
+  - `CodebaseScanner`: detects languages (15 extensions), build systems (CMake/Cargo/pip/Make), ML model files, entry points, dependencies — no API key needed
+  - `CodeAnalyzer`: 4-pass LLM analysis (build → entry points → compute kernels → synthesis) with 48K char per-pass limit
+  - `CodebaseConverter`: maps 7 kernel types (ml_inference, signal_processing, control_loop, image_processing, sensor_fusion, io_bound, general_compute) to hardware operators and outputs workload_profile compatible with existing PPA pipeline
+  - `CodebaseAnalyzerAgent(BaseAgent)`: wraps full pipeline, gracefully falls back to scan-only when LLM unavailable
+  - 3 interactive chat tools: `scan_project`, `analyze_codebase`, `assess_codebase_on_hardware`
+  - CLI: `embodied-ai codebase scan|analyze|assess` subcommands with `--hardware`, `--power-budget`, `--latency-target` options
+  - 34 new tests with 3 synthetic test fixture projects (C++ drone, Python ML, Rust embedded)
+  - Documentation: methodology guide (`docs/codebase-analysis-guide.md`), Starlight feature page, CLI reference updates
+  - Documentation: `docs/sessions/2026-02-24-codebase-analysis-pipeline.md`
+
 - Manufacturing cost model with process node optimizer (2026-02-18):
   - `manufacturing.py`: Physics-based cost model — dies per wafer (300mm circular packing), Murphy's yield model, manufacturing cost breakdown (die + package + test + NRE)
   - `PROCESS_ECONOMICS` database: 16 nodes (2nm–180nm) with wafer cost, defect density, mask set, design NRE, and test NRE
