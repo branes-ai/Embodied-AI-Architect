@@ -12,18 +12,27 @@ Branes' multi-objective optimization (MOO) engine maps the feasibility region, i
 The engine uses a layered approach where each layer builds on the previous one:
 
 ```
-┌─────────────────────┐
-│  Layer 1: MAP-Elites │  Fast atlas: 5K-10K evals, seconds
-│  Quality-diversity   │  Fills a grid of design niches
-└──────────┬──────────┘
+┌──────────────────────┐
+│  Layer 1: MAP-Elites  │  Fast atlas: 5K-10K evals, seconds
+│  Quality-diversity    │  Fills a grid of design niches
+└──────────┬───────────┘
            │ warm-start best designs
-           ▼
-┌─────────────────────┐
-│  Layer 2: Bayesian   │  Refined front: 100-200 evals, minutes
-│  BO (qNEHVI)         │  GP surrogate + sensitivity analysis
-└──────────┬──────────┘
            │
-           ▼
+           ├─── ≤4 objectives ──────┐
+           │                        ▼
+           │              ┌─────────────────────┐
+           │              │  Layer 2: Bayesian   │  100-200 evals, minutes
+           │              │  BO (qNEHVI)         │  GP surrogate + sensitivity
+           │              └──────────┬──────────┘
+           │                        │
+           ├─── >4 objectives ──────┐
+           │                        ▼
+           │              ┌─────────────────────┐
+           │              │  Layer 3: NSGA-III   │  Many-objective fallback
+           │              │  (pymoo)             │  Reference-direction selection
+           │              └──────────┬──────────┘
+           │                        │
+           ▼────────────────────────▼
        Pareto front + sensitivity + knee point
 ```
 
