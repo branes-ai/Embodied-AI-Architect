@@ -10,6 +10,17 @@
   --sl-color-bg: #0f172a;
   --sl-color-bg-nav: #1e293b;
   --sl-color-bg-sidebar: #1e293b;
+
+  /* Text colors — brighter grays for dark backgrounds + macOS font smoothing */
+  --sl-color-white: #f8fafc;
+  --sl-color-gray-1: #e2e8f0;
+  --sl-color-gray-2: #c8d1de;
+  --sl-color-gray-3: #94a3b8;
+  --sl-color-gray-4: #64748b;
+  --sl-color-gray-5: #334155;
+  --sl-color-gray-6: #1e293b;
+  --sl-color-text: var(--sl-color-gray-1);
+  --sl-color-text-accent: var(--sl-color-accent-high);
 }
 
 /* Hero section styling */
