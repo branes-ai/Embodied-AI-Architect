@@ -49,6 +49,18 @@ except ImportError:
     get_codebase_tool_definitions = lambda: []
     create_codebase_tool_executors = lambda: {}
 
+# Import optimization tools (optional, requires numpy)
+try:
+    from .optimization_tools import (
+        get_optimization_tool_definitions,
+        create_optimization_tool_executors,
+    )
+    HAS_MOO = True
+except ImportError:
+    HAS_MOO = False
+    get_optimization_tool_definitions = lambda: []
+    create_optimization_tool_executors = lambda: {}
+
 
 def get_tool_definitions() -> list[dict[str, Any]]:
     """Get tool definitions in Anthropic's tool format.
@@ -268,6 +280,10 @@ def get_tool_definitions() -> list[dict[str, Any]]:
     if HAS_CODEBASE_TOOLS:
         base_tools.extend(get_codebase_tool_definitions())
 
+    # Add optimization tools if available
+    if HAS_MOO:
+        base_tools.extend(get_optimization_tool_definitions())
+
     return base_tools
 
 
@@ -480,5 +496,9 @@ def create_tool_executors() -> dict[str, Callable]:
     # Add codebase analysis executors if available
     if HAS_CODEBASE_TOOLS:
         executors.update(create_codebase_tool_executors())
+
+    # Add optimization executors if available
+    if HAS_MOO:
+        executors.update(create_optimization_tool_executors())
 
     return executors

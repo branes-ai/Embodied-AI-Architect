@@ -1517,27 +1517,36 @@ def create_default_dispatcher() -> Dispatcher:
     from embodied_ai_architect.graphs.experience_specialist import experience_retriever
 
     dispatcher = Dispatcher()
-    dispatcher.register_many(
-        {
-            "workload_analyzer": workload_analyzer,
-            "hw_explorer": hw_explorer,
-            "architecture_composer": architecture_composer,
-            "ppa_assessor": ppa_assessor,
-            "critic": critic,
-            "report_generator": report_generator,
-            "design_optimizer": design_optimizer,
-            # KPU micro-architecture specialists
-            "kpu_configurator": kpu_configurator,
-            "floorplan_validator": floorplan_validator,
-            "bandwidth_validator": bandwidth_validator,
-            "kpu_optimizer": kpu_optimizer,
-            # RTL specialists
-            "rtl_generator": rtl_generator,
-            "rtl_ppa_assessor": rtl_ppa_assessor,
-            # Phase 4 specialists
-            "design_explorer": design_explorer,
-            "safety_detector": safety_detector,
-            "experience_retriever": experience_retriever,
-        }
-    )
+
+    specialists: dict = {
+        "workload_analyzer": workload_analyzer,
+        "hw_explorer": hw_explorer,
+        "architecture_composer": architecture_composer,
+        "ppa_assessor": ppa_assessor,
+        "critic": critic,
+        "report_generator": report_generator,
+        "design_optimizer": design_optimizer,
+        # KPU micro-architecture specialists
+        "kpu_configurator": kpu_configurator,
+        "floorplan_validator": floorplan_validator,
+        "bandwidth_validator": bandwidth_validator,
+        "kpu_optimizer": kpu_optimizer,
+        # RTL specialists
+        "rtl_generator": rtl_generator,
+        "rtl_ppa_assessor": rtl_ppa_assessor,
+        # Phase 4 specialists
+        "design_explorer": design_explorer,
+        "safety_detector": safety_detector,
+        "experience_retriever": experience_retriever,
+    }
+
+    # MOO specialist (optional, requires numpy)
+    try:
+        from embodied_ai_architect.graphs.moo.specialist import moo_explorer
+
+        specialists["moo_explorer"] = moo_explorer
+    except ImportError:
+        pass
+
+    dispatcher.register_many(specialists)
     return dispatcher

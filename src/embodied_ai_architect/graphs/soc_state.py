@@ -237,6 +237,7 @@ class SoCDesignState(TypedDict, total=False):
     baseline_metrics: dict  # Reference point for optimization
     pareto_points: list[dict]  # Explored design space points
     pareto_results: dict  # Pareto front analysis results
+    moo_results: dict  # Multi-objective optimization results (rich data)
     safety_analysis: dict  # Safety-critical detection results
     prior_experience: dict  # Experience retrieval results
     cost_tracking: dict  # CostTracker serialized state
@@ -326,6 +327,7 @@ def create_initial_soc_state(
         baseline_metrics={},
         pareto_points=[],
         pareto_results={},
+        moo_results={},
         safety_analysis={},
         prior_experience={},
         cost_tracking={},

@@ -38,6 +38,17 @@ kubernetes = [
 chat = [
     "anthropic>=0.39.0",  # Claude API for interactive chat
 ]
+optimization = [
+    "pymoo>=0.6.0",
+    "botorch>=0.11.0",
+    "gpytorch>=1.12",
+    "scipy>=1.10.0",
+]
+mcp = [
+    "mcp>=1.0.0",
+    "uvicorn>=0.25.0",
+    "httpx>=0.25.0",
+]
 langgraph = [
     "langgraph>=0.2.0",                      # State machine framework
     "langchain-anthropic>=0.3.0",            # Claude integration for LangGraph

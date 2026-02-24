@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Multi-Objective Optimization Engine (2026-02-24):
+  - New `graphs/moo/` package: 3-layer pipeline (MAP-Elites → Bayesian BO → NSGA-III) for SoC design space exploration
+  - `design_space.py`: Mixed discrete/continuous/categorical variable definitions, LHS sampling, encode/decode for pymoo and BoTorch
+  - `evaluator.py`: Thread-safe design evaluator wrapping existing PPA specialists (ip_blocks, manufacturing, technology) — pure function, no duplication
+  - `executor.py`: `EvalBackend` protocol with `LocalThreadExecutor` (ThreadPoolExecutor) for parallel analytical model evaluation
+  - `map_elites.py`: Layer 1 — quality-diversity algorithm filling a behavioral feature grid (5K-10K evals in seconds), custom implementation (~250 lines)
+  - `bayesian_opt.py`: Layer 2 — sample-efficient Pareto refinement using BoTorch qNEHVI with GP surrogates, sensitivity from lengthscales, warm-start from MAP-Elites (requires botorch)
+  - `nsga3.py`: Layer 3 — many-objective fallback (>4 objectives) wrapping pymoo NSGA-III with warm-start support (requires pymoo)
+  - `engine.py`: Pipeline orchestrator with auto layer selection (<=4 obj → ME+BO, >4 → ME+NSGA3), hypervolume computation, knee point identification, tradeoff explanation
+  - `specialist.py`: Bridge to existing dispatcher pattern — `moo_explorer(task, state)` writes both `pareto_results` (backward compat) and `moo_results`
+  - `k8s_evaluator.py`: Kubernetes evaluation backend with semaphore-based concurrency control, EDA license management via secrets
+  - New `mcp/` package: MCP server exposing 5 optimization tools (start_exploration, get_pareto_front, get_sensitivity, explain_tradeoff, get_exploration_status) with dual-response pattern and session management
+  - `llm/optimization_tools.py`: 5 LLM tools (explore_design_space, get_pareto_front, get_design_sensitivity, explain_design_tradeoff, suggest_optimal_design) following existing tool pattern
+  - `cli/commands/optimize.py`: CLI commands — `branes optimize explore|show-front|sensitivity|explain` with Rich table output
+  - Optional dependency groups: `optimization` (pymoo, botorch, gpytorch, scipy), `mcp` (mcp, uvicorn, httpx)
+  - 52 new tests across 6 test files (design_space, evaluator, map_elites, engine, mcp_server, bayesian_moo)
+  - Documentation: `docs/sessions/2026-02-24-moo-engine.md`
+
 - Full application codebase analysis pipeline (2026-02-24):
   - New `codebase/` package: static scanner, LLM-powered 4-pass code analyzer, workload profile converter
   - `CodebaseScanner`: detects languages (15 extensions), build systems (CMake/Cargo/pip/Make), ML model files, entry points, dependencies — no API key needed
