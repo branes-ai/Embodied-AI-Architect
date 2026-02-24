@@ -69,6 +69,7 @@ def main():
     from embodied_ai_architect.cli.commands import testbench
     from embodied_ai_architect.cli.commands import deploy
     from embodied_ai_architect.cli.commands import demo
+    from embodied_ai_architect.cli.commands import codebase
 
     # Register command groups
     cli.add_command(workflow.workflow)
@@ -86,6 +87,7 @@ def main():
     cli.add_command(testbench.testbench)
     cli.add_command(deploy.deploy)
     cli.add_command(demo.demo)
+    cli.add_command(codebase.codebase)
 
     # Run CLI
     cli(obj={})

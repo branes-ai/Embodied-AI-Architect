@@ -75,6 +75,9 @@ Tools are defined in Anthropic's tool format and wrap existing agents:
 | `run_benchmark` | Benchmark on CPU/SSH/K8s | `BenchmarkAgent` |
 | `list_files` | Explore directories | Built-in |
 | `read_file` | Read text files | Built-in |
+| `scan_project` | Scan project directory for files, build system, ML models | `CodebaseScanner` |
+| `analyze_codebase` | Multi-pass LLM analysis of application source code | `CodeAnalyzer` |
+| `assess_codebase_on_hardware` | End-to-end codebase → hardware assessment | Full pipeline |
 
 Adding a new tool:
 

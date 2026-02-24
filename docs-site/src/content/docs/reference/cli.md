@@ -84,6 +84,44 @@ embodied-ai deploy MODEL [OPTIONS]
 | `--calibration-data PATH` | Calibration images for INT8 |
 | `--output-dir PATH` | Output directory |
 
+### codebase
+
+Analyze full application codebases for hardware assessment.
+
+```bash
+embodied-ai codebase [scan|analyze|assess] PROJECT_PATH [OPTIONS]
+```
+
+#### codebase scan
+
+Quick static scan — no LLM or API key needed.
+
+```bash
+embodied-ai codebase scan /path/to/project
+```
+
+#### codebase analyze
+
+Full LLM-powered multi-pass analysis. Requires `ANTHROPIC_API_KEY`.
+
+```bash
+embodied-ai codebase analyze /path/to/project
+```
+
+#### codebase assess
+
+End-to-end hardware assessment: scan, analyze, convert, and assess.
+
+```bash
+embodied-ai codebase assess /path/to/project [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--hardware TEXT` | Comma-separated hardware targets (e.g., jetson_orin,custom_kpu) |
+| `--power-budget FLOAT` | Maximum power budget in watts |
+| `--latency-target FLOAT` | Target end-to-end latency in milliseconds |
+
 ### report
 
 View and manage analysis reports.

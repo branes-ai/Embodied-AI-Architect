@@ -37,6 +37,18 @@ except ImportError:
     get_architecture_tool_definitions = lambda: []
     create_architecture_tool_executors = lambda: {}
 
+# Import codebase analysis tools
+try:
+    from .codebase_tools import (
+        get_codebase_tool_definitions,
+        create_codebase_tool_executors,
+    )
+    HAS_CODEBASE_TOOLS = True
+except ImportError:
+    HAS_CODEBASE_TOOLS = False
+    get_codebase_tool_definitions = lambda: []
+    create_codebase_tool_executors = lambda: {}
+
 
 def get_tool_definitions() -> list[dict[str, Any]]:
     """Get tool definitions in Anthropic's tool format.
@@ -252,6 +264,10 @@ def get_tool_definitions() -> list[dict[str, Any]]:
     if HAS_ARCHITECTURE_TOOLS:
         base_tools.extend(get_architecture_tool_definitions())
 
+    # Add codebase analysis tools if available
+    if HAS_CODEBASE_TOOLS:
+        base_tools.extend(get_codebase_tool_definitions())
+
     return base_tools
 
 
@@ -460,5 +476,9 @@ def create_tool_executors() -> dict[str, Callable]:
     # Add architecture analysis executors if available
     if HAS_ARCHITECTURE_TOOLS:
         executors.update(create_architecture_tool_executors())
+
+    # Add codebase analysis executors if available
+    if HAS_CODEBASE_TOOLS:
+        executors.update(create_codebase_tool_executors())
 
     return executors

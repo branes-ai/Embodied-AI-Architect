@@ -39,6 +39,11 @@ embodied-ai workflow run model.pt
 embodied-ai analyze model.pt
 embodied-ai benchmark model.pt --backend local
 
+# Codebase analysis (scan requires no API key)
+embodied-ai codebase scan /path/to/project
+embodied-ai codebase analyze /path/to/project
+embodied-ai codebase assess /path/to/project --hardware jetson_orin --power-budget 15
+
 # Start interactive chat session (requires ANTHROPIC_API_KEY)
 export ANTHROPIC_API_KEY=your-key-here
 embodied-ai chat
@@ -64,11 +69,18 @@ embodied-ai chat
 - `RemoteSSHBackend`: Execute on remote machines via SSH (requires `paramiko`)
 - `KubernetesBackend`: Distributed benchmarking on K8s (requires `kubernetes`)
 
+**Codebase Analysis** (`codebase/`): Full application analysis pipeline:
+- `scanner.py` - Static file scanner (languages, build system, ML models, deps)
+- `analyzer.py` - LLM multi-pass code analyzer (4 passes: build→entry→kernels→synthesis)
+- `converter.py` - Maps `CodebaseAnalysisResult` → `workload_profile` for PPA pipeline
+- `models.py` - Pydantic models (`ComputeKernel`, `ScanResult`, `CodebaseAnalysisResult`)
+
 **CLI** (`cli/`): Click-based CLI with subcommands:
 - `chat` - Interactive AI architect session (Claude Code-style)
 - `workflow` - Run full analysis pipeline
 - `analyze` - Model structure analysis only
 - `benchmark` - Performance benchmarking
+- `codebase` - Full application codebase analysis (`scan`, `analyze`, `assess`)
 - `report` - View/manage reports
 - `backends` - Manage benchmark backends
 - `secrets` - Manage credentials
@@ -77,6 +89,7 @@ embodied-ai chat
 - `LLMClient` - Claude API wrapper with tool use support
 - `ArchitectAgent` - Agentic loop that reasons and calls tools
 - `tools.py` - Tool definitions wrapping existing agents
+- `codebase_tools.py` - Tools for codebase scan/analyze/assess in chat
 
 ### Prototypes (`prototypes/`)
 
