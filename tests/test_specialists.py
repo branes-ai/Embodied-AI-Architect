@@ -214,10 +214,10 @@ class TestArchitectureComposer:
         result = architecture_composer(task, state_with_hw)
 
         ip_blocks = result["ip_blocks"]
-        block_types = [b["type"] for b in ip_blocks]
-        assert "cpu" in block_types
-        assert "kpu" in block_types
-        assert "memory" in block_types
+        block_types = [b.get("block_type", b.get("type")) for b in ip_blocks]
+        assert "cpu_core" in block_types
+        assert "kpu_tile" in block_types
+        assert "memory_ctrl" in block_types
         assert "io" in block_types
 
     def test_vision_workload_adds_isp(self, state_with_hw):
@@ -225,7 +225,7 @@ class TestArchitectureComposer:
         result = architecture_composer(task, state_with_hw)
 
         ip_blocks = result["ip_blocks"]
-        block_types = [b["type"] for b in ip_blocks]
+        block_types = [b.get("block_type", b.get("type")) for b in ip_blocks]
         assert "isp" in block_types
 
     def test_produces_memory_map(self, state_with_hw):

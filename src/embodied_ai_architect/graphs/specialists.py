@@ -30,6 +30,18 @@ from embodied_ai_architect.graphs.soc_state import (
 from embodied_ai_architect.graphs.task_graph import TaskNode
 from embodied_ai_architect.graphs.manufacturing import estimate_manufacturing_cost
 from embodied_ai_architect.graphs.technology import get_technology
+from embodied_ai_architect.graphs.ip_blocks import (
+    ARM_A55_PRESET,
+    ARM_A78_PRESET,
+    DEFAULT_IO_PRESET,
+    DEFAULT_ISP_PRESET,
+    IPBlockConfig,
+    MemoryControllerConfig,
+    NoCIPConfig,
+    SMALL_GPU_PRESET,
+    SoCComposition,
+    kpu_preset_block,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -84,9 +96,7 @@ def _try_model_analysis(state: SoCDesignState) -> dict[str, Any] | None:
     return None
 
 
-def _build_profile_from_model(
-    model_data: dict[str, Any], use_case: str
-) -> dict[str, Any]:
+def _build_profile_from_model(model_data: dict[str, Any], use_case: str) -> dict[str, Any]:
     """Build workload profile from ModelAnalyzerAgent output."""
     layer_counts = model_data.get("layer_type_counts", {})
     total_params = model_data.get("total_parameters", 0)
@@ -132,91 +142,105 @@ def _estimate_workload_from_goal(
     # Detect workload types from keywords
     workloads = []
     if any(kw in goal_lower for kw in ("detection", "yolo", "object")):
-        workloads.append({
-            "name": "object_detection",
-            "model_class": "YOLOv8",
-            "operators": [
-                {"type": "convolution", "count": 75},
-                {"type": "batch_norm", "count": 70},
-                {"type": "activation", "count": 70},
-            ],
-            "estimated_gflops": 8.7,
-            "estimated_memory_mb": 12.0,
-            "estimated_params_m": 3.2,
-        })
+        workloads.append(
+            {
+                "name": "object_detection",
+                "model_class": "YOLOv8",
+                "operators": [
+                    {"type": "convolution", "count": 75},
+                    {"type": "batch_norm", "count": 70},
+                    {"type": "activation", "count": 70},
+                ],
+                "estimated_gflops": 8.7,
+                "estimated_memory_mb": 12.0,
+                "estimated_params_m": 3.2,
+            }
+        )
     if any(kw in goal_lower for kw in ("tracking", "track", "bytetrack")):
-        workloads.append({
-            "name": "object_tracking",
-            "model_class": "ByteTrack",
-            "operators": [
-                {"type": "matrix_multiply", "count": 10},
-                {"type": "sort", "count": 1},
-            ],
-            "estimated_gflops": 0.5,
-            "estimated_memory_mb": 2.0,
-            "estimated_params_m": 0.0,
-        })
+        workloads.append(
+            {
+                "name": "object_tracking",
+                "model_class": "ByteTrack",
+                "operators": [
+                    {"type": "matrix_multiply", "count": 10},
+                    {"type": "sort", "count": 1},
+                ],
+                "estimated_gflops": 0.5,
+                "estimated_memory_mb": 2.0,
+                "estimated_params_m": 0.0,
+            }
+        )
     if any(kw in goal_lower for kw in ("slam", "localization", "mapping")):
-        workloads.append({
-            "name": "visual_slam",
-            "model_class": "ORB-SLAM3",
-            "operators": [
-                {"type": "feature_extraction", "count": 1},
-                {"type": "matrix_multiply", "count": 20},
-                {"type": "sparse_solve", "count": 1},
-            ],
-            "estimated_gflops": 3.0,
-            "estimated_memory_mb": 50.0,
-            "estimated_params_m": 0.0,
-        })
+        workloads.append(
+            {
+                "name": "visual_slam",
+                "model_class": "ORB-SLAM3",
+                "operators": [
+                    {"type": "feature_extraction", "count": 1},
+                    {"type": "matrix_multiply", "count": 20},
+                    {"type": "sparse_solve", "count": 1},
+                ],
+                "estimated_gflops": 3.0,
+                "estimated_memory_mb": 50.0,
+                "estimated_params_m": 0.0,
+            }
+        )
     if any(kw in goal_lower for kw in ("perception", "vision", "camera")):
-        workloads.append({
-            "name": "visual_perception",
-            "model_class": "CNN-based",
-            "operators": [
-                {"type": "convolution", "count": 50},
-                {"type": "pooling", "count": 10},
-            ],
-            "estimated_gflops": 6.0,
-            "estimated_memory_mb": 10.0,
-            "estimated_params_m": 2.5,
-        })
+        workloads.append(
+            {
+                "name": "visual_perception",
+                "model_class": "CNN-based",
+                "operators": [
+                    {"type": "convolution", "count": 50},
+                    {"type": "pooling", "count": 10},
+                ],
+                "estimated_gflops": 6.0,
+                "estimated_memory_mb": 10.0,
+                "estimated_params_m": 2.5,
+            }
+        )
     if any(kw in goal_lower for kw in ("voice", "speech", "audio")):
-        workloads.append({
-            "name": "voice_recognition",
-            "model_class": "Whisper-tiny",
-            "operators": [
-                {"type": "attention", "count": 4},
-                {"type": "convolution", "count": 2},
-                {"type": "matrix_multiply", "count": 20},
-            ],
-            "estimated_gflops": 1.5,
-            "estimated_memory_mb": 150.0,
-            "estimated_params_m": 39.0,
-        })
+        workloads.append(
+            {
+                "name": "voice_recognition",
+                "model_class": "Whisper-tiny",
+                "operators": [
+                    {"type": "attention", "count": 4},
+                    {"type": "convolution", "count": 2},
+                    {"type": "matrix_multiply", "count": 20},
+                ],
+                "estimated_gflops": 1.5,
+                "estimated_memory_mb": 150.0,
+                "estimated_params_m": 39.0,
+            }
+        )
     if any(kw in goal_lower for kw in ("lidar", "point cloud")):
-        workloads.append({
-            "name": "lidar_processing",
-            "model_class": "PointPillars",
-            "operators": [
-                {"type": "convolution", "count": 30},
-                {"type": "scatter", "count": 1},
-            ],
-            "estimated_gflops": 4.0,
-            "estimated_memory_mb": 20.0,
-            "estimated_params_m": 1.8,
-        })
+        workloads.append(
+            {
+                "name": "lidar_processing",
+                "model_class": "PointPillars",
+                "operators": [
+                    {"type": "convolution", "count": 30},
+                    {"type": "scatter", "count": 1},
+                ],
+                "estimated_gflops": 4.0,
+                "estimated_memory_mb": 20.0,
+                "estimated_params_m": 1.8,
+            }
+        )
 
     # Default if nothing matched
     if not workloads:
-        workloads.append({
-            "name": "general_inference",
-            "model_class": "Unknown",
-            "operators": [{"type": "general_purpose", "count": 1}],
-            "estimated_gflops": 5.0,
-            "estimated_memory_mb": 20.0,
-            "estimated_params_m": 2.0,
-        })
+        workloads.append(
+            {
+                "name": "general_inference",
+                "model_class": "Unknown",
+                "operators": [{"type": "general_purpose", "count": 1}],
+                "estimated_gflops": 5.0,
+                "estimated_memory_mb": 20.0,
+                "estimated_params_m": 2.0,
+            }
+        )
 
     # Add scheduling field per workload (concurrent/sequential/time_shared)
     for w in workloads:
@@ -282,7 +306,11 @@ def aggregate_workload_requirements(workloads: list[dict]) -> float:
         else:  # time_shared
             time_shared_gflops += gflops * 0.7
 
-    return concurrent_gflops + (max(sequential_gflops) if sequential_gflops else 0.0) + time_shared_gflops
+    return (
+        concurrent_gflops
+        + (max(sequential_gflops) if sequential_gflops else 0.0)
+        + time_shared_gflops
+    )
 
 
 def map_workloads_to_accelerators(
@@ -325,13 +353,15 @@ def map_workloads_to_accelerators(
                 break
 
         precision = "int8" if best_hw.get("peak_tops_int8", 0) > 0 else "fp16"
-        mappings.append({
-            "workload": w.get("name", "unknown"),
-            "model_class": w.get("model_class", "unknown"),
-            "accelerator": best_hw.get("name", "unknown"),
-            "precision": precision,
-            "scheduling": w.get("scheduling", "concurrent"),
-        })
+        mappings.append(
+            {
+                "workload": w.get("name", "unknown"),
+                "model_class": w.get("model_class", "unknown"),
+                "accelerator": best_hw.get("name", "unknown"),
+                "precision": precision,
+                "scheduling": w.get("scheduling", "concurrent"),
+            }
+        )
 
     return mappings
 
@@ -577,9 +607,7 @@ def _load_registry_candidates() -> list[dict[str, Any]]:
                     if entry.capabilities and entry.capabilities.peak_tflops_fp16
                     else 0.0
                 ),
-                "memory_gb": (
-                    entry.capabilities.memory_gb if entry.capabilities else 0.0
-                ),
+                "memory_gb": (entry.capabilities.memory_gb if entry.capabilities else 0.0),
                 "tdp_watts": entry.power.tdp_watts if entry.power else None,
                 "cost_usd": entry.cost_usd,
                 "strengths": _derive_strengths(entry),
@@ -654,7 +682,9 @@ def _score_hardware(
 
     # Operation type match
     strengths = hw.get("strengths", [])
-    if dominant_op == "convolution" and any(s in strengths for s in ("gpu_acceleration", "dataflow", "int8")):
+    if dominant_op == "convolution" and any(
+        s in strengths for s in ("gpu_acceleration", "dataflow", "int8")
+    ):
         score += 10
     if dominant_op == "attention" and any(s in strengths for s in ("gpu_acceleration", "flexible")):
         score += 10
@@ -720,9 +750,10 @@ def architecture_composer(task: TaskNode, state: SoCDesignState) -> dict[str, An
     if selected_hw is None:
         raise ValueError("No hardware candidates available for architecture composition")
 
-    # Compose architecture
-    architecture = _compose_architecture(workload, selected_hw, constraints)
-    ip_blocks = _define_ip_blocks(workload, selected_hw)
+    # Compose heterogeneous SoC from IP blocks
+    soc = _compose_soc(workload, selected_hw, constraints)
+    architecture = _compose_architecture(workload, selected_hw, constraints, soc)
+    ip_blocks = soc.to_ip_block_dicts()
     memory_map = _define_memory_map(ip_blocks, selected_hw)
     interconnect = _define_interconnect(ip_blocks)
 
@@ -732,6 +763,7 @@ def architecture_composer(task: TaskNode, state: SoCDesignState) -> dict[str, An
         "ip_blocks": ip_blocks,
         "memory_map": memory_map,
         "interconnect": interconnect,
+        "soc_composition": soc.block_summary(),
         "_state_updates": {
             "selected_architecture": architecture,
             "ip_blocks": ip_blocks,
@@ -741,13 +773,114 @@ def architecture_composer(task: TaskNode, state: SoCDesignState) -> dict[str, An
     }
 
 
+def _compose_soc(
+    workload: dict[str, Any],
+    hw: dict[str, Any],
+    constraints: DesignConstraints,
+) -> SoCComposition:
+    """Build a heterogeneous SoCComposition from workload analysis and selected hardware.
+
+    Always includes: CPU cores, memory controller, NoC, I/O subsystem.
+    Conditionally includes: GPU clusters, KPU tiles, ISP.
+    """
+    process_nm = constraints.target_process_nm or 28
+    max_power = constraints.max_power_watts or 15.0
+    hw_type = hw.get("type", "unknown")
+    dominant_op = workload.get("dominant_op", "general_purpose")
+    workloads = workload.get("workloads", [])
+    workload_names = {w.get("name", "") for w in workloads}
+
+    blocks: list[IPBlockConfig] = []
+
+    # --- CPU cores: always present ---
+    if max_power < 5.0:
+        # Edge: big.LITTLE with 1 big + 1 little
+        blocks.append(ARM_A78_PRESET.model_copy(update={"count": 1}))
+        blocks.append(ARM_A55_PRESET.model_copy(update={"count": 1}))
+    elif max_power < 15.0:
+        # Mid-range: 2 big + 2 little
+        blocks.append(ARM_A78_PRESET.model_copy(update={"count": 2}))
+        blocks.append(ARM_A55_PRESET.model_copy(update={"count": 2}))
+    else:
+        # High-power: 4 big cores
+        blocks.append(ARM_A78_PRESET.model_copy(update={"count": 4}))
+
+    # --- GPU clusters: when workload has attention/general ops AND power allows ---
+    has_attention = any(
+        op.get("type") == "attention" for w in workloads for op in w.get("operators", [])
+    )
+    has_general = dominant_op in ("general_purpose", "attention")
+    if (has_attention or has_general or hw_type == "gpu") and max_power >= 5.0:
+        gpu = SMALL_GPU_PRESET.model_copy(update={"count": 1})
+        blocks.append(gpu)
+
+    # --- KPU tiles: when workload has convolution/matrix_multiply AND fits budget ---
+    has_conv = any(
+        op.get("type") in ("convolution", "matrix_multiply")
+        for w in workloads
+        for op in w.get("operators", [])
+    )
+    if has_conv or hw_type == "kpu" or dominant_op in ("convolution", "matrix_multiply"):
+        if max_power < 5.0:
+            kpu = kpu_preset_block("drone_minimal")
+        elif max_power < 15.0:
+            kpu = kpu_preset_block("edge_balanced")
+        else:
+            kpu = kpu_preset_block("server_max")
+        blocks.append(kpu)
+
+    # --- Memory controller: always ---
+    mem_gb = min(hw.get("memory_gb", 4.0), 8.0)
+    channels = 2 if max_power < 10.0 else 4
+    blocks.append(
+        MemoryControllerConfig(
+            name="LPDDR4X Controller",
+            channels=channels,
+            bandwidth_gbps_per_channel=6.4,
+            capacity_gb=mem_gb,
+        )
+    )
+
+    # --- NoC: always ---
+    num_ip = len(blocks) + 2  # +2 for NoC and IO we're about to add
+    num_routers = max(4, num_ip * 2)
+    blocks.append(
+        NoCIPConfig(
+            name="Mesh NoC",
+            topology="mesh_2d",
+            link_width_bits=256 if num_routers <= 16 else 512,
+            frequency_mhz=1000.0,
+            num_routers=num_routers,
+        )
+    )
+
+    # --- I/O subsystem: always ---
+    blocks.append(DEFAULT_IO_PRESET.model_copy())
+
+    # --- ISP: when vision workloads detected ---
+    vision_workloads = {
+        "object_detection",
+        "visual_perception",
+        "visual_slam",
+    }
+    if workload_names & vision_workloads or dominant_op in ("convolution", "feature_extraction"):
+        blocks.append(DEFAULT_ISP_PRESET.model_copy())
+
+    return SoCComposition(
+        name=f"SoC-{hw['name'].replace(' ', '-')}",
+        process_nm=process_nm,
+        blocks=blocks,
+    )
+
+
 def _compose_architecture(
     workload: dict[str, Any],
     hw: dict[str, Any],
     constraints: DesignConstraints,
+    soc: SoCComposition | None = None,
 ) -> dict[str, Any]:
     """Build top-level architecture description."""
-    return {
+    arch = {
         "name": f"SoC-{hw['name'].replace(' ', '-')}",
         "primary_compute": hw["name"],
         "compute_type": hw.get("type", "unknown"),
@@ -760,36 +893,43 @@ def _compose_architecture(
             f"with {hw.get('tdp_watts', '?')}W TDP"
         ),
     }
+    if soc is not None:
+        # Enrich with per-block type summary
+        block_types: dict[str, int] = {}
+        for b in soc.blocks:
+            block_types[b.block_type] = block_types.get(b.block_type, 0) + b.count
+        arch["ip_block_types"] = block_types
+    return arch
 
 
-def _map_workloads_to_hw(
-    workload: dict[str, Any], hw: dict[str, Any]
-) -> list[dict[str, str]]:
+def _map_workloads_to_hw(workload: dict[str, Any], hw: dict[str, Any]) -> list[dict[str, str]]:
     """Map workload operators/subworkloads to hardware execution targets."""
     mappings = []
     workloads = workload.get("workloads", [])
     if not workloads:
         # Single-model workload
-        mappings.append({
-            "workload": workload.get("use_case", "main"),
-            "target": hw["name"],
-            "precision": "int8" if hw.get("peak_tops_int8", 0) > 0 else "fp16",
-        })
+        mappings.append(
+            {
+                "workload": workload.get("use_case", "main"),
+                "target": hw["name"],
+                "precision": "int8" if hw.get("peak_tops_int8", 0) > 0 else "fp16",
+            }
+        )
     else:
         for w in workloads:
             precision = "int8" if hw.get("peak_tops_int8", 0) > 0 else "fp16"
-            mappings.append({
-                "workload": w["name"],
-                "model_class": w.get("model_class", "unknown"),
-                "target": hw["name"],
-                "precision": precision,
-            })
+            mappings.append(
+                {
+                    "workload": w["name"],
+                    "model_class": w.get("model_class", "unknown"),
+                    "target": hw["name"],
+                    "precision": precision,
+                }
+            )
     return mappings
 
 
-def _define_ip_blocks(
-    workload: dict[str, Any], hw: dict[str, Any]
-) -> list[dict[str, Any]]:
+def _define_ip_blocks(workload: dict[str, Any], hw: dict[str, Any]) -> list[dict[str, Any]]:
     """Define IP blocks for the SoC."""
     blocks = [
         {
@@ -832,38 +972,42 @@ def _define_ip_blocks(
         w.get("name", "") in ("object_detection", "visual_perception", "visual_slam")
         for w in workload.get("workloads", [])
     ):
-        blocks.append({
-            "name": "isp",
-            "type": "isp",
-            "description": "Image Signal Processor for camera input",
-            "config": {"max_resolution": "4K", "pipeline_stages": 8},
-        })
+        blocks.append(
+            {
+                "name": "isp",
+                "type": "isp",
+                "description": "Image Signal Processor for camera input",
+                "config": {"max_resolution": "4K", "pipeline_stages": 8},
+            }
+        )
 
     return blocks
 
 
-def _define_memory_map(
-    ip_blocks: list[dict[str, Any]], hw: dict[str, Any]
-) -> dict[str, Any]:
+def _define_memory_map(ip_blocks: list[dict[str, Any]], hw: dict[str, Any]) -> dict[str, Any]:
     """Define address space layout."""
     base = 0x0000_0000
     regions = []
     for block in ip_blocks:
         size = 0x0100_0000  # 16MB per block default
-        regions.append({
-            "name": block["name"],
-            "base_address": f"0x{base:08X}",
-            "size_bytes": size,
-        })
+        regions.append(
+            {
+                "name": block["name"],
+                "base_address": f"0x{base:08X}",
+                "size_bytes": size,
+            }
+        )
         base += size
 
     # DRAM region
     dram_gb = min(hw.get("memory_gb", 2), 4)
-    regions.append({
-        "name": "dram",
-        "base_address": f"0x{0x8000_0000:08X}",
-        "size_bytes": int(dram_gb * 1024 * 1024 * 1024),
-    })
+    regions.append(
+        {
+            "name": "dram",
+            "base_address": f"0x{0x8000_0000:08X}",
+            "size_bytes": int(dram_gb * 1024 * 1024 * 1024),
+        }
+    )
 
     return {"regions": regions, "address_width_bits": 32}
 
@@ -918,7 +1062,7 @@ def ppa_assessor(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
 
     # Estimate PPA
     power_w = _estimate_power(ip_blocks, selected_hw, workload, process_nm)
-    latency_ms = _estimate_latency(workload, selected_hw, process_nm)
+    latency_ms = _estimate_latency(workload, selected_hw, process_nm, ip_blocks)
     area_mm2 = _estimate_area(ip_blocks, constraints)
 
     # Manufacturing cost model (replaces static BOM lookup)
@@ -943,7 +1087,9 @@ def ppa_assessor(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
             verdicts["power"] = "PASS"
         else:
             verdicts["power"] = "FAIL"
-            bottlenecks.append(f"Power {power_w:.1f}W exceeds {constraints.max_power_watts}W budget")
+            bottlenecks.append(
+                f"Power {power_w:.1f}W exceeds {constraints.max_power_watts}W budget"
+            )
             suggestions.append("Consider lower-power accelerator or reducing clock frequency")
 
     if constraints.max_latency_ms and latency_ms is not None:
@@ -961,14 +1107,18 @@ def ppa_assessor(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
             verdicts["cost"] = "PASS"
         else:
             verdicts["cost"] = "FAIL"
-            bottlenecks.append(f"Cost ${cost_usd:.0f} exceeds ${constraints.max_cost_usd:.0f} budget")
+            bottlenecks.append(
+                f"Cost ${cost_usd:.0f} exceeds ${constraints.max_cost_usd:.0f} budget"
+            )
 
     if constraints.max_area_mm2 and area_mm2 is not None:
         if area_mm2 <= constraints.max_area_mm2:
             verdicts["area"] = "PASS"
         else:
             verdicts["area"] = "FAIL"
-            bottlenecks.append(f"Area {area_mm2:.1f}mm² exceeds {constraints.max_area_mm2}mm² target")
+            bottlenecks.append(
+                f"Area {area_mm2:.1f}mm² exceeds {constraints.max_area_mm2}mm² target"
+            )
 
     all_pass = all(v == "PASS" for v in verdicts.values()) if verdicts else False
     overall = "PASS" if all_pass else "FAIL"
@@ -1002,36 +1152,37 @@ def _estimate_power(
 ) -> float:
     """Estimate total SoC power consumption.
 
-    Baseline power is TDP * utilization + fixed overhead.
-    When the optimizer applies strategies (tracked in workload["optimizations_applied"]),
-    compute power is reduced proportionally to the cumulative GFLOPS reduction.
-    Clock scaling in IP blocks also reduces compute power.
+    When ip_blocks contain physics-based block data (block_type + _power_watts),
+    use per-block power sums. Otherwise falls back to TDP-based estimation.
     """
+    # --- New path: physics-based IP block power ---
+    if ip_blocks and _has_physics_blocks(ip_blocks):
+        total = sum(b.get("_power_watts", 0.0) for b in ip_blocks)
+        # Apply optimization scaling if workload was optimized
+        if workload and workload.get("optimizations_applied"):
+            opt_scale = _optimization_scale(workload)
+            # Only scale compute blocks, not infra
+            compute_types = {"cpu_core", "gpu_cluster", "kpu_tile"}
+            compute_power = sum(
+                b.get("_power_watts", 0.0)
+                for b in ip_blocks
+                if b.get("block_type") in compute_types
+            )
+            infra_power = total - compute_power
+            total = compute_power * opt_scale + infra_power
+        return round(total, 1)
+
+    # --- Legacy path: TDP-based estimation ---
     if hw is None:
-        return 10.0  # default estimate
+        return 10.0
 
     tdp = hw.get("tdp_watts", 10.0)
-    base_utilization = 0.8  # baseline: 80% of TDP under full workload
+    base_utilization = 0.8
 
-    # When optimizations have been applied, the workload's GFLOPS have been reduced
-    # by the optimizer. Compute the ratio vs. the original GFLOPS to scale power.
     optimization_scale = 1.0
     if workload and workload.get("optimizations_applied"):
-        # The optimizer reduces total_estimated_gflops each time it applies a strategy.
-        # We infer the original by working backwards, but the simpler approach:
-        # count the number of workloads and check if gflops is much lower than expected.
-        # For robustness, use the ratio of current gflops to a reference value.
-        current_gflops = workload.get(
-            "total_estimated_gflops", workload.get("estimated_gflops", 0)
-        )
-        # Reference: typical perception workload is ~15 GFLOPS unoptimized
-        # We use per-use-case reference to stay general
-        reference_gflops = _reference_gflops(workload)
-        if reference_gflops > 0 and current_gflops > 0:
-            optimization_scale = min(current_gflops / reference_gflops, 1.0)
-            optimization_scale = max(optimization_scale, 0.20)  # floor: 20% of base
+        optimization_scale = _optimization_scale(workload)
 
-    # Check for clock scaling in IP blocks
     clock_scale = 1.0
     for block in ip_blocks:
         if block.get("type") in ("kpu", "gpu", "npu", "tpu", "accelerator"):
@@ -1041,11 +1192,10 @@ def _estimate_power(
                 clock_scale = freq / 1000.0
 
     compute_w = tdp * base_utilization * optimization_scale * clock_scale
-    cpu_w = 1.0  # control CPU
-    io_w = 0.5  # I/O subsystem
-    memory_w = 0.8  # memory controller
+    cpu_w = 1.0
+    io_w = 0.5
+    memory_w = 0.8
 
-    # Dynamic power ~ V^2. Reference: 28nm at 0.90V
     tech = get_technology(process_nm)
     voltage_scale = (tech.vdd_v / 0.90) ** 2
     compute_w *= voltage_scale
@@ -1054,6 +1204,21 @@ def _estimate_power(
     memory_w *= voltage_scale
 
     return round(compute_w + cpu_w + io_w + memory_w, 1)
+
+
+def _has_physics_blocks(ip_blocks: list[dict[str, Any]]) -> bool:
+    """Check if ip_blocks contain physics-based block data (new format)."""
+    return any("block_type" in b and "_area_mm2" in b for b in ip_blocks)
+
+
+def _optimization_scale(workload: dict[str, Any]) -> float:
+    """Compute power scaling factor from applied optimizations."""
+    current_gflops = workload.get("total_estimated_gflops", workload.get("estimated_gflops", 0))
+    reference_gflops = _reference_gflops(workload)
+    if reference_gflops > 0 and current_gflops > 0:
+        scale = min(current_gflops / reference_gflops, 1.0)
+        return max(scale, 0.20)
+    return 1.0
 
 
 def _reference_gflops(workload: dict[str, Any]) -> float:
@@ -1078,43 +1243,73 @@ def _reference_gflops(workload: dict[str, Any]) -> float:
 
 
 def _estimate_latency(
-    workload: dict[str, Any], hw: dict[str, Any] | None, process_nm: int = 28
+    workload: dict[str, Any],
+    hw: dict[str, Any] | None,
+    process_nm: int = 28,
+    ip_blocks: list[dict[str, Any]] | None = None,
 ) -> float:
-    """Estimate end-to-end inference latency."""
+    """Estimate end-to-end inference latency.
+
+    For heterogeneous SoCs with physics-based blocks, latency is the max
+    across concurrent accelerators (they run in parallel).
+    """
     if hw is None:
-        return 50.0  # default estimate
+        return 50.0
 
     total_gflops = workload.get("total_estimated_gflops", workload.get("estimated_gflops", 5.0))
-    peak_tops = hw.get("peak_tops_int8", 1.0)
+    tech = get_technology(process_nm)
+    speed_scale = 25.0 / tech.gate_delay_ps
+    overhead_ms = 2.0
 
+    # --- New path: per-accelerator latency for heterogeneous blocks ---
+    if ip_blocks and _has_physics_blocks(ip_blocks):
+        compute_blocks = [
+            b
+            for b in ip_blocks
+            if b.get("block_type") in ("cpu_core", "gpu_cluster", "kpu_tile")
+            and b.get("_peak_gops", 0) > 0
+        ]
+        if compute_blocks:
+            total_peak_gops = sum(b.get("_peak_gops", 0) for b in compute_blocks)
+            utilization = 0.3
+            if total_peak_gops > 0:
+                latency_s = total_gflops / (total_peak_gops * utilization)
+                latency_ms = latency_s * 1000.0
+            else:
+                latency_ms = 100.0
+            latency_ms /= speed_scale
+            return round(latency_ms + overhead_ms, 1)
+
+    # --- Legacy path ---
+    peak_tops = hw.get("peak_tops_int8", 1.0)
     if peak_tops <= 0:
         peak_tops = hw.get("peak_tflops_fp16", 1.0)
 
-    # Rough model: latency = compute / (throughput * utilization)
-    utilization = 0.3  # typical 30% utilization
+    utilization = 0.3
     if peak_tops > 0:
         latency_s = (total_gflops / 1000) / (peak_tops * utilization)
         latency_ms = latency_s * 1000
     else:
         latency_ms = 100.0
 
-    # fmax ~ 1/gate_delay. Reference: 28nm at 25ps
-    tech = get_technology(process_nm)
-    speed_scale = 25.0 / tech.gate_delay_ps
     latency_ms /= speed_scale
-
-    # Add overhead for memory access and I/O (DRAM-dominated, process-independent)
-    overhead_ms = 2.0
     return round(latency_ms + overhead_ms, 1)
 
 
-def _estimate_area(
-    ip_blocks: list[dict[str, Any]], constraints: DesignConstraints
-) -> float:
-    """Estimate die area in mm²."""
+def _estimate_area(ip_blocks: list[dict[str, Any]], constraints: DesignConstraints) -> float:
+    """Estimate die area in mm².
+
+    Uses physics-based per-block area when available (new format),
+    falls back to type-based lookup table for legacy blocks.
+    """
     process_nm = constraints.target_process_nm or 28
 
-    # Rough area estimates per block type at 28nm
+    # --- New path: physics-based IP block area ---
+    if ip_blocks and _has_physics_blocks(ip_blocks):
+        core_area = sum(b.get("_area_mm2", 0.0) for b in ip_blocks)
+        return round(core_area * 1.2, 1)  # 20% interconnect overhead
+
+    # --- Legacy path: type-based lookup ---
     area_per_type = {
         "cpu": 4.0,
         "kpu": 8.0,
@@ -1127,12 +1322,10 @@ def _estimate_area(
         "accelerator": 10.0,
     }
 
-    # Scale by process node (area scales roughly with node²)
     scale = (process_nm / 28) ** 2
-
     total = sum(area_per_type.get(b.get("type", ""), 5.0) for b in ip_blocks)
     total *= scale
-    total *= 1.2  # 20% overhead for interconnect and padding
+    total *= 1.2
 
     return round(total, 1)
 
@@ -1173,12 +1366,8 @@ def critic(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     # Check for single point of failure
     compute_blocks = [b for b in ip_blocks if b.get("type") in ("kpu", "gpu", "npu", "tpu")]
     if len(compute_blocks) == 1:
-        issues.append(
-            "Single compute engine — no fallback if accelerator fails or is overloaded"
-        )
-        recommendations.append(
-            "Consider CPU fallback path for critical inference workloads"
-        )
+        issues.append("Single compute engine — no fallback if accelerator fails or is overloaded")
+        recommendations.append("Consider CPU fallback path for critical inference workloads")
 
     # Check power margin
     power_w = ppa.get("power_watts")
@@ -1328,25 +1517,27 @@ def create_default_dispatcher() -> Dispatcher:
     from embodied_ai_architect.graphs.experience_specialist import experience_retriever
 
     dispatcher = Dispatcher()
-    dispatcher.register_many({
-        "workload_analyzer": workload_analyzer,
-        "hw_explorer": hw_explorer,
-        "architecture_composer": architecture_composer,
-        "ppa_assessor": ppa_assessor,
-        "critic": critic,
-        "report_generator": report_generator,
-        "design_optimizer": design_optimizer,
-        # KPU micro-architecture specialists
-        "kpu_configurator": kpu_configurator,
-        "floorplan_validator": floorplan_validator,
-        "bandwidth_validator": bandwidth_validator,
-        "kpu_optimizer": kpu_optimizer,
-        # RTL specialists
-        "rtl_generator": rtl_generator,
-        "rtl_ppa_assessor": rtl_ppa_assessor,
-        # Phase 4 specialists
-        "design_explorer": design_explorer,
-        "safety_detector": safety_detector,
-        "experience_retriever": experience_retriever,
-    })
+    dispatcher.register_many(
+        {
+            "workload_analyzer": workload_analyzer,
+            "hw_explorer": hw_explorer,
+            "architecture_composer": architecture_composer,
+            "ppa_assessor": ppa_assessor,
+            "critic": critic,
+            "report_generator": report_generator,
+            "design_optimizer": design_optimizer,
+            # KPU micro-architecture specialists
+            "kpu_configurator": kpu_configurator,
+            "floorplan_validator": floorplan_validator,
+            "bandwidth_validator": bandwidth_validator,
+            "kpu_optimizer": kpu_optimizer,
+            # RTL specialists
+            "rtl_generator": rtl_generator,
+            "rtl_ppa_assessor": rtl_ppa_assessor,
+            # Phase 4 specialists
+            "design_explorer": design_explorer,
+            "safety_detector": safety_detector,
+            "experience_retriever": experience_retriever,
+        }
+    )
     return dispatcher

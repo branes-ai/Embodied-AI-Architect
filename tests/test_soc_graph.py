@@ -294,3 +294,62 @@ class TestOptimizationHistory:
             assert "iteration" in entry
             assert "ppa_snapshot" in entry
             assert "verdicts" in entry
+
+
+class TestHeterogeneousIPBlocks:
+    """Verify the LangGraph loop works with heterogeneous IP block composition."""
+
+    def test_langgraph_loop_produces_physics_blocks(self, passing_state):
+        """Full LangGraph loop should produce ip_blocks with physics-based data."""
+        from embodied_ai_architect.graphs.specialists import (
+            architecture_composer,
+            critic,
+            hw_explorer,
+            report_generator,
+            workload_analyzer,
+        )
+
+        def passing_ppa(task, state):
+            ppa = PPAMetrics(
+                power_watts=4.0,
+                latency_ms=25.0,
+                area_mm2=50.0,
+                verdicts={"power": "PASS", "latency": "PASS", "cost": "PASS"},
+            )
+            return {
+                "summary": "PPA: PASS",
+                "overall_verdict": "PASS",
+                "ppa_metrics": ppa.model_dump(),
+                "_state_updates": {"ppa_metrics": ppa.model_dump()},
+            }
+
+        d = Dispatcher()
+        d.register_many({
+            "workload_analyzer": workload_analyzer,
+            "hw_explorer": hw_explorer,
+            "architecture_composer": architecture_composer,
+            "ppa_assessor": passing_ppa,
+            "critic": critic,
+            "report_generator": report_generator,
+            "design_optimizer": lambda t, s: {
+                "summary": "no-op",
+                "applied": False,
+                "strategy": None,
+            },
+        })
+
+        planner = PlannerNode(static_plan=DEMO_PLAN)
+        graph = build_soc_design_graph(dispatcher=d, planner=planner)
+        result = graph.invoke(passing_state, config={"recursion_limit": 50})
+
+        assert result["status"] == DesignStatus.COMPLETE.value
+
+        ip_blocks = result.get("ip_blocks", [])
+        assert len(ip_blocks) > 0
+        # Should have physics-based block data from the new composition
+        assert any(b.get("block_type") == "cpu_core" for b in ip_blocks)
+        block_types = {b.get("block_type") for b in ip_blocks}
+        # Should have infra blocks
+        assert "memory_ctrl" in block_types
+        assert "noc" in block_types
+        assert "io" in block_types
