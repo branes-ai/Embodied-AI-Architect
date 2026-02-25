@@ -73,21 +73,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release publish
 
-      # PyPI publishing via API token
-      # To migrate to OIDC trusted publishers:
-      #   1. Remove PYPI_API_TOKEN secret
-      #   2. Configure trusted publisher at pypi.org/manage/project/.../settings/publishing/
-      #   3. Uncomment the pypa/gh-action-pypi-publish block below and remove the twine block
       - name: Publish to PyPI
         if: steps.version.outputs.released != '0'
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: |
-          pip install twine
-          twine upload dist/*
-
-      # OIDC trusted publisher (uncomment when ready):
-      # - name: Publish to PyPI (OIDC)
-      #   if: steps.version.outputs.released != '0'
-      #   uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@release/v1
