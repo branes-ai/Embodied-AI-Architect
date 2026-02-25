@@ -126,7 +126,9 @@ class RTLLintTool:
 
         if not module_name:
             errors.append("No module definition found")
-        if rtl_source.count("module") != rtl_source.count("endmodule"):
+        n_module = len(re.findall(r"\bmodule\b", rtl_source))
+        n_endmodule = len(re.findall(r"\bendmodule\b", rtl_source))
+        if n_module != n_endmodule:
             errors.append("Mismatched module/endmodule")
 
         return LintResult(
