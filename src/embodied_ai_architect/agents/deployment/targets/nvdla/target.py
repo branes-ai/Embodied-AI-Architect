@@ -10,7 +10,6 @@ Key differences from other targets:
 3. Full system simulation with Linux kernel
 """
 
-import subprocess
 import time
 from pathlib import Path
 from typing import Any
@@ -31,7 +30,6 @@ from .spec import (
     NVDLAConfig,
     NVDLALoadable,
     NVDLAPrecision,
-    NVDLAVariant,
     NVDLACompilerInterface,
     NVDLARuntimeInterface,
     NVDLAExecutionResult,

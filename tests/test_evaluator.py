@@ -5,7 +5,6 @@ from __future__ import annotations
 import pytest
 
 from embodied_ai_architect.graphs.evaluation import (
-    DimensionScore,
     GoldStandard,
     RunTrace,
     Scorecard,

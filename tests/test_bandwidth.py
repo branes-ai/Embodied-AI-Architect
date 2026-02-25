@@ -1,7 +1,5 @@
 """Tests for bandwidth matching analysis."""
 
-import pytest
-
 from embodied_ai_architect.graphs.bandwidth import (
     BandwidthMatchResult,
     check_bandwidth_match,
@@ -26,7 +24,7 @@ class TestBandwidthMatch:
     def test_has_four_links(self):
         config = KPU_PRESETS["edge_balanced"]
         result = check_bandwidth_match(config, {"total_estimated_gflops": 5.0})
-        link_names = {l.name for l in result.links}
+        link_names = {link.name for link in result.links}
         assert link_names == {"dram_to_l3", "l3_to_l2", "l2_to_l1", "l1_to_compute"}
 
     def test_dram_bottleneck_with_low_bw(self):
@@ -44,7 +42,7 @@ class TestBandwidthMatch:
             arithmetic_intensity=1.0,  # Very memory-bound
         )
         # Should detect DRAM bottleneck
-        dram_link = next(l for l in result.links if l.name == "dram_to_l3")
+        dram_link = next(link for link in result.links if link.name == "dram_to_l3")
         assert dram_link.utilization > 0.85
 
     def test_high_arithmetic_intensity_reduces_demand(self):

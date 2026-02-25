@@ -89,7 +89,7 @@ class CoralTarget(DeploymentTarget):
     def _check_pycoral(self) -> bool:
         """Check if pycoral is available."""
         try:
-            from pycoral.utils import edgetpu
+            from pycoral.utils import edgetpu  # noqa: F401
 
             self._has_pycoral = True
         except ImportError:

@@ -245,7 +245,7 @@ def check_bandwidth_match(
     peak_util = max(link.utilization for link in links) if links else 0.0
     bottleneck_link = None
     if not balanced:
-        worst = max(links, key=lambda l: l.utilization)
+        worst = max(links, key=lambda link: link.utilization)
         bottleneck_link = worst.name
 
     return BandwidthMatchResult(

@@ -5,12 +5,9 @@ Tests RTL template generation driven by KPU config and experience episode fields
 
 from __future__ import annotations
 
-import pytest
 
 from embodied_ai_architect.graphs.kpu_config import (
-    KPUMicroArchConfig,
     KPU_PRESETS,
-    create_kpu_config,
 )
 from embodied_ai_architect.graphs.rtl_templates import RTLTemplateEngine
 from embodied_ai_architect.graphs.rtl_loop import RTLLoopConfig, run_rtl_loop

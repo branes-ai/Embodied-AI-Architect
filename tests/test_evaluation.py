@@ -292,10 +292,10 @@ def test_scorecard_summary_bar_chart_format():
     # Half score: 5 '#' marks followed by dots
     # (exact format depends on implementation but should have mix)
     lines = summary.split("\n")
-    half_line = [l for l in lines if "half" in l][0]
+    half_line = [line for line in lines if "half" in line][0]
     assert "#" in half_line
     assert "." in half_line
 
     # Zero score: 10 '.' marks
-    zero_line = [l for l in lines if "zero" in l][0]
+    zero_line = [line for line in lines if "zero" in line][0]
     assert ".........." in zero_line

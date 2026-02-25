@@ -53,7 +53,7 @@ def analyze(ctx, model_path, input_shape):
         if json_output:
             click.echo(json.dumps(result.data, indent=2))
         else:
-            console.print(f"\n[bold green]✓[/bold green] Analysis complete\n")
+            console.print("\n[bold green]✓[/bold green] Analysis complete\n")
 
             # Model summary
             console.print("[bold]Model Summary[/bold]")

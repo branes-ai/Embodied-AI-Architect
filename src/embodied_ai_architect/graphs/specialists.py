@@ -1343,7 +1343,7 @@ def critic(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
 
     Does not write to state — returns critique for planner/human review.
     """
-    architecture = state.get("selected_architecture", {})
+    state.get("selected_architecture", {})
     ppa = state.get("ppa_metrics", {})
     constraints = get_constraints(state)
     workload = state.get("workload_profile", {})

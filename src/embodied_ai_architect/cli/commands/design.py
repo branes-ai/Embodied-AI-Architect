@@ -342,7 +342,7 @@ def _acquire_models(models: list[dict]) -> dict[str, Path]:
         try:
             path = acquire(model_id, format="onnx")
             paths[model_id] = path
-            console.print(f"[green]✓[/green]")
+            console.print("[green]✓[/green]")
         except Exception as e:
             console.print(f"[red]✗[/red] {e}")
 
@@ -411,7 +411,6 @@ def _validate_models(models: list[dict], model_paths: dict, requirements) -> Non
 
 def _generate_pipeline(requirements, models: list[dict], model_paths: dict) -> dict:
     """Generate pipeline configuration from requirements and models."""
-    from embodied_ai_architect.requirements import TaskType
 
     operators = []
 

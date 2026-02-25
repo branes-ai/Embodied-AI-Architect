@@ -16,7 +16,7 @@ from typing import Optional
 from rich.console import Console
 from rich.table import Table
 
-from .metrics import MetricResult, MetricType, ValidationResult
+from .metrics import MetricType, ValidationResult
 
 console = Console()
 

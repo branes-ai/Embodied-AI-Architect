@@ -6,14 +6,10 @@ and verify the evaluation framework produces passing scores.
 
 from __future__ import annotations
 
-import time
-
-import pytest
 
 from embodied_ai_architect.graphs.soc_state import (
     DesignConstraints,
     create_initial_soc_state,
-    get_task_graph,
 )
 from embodied_ai_architect.graphs.planner import PlannerNode
 from embodied_ai_architect.graphs.specialists import create_default_dispatcher

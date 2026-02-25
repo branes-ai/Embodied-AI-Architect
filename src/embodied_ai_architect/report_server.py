@@ -69,7 +69,7 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
                     if metadata_file.exists():
                         try:
                             metadata = json.loads(metadata_file.read_text())
-                        except:
+                        except Exception:
                             pass
 
                     reports.append(

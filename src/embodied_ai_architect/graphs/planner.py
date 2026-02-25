@@ -29,7 +29,6 @@ from embodied_ai_architect.graphs.soc_state import (
     DesignStatus,
     SoCDesignState,
     get_constraints,
-    get_task_graph,
     record_decision,
     set_task_graph,
 )
@@ -141,7 +140,7 @@ def parse_plan_json(raw: str) -> list[dict[str, Any]]:
     if text.startswith("```"):
         lines = text.split("\n")
         # Remove first line (```json or ```) and last line (```)
-        lines = [l for l in lines if not l.strip().startswith("```")]
+        lines = [ln for ln in lines if not ln.strip().startswith("```")]
         text = "\n".join(lines).strip()
 
     try:

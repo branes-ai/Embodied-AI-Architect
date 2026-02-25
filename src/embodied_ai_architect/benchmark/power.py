@@ -5,7 +5,6 @@ Supports AMD (ryzen_smu), Intel (RAPL), and external measurement.
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 import statistics
 import subprocess
 import threading

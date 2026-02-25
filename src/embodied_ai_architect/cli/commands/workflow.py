@@ -276,7 +276,7 @@ def list(ctx, limit):
     workflows = []
     for workflow_dir in sorted(reports_dir.iterdir(), reverse=True)[:limit]:
         if workflow_dir.is_dir():
-            report_html = workflow_dir / "report.html"
+            workflow_dir / "report.html"
             report_json = workflow_dir / "report.json"
 
             if report_json.exists():

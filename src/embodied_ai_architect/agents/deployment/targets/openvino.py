@@ -158,10 +158,8 @@ class OpenVINOTarget(DeploymentTarget):
 
     def _convert_to_fp16(self, model):
         """Convert model to FP16 precision."""
-        import openvino as ov
 
         # Use compression to FP16
-        from openvino.runtime import serialize
 
         # OpenVINO automatically handles FP16 conversion during compilation
         # For explicit FP16, we can use the compress_model_transformation
@@ -288,7 +286,6 @@ class OpenVINOTarget(DeploymentTarget):
 
         # Get shapes
         input_shape = deployed_artifact.input_shape
-        output_shape = deployed_artifact.output_shape or (1, 1000)
 
         # Run validation
         latencies_baseline = []

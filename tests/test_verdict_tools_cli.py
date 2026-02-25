@@ -13,11 +13,10 @@ For verbose output showing agent responses:
     pytest tests/test_verdict_tools_cli.py -v --live-api -s
 """
 
-import json
 import os
 import pytest
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from dataclasses import dataclass, field
 
 # =============================================================================
@@ -384,9 +383,9 @@ class VerdictToolsTester:
         """Generate mock response for unit testing."""
         # This simulates what the agent would return
         if test_case.expected_verdict == "PASS":
-            return f"**PASS** - The constraint is met with good headroom."
+            return "**PASS** - The constraint is met with good headroom."
         elif test_case.expected_verdict == "FAIL":
-            return f"**FAIL** - The constraint cannot be met."
+            return "**FAIL** - The constraint cannot be met."
         else:
             return "Analysis complete. See details above."
 
@@ -537,12 +536,12 @@ def run_interactive_tests():
         result = tester.run_test(tc)
 
         if result["success"]:
-            print(f"  ✓ PASSED")
+            print("  ✓ PASSED")
             print(f"    Tools: {result['tools_called']}")
             print(f"    Verdict: {result['verdict_found']}")
             results["passed"] += 1
         else:
-            print(f"  ✗ FAILED")
+            print("  ✗ FAILED")
             for error in result["errors"]:
                 print(f"    - {error}")
             results["failed"] += 1

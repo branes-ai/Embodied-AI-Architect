@@ -43,7 +43,7 @@ def list(ctx):
 
     # Check for optional backends
     try:
-        import paramiko
+        import paramiko  # noqa: F401
 
         backends_info.append(
             {
@@ -66,7 +66,7 @@ def list(ctx):
         )
 
     try:
-        import kubernetes
+        import kubernetes  # noqa: F401
 
         backends_info.append(
             {
@@ -127,7 +127,7 @@ def test(ctx, backend_name):
 
     elif backend_name == "remote_ssh":
         try:
-            import paramiko
+            import paramiko  # noqa: F401
 
             console.print(
                 "[yellow]⚠[/yellow] SSH backend installed, but connection test not yet implemented"
@@ -147,7 +147,7 @@ def test(ctx, backend_name):
 
     elif backend_name == "kubernetes":
         try:
-            from kubernetes import client, config
+            from kubernetes import client, config  # noqa: F401
             from embodied_ai_architect.security import SecretsManager, EnvironmentSecretsProvider
 
             # Try to load kubeconfig

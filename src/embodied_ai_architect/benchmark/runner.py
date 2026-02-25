@@ -4,12 +4,10 @@ Loads architectures from embodied-schemas and executes them with timing.
 """
 
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any
 import time
 import statistics
 
-import numpy as np
 
 from embodied_schemas import SoftwareArchitecture, Registry
 

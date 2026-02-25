@@ -3,7 +3,6 @@
 Supports CPU, GPU (CUDA/ROCm), and NPU (Ryzen AI, QNN, CoreML) execution.
 """
 
-from pathlib import Path
 from typing import Any
 
 import numpy as np

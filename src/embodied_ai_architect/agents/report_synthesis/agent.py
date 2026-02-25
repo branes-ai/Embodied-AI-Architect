@@ -9,7 +9,6 @@ import matplotlib
 
 matplotlib.use("Agg")  # Non-interactive backend
 import matplotlib.pyplot as plt
-import numpy as np
 from jinja2 import Template
 
 from ..base import BaseAgent, AgentResult

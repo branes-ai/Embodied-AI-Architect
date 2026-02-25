@@ -140,7 +140,7 @@ def create_join_node(
         parallel_results = state.get("parallel_results", {})
 
         # Check which branches have completed
-        completed = [b for b in expected_branches if b in parallel_results]
+        [b for b in expected_branches if b in parallel_results]
         pending = [b for b in expected_branches if b not in parallel_results]
 
         if pending:

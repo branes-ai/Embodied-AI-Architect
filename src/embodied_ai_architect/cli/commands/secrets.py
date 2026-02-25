@@ -103,7 +103,7 @@ def set(ctx, secret_key, env, file):
 
     if env:
         console.print("\n[yellow]⚠[/yellow] Environment variable setting not persistent")
-        console.print(f"\n[dim]Add to your shell profile:[/dim]")
+        console.print("\n[dim]Add to your shell profile:[/dim]")
         console.print(f"export EMBODIED_AI_{secret_key.upper()}=<your-secret>")
 
     if file:

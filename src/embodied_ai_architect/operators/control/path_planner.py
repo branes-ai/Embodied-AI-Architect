@@ -37,7 +37,7 @@ class PathPlannerAStar(Operator):
             execution_target: Only cpu supported
         """
         if execution_target != "cpu":
-            print(f"[PathPlannerAStar] Warning: Only CPU supported")
+            print("[PathPlannerAStar] Warning: Only CPU supported")
 
         self._execution_target = "cpu"
         self._config = config

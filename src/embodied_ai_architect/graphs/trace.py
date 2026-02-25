@@ -20,7 +20,6 @@ from typing import Any
 from embodied_ai_architect.graphs.dispatcher import Dispatcher
 from embodied_ai_architect.graphs.evaluation import RunTrace
 from embodied_ai_architect.graphs.soc_state import SoCDesignState, get_task_graph
-from embodied_ai_architect.graphs.task_graph import TaskStatus
 
 logger = logging.getLogger(__name__)
 

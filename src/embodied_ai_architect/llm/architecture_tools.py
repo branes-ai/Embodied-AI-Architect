@@ -30,8 +30,8 @@ try:
         OperatorTiming,
         RateFeasibility,
         ExecutionTargetUtilization,
-        DataMovementAnalysis,
-        DataTransfer,
+        DataMovementAnalysis,  # noqa: F401
+        DataTransfer,  # noqa: F401
         OperatorBenchmarkResult,
         ArchitectureBenchmarkResult,
     )
@@ -829,7 +829,6 @@ def check_scheduling(
                 latency_ms, memory_mb, power_w = _get_operator_perf(op_entry, hardware_id)
             else:
                 latency_ms = 1.0
-                memory_mb = 10.0
 
             target_rate = op_inst.rate_hz
             exec_target = _normalize_execution_target(op_inst.execution_target)
@@ -1272,7 +1271,6 @@ def suggest_optimizations(
             else:
                 latency_ms = 1.0
                 memory_mb = 10.0
-                power_w = None
                 op_entry = None
 
             exec_target = _normalize_execution_target(op_inst.execution_target)

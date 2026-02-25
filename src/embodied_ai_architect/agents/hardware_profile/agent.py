@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List
 from ..base import BaseAgent, AgentResult
-from .models import HardwareProfile, HardwareRecommendation, OperationType
+from .models import HardwareProfile, HardwareRecommendation
 from .knowledge_base import get_default_hardware_profiles, get_hardware_by_name
 
 

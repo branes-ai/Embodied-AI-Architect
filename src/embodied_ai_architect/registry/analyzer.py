@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 
 from embodied_ai_architect.registry.model_registry import ModelMetadata, _slugify
-from embodied_ai_architect.registry.exceptions import ModelLoadError, AnalysisError
+from embodied_ai_architect.registry.exceptions import ModelLoadError
 
 
 class ModelAnalyzer:
@@ -314,7 +314,6 @@ class ModelAnalyzer:
         tags: Optional[list[str]] = None,
     ) -> ModelMetadata:
         """Analyze an ONNX model."""
-        import onnx
         from onnx import numpy_helper
 
         # Count parameters

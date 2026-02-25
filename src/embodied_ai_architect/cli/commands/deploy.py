@@ -185,8 +185,8 @@ def run(
             available = agent.list_targets()
             if not available:
                 raise click.ClickException(
-                    f"No deployment targets available. "
-                    f"Install TensorRT: pip install embodied-ai-architect[jetson]"
+                    "No deployment targets available. "
+                    "Install TensorRT: pip install embodied-ai-architect[jetson]"
                 )
             raise click.ClickException(f"Target '{target}' not available. Available: {available}")
 
@@ -235,7 +235,7 @@ def run(
             click.echo(json.dumps(result.data, indent=2, default=str))
         else:
             data = result.data
-            console.print(f"\n[bold green]Deployment completed[/bold green]")
+            console.print("\n[bold green]Deployment completed[/bold green]")
 
             # Show logs
             for log in data.get("logs", []):
@@ -243,7 +243,7 @@ def run(
 
             if data.get("artifact"):
                 artifact = data["artifact"]
-                console.print(f"\n[bold]Artifact:[/bold]")
+                console.print("\n[bold]Artifact:[/bold]")
                 console.print(f"  Engine: {artifact['engine_path']}")
                 console.print(f"  Size: {artifact['size_bytes'] / 1024 / 1024:.2f} MB")
                 console.print(f"  Precision: {artifact['precision']}")
@@ -265,7 +265,7 @@ def run(
 
                 # Power metrics
                 if val.get("power_watts") is not None:
-                    console.print(f"\n[bold]Power:[/bold]")
+                    console.print("\n[bold]Power:[/bold]")
                     console.print(f"  Average power: {val['power_watts']:.2f} W")
                     if val.get("power_budget_watts"):
                         budget = val["power_budget_watts"]

@@ -5,7 +5,6 @@ import json
 import uuid
 import base64
 from typing import Any, Dict, List, Tuple
-from pathlib import Path
 import torch
 import torch.nn as nn
 
@@ -91,7 +90,7 @@ class KubernetesBackend(BenchmarkBackend):
             # Try default locations
             try:
                 self.k8s_config.load_kube_config()
-            except:
+            except Exception:
                 self.k8s_config.load_incluster_config()
 
         # Initialize API clients
@@ -109,7 +108,7 @@ class KubernetesBackend(BenchmarkBackend):
         try:
             self.core_api.list_namespace()
             return True
-        except:
+        except Exception:
             return False
 
     def execute_benchmark(
@@ -144,7 +143,7 @@ class KubernetesBackend(BenchmarkBackend):
             self._create_benchmark_job(job_id)
 
             # 3. Wait for completion
-            print(f"  Waiting for job completion...")
+            print("  Waiting for job completion...")
             self._wait_for_job_completion(job_id, timeout=600)
 
             # 4. Get results from logs
@@ -468,13 +467,13 @@ print(json.dumps(results))
             self.batch_api.delete_namespaced_job(
                 f"benchmark-{job_id}", self.namespace, propagation_policy="Background"
             )
-        except:
+        except Exception:
             pass
 
         try:
             # Delete configmap
             self.core_api.delete_namespaced_config_map(f"model-{job_id}", self.namespace)
-        except:
+        except Exception:
             pass
 
     def get_capabilities(self) -> Dict[str, Any]:

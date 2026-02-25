@@ -288,7 +288,7 @@ class PowerPredictor:
         # Compute operations based on precision
         precision_multiplier = self._get_precision_multiplier(precision)
         effective_ops = model_characteristics.total_macs * 2  # MAC = 2 ops
-        effective_tops = effective_ops / 1e12 * precision_multiplier
+        effective_ops / 1e12 * precision_multiplier
 
         # Estimate utilization based on compute intensity
         compute_intensity = self._compute_intensity(model_characteristics)

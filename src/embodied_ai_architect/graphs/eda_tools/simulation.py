@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 import subprocess
 import tempfile
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Optional
 

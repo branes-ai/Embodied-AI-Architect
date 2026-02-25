@@ -13,7 +13,6 @@ Usage:
 
 from __future__ import annotations
 
-import copy
 import logging
 from typing import Any
 
@@ -140,7 +139,7 @@ def bandwidth_validator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]
 
     verdict = "PASS" if result.balanced else "FAIL"
 
-    link_summary = ", ".join(f"{l.name}: {l.utilization:.0%}" for l in result.links)
+    link_summary = ", ".join(f"{link.name}: {link.utilization:.0%}" for link in result.links)
 
     return {
         "summary": (

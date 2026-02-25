@@ -1,12 +1,10 @@
 """Pipeline CLI command for LangGraph operator orchestration."""
 
 import asyncio
-from pathlib import Path
 from typing import Optional
 
 import click
 from rich.console import Console
-from rich.live import Live
 from rich.table import Table
 from rich.panel import Panel
 

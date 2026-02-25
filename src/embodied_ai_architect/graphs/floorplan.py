@@ -16,11 +16,10 @@ Usage:
 from __future__ import annotations
 
 import math
-from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
-from embodied_ai_architect.graphs.technology import estimate_sram_area_mm2, get_technology
+from embodied_ai_architect.graphs.technology import estimate_sram_area_mm2
 
 # ---------------------------------------------------------------------------
 # Area estimation constants

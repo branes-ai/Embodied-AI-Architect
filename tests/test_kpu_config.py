@@ -8,7 +8,6 @@ from embodied_ai_architect.graphs.kpu_config import (
     KPUMicroArchConfig,
     KPU_PRESETS,
     MemoryTileConfig,
-    NoCConfig,
     create_kpu_config,
 )
 

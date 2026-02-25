@@ -125,7 +125,7 @@ class RTLSynthesisTool:
                 cwd=self.work_dir,
             )
             if proc.returncode != 0:
-                errors = [l for l in proc.stderr.splitlines() if "error" in l.lower()]
+                errors = [line for line in proc.stderr.splitlines() if "error" in line.lower()]
                 if not errors:
                     errors = [proc.stderr[:500] if proc.stderr else "Unknown synthesis error"]
                 return SynthesisResult(

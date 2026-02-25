@@ -14,7 +14,7 @@ import logging
 from typing import Any
 
 from embodied_ai_architect.graphs.experience import DesignEpisode, ExperienceCache
-from embodied_ai_architect.graphs.soc_state import SoCDesignState, get_constraints
+from embodied_ai_architect.graphs.soc_state import SoCDesignState
 from embodied_ai_architect.graphs.task_graph import TaskNode
 
 logger = logging.getLogger(__name__)

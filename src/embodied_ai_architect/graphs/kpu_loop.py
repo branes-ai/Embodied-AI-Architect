@@ -60,7 +60,7 @@ def run_kpu_loop(
     """
     from embodied_ai_architect.graphs.bandwidth import check_bandwidth_match
     from embodied_ai_architect.graphs.floorplan import estimate_floorplan
-    from embodied_ai_architect.graphs.kpu_config import KPUMicroArchConfig, create_kpu_config
+    from embodied_ai_architect.graphs.kpu_config import create_kpu_config
 
     if loop_config is None:
         loop_config = KPULoopConfig()

@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-import pytest
 
 from embodied_ai_architect.graphs.experience import DesignEpisode, ExperienceCache
 from embodied_ai_architect.graphs.experience_specialist import (
-    SIMILARITY_THRESHOLD,
     compute_similarity,
     experience_retriever,
 )

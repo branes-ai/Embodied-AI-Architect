@@ -224,15 +224,14 @@ def _execute_demo(
         raise click.ClickException(f"Demo '{entry.cli_name}' has no run_demo() function.")
 
     output_buffer = io.StringIO()
-    result = None
     error = None
 
     try:
         if json_mode or quiet_mode:
             with contextlib.redirect_stdout(output_buffer):
-                result = run_demo_fn(**kwargs)
+                run_demo_fn(**kwargs)
         else:
-            result = run_demo_fn(**kwargs)
+            run_demo_fn(**kwargs)
     except SystemExit:
         error = "Demo called sys.exit()"
     except Exception as e:

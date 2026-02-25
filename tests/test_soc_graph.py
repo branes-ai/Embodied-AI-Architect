@@ -16,15 +16,13 @@ from embodied_ai_architect.graphs.soc_state import (
     DesignConstraints,
     DesignStatus,
     PPAMetrics,
-    SoCDesignState,
     create_initial_soc_state,
 )
-from embodied_ai_architect.graphs.task_graph import TaskNode
 
 # We need langgraph for these tests
 langgraph = pytest.importorskip("langgraph", reason="langgraph not installed")
 
-from embodied_ai_architect.graphs.soc_graph import build_soc_design_graph
+from embodied_ai_architect.graphs.soc_graph import build_soc_design_graph  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -130,7 +128,7 @@ def _make_failing_then_passing_dispatcher(fail_iterations=1):
 
     def conditional_ppa(task, state):
         call_count["ppa"] += 1
-        iteration = state.get("iteration", 0)
+        state.get("iteration", 0)
         constraints = state.get("constraints", {})
         max_power = constraints.get("max_power_watts", 5.0)
         max_latency = constraints.get("max_latency_ms", 33.3)

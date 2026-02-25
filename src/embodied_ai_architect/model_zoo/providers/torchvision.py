@@ -554,12 +554,12 @@ class TorchVisionProvider(ModelProvider):
             torch.save(model.state_dict(), model_path)
 
         elif format == ModelFormat.TORCHSCRIPT:
-            print(f"[TorchVision] Tracing model to TorchScript...")
+            print("[TorchVision] Tracing model to TorchScript...")
             traced = torch.jit.trace(model, dummy_input)
             traced.save(str(model_path))
 
         elif format == ModelFormat.ONNX:
-            print(f"[TorchVision] Exporting to ONNX...")
+            print("[TorchVision] Exporting to ONNX...")
             torch.onnx.export(
                 model,
                 dummy_input,

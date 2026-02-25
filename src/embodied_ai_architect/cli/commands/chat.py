@@ -7,10 +7,8 @@ and run benchmarks.
 
 import click
 from rich.console import Console
-from rich.live import Live
 from rich.markdown import Markdown
 from rich.panel import Panel
-from rich.spinner import Spinner
 from rich.text import Text
 
 console = Console()
@@ -141,7 +139,7 @@ def _run_agent_turn(agent, user_input: str, verbose: bool) -> None:
         user_input: User's message
         verbose: Whether to show detailed info
     """
-    tool_status = Text()
+    Text()
     current_tool = None
 
     def on_tool_start(name: str, args: dict) -> None:

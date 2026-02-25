@@ -12,7 +12,6 @@ from embodied_ai_architect.graphs.state import (
     EmbodiedPipelineState,
     create_initial_state,
     format_timing_summary,
-    get_total_latency_ms,
 )
 
 

@@ -22,8 +22,13 @@ try:
     )
 except ImportError:
     HAS_GRAPHS = False
-    get_graphs_tool_definitions = lambda: []
-    create_graphs_tool_executors = lambda: {}
+
+    def get_graphs_tool_definitions():
+        return []
+
+    def create_graphs_tool_executors():
+        return {}
+
 
 # Import architecture analysis tools
 try:
@@ -35,8 +40,13 @@ try:
     HAS_ARCHITECTURE_TOOLS = True
 except ImportError:
     HAS_ARCHITECTURE_TOOLS = False
-    get_architecture_tool_definitions = lambda: []
-    create_architecture_tool_executors = lambda: {}
+
+    def get_architecture_tool_definitions():
+        return []
+
+    def create_architecture_tool_executors():
+        return {}
+
 
 # Import codebase analysis tools
 try:
@@ -48,8 +58,13 @@ try:
     HAS_CODEBASE_TOOLS = True
 except ImportError:
     HAS_CODEBASE_TOOLS = False
-    get_codebase_tool_definitions = lambda: []
-    create_codebase_tool_executors = lambda: {}
+
+    def get_codebase_tool_definitions():
+        return []
+
+    def create_codebase_tool_executors():
+        return {}
+
 
 # Import optimization tools (optional, requires numpy)
 try:
@@ -61,8 +76,12 @@ try:
     HAS_MOO = True
 except ImportError:
     HAS_MOO = False
-    get_optimization_tool_definitions = lambda: []
-    create_optimization_tool_executors = lambda: {}
+
+    def get_optimization_tool_definitions():
+        return []
+
+    def create_optimization_tool_executors():
+        return {}
 
 
 def get_tool_definitions() -> list[dict[str, Any]]:

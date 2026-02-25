@@ -80,7 +80,7 @@ class Orchestrator:
                         error=f"Model analysis failed: {result.error}",
                     )
 
-                print(f"✓ Model Analysis completed")
+                print("✓ Model Analysis completed")
                 self._print_model_summary(result.data)
 
             # Step 2: Hardware Profiling
@@ -105,7 +105,7 @@ class Orchestrator:
                         error=f"Hardware profiling failed: {result.error}",
                     )
 
-                print(f"✓ Hardware Profiling completed")
+                print("✓ Hardware Profiling completed")
                 self._print_hardware_summary(result.data)
 
             # Step 3: Benchmarking
@@ -131,7 +131,7 @@ class Orchestrator:
                         error=f"Benchmark failed: {result.error}",
                     )
 
-                print(f"✓ Benchmarks completed")
+                print("✓ Benchmarks completed")
                 self._print_benchmark_summary(result.data)
 
             # Step 4: Report Synthesis
@@ -151,7 +151,7 @@ class Orchestrator:
                 if not result.success:
                     print(f"  Warning: Report generation failed: {result.error}")
                 else:
-                    print(f"✓ Report generated")
+                    print("✓ Report generated")
                     print(f"  View report: {result.data.get('report_html')}")
 
             # Future: Add more agent steps here
@@ -220,7 +220,7 @@ class Orchestrator:
 
         layer_types = analysis.get("layer_type_counts", {})
         if layer_types:
-            print(f"\n  Layer Types:")
+            print("\n  Layer Types:")
             for layer_type, count in sorted(layer_types.items(), key=lambda x: -x[1])[:5]:
                 print(f"    - {layer_type}: {count}")
 
@@ -237,7 +237,7 @@ class Orchestrator:
             print("\n  No benchmark results available")
             return
 
-        print(f"\n  Benchmark Results:")
+        print("\n  Benchmark Results:")
         for backend_name, result in benchmarks.items():
             print(f"\n    {backend_name.upper()}:")
             print(f"      Mean Latency: {result.get('mean_latency_ms', 0):.3f} ms")
@@ -268,12 +268,12 @@ class Orchestrator:
             print("\n  No hardware recommendations available")
             return
 
-        print(f"\n  Model Characteristics:")
+        print("\n  Model Characteristics:")
         print(f"    Parameters: {model_chars.get('parameters', 0):,}")
         print(f"    Estimated Memory: {model_chars.get('estimated_memory_mb', 0):.1f} MB")
         print(f"    Operations: {', '.join(model_chars.get('operation_types', []))}")
 
-        print(f"\n  Top Hardware Recommendations:")
+        print("\n  Top Hardware Recommendations:")
         for rec in recommendations[:3]:  # Show top 3
             print(f"\n    #{rec['rank']}: {rec['name']} ({rec['vendor']})")
             print(f"      Score: {rec['score']:.1f}/100")
@@ -284,13 +284,13 @@ class Orchestrator:
 
             # Show top reasons
             if rec.get("reasons"):
-                print(f"      Reasons:")
+                print("      Reasons:")
                 for reason in rec["reasons"][:3]:
                     print(f"        • {reason}")
 
             # Show warnings if any
             if rec.get("warnings"):
-                print(f"      ⚠️  Warnings:")
+                print("      ⚠️  Warnings:")
                 for warning in rec["warnings"]:
                     print(f"        • {warning}")
 

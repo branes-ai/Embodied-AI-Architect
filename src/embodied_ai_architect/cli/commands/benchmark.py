@@ -128,7 +128,7 @@ def run(ctx, model_path, backend, input_shape, iterations, warmup):
         if json_output:
             click.echo(json.dumps(result.data, indent=2))
         else:
-            console.print(f"\n[bold green]✓[/bold green] Benchmark complete\n")
+            console.print("\n[bold green]✓[/bold green] Benchmark complete\n")
 
             # Get benchmark data for the backend
             benchmarks = result.data.get("benchmarks", {})

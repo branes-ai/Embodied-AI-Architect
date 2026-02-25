@@ -4,7 +4,6 @@ This module implements a Claude Code-style interactive agent that can
 reason about user requests and call tools to accomplish tasks.
 """
 
-import json
 from typing import Any, Callable
 
 from .client import LLMClient, LLMResponse

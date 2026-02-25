@@ -1,7 +1,6 @@
 """Tests for the deployment agent and targets."""
 
 import pytest
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -780,7 +779,6 @@ class TestJetsonInt8CalibrationMocked:
         # This test verifies the validation logic without actual TensorRT
 
         from embodied_ai_architect.agents.deployment.models import (
-            CalibrationConfig,
             DeploymentPrecision,
         )
 
@@ -888,7 +886,6 @@ class TestCoralTargetBasic:
     def test_coral_int8_only_requirement(self):
         """Test that Coral enforces INT8-only precision."""
         from embodied_ai_architect.agents.deployment.targets.coral import CoralTarget
-        from embodied_ai_architect.agents.deployment.models import DeploymentPrecision
 
         target = CoralTarget()
 

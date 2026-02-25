@@ -35,7 +35,7 @@ class PathFollower(Operator):
             execution_target: Only cpu supported
         """
         if execution_target != "cpu":
-            print(f"[PathFollower] Warning: Only CPU supported")
+            print("[PathFollower] Warning: Only CPU supported")
 
         self._execution_target = "cpu"
         self._config = config

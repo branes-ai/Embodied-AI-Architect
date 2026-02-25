@@ -198,7 +198,7 @@ class StillwaterKPUTarget(DeploymentTarget):
         import onnx
 
         model_path = Path(model)
-        onnx_model = onnx.load(str(model_path))
+        onnx.load(str(model_path))
 
         # Validate model compatibility
         issues = self.compiler.validate_model(model_path, self.config)
@@ -784,7 +784,6 @@ class StubKPURuntime(KPURuntimeInterface):
 
             # Simulate performance metrics
             cycles = self._program.estimated_total_cycles
-            freq_mhz = self.config.compute.clock_mhz
 
             metrics = KPUPerformanceMetrics(
                 total_cycles=cycles,

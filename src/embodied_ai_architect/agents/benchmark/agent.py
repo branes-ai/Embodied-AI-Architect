@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List
 from ..base import BaseAgent, AgentResult
-from .backends.base import BenchmarkBackend, BenchmarkResult
+from .backends.base import BenchmarkBackend
 from .backends.local_cpu import LocalCPUBackend
 
 

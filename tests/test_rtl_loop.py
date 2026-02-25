@@ -1,8 +1,6 @@
 """Tests for RTL inner loop (lint -> synthesize -> validate)."""
 
-import pytest
-
-from embodied_ai_architect.graphs.rtl_loop import RTLLoopConfig, RTLLoopResult, run_rtl_loop
+from embodied_ai_architect.graphs.rtl_loop import RTLLoopResult, run_rtl_loop
 
 SIMPLE_RTL = """
 module test_mod (

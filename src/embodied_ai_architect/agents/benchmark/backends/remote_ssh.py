@@ -1,6 +1,5 @@
 """Remote SSH benchmark backend - Execute benchmarks on remote machines via SSH."""
 
-import time
 import tempfile
 from pathlib import Path
 from typing import Any, Dict
@@ -416,5 +415,5 @@ if __name__ == '__main__':
         if self._client:
             try:
                 self._client.close()
-            except:
+            except Exception:
                 pass

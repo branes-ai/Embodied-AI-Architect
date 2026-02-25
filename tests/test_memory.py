@@ -1,7 +1,5 @@
 """Tests for working memory module."""
 
-import pytest
-
 from embodied_ai_architect.graphs.memory import (
     AgentWorkingMemory,
     WorkingMemoryStore,

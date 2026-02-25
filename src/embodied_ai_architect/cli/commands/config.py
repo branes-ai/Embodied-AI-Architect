@@ -132,7 +132,7 @@ def validate(ctx):
 
     # Basic validation (just check if file is readable YAML-like)
     try:
-        config_content = config_file.read_text()
+        config_file.read_text()
         # TODO: Add proper YAML validation
         if json_output:
             click.echo(json.dumps({"valid": True, "config_file": str(config_file)}))

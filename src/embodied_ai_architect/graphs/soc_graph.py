@@ -26,15 +26,11 @@ from typing import Any, Callable, Optional
 
 from embodied_ai_architect.graphs.dispatcher import Dispatcher
 from embodied_ai_architect.graphs.governance import GovernanceGuard
-from embodied_ai_architect.graphs.memory import WorkingMemoryStore
 from embodied_ai_architect.graphs.optimizer import design_optimizer
 from embodied_ai_architect.graphs.planner import PlannerNode
 from embodied_ai_architect.graphs.soc_state import (
     DesignStatus,
     SoCDesignState,
-    get_constraints,
-    get_ppa_metrics,
-    get_task_graph,
     record_decision,
 )
 from embodied_ai_architect.graphs.task_graph import TaskGraph, TaskNode

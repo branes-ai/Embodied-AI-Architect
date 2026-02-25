@@ -1,8 +1,5 @@
 """Tests for EDA tool wrappers (all use mock fallbacks)."""
 
-import pytest
-from pathlib import Path
-
 from embodied_ai_architect.graphs.eda_tools import (
     RTLLintTool,
     RTLSynthesisTool,

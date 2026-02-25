@@ -390,11 +390,11 @@ class HuggingFaceProvider(ModelProvider):
         dummy_input = torch.randn(*input_shape)
 
         if format == ModelFormat.PYTORCH:
-            print(f"[HuggingFace] Saving PyTorch model...")
+            print("[HuggingFace] Saving PyTorch model...")
             torch.save(model.state_dict(), model_path)
 
         elif format == ModelFormat.ONNX:
-            print(f"[HuggingFace] Exporting to ONNX...")
+            print("[HuggingFace] Exporting to ONNX...")
             try:
                 torch.onnx.export(
                     model,
@@ -408,12 +408,10 @@ class HuggingFaceProvider(ModelProvider):
                     },
                     opset_version=17,
                 )
-            except Exception as e:
+            except Exception:
                 # Some models need different export approach
-                print(f"[HuggingFace] Standard export failed, trying alternative...")
+                print("[HuggingFace] Standard export failed, trying alternative...")
                 try:
-                    from transformers.onnx import export as onnx_export
-                    from transformers import AutoConfig
 
                     # Use transformers built-in ONNX export if available
                     raise NotImplementedError("Falling back to torch.onnx")

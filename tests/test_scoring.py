@@ -4,8 +4,6 @@ Tests all scoring functions with known deterministic inputs to verify
 correct score calculation and bounds.
 """
 
-import pytest
-
 from embodied_ai_architect.graphs.evaluation import GoldStandard, RunTrace
 from embodied_ai_architect.graphs.scoring import (
     score_adaptability,

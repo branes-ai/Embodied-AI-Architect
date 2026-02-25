@@ -1,7 +1,5 @@
 """Tests for the design optimizer specialist."""
 
-import pytest
-
 from embodied_ai_architect.graphs.memory import WorkingMemoryStore
 from embodied_ai_architect.graphs.optimizer import (
     OPTIMIZATION_STRATEGIES,

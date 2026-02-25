@@ -344,7 +344,7 @@ def analyze_model(ctx, path, input_shape):
             return
 
         # Display results
-        console.print(f"\n[bold green]✓[/bold green] Analysis complete\n")
+        console.print("\n[bold green]✓[/bold green] Analysis complete\n")
 
         table = Table(show_header=False, box=None, padding=(0, 2))
         table.add_column("Key", style="bold")

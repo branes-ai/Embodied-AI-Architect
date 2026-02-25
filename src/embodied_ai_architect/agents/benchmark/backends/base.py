@@ -1,7 +1,7 @@
 """Base interface for benchmark execution backends."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import Any, Dict
 from pydantic import BaseModel
 import torch.nn as nn
 

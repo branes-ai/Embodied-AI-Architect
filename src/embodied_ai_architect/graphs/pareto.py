@@ -157,7 +157,7 @@ def design_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     Writes to state: pareto_results
     """
     candidates = state.get("hardware_candidates", [])
-    constraints = get_constraints(state)
+    get_constraints(state)
 
     if not candidates:
         return {

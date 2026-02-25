@@ -127,7 +127,7 @@ def list(ctx, limit):
             table.add_row(r["id"], r["timestamp"], r["model"], r["backend"])
 
         console.print(table)
-        console.print(f"\n[dim]Tip:[/dim] Use 'branes report view <workflow_id>' to open a report")
+        console.print("\n[dim]Tip:[/dim] Use 'branes report view <workflow_id>' to open a report")
 
 
 @report.command()

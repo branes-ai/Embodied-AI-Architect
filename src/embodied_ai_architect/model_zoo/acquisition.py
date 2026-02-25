@@ -11,7 +11,7 @@ from typing import Optional
 
 from .cache import ModelCache
 from .discovery import ModelDiscoveryService
-from .providers.base import ModelFormat, ModelArtifact
+from .providers.base import ModelFormat
 
 
 class ModelAcquisition:

@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 try:
-    from jinja2 import Environment, FileSystemLoader, TemplateNotFound
+    from jinja2 import Environment, FileSystemLoader, TemplateNotFound  # noqa: F401
 
     HAS_JINJA2 = True
 except ImportError:
@@ -746,7 +746,7 @@ endmodule
 """
 
     elif component == "alu":
-        ops = params.get("operations", "add,sub,and,or,xor")
+        params.get("operations", "add,sub,and,or,xor")
         return f"""\
 module {module_name} #(
     parameter DATA_WIDTH = {dw}
@@ -788,7 +788,7 @@ endmodule
 def _builtin_testbench(component: str, params: dict[str, Any]) -> str:
     """Generate a minimal testbench."""
     module_name = params.get("module_name", component)
-    dw = params.get("data_width", 8)
+    params.get("data_width", 8)
 
     return f"""\
 module {component}_tb;

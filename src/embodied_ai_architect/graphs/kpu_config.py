@@ -18,7 +18,7 @@ Usage:
 from __future__ import annotations
 
 import math
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -320,7 +320,7 @@ def create_kpu_config(
     gflops = workload.get("total_estimated_gflops", workload.get("estimated_gflops", 5.0))
     memory_mb = workload.get("total_estimated_memory_mb", workload.get("estimated_memory_mb", 20.0))
     max_power = constraints.get("max_power_watts", 10.0)
-    max_area = constraints.get("max_area_mm2", 100.0)
+    constraints.get("max_area_mm2", 100.0)
     process_nm = constraints.get("target_process_nm", 28)
 
     # Size systolic array based on GFLOPS target

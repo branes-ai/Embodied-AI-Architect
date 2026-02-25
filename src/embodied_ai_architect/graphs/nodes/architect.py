@@ -67,7 +67,7 @@ def format_optimization_request(state: EmbodiedPipelineState) -> str:
     sorted_timing = sorted(timing.items(), key=lambda x: x[1], reverse=True)
 
     lines = [
-        f"Current pipeline performance:",
+        "Current pipeline performance:",
         f"- Total latency: {total_ms:.2f}ms",
         f"- Budget: {budget_ms:.2f}ms",
         f"- Over budget by: {total_ms - budget_ms:.2f}ms",
@@ -88,7 +88,7 @@ def format_optimization_request(state: EmbodiedPipelineState) -> str:
     lines.extend(
         [
             "",
-            f"Current workload:",
+            "Current workload:",
             f"- Detections: {num_detections}",
             f"- Active tracks: {num_tracks}",
         ]

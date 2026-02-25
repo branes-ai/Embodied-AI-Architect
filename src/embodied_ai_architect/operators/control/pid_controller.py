@@ -44,7 +44,7 @@ class PIDController(Operator):
             execution_target: Only cpu supported
         """
         if execution_target != "cpu":
-            print(f"[PIDController] Warning: Only CPU supported")
+            print("[PIDController] Warning: Only CPU supported")
 
         self._execution_target = "cpu"
         self._config = config

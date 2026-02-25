@@ -6,14 +6,11 @@ Planner -> Dispatcher(specialists) -> complete design.
 
 import pytest
 
-from embodied_ai_architect.graphs.dispatcher import Dispatcher
 from embodied_ai_architect.graphs.planner import PlannerNode
 from embodied_ai_architect.graphs.soc_state import (
     DesignConstraints,
     DesignStatus,
-    SoCDesignState,
     create_initial_soc_state,
-    get_constraints,
     get_task_graph,
 )
 from embodied_ai_architect.graphs.specialists import (
@@ -25,7 +22,7 @@ from embodied_ai_architect.graphs.specialists import (
     report_generator,
     workload_analyzer,
 )
-from embodied_ai_architect.graphs.task_graph import TaskNode, TaskStatus
+from embodied_ai_architect.graphs.task_graph import TaskNode
 
 # ============================================================================
 # Fixtures

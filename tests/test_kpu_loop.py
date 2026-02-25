@@ -1,7 +1,5 @@
 """Tests for KPU validation loop."""
 
-import pytest
-
 from embodied_ai_architect.graphs.kpu_loop import KPULoopConfig, KPULoopResult, run_kpu_loop
 
 

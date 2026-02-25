@@ -287,7 +287,6 @@ class UltralyticsProvider(ModelProvider):
                 shutil.move(str(src_path), str(model_path))
             else:
                 # Model was cached by ultralytics, find it
-                from ultralytics.utils import ASSETS
                 import os
 
                 yolo_cache = Path.home() / ".cache" / "ultralytics"

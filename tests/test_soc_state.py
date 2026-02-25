@@ -17,7 +17,6 @@ from embodied_ai_architect.graphs.soc_state import (
     DesignConstraints,
     DesignStatus,
     PPAMetrics,
-    SoCDesignState,
     create_initial_soc_state,
     get_constraints,
     get_iteration_summary,

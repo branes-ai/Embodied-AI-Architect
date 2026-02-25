@@ -34,7 +34,7 @@ class TrajectoryPredictor(Operator):
             execution_target: Only cpu supported
         """
         if execution_target != "cpu":
-            print(f"[TrajectoryPredictor] Warning: Only CPU supported")
+            print("[TrajectoryPredictor] Warning: Only CPU supported")
 
         self._execution_target = "cpu"
         self._config = config
