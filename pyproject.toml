@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "embodied-ai-architect"
-version = "1.0.0"
+version = "0.5.3"
 description = "Hardware/Software Codesign Space Exploration and Optimization Environment for Embodied AI systems"
 readme = "PYPI_README.md"
 requires-python = ">=3.11"
@@ -103,7 +103,7 @@ version_toml = ["pyproject.toml:project.version"]
 major_on_zero = false
 branch = "main"
 build_command = "python -m build"
-commit_message = "chore(release): {version}"
+commit_message = "chore(release): {version} [skip ci]"
 tag_format = "v{version}"
 
 [tool.semantic_release.changelog]
