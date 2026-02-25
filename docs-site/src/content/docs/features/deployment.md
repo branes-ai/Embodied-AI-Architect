@@ -121,7 +121,8 @@ For detailed platform-specific guides:
 
 - [YOLOv8 on Jetson Orin](/tutorials/yolo-on-jetson/)
 - [Coral Edge TPU Deployment](/tutorials/coral-deployment/)
-- [OpenVINO Optimization](/tutorials/openvino-optimization/)
+- [OpenVINO Deployment](/tutorials/openvino-deployment/)
+- [AMD Ryzen AI NUC Deployment](/tutorials/ryzen-ai-deployment/)
 
 ## Next Steps
 
