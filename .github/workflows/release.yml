@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -58,7 +58,7 @@ jobs:
       - name: Semantic release version
         id: version
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           semantic-release version
           echo "released=$(git diff HEAD~1 --name-only | grep -c pyproject.toml || true)" >> $GITHUB_OUTPUT
@@ -70,7 +70,7 @@ jobs:
       - name: Semantic release publish
         if: steps.version.outputs.released != '0'
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release publish
 
       # PyPI publishing via API token
