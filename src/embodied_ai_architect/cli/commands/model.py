@@ -95,7 +95,9 @@ def register(ctx, path, name, input_shape, tags, description, overwrite):
         if json_output:
             click.echo(json.dumps(metadata.to_dict(), indent=2))
         else:
-            console.print(f"\n[bold green]✓[/bold green] Registered model: [cyan]{metadata.id}[/cyan]")
+            console.print(
+                f"\n[bold green]✓[/bold green] Registered model: [cyan]{metadata.id}[/cyan]"
+            )
             console.print(f"  Parameters: {metadata.format_parameters()}")
             console.print(f"  Architecture: {metadata.architecture_display}")
             console.print(f"  Format: {metadata.format}")
@@ -243,11 +245,13 @@ def show(ctx, model_id):
             lines.append(f"[bold]Tags:[/bold] {', '.join(metadata.tags)}")
 
         console.print()
-        console.print(Panel(
-            "\n".join(lines),
-            title=f"[bold cyan]{metadata.name}[/bold cyan]",
-            border_style="cyan",
-        ))
+        console.print(
+            Panel(
+                "\n".join(lines),
+                title=f"[bold cyan]{metadata.name}[/bold cyan]",
+                border_style="cyan",
+            )
+        )
 
     except ModelNotFoundError as e:
         if json_output:
@@ -348,7 +352,9 @@ def analyze_model(ctx, path, input_shape):
 
         table.add_row("Format", metadata.format)
         table.add_row("Architecture", metadata.architecture_display)
-        table.add_row("Parameters", f"{metadata.total_parameters:,} ({metadata.format_parameters()})")
+        table.add_row(
+            "Parameters", f"{metadata.total_parameters:,} ({metadata.format_parameters()})"
+        )
         table.add_row("Trainable", f"{metadata.trainable_parameters:,}")
         table.add_row("Est. FLOPs", metadata.format_flops())
         table.add_row("Memory", f"{metadata.estimated_memory_mb:.2f} MB")

@@ -122,8 +122,7 @@ def _get_examples_dir() -> Path:
         return cwd_candidate
 
     raise click.ClickException(
-        "Cannot find examples/ directory. "
-        "Run this command from the repository root."
+        "Cannot find examples/ directory. " "Run this command from the repository root."
     )
 
 
@@ -169,9 +168,7 @@ def _load_demo_module(entry: DemoEntry):
     return module
 
 
-def _build_kwargs(
-    entry: DemoEntry, options: Dict[str, Any], module: Any
-) -> Dict[str, Any]:
+def _build_kwargs(entry: DemoEntry, options: Dict[str, Any], module: Any) -> Dict[str, Any]:
     """Map shared CLI options to each demo's run_demo() signature."""
     kwargs: Dict[str, Any] = {}
 
@@ -224,9 +221,7 @@ def _execute_demo(
 
     run_demo_fn: Optional[Callable] = getattr(module, "run_demo", None)
     if run_demo_fn is None:
-        raise click.ClickException(
-            f"Demo '{entry.cli_name}' has no run_demo() function."
-        )
+        raise click.ClickException(f"Demo '{entry.cli_name}' has no run_demo() function.")
 
     output_buffer = io.StringIO()
     result = None
@@ -385,9 +380,7 @@ def demo_run(ctx, name: str, goal, power, latency, cost, max_iterations, llm):
         )
 
     if not quiet_mode and not json_mode:
-        console.print(
-            f"[bold cyan]Running Demo {entry.number}:[/bold cyan] {entry.title}"
-        )
+        console.print(f"[bold cyan]Running Demo {entry.number}:[/bold cyan] {entry.title}")
 
     result = _execute_demo(entry, options, json_mode, quiet_mode)
 
@@ -395,9 +388,7 @@ def demo_run(ctx, name: str, goal, power, latency, cost, max_iterations, llm):
         click.echo(json.dumps(result, indent=2))
     elif quiet_mode:
         status = "[green]OK[/green]" if result["success"] else "[red]FAIL[/red]"
-        console.print(
-            f"  {entry.cli_name}: {status} ({result['elapsed_s']:.1f}s)"
-        )
+        console.print(f"  {entry.cli_name}: {status} ({result['elapsed_s']:.1f}s)")
         if result["error"]:
             console.print(f"    Error: {result['error']}")
     else:
@@ -419,15 +410,9 @@ def _run_all_demos(
 
     for entry in DEMOS:
         if not quiet_mode and not json_mode:
-            console.print(
-                f"\n[bold cyan]{'=' * 60}[/bold cyan]"
-            )
-            console.print(
-                f"[bold cyan]Demo {entry.number}:[/bold cyan] {entry.title}"
-            )
-            console.print(
-                f"[bold cyan]{'=' * 60}[/bold cyan]"
-            )
+            console.print(f"\n[bold cyan]{'=' * 60}[/bold cyan]")
+            console.print(f"[bold cyan]Demo {entry.number}:[/bold cyan] {entry.title}")
+            console.print(f"[bold cyan]{'=' * 60}[/bold cyan]")
 
         result = _execute_demo(entry, options, json_mode, quiet_mode)
         results.append(result)
@@ -471,6 +456,4 @@ def _run_all_demos(
 
     console.print(table)
     passed = sum(1 for r in results if r["success"])
-    console.print(
-        f"\n  {passed}/{len(results)} passed in {total_elapsed:.1f}s total"
-    )
+    console.print(f"\n  {passed}/{len(results)} passed in {total_elapsed:.1f}s total")

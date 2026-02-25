@@ -15,7 +15,6 @@ from typing import Any, Optional
 
 from .base import ModelProvider, ModelFormat, ModelQuery, ModelArtifact
 
-
 # ONNX Model Zoo catalog
 # Source: https://github.com/onnx/models
 # Models are hosted on GitHub releases or external URLs
@@ -402,8 +401,7 @@ class ONNXModelZooProvider(ModelProvider):
         """
         if format != ModelFormat.ONNX:
             raise ValueError(
-                f"ONNX Model Zoo only provides ONNX format. "
-                f"Requested: {format.value}"
+                f"ONNX Model Zoo only provides ONNX format. " f"Requested: {format.value}"
             )
 
         # Get model info

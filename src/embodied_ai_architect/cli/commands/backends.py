@@ -129,11 +129,17 @@ def test(ctx, backend_name):
         try:
             import paramiko
 
-            console.print("[yellow]⚠[/yellow] SSH backend installed, but connection test not yet implemented")
+            console.print(
+                "[yellow]⚠[/yellow] SSH backend installed, but connection test not yet implemented"
+            )
             console.print("\n[dim]Check your SSH credentials configuration[/dim]")
         except ImportError:
             if json_output:
-                click.echo(json.dumps({"backend": "remote_ssh", "available": False, "error": "Not installed"}))
+                click.echo(
+                    json.dumps(
+                        {"backend": "remote_ssh", "available": False, "error": "Not installed"}
+                    )
+                )
             else:
                 console.print("[red]✗[/red] remote_ssh backend not installed")
                 console.print("\n[dim]Install with: pip install 'branes[remote]'[/dim]")
@@ -150,10 +156,22 @@ def test(ctx, backend_name):
 
             if not kubeconfig:
                 if json_output:
-                    click.echo(json.dumps({"backend": "kubernetes", "available": False, "error": "Kubeconfig not configured"}))
+                    click.echo(
+                        json.dumps(
+                            {
+                                "backend": "kubernetes",
+                                "available": False,
+                                "error": "Kubeconfig not configured",
+                            }
+                        )
+                    )
                 else:
-                    console.print("[yellow]⚠[/yellow] Kubernetes backend installed, but kubeconfig not configured")
-                    console.print("\n[dim]Set EMBODIED_AI_K8S_KUBECONFIG environment variable[/dim]")
+                    console.print(
+                        "[yellow]⚠[/yellow] Kubernetes backend installed, but kubeconfig not configured"
+                    )
+                    console.print(
+                        "\n[dim]Set EMBODIED_AI_K8S_KUBECONFIG environment variable[/dim]"
+                    )
                 ctx.exit(1)
 
             # TODO: Actually test K8s connection
@@ -161,7 +179,11 @@ def test(ctx, backend_name):
 
         except ImportError:
             if json_output:
-                click.echo(json.dumps({"backend": "kubernetes", "available": False, "error": "Not installed"}))
+                click.echo(
+                    json.dumps(
+                        {"backend": "kubernetes", "available": False, "error": "Not installed"}
+                    )
+                )
             else:
                 console.print("[red]✗[/red] kubernetes backend not installed")
                 console.print("\n[dim]Install with: pip install 'branes[kubernetes]'[/dim]")

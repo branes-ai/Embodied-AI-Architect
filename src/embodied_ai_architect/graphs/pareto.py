@@ -74,13 +74,15 @@ def compute_pareto_front(
                 val = float("inf")
             vals.append(float(val))
         vectors.append(vals)
-        points.append(ParetoPoint(
-            hardware_name=c.get("name", "unknown"),
-            power=c.get("tdp_watts", c.get("power", 0.0)) or 0.0,
-            latency=c.get("latency_ms", c.get("latency", 0.0)) or 0.0,
-            cost=c.get("cost_usd", c.get("cost", 0.0)) or 0.0,
-            metadata={k: v for k, v in c.items() if k not in ("name",)},
-        ))
+        points.append(
+            ParetoPoint(
+                hardware_name=c.get("name", "unknown"),
+                power=c.get("tdp_watts", c.get("power", 0.0)) or 0.0,
+                latency=c.get("latency_ms", c.get("latency", 0.0)) or 0.0,
+                cost=c.get("cost_usd", c.get("cost", 0.0)) or 0.0,
+                metadata={k: v for k, v in c.items() if k not in ("name",)},
+            )
+        )
 
     # Non-dominated sorting
     n = len(vectors)
@@ -202,9 +204,7 @@ def _enrich_candidates_with_latency(
 ) -> list[dict[str, Any]]:
     """Add latency_ms estimate to candidates if not present."""
     workload = state.get("workload_profile", {})
-    total_gflops = workload.get(
-        "total_estimated_gflops", workload.get("estimated_gflops", 5.0)
-    )
+    total_gflops = workload.get("total_estimated_gflops", workload.get("estimated_gflops", 5.0))
 
     enriched = []
     for c in candidates:

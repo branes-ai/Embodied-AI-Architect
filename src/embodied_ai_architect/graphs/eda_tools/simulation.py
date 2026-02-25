@@ -63,9 +63,7 @@ class SimulationTool:
         except FileNotFoundError:
             return self._mock_simulation(rtl_source)
         except subprocess.TimeoutExpired:
-            return SimulationResult(
-                success=False, error_message="Simulation timed out"
-            ).to_dict()
+            return SimulationResult(success=False, error_message="Simulation timed out").to_dict()
 
     def _compile(self, rtl_path: Path, tb_path: Path, vvp_path: Path) -> dict:
         proc = subprocess.run(
@@ -91,9 +89,7 @@ class SimulationTool:
         )
         return self._parse_results(proc.stdout, proc.returncode, vcd_path)
 
-    def _parse_results(
-        self, stdout: str, returncode: int, vcd_path: Optional[Path]
-    ) -> dict:
+    def _parse_results(self, stdout: str, returncode: int, vcd_path: Optional[Path]) -> dict:
         passed = 0
         failed = 0
 

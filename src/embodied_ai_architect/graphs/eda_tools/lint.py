@@ -146,8 +146,6 @@ class RTLLintTool:
         ports = [{"direction": p[0], "name": p[1]} for p in re.findall(port_pattern, rtl)]
 
         param_pattern = r"parameter\s+(\w+)\s*=\s*([^,;]+)"
-        params = [
-            {"name": p[0], "value": p[1].strip()} for p in re.findall(param_pattern, rtl)
-        ]
+        params = [{"name": p[0], "value": p[1].strip()} for p in re.findall(param_pattern, rtl)]
 
         return module_name, ports, params

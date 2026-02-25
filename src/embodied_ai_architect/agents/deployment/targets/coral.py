@@ -55,6 +55,7 @@ class CoralTarget(DeploymentTarget):
         """Check if TensorFlow/TFLite is available."""
         try:
             import tensorflow as tf
+
             self._tf = tf
             return True
         except ImportError:
@@ -63,6 +64,7 @@ class CoralTarget(DeploymentTarget):
         # Try tflite-runtime as fallback
         try:
             import tflite_runtime.interpreter as tflite
+
             self._tflite_runtime = tflite
             return True
         except ImportError:
@@ -88,6 +90,7 @@ class CoralTarget(DeploymentTarget):
         """Check if pycoral is available."""
         try:
             from pycoral.utils import edgetpu
+
             self._has_pycoral = True
         except ImportError:
             self._has_pycoral = False
@@ -132,9 +135,7 @@ class CoralTarget(DeploymentTarget):
         3. Compile for Edge TPU (if compiler available)
         """
         if not self.is_available():
-            raise RuntimeError(
-                "TensorFlow not available. Install with: pip install tensorflow"
-            )
+            raise RuntimeError("TensorFlow not available. Install with: pip install tensorflow")
 
         # Edge TPU only supports INT8
         if precision != DeploymentPrecision.INT8:
@@ -327,7 +328,8 @@ class CoralTarget(DeploymentTarget):
                 [
                     "edgetpu_compiler",
                     "-s",  # Show operations
-                    "-o", str(output_dir),
+                    "-o",
+                    str(output_dir),
                     str(tflite_path),
                 ],
                 capture_output=True,
@@ -340,9 +342,7 @@ class CoralTarget(DeploymentTarget):
                 return None
 
             # Edge TPU compiler creates file with _edgetpu suffix
-            edgetpu_path = tflite_path.with_name(
-                tflite_path.stem + "_edgetpu.tflite"
-            )
+            edgetpu_path = tflite_path.with_name(tflite_path.stem + "_edgetpu.tflite")
 
             if edgetpu_path.exists():
                 return edgetpu_path
@@ -356,6 +356,7 @@ class CoralTarget(DeploymentTarget):
         """Get output shape from TFLite model."""
         try:
             import tensorflow as tf
+
             interpreter = tf.lite.Interpreter(model_path=str(tflite_path))
             interpreter.allocate_tensors()
             output_details = interpreter.get_output_details()
@@ -366,6 +367,7 @@ class CoralTarget(DeploymentTarget):
 
         try:
             import tflite_runtime.interpreter as tflite
+
             interpreter = tflite.Interpreter(model_path=str(tflite_path))
             interpreter.allocate_tensors()
             output_details = interpreter.get_output_details()
@@ -397,6 +399,7 @@ class CoralTarget(DeploymentTarget):
         if self._check_pycoral() and deployed_artifact.metadata.get("edgetpu_compiled"):
             try:
                 from pycoral.utils import edgetpu
+
                 interpreter = edgetpu.make_interpreter(str(deployed_artifact.engine_path))
                 interpreter.allocate_tensors()
                 input_details = interpreter.get_input_details()
@@ -434,9 +437,7 @@ class CoralTarget(DeploymentTarget):
             start = time.perf_counter()
 
             # Prepare input (may need quantization for INT8)
-            tflite_input = self._prepare_tflite_input(
-                input_data, input_details[0]
-            )
+            tflite_input = self._prepare_tflite_input(input_data, input_details[0])
 
             interpreter.set_tensor(input_details[0]["index"], tflite_input)
             interpreter.invoke()
@@ -488,17 +489,17 @@ class CoralTarget(DeploymentTarget):
         """Load TFLite interpreter."""
         try:
             import tensorflow as tf
+
             return tf.lite.Interpreter(model_path=str(model_path))
         except (ImportError, AttributeError):
             pass
 
         try:
             import tflite_runtime.interpreter as tflite
+
             return tflite.Interpreter(model_path=str(model_path))
         except ImportError:
-            raise ImportError(
-                "tensorflow or tflite-runtime required for TFLite inference"
-            )
+            raise ImportError("tensorflow or tflite-runtime required for TFLite inference")
 
     def _prepare_tflite_input(self, input_data: np.ndarray, input_details: dict) -> np.ndarray:
         """Prepare input for TFLite (quantize if needed)."""
@@ -534,18 +535,14 @@ class CoralTarget(DeploymentTarget):
         """Load baseline model for comparison."""
         try:
             import onnxruntime as ort
-            return ort.InferenceSession(
-                str(model_path), providers=["CPUExecutionProvider"]
-            )
+
+            return ort.InferenceSession(str(model_path), providers=["CPUExecutionProvider"])
         except ImportError:
             raise ImportError(
-                "onnxruntime required for validation. "
-                "Install with: pip install onnxruntime"
+                "onnxruntime required for validation. " "Install with: pip install onnxruntime"
             )
 
-    def _create_test_loader(
-        self, config: ValidationConfig, input_shape: tuple[int, ...]
-    ):
+    def _create_test_loader(self, config: ValidationConfig, input_shape: tuple[int, ...]):
         """Create test data loader."""
         if config.test_data_path is None:
             # Generate random test data

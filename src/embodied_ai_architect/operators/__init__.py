@@ -27,7 +27,6 @@ from .state_estimation import EKF6DOF, TrajectoryPredictor, CollisionDetector
 # Control operators
 from .control import PIDController, PathFollower, PathPlannerAStar
 
-
 # Operator registry mapping operator_id to class
 OPERATOR_REGISTRY: dict[str, type[Operator]] = {
     # Perception
@@ -73,8 +72,7 @@ def get_operator_class(operator_id: str) -> type[Operator]:
     """
     if operator_id not in OPERATOR_REGISTRY:
         raise KeyError(
-            f"Unknown operator: {operator_id}. "
-            f"Available: {list(OPERATOR_REGISTRY.keys())}"
+            f"Unknown operator: {operator_id}. " f"Available: {list(OPERATOR_REGISTRY.keys())}"
         )
     return OPERATOR_REGISTRY[operator_id]
 

@@ -26,7 +26,6 @@ langgraph = pytest.importorskip("langgraph", reason="langgraph not installed")
 
 from embodied_ai_architect.graphs.soc_graph import build_soc_design_graph
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -98,15 +97,21 @@ def _make_passing_dispatcher():
         }
 
     d = Dispatcher()
-    d.register_many({
-        "workload_analyzer": workload_analyzer,
-        "hw_explorer": hw_explorer,
-        "architecture_composer": architecture_composer,
-        "ppa_assessor": passing_ppa,
-        "critic": critic,
-        "report_generator": report_generator,
-        "design_optimizer": lambda t, s: {"summary": "no-op", "applied": False, "strategy": None},
-    })
+    d.register_many(
+        {
+            "workload_analyzer": workload_analyzer,
+            "hw_explorer": hw_explorer,
+            "architecture_composer": architecture_composer,
+            "ppa_assessor": passing_ppa,
+            "critic": critic,
+            "report_generator": report_generator,
+            "design_optimizer": lambda t, s: {
+                "summary": "no-op",
+                "applied": False,
+                "strategy": None,
+            },
+        }
+    )
     return d
 
 
@@ -161,15 +166,17 @@ def _make_failing_then_passing_dispatcher(fail_iterations=1):
         }
 
     d = Dispatcher()
-    d.register_many({
-        "workload_analyzer": workload_analyzer,
-        "hw_explorer": hw_explorer,
-        "architecture_composer": architecture_composer,
-        "ppa_assessor": conditional_ppa,
-        "critic": critic,
-        "report_generator": report_generator,
-        "design_optimizer": design_optimizer,
-    })
+    d.register_many(
+        {
+            "workload_analyzer": workload_analyzer,
+            "hw_explorer": hw_explorer,
+            "architecture_composer": architecture_composer,
+            "ppa_assessor": conditional_ppa,
+            "critic": critic,
+            "report_generator": report_generator,
+            "design_optimizer": design_optimizer,
+        }
+    )
     return d
 
 
@@ -256,15 +263,17 @@ class TestIterationLimit:
             }
 
         d = Dispatcher()
-        d.register_many({
-            "workload_analyzer": workload_analyzer,
-            "hw_explorer": hw_explorer,
-            "architecture_composer": architecture_composer,
-            "ppa_assessor": always_failing_ppa,
-            "critic": critic,
-            "report_generator": report_generator,
-            "design_optimizer": design_optimizer,
-        })
+        d.register_many(
+            {
+                "workload_analyzer": workload_analyzer,
+                "hw_explorer": hw_explorer,
+                "architecture_composer": architecture_composer,
+                "ppa_assessor": always_failing_ppa,
+                "critic": critic,
+                "report_generator": report_generator,
+                "design_optimizer": design_optimizer,
+            }
+        )
 
         gov = GovernanceGuard(GovernancePolicy(iteration_limit=3))
         planner = PlannerNode(static_plan=DEMO_PLAN)
@@ -324,19 +333,21 @@ class TestHeterogeneousIPBlocks:
             }
 
         d = Dispatcher()
-        d.register_many({
-            "workload_analyzer": workload_analyzer,
-            "hw_explorer": hw_explorer,
-            "architecture_composer": architecture_composer,
-            "ppa_assessor": passing_ppa,
-            "critic": critic,
-            "report_generator": report_generator,
-            "design_optimizer": lambda t, s: {
-                "summary": "no-op",
-                "applied": False,
-                "strategy": None,
-            },
-        })
+        d.register_many(
+            {
+                "workload_analyzer": workload_analyzer,
+                "hw_explorer": hw_explorer,
+                "architecture_composer": architecture_composer,
+                "ppa_assessor": passing_ppa,
+                "critic": critic,
+                "report_generator": report_generator,
+                "design_optimizer": lambda t, s: {
+                    "summary": "no-op",
+                    "applied": False,
+                    "strategy": None,
+                },
+            }
+        )
 
         planner = PlannerNode(static_plan=DEMO_PLAN)
         graph = build_soc_design_graph(dispatcher=d, planner=planner)

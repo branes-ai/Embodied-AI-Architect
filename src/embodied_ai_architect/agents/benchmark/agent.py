@@ -71,18 +71,10 @@ class BenchmarkAgent(BaseAgent):
             warmup_iterations = input_data.get("warmup_iterations", 10)
 
             if model is None:
-                return AgentResult(
-                    success=False,
-                    data={},
-                    error="No model provided"
-                )
+                return AgentResult(success=False, data={}, error="No model provided")
 
             if input_shape is None:
-                return AgentResult(
-                    success=False,
-                    data={},
-                    error="No input_shape provided"
-                )
+                return AgentResult(success=False, data={}, error="No input_shape provided")
 
             # Determine which backends to use
             if requested_backends is None:
@@ -92,9 +84,7 @@ class BenchmarkAgent(BaseAgent):
 
             if not backends_to_use:
                 return AgentResult(
-                    success=False,
-                    data={},
-                    error="No available backends to run benchmarks"
+                    success=False, data={}, error="No available backends to run benchmarks"
                 )
 
             # Run benchmarks on each backend
@@ -107,7 +97,7 @@ class BenchmarkAgent(BaseAgent):
                     model=model,
                     input_shape=input_shape,
                     iterations=iterations,
-                    warmup_iterations=warmup_iterations
+                    warmup_iterations=warmup_iterations,
                 )
 
                 results[backend_name] = benchmark_result.model_dump()
@@ -117,22 +107,17 @@ class BenchmarkAgent(BaseAgent):
 
             return AgentResult(
                 success=True,
-                data={
-                    "benchmarks": results,
-                    "summary": summary
-                },
+                data={"benchmarks": results, "summary": summary},
                 metadata={
                     "agent": self.name,
                     "backends_used": backends_to_use,
-                    "iterations": iterations
-                }
+                    "iterations": iterations,
+                },
             )
 
         except Exception as e:
             return AgentResult(
-                success=False,
-                data={},
-                error=f"Benchmark execution failed: {str(e)}"
+                success=False, data={}, error=f"Benchmark execution failed: {str(e)}"
             )
 
     def _create_summary(self, results: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:

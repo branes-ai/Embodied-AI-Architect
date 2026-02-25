@@ -16,7 +16,6 @@ from embodied_ai_architect.graphs.soc_state import (
 )
 from embodied_ai_architect.graphs.task_graph import TaskNode
 
-
 # ---------------------------------------------------------------------------
 # compute_similarity tests
 # ---------------------------------------------------------------------------
@@ -67,13 +66,15 @@ class TestComputeSimilarity:
         ep = self._episode(constraints={"max_power_watts": 5.0, "max_cost_usd": 30.0})
         # Very similar constraint values
         sim_close = compute_similarity(
-            "delivery_drone", "drone",
+            "delivery_drone",
+            "drone",
             {"max_power_watts": 5.5, "max_cost_usd": 28.0},
             ep,
         )
         # Very different constraint values
         sim_far = compute_similarity(
-            "delivery_drone", "drone",
+            "delivery_drone",
+            "drone",
             {"max_power_watts": 50.0, "max_cost_usd": 500.0},
             ep,
         )

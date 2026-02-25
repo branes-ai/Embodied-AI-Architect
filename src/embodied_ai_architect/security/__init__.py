@@ -6,7 +6,7 @@ from .secrets_manager import (
     EnvironmentSecretsProvider,
     FileSecretsProvider,
     SecretError,
-    SecretNotFoundError
+    SecretNotFoundError,
 )
 
 __all__ = [

@@ -428,4 +428,6 @@ def clear(ctx, provider, yes):
             )
         )
     else:
-        console.print(f"[green]✓[/green] Cleared {count} models ({total_size / (1024 * 1024):.1f} MB)")
+        console.print(
+            f"[green]✓[/green] Cleared {count} models ({total_size / (1024 * 1024):.1f} MB)"
+        )

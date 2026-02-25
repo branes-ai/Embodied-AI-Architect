@@ -70,7 +70,9 @@ def analyze(ctx, model_path, input_shape):
                 table.add_column("Layer Type", style="cyan")
                 table.add_column("Count", style="green", justify="right")
 
-                for layer_type, count in sorted(layer_types.items(), key=lambda x: x[1], reverse=True):
+                for layer_type, count in sorted(
+                    layer_types.items(), key=lambda x: x[1], reverse=True
+                ):
                     table.add_row(layer_type, str(count))
 
                 console.print(table)

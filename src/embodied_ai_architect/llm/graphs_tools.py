@@ -22,6 +22,7 @@ try:
     from graphs.analysis.unified_analyzer import UnifiedAnalyzer
     from graphs.hardware.resource_model import Precision
     from graphs.ir.structures import BottleneckType
+
     HAS_GRAPHS = True
 except ImportError:
     HAS_GRAPHS = False
@@ -37,6 +38,7 @@ try:
         Confidence,
         GraphAnalysisResult,
     )
+
     HAS_PYDANTIC = True
 except ImportError:
     HAS_PYDANTIC = False
@@ -463,19 +465,21 @@ def analyze_model_detailed(
                 "compute_bound_ops": roofline.num_compute_bound if roofline else 0,
                 "memory_bound_ops": roofline.num_memory_bound if roofline else 0,
                 "balanced_ops": roofline.num_balanced if roofline else 0,
-                "avg_compute_utilization": round(
-                    roofline.average_flops_utilization * 100, 1
-                ) if roofline else 0,
-                "avg_memory_utilization": round(
-                    roofline.average_bandwidth_utilization * 100, 1
-                ) if roofline else 0,
+                "avg_compute_utilization": (
+                    round(roofline.average_flops_utilization * 100, 1) if roofline else 0
+                ),
+                "avg_memory_utilization": (
+                    round(roofline.average_bandwidth_utilization * 100, 1) if roofline else 0
+                ),
             },
         }
 
         return json.dumps(output, indent=2)
 
     except Exception as e:
-        return f"Error analyzing {model_name} on {hardware_name}: {str(e)}\n{traceback.format_exc()}"
+        return (
+            f"Error analyzing {model_name} on {hardware_name}: {str(e)}\n{traceback.format_exc()}"
+        )
 
 
 def compare_hardware_targets(
@@ -527,19 +531,23 @@ def compare_hardware_targets(
                 else:
                     dominant = "unknown"
 
-                results.append({
-                    "hardware": result.hardware_name,
-                    "latency_ms": round(result.total_latency_ms, 3),
-                    "throughput_fps": round(result.throughput_fps, 1),
-                    "energy_mj": round(result.total_energy_mj, 3),
-                    "efficiency_fps_per_watt": round(efficiency, 2),
-                    "bottleneck": dominant,
-                })
+                results.append(
+                    {
+                        "hardware": result.hardware_name,
+                        "latency_ms": round(result.total_latency_ms, 3),
+                        "throughput_fps": round(result.throughput_fps, 1),
+                        "energy_mj": round(result.total_energy_mj, 3),
+                        "efficiency_fps_per_watt": round(efficiency, 2),
+                        "bottleneck": dominant,
+                    }
+                )
             except Exception as e:
-                results.append({
-                    "hardware": hw,
-                    "error": str(e),
-                })
+                results.append(
+                    {
+                        "hardware": hw,
+                        "error": str(e),
+                    }
+                )
 
         # Sort by latency (fastest first)
         valid_results = [r for r in results if "error" not in r]
@@ -588,9 +596,9 @@ def identify_bottleneck(
 
         roofline = result.roofline_report
         if not roofline:
-            return json.dumps({
-                "error": "Roofline analysis not available for this model/hardware combination"
-            })
+            return json.dumps(
+                {"error": "Roofline analysis not available for this model/hardware combination"}
+            )
 
         # Determine dominant bottleneck from counts
         if roofline.num_compute_bound > roofline.num_memory_bound:
@@ -641,9 +649,7 @@ def identify_bottleneck(
                 "balanced_ops": roofline.num_balanced,
                 "total_compute_time_ms": round(roofline.total_compute_time * 1000, 4),
                 "total_memory_time_ms": round(roofline.total_memory_time * 1000, 4),
-                "avg_compute_utilization_pct": round(
-                    roofline.average_flops_utilization * 100, 1
-                ),
+                "avg_compute_utilization_pct": round(roofline.average_flops_utilization * 100, 1),
                 "avg_memory_utilization_pct": round(
                     roofline.average_bandwidth_utilization * 100, 1
                 ),
@@ -742,9 +748,7 @@ def estimate_power_consumption(
 
         # If target inference rate specified, calculate sustained power
         if inferences_per_second:
-            inference_time_fraction = (
-                result.total_latency_ms / 1000.0
-            ) * inferences_per_second
+            inference_time_fraction = (result.total_latency_ms / 1000.0) * inferences_per_second
             if inference_time_fraction > 1.0:
                 sustained_power_w = dynamic_power_w  # Can't keep up
                 can_sustain = False
@@ -854,7 +858,9 @@ def _format_verdict_result(result: "GraphAnalysisResult") -> str:
             "metric": result.constraint_metric,
             "threshold": result.constraint_threshold,
             "actual": result.constraint_actual,
-            "margin_pct": round(result.constraint_margin_pct, 1) if result.constraint_margin_pct else None,
+            "margin_pct": (
+                round(result.constraint_margin_pct, 1) if result.constraint_margin_pct else None
+            ),
         }
 
     # Add suggestions if present
@@ -904,11 +910,14 @@ def check_latency(
         return _format_verdict_result(pydantic_result)
 
     except Exception as e:
-        return json.dumps({
-            "verdict": "UNKNOWN",
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "verdict": "UNKNOWN",
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def check_power(
@@ -944,11 +953,14 @@ def check_power(
         return _format_verdict_result(pydantic_result)
 
     except Exception as e:
-        return json.dumps({
-            "verdict": "UNKNOWN",
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "verdict": "UNKNOWN",
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def check_memory(
@@ -984,11 +996,14 @@ def check_memory(
         return _format_verdict_result(pydantic_result)
 
     except Exception as e:
-        return json.dumps({
-            "verdict": "UNKNOWN",
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "verdict": "UNKNOWN",
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def full_analysis(
@@ -1028,11 +1043,14 @@ def full_analysis(
         return _format_verdict_result(pydantic_result)
 
     except Exception as e:
-        return json.dumps({
-            "verdict": "UNKNOWN",
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "verdict": "UNKNOWN",
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 # =============================================================================

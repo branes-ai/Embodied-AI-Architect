@@ -98,12 +98,14 @@ def run_rtl_loop(
         lint_ok = lint_result.get("success", False)
 
         if not lint_ok:
-            history.append({
-                "iteration": iteration,
-                "stage": "lint",
-                "success": False,
-                "errors": lint_result.get("errors", []),
-            })
+            history.append(
+                {
+                    "iteration": iteration,
+                    "stage": "lint",
+                    "success": False,
+                    "errors": lint_result.get("errors", []),
+                }
+            )
             # In Phase 3, no auto-fix — just report failure
             return RTLLoopResult(
                 module_name=module_name,
@@ -120,12 +122,14 @@ def run_rtl_loop(
         synth_ok = synth_result.get("success", False)
 
         if not synth_ok:
-            history.append({
-                "iteration": iteration,
-                "stage": "synthesis",
-                "success": False,
-                "errors": synth_result.get("errors", []),
-            })
+            history.append(
+                {
+                    "iteration": iteration,
+                    "stage": "synthesis",
+                    "success": False,
+                    "errors": synth_result.get("errors", []),
+                }
+            )
             return RTLLoopResult(
                 module_name=module_name,
                 success=False,
@@ -140,9 +144,7 @@ def run_rtl_loop(
         # Step 3: Validate (simulation) if testbench provided
         validation_result = None
         if testbench_source and not config.skip_validation:
-            validation_result = toolchain.simulate(
-                rtl_source, testbench_source, module_name
-            )
+            validation_result = toolchain.simulate(rtl_source, testbench_source, module_name)
 
         # Collect metrics
         metrics = {
@@ -152,12 +154,14 @@ def run_rtl_loop(
             "num_cells": synth_result.get("num_cells", 0),
         }
 
-        history.append({
-            "iteration": iteration,
-            "stage": "complete",
-            "success": True,
-            "metrics": metrics,
-        })
+        history.append(
+            {
+                "iteration": iteration,
+                "stage": "complete",
+                "success": True,
+                "metrics": metrics,
+            }
+        )
 
         # Phase 3: single iteration, no LLM-based optimization
         return RTLLoopResult(

@@ -167,9 +167,11 @@ class PipelineRunner:
         """
         # Create initial state
         state = create_initial_state(
-            frame={"image": frame, "timestamp": 0.0, "frame_id": frame_id}
-            if frame is not None
-            else None,
+            frame=(
+                {"image": frame, "timestamp": 0.0, "frame_id": frame_id}
+                if frame is not None
+                else None
+            ),
             imu_data=imu_data,
             goal=goal,
             frame_id=frame_id,

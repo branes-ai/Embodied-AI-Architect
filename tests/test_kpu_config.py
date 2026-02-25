@@ -15,14 +15,19 @@ from embodied_ai_architect.graphs.kpu_config import (
 
 class TestDRAMConfig:
     def test_total_bandwidth(self):
-        dram = DRAMConfig(num_controllers=2, channels_per_controller=2, bandwidth_per_channel_gbps=6.4)
+        dram = DRAMConfig(
+            num_controllers=2, channels_per_controller=2, bandwidth_per_channel_gbps=6.4
+        )
         assert dram.total_bandwidth_gbps == pytest.approx(25.6)
 
 
 class TestComputeTileConfig:
     def test_peak_tops(self):
         ct = ComputeTileConfig(
-            num_tiles=4, array_rows=16, array_cols=16, frequency_mhz=500.0,
+            num_tiles=4,
+            array_rows=16,
+            array_cols=16,
+            frequency_mhz=500.0,
         )
         # 16*16*2 = 512 ops/cycle * 4 tiles * 500e6 = 1.024 TOPS
         assert ct.peak_tops_int8 == pytest.approx(1.024)
@@ -49,7 +54,8 @@ class TestKPUMicroArchConfig:
 
     def test_total_sram(self):
         config = KPUMicroArchConfig(
-            array_rows=3, array_cols=3,
+            array_rows=3,
+            array_cols=3,
             compute_tile=ComputeTileConfig(l2_size_bytes=256 * 1024, l1_size_bytes=32 * 1024),
             memory_tile=MemoryTileConfig(l3_tile_size_bytes=512 * 1024),
         )
@@ -59,9 +65,12 @@ class TestKPUMicroArchConfig:
 
     def test_peak_tops(self):
         config = KPUMicroArchConfig(
-            array_rows=3, array_cols=3,
+            array_rows=3,
+            array_cols=3,
             compute_tile=ComputeTileConfig(
-                array_rows=16, array_cols=16, frequency_mhz=500.0,
+                array_rows=16,
+                array_cols=16,
+                frequency_mhz=500.0,
             ),
         )
         # 5 compute tiles * 16*16*2 * 500e6 / 1e12

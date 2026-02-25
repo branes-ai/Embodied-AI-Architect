@@ -132,9 +132,7 @@ class ModelRegistry:
         data = {
             "version": "1.0",
             "updated_at": datetime.now().isoformat(),
-            "models": {
-                model_id: model.to_dict() for model_id, model in self._models.items()
-            },
+            "models": {model_id: model.to_dict() for model_id, model in self._models.items()},
         }
         with open(self.registry_path, "w") as f:
             json.dump(data, f, indent=2)

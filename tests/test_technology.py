@@ -15,9 +15,25 @@ from embodied_ai_architect.graphs.technology import (
 
 class TestTechnologyDatabase:
     def test_all_nodes_present(self):
-        expected = {"2nm", "3nm", "4nm", "5nm", "7nm", "8nm", "10nm", "12nm",
-                    "14nm", "16nm", "22nm", "28nm", "40nm", "65nm", "90nm",
-                    "130nm", "180nm"}
+        expected = {
+            "2nm",
+            "3nm",
+            "4nm",
+            "5nm",
+            "7nm",
+            "8nm",
+            "10nm",
+            "12nm",
+            "14nm",
+            "16nm",
+            "22nm",
+            "28nm",
+            "40nm",
+            "65nm",
+            "90nm",
+            "130nm",
+            "180nm",
+        }
         assert set(TECHNOLOGY_NODES.keys()) == expected
 
     def test_sram_density_has_entries(self):

@@ -297,7 +297,7 @@ class PowerPredictor:
         # Power estimation using power law model
         # P = P_idle + (P_peak - P_idle) * utilization^exponent
         dynamic_power = (spec.peak_watts - spec.idle_watts) * (
-            estimated_utilization ** spec.power_exponent
+            estimated_utilization**spec.power_exponent
         )
         mean_power = spec.idle_watts + dynamic_power
 
@@ -406,8 +406,7 @@ class PowerPredictor:
 
         # Check for calibration data
         calibration_count = sum(
-            1 for k, v in self._calibration_data.items()
-            if v["hardware"] == hardware.value
+            1 for k, v in self._calibration_data.items() if v["hardware"] == hardware.value
         )
         if calibration_count > 0:
             base_confidence += min(0.3, calibration_count * 0.1)

@@ -46,16 +46,18 @@ class TestRTLFromKPUConfig:
         for comp in components:
             rtl = engine.render(comp["component_type"], comp["params"])
             result = run_rtl_loop(
-                comp["module_name"], rtl, loop_config,
+                comp["module_name"],
+                rtl,
+                loop_config,
             )
             if result.success:
                 passed += 1
                 assert result.metrics.get("area_cells", 0) > 0
 
         # Most components should pass; some SV features may fail with real Yosys
-        assert passed >= len(components) // 2, (
-            f"Only {passed}/{len(components)} components passed RTL loop"
-        )
+        assert (
+            passed >= len(components) // 2
+        ), f"Only {passed}/{len(components)} components passed RTL loop"
 
     def test_synthesis_area_uses_technology(self):
         # Verify technology.py area estimation works with synthesis cell counts

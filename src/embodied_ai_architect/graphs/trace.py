@@ -118,9 +118,7 @@ def extract_trace_from_state(
     # Audit log and cost
     audit_log = final_state.get("audit_log", [])
     cost_tokens = sum(entry.get("cost_tokens", 0) for entry in audit_log)
-    human_interventions = sum(
-        1 for entry in audit_log if entry.get("human_approved", False)
-    )
+    human_interventions = sum(1 for entry in audit_log if entry.get("human_approved", False))
 
     return RunTrace(
         demo_name=demo_name,

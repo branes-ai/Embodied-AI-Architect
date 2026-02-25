@@ -138,9 +138,7 @@ class StillwaterKPUTarget(DeploymentTarget):
         }
 
         supported = [
-            precision_map[p]
-            for p in self.config.supported_precisions
-            if p in precision_map
+            precision_map[p] for p in self.config.supported_precisions if p in precision_map
         ]
 
         return {
@@ -148,9 +146,7 @@ class StillwaterKPUTarget(DeploymentTarget):
             "kpu_version": self.config.version,
             "supported_precisions": supported,
             "supports_calibration": True,
-            "supports_posit": any(
-                "posit" in p.value for p in self.config.supported_precisions
-            ),
+            "supports_posit": any("posit" in p.value for p in self.config.supported_precisions),
             "native_ops": self.config.native_ops,
             "sram_bytes": self.config.memory.sram_l1_bytes + self.config.memory.sram_l2_bytes,
             "peak_tops_int8": self.config.compute.tops_int8,
@@ -247,9 +243,7 @@ class StillwaterKPUTarget(DeploymentTarget):
                 "peak_sram_bytes": program.peak_sram_bytes,
                 "weight_bytes": program.weight_bytes,
                 "num_ops": len(program.ops),
-                "total_params": sum(
-                    t.size_bytes for t in program.tensors.values() if t.is_weight
-                ),
+                "total_params": sum(t.size_bytes for t in program.tensors.values() if t.is_weight),
                 "total_macs": self._estimate_macs(program),
             },
         )
@@ -423,18 +417,13 @@ class StillwaterKPUTarget(DeploymentTarget):
         try:
             import onnxruntime as ort
 
-            return ort.InferenceSession(
-                str(model_path), providers=["CPUExecutionProvider"]
-            )
+            return ort.InferenceSession(str(model_path), providers=["CPUExecutionProvider"])
         except ImportError:
             raise ImportError(
-                "onnxruntime required for validation. "
-                "Install with: pip install onnxruntime"
+                "onnxruntime required for validation. " "Install with: pip install onnxruntime"
             )
 
-    def _create_test_loader(
-        self, config: ValidationConfig, input_shape: tuple[int, ...]
-    ):
+    def _create_test_loader(self, config: ValidationConfig, input_shape: tuple[int, ...]):
         """Create test data loader."""
         if config.test_data_path is None:
             for _ in range(config.num_samples):
@@ -562,8 +551,7 @@ class StubKPUCompiler(KPUCompilerInterface):
         # Process inputs
         for inp in graph.input:
             shape = tuple(
-                d.dim_value if d.dim_value > 0 else 1
-                for d in inp.type.tensor_type.shape.dim
+                d.dim_value if d.dim_value > 0 else 1 for d in inp.type.tensor_type.shape.dim
             )
             tid = f"tensor_{tensor_id}"
             program.tensors[tid] = KPUTensor(
@@ -611,8 +599,7 @@ class StubKPUCompiler(KPUCompilerInterface):
         # Process outputs
         for out in graph.output:
             shape = tuple(
-                d.dim_value if d.dim_value > 0 else 1
-                for d in out.type.tensor_type.shape.dim
+                d.dim_value if d.dim_value > 0 else 1 for d in out.type.tensor_type.shape.dim
             )
             tid = f"tensor_{tensor_id}"
             program.tensors[tid] = KPUTensor(
@@ -686,10 +673,7 @@ class StubKPUCompiler(KPUCompilerInterface):
 
         bytes_per_element = 1 if "int8" in precision.value else 2
 
-        weights = sum(
-            int(np.prod(init.dims)) * bytes_per_element
-            for init in graph.initializer
-        )
+        weights = sum(int(np.prod(init.dims)) * bytes_per_element for init in graph.initializer)
 
         # Rough activation estimate
         activations = weights // 2

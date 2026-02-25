@@ -37,7 +37,8 @@ def score_decomposition(trace: RunTrace, gold: GoldStandard) -> DimensionScore:
 
     if not expected_nodes:
         return DimensionScore(
-            dimension="decomposition", score=1.0 if current_nodes else 0.5,
+            dimension="decomposition",
+            score=1.0 if current_nodes else 0.5,
             details="No expected task graph defined",
         )
 
@@ -75,7 +76,8 @@ def score_ppa_accuracy(trace: RunTrace, gold: GoldStandard) -> DimensionScore:
 
     if not expected_ppa:
         return DimensionScore(
-            dimension="ppa_accuracy", score=0.75,
+            dimension="ppa_accuracy",
+            score=0.75,
             details="No expected PPA defined",
         )
 
@@ -117,7 +119,8 @@ def score_exploration_efficiency(trace: RunTrace, gold: GoldStandard) -> Dimensi
     """
     if gold.expected_pareto_points <= 0:
         return DimensionScore(
-            dimension="exploration_efficiency", score=0.75,
+            dimension="exploration_efficiency",
+            score=0.75,
             details="No Pareto exploration expected for this demo",
         )
 
@@ -125,7 +128,8 @@ def score_exploration_efficiency(trace: RunTrace, gold: GoldStandard) -> Dimensi
     total = len(pareto_points)
     if total == 0:
         return DimensionScore(
-            dimension="exploration_efficiency", score=0.0,
+            dimension="exploration_efficiency",
+            score=0.0,
             details="No design points explored",
         )
 
@@ -139,7 +143,9 @@ def score_exploration_efficiency(trace: RunTrace, gold: GoldStandard) -> Dimensi
 
     details = f"{non_dominated}/{total} non-dominated (expected >= {gold.expected_pareto_points})"
     return DimensionScore(
-        dimension="exploration_efficiency", score=round(score, 3), details=details,
+        dimension="exploration_efficiency",
+        score=round(score, 3),
+        details=details,
     )
 
 
@@ -153,7 +159,8 @@ def score_reasoning(trace: RunTrace, gold: GoldStandard) -> DimensionScore:
 
     if not rationale:
         return DimensionScore(
-            dimension="reasoning", score=0.25,
+            dimension="reasoning",
+            score=0.25,
             details="No design rationale recorded",
         )
 
@@ -192,7 +199,8 @@ def score_convergence(trace: RunTrace, gold: GoldStandard) -> DimensionScore:
         all_pass = all(v == "PASS" for v in verdicts.values()) if verdicts else False
         score = 1.0 if all_pass else 0.5
         return DimensionScore(
-            dimension="convergence", score=score,
+            dimension="convergence",
+            score=score,
             details="Single iteration" + (" — all PASS" if all_pass else ""),
         )
 
@@ -231,13 +239,15 @@ def score_governance(trace: RunTrace, gold: GoldStandard) -> DimensionScore:
 
     if not expected_triggers:
         return DimensionScore(
-            dimension="governance", score=1.0,
+            dimension="governance",
+            score=1.0,
             details="No governance triggers expected",
         )
 
     if not audit_log:
         return DimensionScore(
-            dimension="governance", score=0.0,
+            dimension="governance",
+            score=0.0,
             details=f"No audit log but {len(expected_triggers)} triggers expected",
         )
 
@@ -267,13 +277,15 @@ def score_tool_use(trace: RunTrace, gold: GoldStandard) -> DimensionScore:
 
     if not expected_tools:
         return DimensionScore(
-            dimension="tool_use", score=0.75,
+            dimension="tool_use",
+            score=0.75,
             details="No expected tool calls defined",
         )
 
     if not actual_tools:
         return DimensionScore(
-            dimension="tool_use", score=0.0,
+            dimension="tool_use",
+            score=0.0,
             details="No tools called",
         )
 
@@ -300,7 +312,8 @@ def score_adaptability(trace: RunTrace, gold: GoldStandard) -> DimensionScore:
 
     if failures == 0:
         return DimensionScore(
-            dimension="adaptability", score=1.0,
+            dimension="adaptability",
+            score=1.0,
             details="No failures encountered — perfect adaptability",
         )
 

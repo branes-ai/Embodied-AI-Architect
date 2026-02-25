@@ -72,12 +72,14 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
                         except:
                             pass
 
-                    reports.append({
-                        "workflow_id": report_dir.name,
-                        "path": f"/{report_dir.name}/report.html",
-                        "generated_at": metadata.get("generated_at", "Unknown"),
-                        "has_json": (report_dir / "report.json").exists()
-                    })
+                    reports.append(
+                        {
+                            "workflow_id": report_dir.name,
+                            "path": f"/{report_dir.name}/report.html",
+                            "generated_at": metadata.get("generated_at", "Unknown"),
+                            "has_json": (report_dir / "report.json").exists(),
+                        }
+                    )
 
         return reports
 

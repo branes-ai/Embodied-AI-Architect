@@ -188,9 +188,7 @@ def run(
                     f"No deployment targets available. "
                     f"Install TensorRT: pip install embodied-ai-architect[jetson]"
                 )
-            raise click.ClickException(
-                f"Target '{target}' not available. Available: {available}"
-            )
+            raise click.ClickException(f"Target '{target}' not available. Available: {available}")
 
         input_data = {
             "model": model_path,
@@ -275,7 +273,9 @@ def run(
                         status = "[green]OK[/green]" if within else "[red]EXCEEDED[/red]"
                         console.print(f"  Power budget: {budget:.2f} W {status}")
                     if val.get("energy_per_inference_mj"):
-                        console.print(f"  Energy/inference: {val['energy_per_inference_mj']:.3f} mJ")
+                        console.print(
+                            f"  Energy/inference: {val['energy_per_inference_mj']:.3f} mJ"
+                        )
 
     except ImportError:
         console.print(
@@ -321,9 +321,18 @@ def list_targets(ctx):
 
     # Add unavailable targets for reference
     all_possible = [
-        {"name": "jetson", "requires": "tensorrt, pycuda (pip install embodied-ai-architect[jetson])"},
-        {"name": "openvino", "requires": "openvino, nncf (pip install embodied-ai-architect[openvino])"},
-        {"name": "coral", "requires": "tensorflow, onnx2tf (pip install embodied-ai-architect[coral])"},
+        {
+            "name": "jetson",
+            "requires": "tensorrt, pycuda (pip install embodied-ai-architect[jetson])",
+        },
+        {
+            "name": "openvino",
+            "requires": "openvino, nncf (pip install embodied-ai-architect[openvino])",
+        },
+        {
+            "name": "coral",
+            "requires": "tensorflow, onnx2tf (pip install embodied-ai-architect[coral])",
+        },
         {"name": "swkpu", "requires": "torch>=2.0 (pip install embodied-ai-architect[kpu])"},
         {"name": "nvdla", "requires": "onnx (pip install embodied-ai-architect[nvdla])"},
     ]

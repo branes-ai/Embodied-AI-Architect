@@ -9,7 +9,6 @@ from typing import Any, Optional
 
 from .base import ModelProvider, ModelFormat, ModelQuery, ModelArtifact
 
-
 # TorchVision model catalog with known specifications
 # Source: https://pytorch.org/vision/stable/models.html
 TORCHVISION_MODELS = {

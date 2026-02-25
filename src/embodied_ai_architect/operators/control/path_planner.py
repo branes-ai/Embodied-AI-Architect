@@ -90,7 +90,7 @@ class PathPlannerAStar(Operator):
             det = goal[0]
             bbox = det.get("bbox", [0, 0, 0, 0])
             goal = ((bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2)
-        elif not goal or (hasattr(goal, '__len__') and len(goal) < 2):
+        elif not goal or (hasattr(goal, "__len__") and len(goal) < 2):
             goal = (50, 50)  # Default
 
         if use_meters:
@@ -158,9 +158,14 @@ class PathPlannerAStar(Operator):
         # Movement directions
         if self.diagonal_movement:
             directions = [
-                (-1, -1), (-1, 0), (-1, 1),
-                (0, -1),          (0, 1),
-                (1, -1),  (1, 0),  (1, 1),
+                (-1, -1),
+                (-1, 0),
+                (-1, 1),
+                (0, -1),
+                (0, 1),
+                (1, -1),
+                (1, 0),
+                (1, 1),
             ]
             costs = [1.414, 1, 1.414, 1, 1, 1.414, 1, 1.414]
         else:

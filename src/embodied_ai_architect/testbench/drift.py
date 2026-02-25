@@ -131,19 +131,21 @@ class DriftMonitor:
         history = self._load_history(history_file)
 
         # Add new result
-        history.append({
-            "timestamp": result.timestamp or datetime.now().isoformat(),
-            "dataset": result.dataset,
-            "passed": result.passed,
-            "metrics": {
-                m.metric.value: {
-                    "value": m.value,
-                    "threshold": m.threshold,
-                    "passed": m.passed,
-                }
-                for m in result.metrics
-            },
-        })
+        history.append(
+            {
+                "timestamp": result.timestamp or datetime.now().isoformat(),
+                "dataset": result.dataset,
+                "passed": result.passed,
+                "metrics": {
+                    m.metric.value: {
+                        "value": m.value,
+                        "threshold": m.threshold,
+                        "passed": m.passed,
+                    }
+                    for m in result.metrics
+                },
+            }
+        )
 
         # Save history
         self._save_history(history_file, history)

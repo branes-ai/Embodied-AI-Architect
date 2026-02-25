@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 class HardwareType(str, Enum):
     """Types of hardware accelerators."""
+
     CPU = "cpu"
     DSP = "dsp"
     GPU = "gpu"
@@ -19,6 +20,7 @@ class HardwareType(str, Enum):
 
 class ComputeParadigm(str, Enum):
     """Computation paradigm of the hardware."""
+
     VON_NEUMANN = "von_neumann"  # Traditional CPU architecture
     SIMD = "simd"  # Single Instruction Multiple Data
     DATAFLOW = "dataflow"  # Dataflow architectures
@@ -28,6 +30,7 @@ class ComputeParadigm(str, Enum):
 
 class OperationType(str, Enum):
     """Types of operations hardware is optimized for."""
+
     GENERAL_PURPOSE = "general_purpose"
     MATRIX_MULTIPLY = "matrix_multiply"
     CONVOLUTION = "convolution"
@@ -103,7 +106,7 @@ class HardwareProfile(BaseModel):
         model_memory_mb: float,
         operation_types: List[str],
         target_latency_ms: float | None = None,
-        max_power_watts: float | None = None
+        max_power_watts: float | None = None,
     ) -> float:
         """Calculate a fitness score for this hardware given model requirements.
 
@@ -160,7 +163,9 @@ class HardwareProfile(BaseModel):
 
         # Operation type match (20 points)
         max_score += 20
-        matching_ops = sum(1 for op in operation_types if op in [o.value for o in self.optimized_for])
+        matching_ops = sum(
+            1 for op in operation_types if op in [o.value for o in self.optimized_for]
+        )
         if operation_types:
             score += 20 * (matching_ops / len(operation_types))
         else:

@@ -79,12 +79,14 @@ def create_path_planner_node(
                     if 0 <= gx < grid_size[0] and 0 <= gy < grid_size[1]:
                         grid[gx, gy] = 1
 
-                result = operator.process({
-                    "start": start,
-                    "goal": goal,
-                    "grid": grid,
-                    "use_meters": True,
-                })
+                result = operator.process(
+                    {
+                        "start": start,
+                        "goal": goal,
+                        "grid": grid,
+                        "use_meters": True,
+                    }
+                )
             except Exception as e:
                 return {
                     "next_stage": PipelineStage.ERROR.value,
@@ -160,10 +162,12 @@ def create_path_follower_node(
         # Execute with timing
         with NodeTimer(state, "path_follow") as timer:
             try:
-                result = operator.process({
-                    "pose": pose,
-                    "path": path,
-                })
+                result = operator.process(
+                    {
+                        "pose": pose,
+                        "path": path,
+                    }
+                )
             except Exception as e:
                 return {
                     "next_stage": PipelineStage.ERROR.value,

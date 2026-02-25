@@ -85,12 +85,14 @@ class STrack:
         # Convert xyxy to xywh
         bbox = detection["bbox"]
         x1, y1, x2, y2 = bbox
-        bbox_xywh = np.array([
-            (x1 + x2) / 2,
-            (y1 + y2) / 2,
-            x2 - x1,
-            y2 - y1,
-        ])
+        bbox_xywh = np.array(
+            [
+                (x1 + x2) / 2,
+                (y1 + y2) / 2,
+                x2 - x1,
+                y2 - y1,
+            ]
+        )
 
         self.kalman = KalmanBoxFilter(bbox_xywh)
         self.hits = 1
@@ -110,12 +112,14 @@ class STrack:
         """Update with new detection."""
         bbox = detection["bbox"]
         x1, y1, x2, y2 = bbox
-        bbox_xywh = np.array([
-            (x1 + x2) / 2,
-            (y1 + y2) / 2,
-            x2 - x1,
-            y2 - y1,
-        ])
+        bbox_xywh = np.array(
+            [
+                (x1 + x2) / 2,
+                (y1 + y2) / 2,
+                x2 - x1,
+                y2 - y1,
+            ]
+        )
 
         self.kalman.update(bbox_xywh)
         self.confidence = detection["confidence"]
@@ -231,10 +235,7 @@ class ByteTrack(Operator):
                 self.tracks.append(new_track)
 
         # Remove lost tracks
-        self.tracks = [
-            t for t in self.tracks
-            if t.time_since_update < self.track_buffer
-        ]
+        self.tracks = [t for t in self.tracks if t.time_since_update < self.track_buffer]
 
         # Output active tracks
         active_tracks = [t.to_dict() for t in self.tracks if t.is_activated]

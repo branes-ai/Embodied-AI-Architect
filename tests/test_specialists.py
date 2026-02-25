@@ -27,7 +27,6 @@ from embodied_ai_architect.graphs.specialists import (
 )
 from embodied_ai_architect.graphs.task_graph import TaskNode, TaskStatus
 
-
 # ============================================================================
 # Fixtures
 # ============================================================================
@@ -161,7 +160,10 @@ class TestHWExplorer:
         assert kpu["constraint_verdicts"]["cost"] == "PASS"
 
     def test_state_updates(self, drone_state):
-        drone_state["workload_profile"] = {"total_estimated_gflops": 5.0, "dominant_op": "convolution"}
+        drone_state["workload_profile"] = {
+            "total_estimated_gflops": 5.0,
+            "dominant_op": "convolution",
+        }
         task = make_task("t1", "hw_explorer")
         result = hw_explorer(task, drone_state)
         assert "_state_updates" in result
@@ -548,12 +550,32 @@ class TestFullPipeline:
     """End-to-end: Planner creates plan -> Dispatcher runs all specialists."""
 
     DRONE_PLAN = [
-        {"id": "t1", "name": "Analyze perception workload", "agent": "workload_analyzer", "dependencies": []},
-        {"id": "t2", "name": "Explore hardware candidates", "agent": "hw_explorer", "dependencies": ["t1"]},
-        {"id": "t3", "name": "Compose SoC architecture", "agent": "architecture_composer", "dependencies": ["t2"]},
+        {
+            "id": "t1",
+            "name": "Analyze perception workload",
+            "agent": "workload_analyzer",
+            "dependencies": [],
+        },
+        {
+            "id": "t2",
+            "name": "Explore hardware candidates",
+            "agent": "hw_explorer",
+            "dependencies": ["t1"],
+        },
+        {
+            "id": "t3",
+            "name": "Compose SoC architecture",
+            "agent": "architecture_composer",
+            "dependencies": ["t2"],
+        },
         {"id": "t4", "name": "Assess PPA metrics", "agent": "ppa_assessor", "dependencies": ["t3"]},
         {"id": "t5", "name": "Review design quality", "agent": "critic", "dependencies": ["t4"]},
-        {"id": "t6", "name": "Generate design report", "agent": "report_generator", "dependencies": ["t5"]},
+        {
+            "id": "t6",
+            "name": "Generate design report",
+            "agent": "report_generator",
+            "dependencies": ["t5"],
+        },
     ]
 
     def test_drone_soc_design(self):

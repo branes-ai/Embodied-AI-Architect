@@ -135,8 +135,7 @@ class ModelAcquisition:
 
         except ImportError:
             raise ValueError(
-                "embodied-schemas not installed. "
-                "Install with: pip install embodied-schemas"
+                "embodied-schemas not installed. " "Install with: pip install embodied-schemas"
             )
 
     def _detect_provider(self, model_id: str) -> str:

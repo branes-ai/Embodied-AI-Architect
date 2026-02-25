@@ -160,20 +160,26 @@ def run(
                 "status": result.status,
                 "workflow_id": result.summary.get("workflow_id"),
                 "duration_seconds": duration,
-                "model_analysis": result.agent_results.get("ModelAnalyzer", {}).data
-                if "ModelAnalyzer" in result.agent_results
-                else {},
-                "hardware_recommendations": result.agent_results.get("HardwareProfile", {}).data
-                if "HardwareProfile" in result.agent_results
-                else {},
-                "benchmarks": result.agent_results.get("Benchmark", {}).data
-                if "Benchmark" in result.agent_results
-                else {},
-                "report_path": result.agent_results.get("ReportSynthesis", {}).data.get(
-                    "report_html"
-                )
-                if "ReportSynthesis" in result.agent_results
-                else None,
+                "model_analysis": (
+                    result.agent_results.get("ModelAnalyzer", {}).data
+                    if "ModelAnalyzer" in result.agent_results
+                    else {}
+                ),
+                "hardware_recommendations": (
+                    result.agent_results.get("HardwareProfile", {}).data
+                    if "HardwareProfile" in result.agent_results
+                    else {}
+                ),
+                "benchmarks": (
+                    result.agent_results.get("Benchmark", {}).data
+                    if "Benchmark" in result.agent_results
+                    else {}
+                ),
+                "report_path": (
+                    result.agent_results.get("ReportSynthesis", {}).data.get("report_html")
+                    if "ReportSynthesis" in result.agent_results
+                    else None
+                ),
             }
             click.echo(json.dumps(output, indent=2))
         elif quiet:
@@ -205,7 +211,7 @@ def run(
                     top = recommendations[0]
                     console.print(f"  {top['name']} (score: {top['score']:.1f})")
                     # Get first reason if available
-                    reasons = top.get('reasons', [])
+                    reasons = top.get("reasons", [])
                     if reasons:
                         console.print(f"  {reasons[0]}\n")
                     else:
@@ -221,7 +227,9 @@ def run(
                     bench_result = benchmarks[first_backend]
                     console.print("[bold]⚡ Benchmark Results[/bold]")
                     console.print(f"  Backend: {bench_result.get('device', first_backend)}")
-                    console.print(f"  Mean Latency: {bench_result.get('mean_latency_ms', 0):.3f} ms")
+                    console.print(
+                        f"  Mean Latency: {bench_result.get('mean_latency_ms', 0):.3f} ms"
+                    )
                     console.print(
                         f"  Throughput: {bench_result.get('throughput_samples_per_sec', 0):.2f} samples/sec\n"
                     )

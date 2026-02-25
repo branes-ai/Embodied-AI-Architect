@@ -16,7 +16,6 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
-
 # ---------------------------------------------------------------------------
 # Models
 # ---------------------------------------------------------------------------
@@ -158,15 +157,17 @@ def check_bandwidth_match(
     dram_required = demand_gbps
     dram_util = dram_required / dram_available if dram_available > 0 else 1.0
     dram_bottleneck = dram_util > bottleneck_threshold
-    links.append(BandwidthLink(
-        name="dram_to_l3",
-        source="DRAM",
-        sink="L3",
-        available_gbps=round(dram_available, 1),
-        required_gbps=round(dram_required, 1),
-        utilization=round(dram_util, 3),
-        bottleneck=dram_bottleneck,
-    ))
+    links.append(
+        BandwidthLink(
+            name="dram_to_l3",
+            source="DRAM",
+            sink="L3",
+            available_gbps=round(dram_available, 1),
+            required_gbps=round(dram_required, 1),
+            utilization=round(dram_util, 3),
+            bottleneck=dram_bottleneck,
+        )
+    )
     if dram_bottleneck:
         issues.append(
             f"DRAM bandwidth bottleneck: {dram_util:.0%} utilization. "
@@ -178,15 +179,17 @@ def check_bandwidth_match(
     l3_required = demand_gbps * l3_reuse_factor
     l3_util = l3_required / l3_available if l3_available > 0 else 1.0
     l3_bottleneck = l3_util > bottleneck_threshold
-    links.append(BandwidthLink(
-        name="l3_to_l2",
-        source="L3",
-        sink="L2",
-        available_gbps=round(l3_available, 1),
-        required_gbps=round(l3_required, 1),
-        utilization=round(l3_util, 3),
-        bottleneck=l3_bottleneck,
-    ))
+    links.append(
+        BandwidthLink(
+            name="l3_to_l2",
+            source="L3",
+            sink="L2",
+            available_gbps=round(l3_available, 1),
+            required_gbps=round(l3_required, 1),
+            utilization=round(l3_util, 3),
+            bottleneck=l3_bottleneck,
+        )
+    )
     if l3_bottleneck:
         issues.append(
             f"L3->L2 (NoC) bandwidth bottleneck: {l3_util:.0%} utilization. "
@@ -198,15 +201,17 @@ def check_bandwidth_match(
     l2_required = demand_gbps * l3_reuse_factor * l2_reuse_factor
     l2_util = l2_required / l2_available if l2_available > 0 else 1.0
     l2_bottleneck = l2_util > bottleneck_threshold
-    links.append(BandwidthLink(
-        name="l2_to_l1",
-        source="L2",
-        sink="L1",
-        available_gbps=round(l2_available, 1),
-        required_gbps=round(l2_required, 1),
-        utilization=round(l2_util, 3),
-        bottleneck=l2_bottleneck,
-    ))
+    links.append(
+        BandwidthLink(
+            name="l2_to_l1",
+            source="L2",
+            sink="L1",
+            available_gbps=round(l2_available, 1),
+            required_gbps=round(l2_required, 1),
+            utilization=round(l2_util, 3),
+            bottleneck=l2_bottleneck,
+        )
+    )
     if l2_bottleneck:
         issues.append(
             f"L2->L1 (streamer) bandwidth bottleneck: {l2_util:.0%} utilization. "
@@ -218,15 +223,17 @@ def check_bandwidth_match(
     l1_required = demand_gbps * l3_reuse_factor * l2_reuse_factor * l1_reuse_factor
     l1_util = l1_required / l1_available if l1_available > 0 else 1.0
     l1_bottleneck = l1_util > bottleneck_threshold
-    links.append(BandwidthLink(
-        name="l1_to_compute",
-        source="L1",
-        sink="Compute",
-        available_gbps=round(l1_available, 1),
-        required_gbps=round(l1_required, 1),
-        utilization=round(l1_util, 3),
-        bottleneck=l1_bottleneck,
-    ))
+    links.append(
+        BandwidthLink(
+            name="l1_to_compute",
+            source="L1",
+            sink="Compute",
+            available_gbps=round(l1_available, 1),
+            required_gbps=round(l1_required, 1),
+            utilization=round(l1_util, 3),
+            bottleneck=l1_bottleneck,
+        )
+    )
     if l1_bottleneck:
         issues.append(
             f"L1->Compute bandwidth bottleneck: {l1_util:.0%} utilization. "

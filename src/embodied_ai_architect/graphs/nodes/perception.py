@@ -255,11 +255,13 @@ def create_scene_graph_node(
         # Execute with timing
         with NodeTimer(state, "scene_graph") as timer:
             try:
-                result = operator.process({
-                    "tracks": track_list,
-                    "depth_map": None,  # Optional depth map
-                    "image_size": image_size,
-                })
+                result = operator.process(
+                    {
+                        "tracks": track_list,
+                        "depth_map": None,  # Optional depth map
+                        "image_size": image_size,
+                    }
+                )
             except Exception as e:
                 return {
                     "next_stage": PipelineStage.ERROR.value,

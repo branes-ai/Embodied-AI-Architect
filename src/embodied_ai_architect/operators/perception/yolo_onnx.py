@@ -72,6 +72,7 @@ class YOLOv8ONNX(Operator):
         model_path = config.get("model_path")
         if model_path is None:
             from embodied_ai_architect.model_zoo import acquire
+
             model_path = acquire(f"yolov8{self.variant}", format="onnx")
 
         # Select providers based on target
@@ -217,11 +218,13 @@ class YOLOv8ONNX(Operator):
         # Build detection list
         detections = []
         for idx in indices:
-            detections.append({
-                "bbox": boxes_xyxy[idx].tolist(),
-                "class_id": int(class_ids[idx]),
-                "confidence": float(confidences[idx]),
-            })
+            detections.append(
+                {
+                    "bbox": boxes_xyxy[idx].tolist(),
+                    "class_id": int(class_ids[idx]),
+                    "confidence": float(confidences[idx]),
+                }
+            )
 
         return detections
 

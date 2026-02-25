@@ -25,7 +25,6 @@ from embodied_ai_architect.graphs.ip_blocks import (
     kpu_preset_block,
 )
 
-
 # ============================================================================
 # CPU Core IP
 # ============================================================================
@@ -91,8 +90,12 @@ class TestCPUCorePeakGops:
         assert gops == pytest.approx(16.0, rel=0.01)
 
     def test_simd_doubles_gops(self):
-        with_simd = CPUCoreConfig(name="test", isa="ARM_A78", has_simd=True, issue_width=4, frequency_mhz=1000)
-        no_simd = CPUCoreConfig(name="test", isa="ARM_A78", has_simd=False, issue_width=4, frequency_mhz=1000)
+        with_simd = CPUCoreConfig(
+            name="test", isa="ARM_A78", has_simd=True, issue_width=4, frequency_mhz=1000
+        )
+        no_simd = CPUCoreConfig(
+            name="test", isa="ARM_A78", has_simd=False, issue_width=4, frequency_mhz=1000
+        )
         assert with_simd.peak_gops() == 2 * no_simd.peak_gops()
 
 
@@ -109,10 +112,9 @@ class TestGPUClusterArea:
         # Compute SRAM-only area
         from embodied_ai_architect.graphs.technology import estimate_sram_area_mm2
 
-        sram_area = (
-            estimate_sram_area_mm2(gpu.l1_bytes_per_core, 28) * gpu.shader_cores
-            + estimate_sram_area_mm2(gpu.shared_l2_bytes, 28)
-        )
+        sram_area = estimate_sram_area_mm2(
+            gpu.l1_bytes_per_core, 28
+        ) * gpu.shader_cores + estimate_sram_area_mm2(gpu.shared_l2_bytes, 28)
         # SRAM area should be positive and part of the total
         assert sram_area > 0
         assert total_area > sram_area  # logic dominates, but SRAM is included
@@ -264,9 +266,7 @@ class TestSoCComposition:
         )
         cpu_power = ARM_A78_PRESET.estimate_power_watts(28)
         gpu_power = SMALL_GPU_PRESET.estimate_power_watts(28)
-        assert soc.total_power_watts() == pytest.approx(
-            cpu_power + gpu_power, rel=0.001
-        )
+        assert soc.total_power_watts() == pytest.approx(cpu_power + gpu_power, rel=0.001)
 
     def test_peak_gops_totals(self):
         soc = SoCComposition(
@@ -463,10 +463,20 @@ class TestFullPipelineWithIPBlocks:
     PLAN = [
         {"id": "t1", "name": "Analyze workload", "agent": "workload_analyzer", "dependencies": []},
         {"id": "t2", "name": "Explore hardware", "agent": "hw_explorer", "dependencies": ["t1"]},
-        {"id": "t3", "name": "Compose architecture", "agent": "architecture_composer", "dependencies": ["t2"]},
+        {
+            "id": "t3",
+            "name": "Compose architecture",
+            "agent": "architecture_composer",
+            "dependencies": ["t2"],
+        },
         {"id": "t4", "name": "Assess PPA", "agent": "ppa_assessor", "dependencies": ["t3"]},
         {"id": "t5", "name": "Review design", "agent": "critic", "dependencies": ["t4"]},
-        {"id": "t6", "name": "Generate report", "agent": "report_generator", "dependencies": ["t5"]},
+        {
+            "id": "t6",
+            "name": "Generate report",
+            "agent": "report_generator",
+            "dependencies": ["t5"],
+        },
     ]
 
     def test_full_loop_with_ip_blocks(self):

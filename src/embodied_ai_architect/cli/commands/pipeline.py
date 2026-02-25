@@ -29,20 +29,23 @@ def pipeline():
 @pipeline.command()
 @click.argument("pipeline_name", type=click.Choice(["perception", "autonomy", "autonomy-ekf"]))
 @click.option(
-    "--input", "-i",
+    "--input",
+    "-i",
     "input_path",
     type=click.Path(exists=True),
     required=True,
     help="Input image or video file",
 )
 @click.option(
-    "--execution-target", "-t",
+    "--execution-target",
+    "-t",
     type=click.Choice(["cpu", "gpu", "npu"]),
     default="cpu",
     help="Hardware execution target",
 )
 @click.option(
-    "--yolo-variant", "-y",
+    "--yolo-variant",
+    "-y",
     type=click.Choice(["n", "s", "m", "l", "x"]),
     default="s",
     help="YOLO model variant (n=nano, s=small, m=medium, l=large, x=extra)",
@@ -277,32 +280,37 @@ def _print_result(result: dict, json_output: bool, latency_budget: float):
 @pipeline.command()
 @click.argument("pipeline_name", type=click.Choice(["perception", "autonomy"]))
 @click.option(
-    "--input", "-i",
+    "--input",
+    "-i",
     "input_path",
     type=click.Path(exists=True),
     required=True,
     help="Input image for benchmarking",
 )
 @click.option(
-    "--iterations", "-n",
+    "--iterations",
+    "-n",
     type=int,
     default=100,
     help="Number of timed iterations",
 )
 @click.option(
-    "--warmup", "-w",
+    "--warmup",
+    "-w",
     type=int,
     default=10,
     help="Number of warmup iterations",
 )
 @click.option(
-    "--execution-target", "-t",
+    "--execution-target",
+    "-t",
     type=click.Choice(["cpu", "gpu", "npu"]),
     default="cpu",
     help="Hardware execution target",
 )
 @click.option(
-    "--yolo-variant", "-y",
+    "--yolo-variant",
+    "-y",
     type=click.Choice(["n", "s", "m", "l", "x"]),
     default="s",
     help="YOLO model variant",

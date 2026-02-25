@@ -186,7 +186,9 @@ class RAPLMonitor:
 
                 # Handle counter wraparound
                 if delta_energy < 0:
-                    max_energy = int((self.package_path.parent / "max_energy_range_uj").read_text().strip())
+                    max_energy = int(
+                        (self.package_path.parent / "max_energy_range_uj").read_text().strip()
+                    )
                     delta_energy += max_energy
 
                 if delta_time > 0:

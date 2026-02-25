@@ -19,6 +19,7 @@ from typing import Any, Optional
 
 try:
     from jinja2 import Environment, FileSystemLoader, TemplateNotFound
+
     HAS_JINJA2 = True
 except ImportError:
     HAS_JINJA2 = False
@@ -29,6 +30,7 @@ TEMPLATE_DIR = Path(__file__).parent
 # ---------------------------------------------------------------------------
 # Fallback string-template rendering when Jinja2 is not installed
 # ---------------------------------------------------------------------------
+
 
 def _simple_render(template_str: str, params: dict[str, Any]) -> str:
     """Simple string.format-style rendering for when Jinja2 is unavailable."""

@@ -117,9 +117,7 @@ class ModelDiscoveryService:
         # Filter providers if specified
         search_providers = self._providers
         if providers is not None:
-            search_providers = {
-                k: v for k, v in self._providers.items() if k in providers
-            }
+            search_providers = {k: v for k, v in self._providers.items() if k in providers}
 
         # Search each provider
         for provider in search_providers.values():
@@ -137,9 +135,7 @@ class ModelDiscoveryService:
         # Sort by parameters (smallest first for edge deployment focus)
         return sorted(candidates, key=lambda c: c.parameters or float("inf"))
 
-    def _enrich_from_schemas(
-        self, candidates: list[ModelCandidate]
-    ) -> list[ModelCandidate]:
+    def _enrich_from_schemas(self, candidates: list[ModelCandidate]) -> list[ModelCandidate]:
         """Enrich candidates with data from embodied-schemas."""
         try:
             from embodied_schemas import Registry

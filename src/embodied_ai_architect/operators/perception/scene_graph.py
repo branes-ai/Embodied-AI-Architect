@@ -188,8 +188,8 @@ class SceneGraphManager(Operator):
         region_size = max(1, min(10, (x2 - x1) // 4, (y2 - y1) // 4))
 
         depth_region = depth_map[
-            max(0, cy - region_size):min(h, cy + region_size),
-            max(0, cx - region_size):min(w, cx + region_size),
+            max(0, cy - region_size) : min(h, cy + region_size),
+            max(0, cx - region_size) : min(w, cx + region_size),
         ]
 
         # Use median depth for robustness
@@ -211,7 +211,7 @@ class SceneGraphManager(Operator):
         nearby = []
         for obj in self.objects.values():
             pos = obj["position"]
-            distance = np.sqrt(pos[0]**2 + pos[1]**2 + pos[2]**2)
+            distance = np.sqrt(pos[0] ** 2 + pos[1] ** 2 + pos[2] ** 2)
             if distance <= max_distance:
                 nearby.append(obj)
         return nearby

@@ -99,9 +99,7 @@ class OpenVINOTarget(DeploymentTarget):
         4. Save IR files (.xml, .bin)
         """
         if not self.is_available():
-            raise RuntimeError(
-                "OpenVINO not available. Install with: pip install openvino"
-            )
+            raise RuntimeError("OpenVINO not available. Install with: pip install openvino")
 
         if precision == DeploymentPrecision.INT8 and calibration is None:
             raise ValueError("INT8 precision requires calibration config")
@@ -142,10 +140,7 @@ class OpenVINOTarget(DeploymentTarget):
                 output_shape = tuple(partial_shape.to_shape())
             else:
                 # For dynamic shapes, get the partial shape dimensions
-                output_shape = tuple(
-                    d.get_length() if d.is_static else -1
-                    for d in partial_shape
-                )
+                output_shape = tuple(d.get_length() if d.is_static else -1 for d in partial_shape)
 
         return DeploymentArtifact(
             engine_path=ir_path,
@@ -193,8 +188,7 @@ class OpenVINOTarget(DeploymentTarget):
             import nncf
         except ImportError:
             raise ImportError(
-                "NNCF required for INT8 quantization. "
-                "Install with: pip install nncf"
+                "NNCF required for INT8 quantization. " "Install with: pip install nncf"
             )
 
         # Create calibration dataset
@@ -379,16 +373,18 @@ class OpenVINOTarget(DeploymentTarget):
             )
 
             if power_metrics is not None:
-                power_passed = self.validate_power_result(
-                    power_metrics, config.power_validation
-                )
+                power_passed = self.validate_power_result(power_metrics, config.power_validation)
                 if not power_passed:
                     if config.power_validation.power_budget_watts:
                         errors.append(
                             f"Power {power_metrics.measured_watts:.1f}W exceeds budget "
                             f"{config.power_validation.power_budget_watts:.1f}W"
                         )
-                    if power_metrics.deviation_percent and abs(power_metrics.deviation_percent) > config.power_validation.tolerance_percent:
+                    if (
+                        power_metrics.deviation_percent
+                        and abs(power_metrics.deviation_percent)
+                        > config.power_validation.tolerance_percent
+                    ):
                         errors.append(
                             f"Power deviation {power_metrics.deviation_percent:.1f}% exceeds "
                             f"tolerance {config.power_validation.tolerance_percent:.1f}%"
@@ -411,18 +407,13 @@ class OpenVINOTarget(DeploymentTarget):
         try:
             import onnxruntime as ort
 
-            return ort.InferenceSession(
-                str(model_path), providers=["CPUExecutionProvider"]
-            )
+            return ort.InferenceSession(str(model_path), providers=["CPUExecutionProvider"])
         except ImportError:
             raise ImportError(
-                "onnxruntime required for validation. "
-                "Install with: pip install onnxruntime"
+                "onnxruntime required for validation. " "Install with: pip install onnxruntime"
             )
 
-    def _create_test_loader(
-        self, config: ValidationConfig, input_shape: tuple[int, ...]
-    ):
+    def _create_test_loader(self, config: ValidationConfig, input_shape: tuple[int, ...]):
         """Create test data loader."""
         if config.test_data_path is None:
             # Generate random test data

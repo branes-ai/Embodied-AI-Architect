@@ -51,12 +51,22 @@ SAFETY_STANDARDS = {
 
 # Keywords that indicate safety-critical applications
 SAFETY_KEYWORDS = [
-    "surgical", "medical", "patient", "life-support",
-    "automotive", "self-driving", "adas",
-    "aerospace", "flight", "avionics",
-    "nuclear", "reactor",
-    "safety-critical", "safety critical",
-    "fail-safe", "failsafe",
+    "surgical",
+    "medical",
+    "patient",
+    "life-support",
+    "automotive",
+    "self-driving",
+    "adas",
+    "aerospace",
+    "flight",
+    "avionics",
+    "nuclear",
+    "reactor",
+    "safety-critical",
+    "safety critical",
+    "fail-safe",
+    "failsafe",
 ]
 
 # Redundancy requirements injected into the architecture

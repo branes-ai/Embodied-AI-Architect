@@ -147,7 +147,7 @@ class EKF6DOF(Operator):
         H[1, 7] = 1 / self.dt  # ay ~ dvy/dt
         H[2, 8] = 1 / self.dt  # az ~ dvz/dt
         # Gyro directly observes angular velocity
-        H[3, 9] = 1   # wx
+        H[3, 9] = 1  # wx
         H[4, 10] = 1  # wy
         H[5, 11] = 1  # wz
 
@@ -168,11 +168,13 @@ class EKF6DOF(Operator):
         cp, sp = np.cos(pitch), np.sin(pitch)
         cy, sy = np.cos(yaw), np.sin(yaw)
 
-        R = np.array([
-            [cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr],
-            [sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr],
-            [-sp, cp * sr, cp * cr],
-        ])
+        R = np.array(
+            [
+                [cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr],
+                [sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr],
+                [-sp, cp * sr, cp * cr],
+            ]
+        )
         return R
 
     def _normalize_angles(self, angles: np.ndarray) -> np.ndarray:

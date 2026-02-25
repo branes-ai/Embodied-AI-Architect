@@ -63,12 +63,8 @@ def compute_similarity(
 
     # Constraint overlap (0.4)
     if current_constraints and past_episode.constraints:
-        current_keys = {
-            k for k, v in current_constraints.items() if v is not None
-        }
-        past_keys = {
-            k for k, v in past_episode.constraints.items() if v is not None
-        }
+        current_keys = {k for k, v in current_constraints.items() if v is not None}
+        past_keys = {k for k, v in past_episode.constraints.items() if v is not None}
         if current_keys or past_keys:
             overlap = len(current_keys & past_keys)
             union = len(current_keys | past_keys)
@@ -165,17 +161,19 @@ def experience_retriever(task: TaskNode, state: SoCDesignState) -> dict[str, Any
     scored_matches = []
     for episode in similar:
         sim = compute_similarity(use_case, platform, constraints, episode)
-        scored_matches.append({
-            "episode_id": episode.episode_id,
-            "use_case": episode.use_case,
-            "platform": episode.platform,
-            "similarity": sim,
-            "outcome_score": episode.outcome_score,
-            "hardware_selected": episode.hardware_selected,
-            "architecture_chosen": episode.architecture_chosen,
-            "iterations_used": episode.iterations_used,
-            "lessons_learned": episode.lessons_learned,
-        })
+        scored_matches.append(
+            {
+                "episode_id": episode.episode_id,
+                "use_case": episode.use_case,
+                "platform": episode.platform,
+                "similarity": sim,
+                "outcome_score": episode.outcome_score,
+                "hardware_selected": episode.hardware_selected,
+                "architecture_chosen": episode.architecture_chosen,
+                "iterations_used": episode.iterations_used,
+                "lessons_learned": episode.lessons_learned,
+            }
+        )
 
     scored_matches.sort(key=lambda m: m["similarity"], reverse=True)
 

@@ -9,7 +9,6 @@ from typing import Any, Optional
 
 from .base import ModelProvider, ModelFormat, ModelQuery, ModelArtifact
 
-
 # YOLO model catalog with known specifications
 # Source: https://docs.ultralytics.com/models/
 YOLO_MODELS = {
@@ -274,9 +273,7 @@ class UltralyticsProvider(ModelProvider):
         try:
             from ultralytics import YOLO
         except ImportError:
-            raise ImportError(
-                "ultralytics not installed. Install with: pip install ultralytics"
-            )
+            raise ImportError("ultralytics not installed. Install with: pip install ultralytics")
 
         # Load the model (downloads if needed)
         model = YOLO(f"{model_id}.pt")

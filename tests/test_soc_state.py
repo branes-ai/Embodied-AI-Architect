@@ -33,7 +33,6 @@ from embodied_ai_architect.graphs.soc_state import (
     update_working_memory,
 )
 
-
 # ============================================================================
 # TaskNode tests
 # ============================================================================
@@ -94,9 +93,7 @@ class TestTaskGraphBasic:
     def test_add_with_missing_dependency_raises(self):
         graph = TaskGraph()
         with pytest.raises(ValueError, match="does not exist"):
-            graph.add_task(
-                TaskNode(id="t2", name="B", agent="b", dependencies=["t1"])
-            )
+            graph.add_task(TaskNode(id="t2", name="B", agent="b", dependencies=["t1"]))
 
     def test_ready_tasks_no_dependencies(self):
         graph = TaskGraph()
@@ -247,9 +244,7 @@ class TestTaskGraphDAG:
         graph.add_task(TaskNode(id="t1", name="A", agent="a"))
         graph.add_task(TaskNode(id="t2", name="B", agent="b", dependencies=["t1"]))
         graph.add_task(TaskNode(id="t3", name="C", agent="c", dependencies=["t1"]))
-        graph.add_task(
-            TaskNode(id="t4", name="D", agent="d", dependencies=["t2", "t3"])
-        )
+        graph.add_task(TaskNode(id="t4", name="D", agent="d", dependencies=["t2", "t3"]))
 
         # Only t1 is ready
         ready = graph.ready_tasks()
@@ -286,19 +281,19 @@ class TestTaskGraphDAG:
         """Mutual dependencies in a batch should raise CycleError."""
         graph = TaskGraph()
         with pytest.raises(CycleError):
-            graph.add_tasks([
-                TaskNode(id="t1", name="A", agent="a", dependencies=["t2"]),
-                TaskNode(id="t2", name="B", agent="b", dependencies=["t1"]),
-            ])
+            graph.add_tasks(
+                [
+                    TaskNode(id="t1", name="A", agent="a", dependencies=["t2"]),
+                    TaskNode(id="t2", name="B", agent="b", dependencies=["t1"]),
+                ]
+            )
 
     def test_execution_order(self):
         graph = TaskGraph()
         graph.add_task(TaskNode(id="t1", name="A", agent="a"))
         graph.add_task(TaskNode(id="t2", name="B", agent="b", dependencies=["t1"]))
         graph.add_task(TaskNode(id="t3", name="C", agent="c", dependencies=["t1"]))
-        graph.add_task(
-            TaskNode(id="t4", name="D", agent="d", dependencies=["t2", "t3"])
-        )
+        graph.add_task(TaskNode(id="t4", name="D", agent="d", dependencies=["t2", "t3"]))
 
         order = graph.execution_order()
         # t1 must come before t2, t3; t2 and t3 must come before t4
@@ -618,39 +613,41 @@ class TestIntegration:
 
         # Planner creates task graph
         graph = get_task_graph(state)
-        graph.add_tasks([
-            TaskNode(
-                id="t1",
-                name="Analyze perception workload",
-                agent="workload_analyzer",
-                postconditions=["workload_profile populated"],
-            ),
-            TaskNode(
-                id="t2",
-                name="Analyze environmental constraints",
-                agent="workload_analyzer",
-                postconditions=["thermal and IP constraints identified"],
-            ),
-            TaskNode(
-                id="t3",
-                name="Enumerate feasible hardware",
-                agent="hw_explorer",
-                dependencies=["t1", "t2"],
-                preconditions=["workload_profile available", "env constraints available"],
-            ),
-            TaskNode(
-                id="t4",
-                name="PPA assessment",
-                agent="ppa_assessor",
-                dependencies=["t3"],
-            ),
-            TaskNode(
-                id="t5",
-                name="Generate design report",
-                agent="report_generator",
-                dependencies=["t4"],
-            ),
-        ])
+        graph.add_tasks(
+            [
+                TaskNode(
+                    id="t1",
+                    name="Analyze perception workload",
+                    agent="workload_analyzer",
+                    postconditions=["workload_profile populated"],
+                ),
+                TaskNode(
+                    id="t2",
+                    name="Analyze environmental constraints",
+                    agent="workload_analyzer",
+                    postconditions=["thermal and IP constraints identified"],
+                ),
+                TaskNode(
+                    id="t3",
+                    name="Enumerate feasible hardware",
+                    agent="hw_explorer",
+                    dependencies=["t1", "t2"],
+                    preconditions=["workload_profile available", "env constraints available"],
+                ),
+                TaskNode(
+                    id="t4",
+                    name="PPA assessment",
+                    agent="ppa_assessor",
+                    dependencies=["t3"],
+                ),
+                TaskNode(
+                    id="t5",
+                    name="Generate design report",
+                    agent="report_generator",
+                    dependencies=["t4"],
+                ),
+            ]
+        )
 
         state = set_task_graph(state, graph)
         state = record_decision(

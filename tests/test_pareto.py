@@ -18,7 +18,6 @@ from embodied_ai_architect.graphs.soc_state import (
 )
 from embodied_ai_architect.graphs.task_graph import TaskNode
 
-
 # ============================================================================
 # Fixtures
 # ============================================================================

@@ -127,9 +127,7 @@ def list(ctx, limit):
             table.add_row(r["id"], r["timestamp"], r["model"], r["backend"])
 
         console.print(table)
-        console.print(
-            f"\n[dim]Tip:[/dim] Use 'branes report view <workflow_id>' to open a report"
-        )
+        console.print(f"\n[dim]Tip:[/dim] Use 'branes report view <workflow_id>' to open a report")
 
 
 @report.command()
@@ -205,9 +203,7 @@ def compare(ctx, workflow_id_1, workflow_id_2):
         # Performance delta
         latency_diff = bench2.get("mean_latency_ms", 0) - bench1.get("mean_latency_ms", 0)
         if latency_diff < 0:
-            console.print(
-                f"\n[green]✓[/green] {workflow_id_2} is {abs(latency_diff):.3f}ms faster"
-            )
+            console.print(f"\n[green]✓[/green] {workflow_id_2} is {abs(latency_diff):.3f}ms faster")
         elif latency_diff > 0:
             console.print(f"\n[yellow]⚠[/yellow] {workflow_id_2} is {latency_diff:.3f}ms slower")
         else:

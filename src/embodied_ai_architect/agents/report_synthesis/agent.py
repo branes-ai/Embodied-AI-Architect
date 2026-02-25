@@ -6,7 +6,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 import matplotlib
-matplotlib.use('Agg')  # Non-interactive backend
+
+matplotlib.use("Agg")  # Non-interactive backend
 import matplotlib.pyplot as plt
 import numpy as np
 from jinja2 import Template
@@ -71,9 +72,7 @@ class ReportSynthesisAgent(BaseAgent):
             assets_dir.mkdir(parents=True, exist_ok=True)
 
             # Synthesize data
-            report_data = self._synthesize_data(
-                workflow_id, agent_results, request, timestamp
-            )
+            report_data = self._synthesize_data(workflow_id, agent_results, request, timestamp)
 
             # Generate visualizations
             charts = self._generate_visualizations(report_data, assets_dir)
@@ -82,20 +81,16 @@ class ReportSynthesisAgent(BaseAgent):
             html_content = self._generate_html(report_data, charts)
 
             # Write artifacts
-            (report_dir / "report.json").write_text(
-                json.dumps(report_data, indent=2)
-            )
+            (report_dir / "report.json").write_text(json.dumps(report_data, indent=2))
             (report_dir / "report.html").write_text(html_content)
 
             # Create metadata
             metadata = {
                 "workflow_id": workflow_id,
                 "generated_at": datetime.now().isoformat(),
-                "report_version": "1.0"
+                "report_version": "1.0",
             }
-            (report_dir / "metadata.json").write_text(
-                json.dumps(metadata, indent=2)
-            )
+            (report_dir / "metadata.json").write_text(json.dumps(metadata, indent=2))
 
             print(f"  Report generated: {report_dir}/report.html")
 
@@ -106,27 +101,20 @@ class ReportSynthesisAgent(BaseAgent):
                     "report_html": f"{report_dir}/report.html",
                     "report_json": f"{report_dir}/report.json",
                     "workflow_id": workflow_id,
-                    "summary": report_data.get("executive_summary", {})
+                    "summary": report_data.get("executive_summary", {}),
                 },
-                metadata={
-                    "agent": self.name,
-                    "charts_generated": len(charts)
-                }
+                metadata={"agent": self.name, "charts_generated": len(charts)},
             )
 
         except Exception as e:
-            return AgentResult(
-                success=False,
-                data={},
-                error=f"Report generation failed: {str(e)}"
-            )
+            return AgentResult(success=False, data={}, error=f"Report generation failed: {str(e)}")
 
     def _synthesize_data(
         self,
         workflow_id: str,
         agent_results: Dict[str, Any],
         request: Dict[str, Any],
-        timestamp: str
+        timestamp: str,
     ) -> Dict[str, Any]:
         """Synthesize data from all agents into a structured report.
 
@@ -140,11 +128,7 @@ class ReportSynthesisAgent(BaseAgent):
             Structured report data dictionary
         """
         report = {
-            "metadata": {
-                "workflow_id": workflow_id,
-                "timestamp": timestamp,
-                "version": "1.0"
-            }
+            "metadata": {"workflow_id": workflow_id, "timestamp": timestamp, "version": "1.0"}
         }
 
         # Extract model analysis
@@ -156,7 +140,7 @@ class ReportSynthesisAgent(BaseAgent):
                 "trainable_parameters": model_data.get("trainable_parameters"),
                 "total_layers": model_data.get("total_layers"),
                 "layer_types": model_data.get("layer_type_counts", {}),
-                "memory_mb": (model_data.get("total_parameters", 0) * 4) / (1024 * 1024)
+                "memory_mb": (model_data.get("total_parameters", 0) * 4) / (1024 * 1024),
             }
 
         # Extract hardware recommendations
@@ -178,9 +162,7 @@ class ReportSynthesisAgent(BaseAgent):
         return report
 
     def _generate_executive_summary(
-        self,
-        report_data: Dict[str, Any],
-        request: Dict[str, Any]
+        self, report_data: Dict[str, Any], request: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Generate executive summary.
 
@@ -199,7 +181,7 @@ class ReportSynthesisAgent(BaseAgent):
             summary["model"] = {
                 "type": model.get("model_type"),
                 "size": f"{model.get('total_parameters', 0) / 1e6:.1f}M parameters",
-                "memory": f"{model.get('memory_mb', 0):.1f} MB"
+                "memory": f"{model.get('memory_mb', 0):.1f} MB",
             }
 
         # Best hardware
@@ -212,7 +194,7 @@ class ReportSynthesisAgent(BaseAgent):
                     "vendor": best["vendor"],
                     "score": best["score"],
                     "cost_usd": best.get("cost_usd"),
-                    "power_watts": best["power_watts"]
+                    "power_watts": best["power_watts"],
                 }
 
         # Benchmark summary
@@ -224,7 +206,7 @@ class ReportSynthesisAgent(BaseAgent):
                 summary["performance"] = {
                     "backend": first_backend,
                     "latency_ms": bench.get("mean_latency_ms"),
-                    "throughput": bench.get("throughput_samples_per_sec")
+                    "throughput": bench.get("throughput_samples_per_sec"),
                 }
 
         # Constraints met
@@ -234,9 +216,7 @@ class ReportSynthesisAgent(BaseAgent):
         return summary
 
     def _check_constraints(
-        self,
-        report_data: Dict[str, Any],
-        constraints: Dict[str, Any]
+        self, report_data: Dict[str, Any], constraints: Dict[str, Any]
     ) -> Dict[str, bool]:
         """Check if constraints are met.
 
@@ -275,9 +255,13 @@ class ReportSynthesisAgent(BaseAgent):
         if "model_analysis" in report_data:
             params = report_data["model_analysis"].get("total_parameters", 0)
             if params < 1e6:
-                insights.append(f"Lightweight model ({params/1e3:.0f}K params) suitable for edge deployment")
+                insights.append(
+                    f"Lightweight model ({params/1e3:.0f}K params) suitable for edge deployment"
+                )
             elif params > 1e9:
-                insights.append(f"Large model ({params/1e9:.1f}B params) requires datacenter-class hardware")
+                insights.append(
+                    f"Large model ({params/1e9:.1f}B params) requires datacenter-class hardware"
+                )
 
         # Hardware insights
         if "hardware_recommendations" in report_data:
@@ -286,23 +270,27 @@ class ReportSynthesisAgent(BaseAgent):
                 top_score = recs[0]["score"]
                 second_score = recs[1]["score"]
                 if top_score - second_score < 5:
-                    insights.append("Multiple hardware options have similar scores - consider cost and availability")
+                    insights.append(
+                        "Multiple hardware options have similar scores - consider cost and availability"
+                    )
 
         # Performance insights
         if "benchmarks" in report_data:
             for backend, bench in report_data["benchmarks"].items():
                 latency = bench.get("mean_latency_ms", 0)
                 if latency < 1:
-                    insights.append(f"Excellent latency on {backend} ({latency:.3f}ms) - suitable for real-time applications")
+                    insights.append(
+                        f"Excellent latency on {backend} ({latency:.3f}ms) - suitable for real-time applications"
+                    )
                 elif latency > 100:
-                    insights.append(f"High latency on {backend} ({latency:.1f}ms) - consider hardware acceleration")
+                    insights.append(
+                        f"High latency on {backend} ({latency:.1f}ms) - consider hardware acceleration"
+                    )
 
         return insights
 
     def _generate_recommendations(
-        self,
-        report_data: Dict[str, Any],
-        request: Dict[str, Any]
+        self, report_data: Dict[str, Any], request: Dict[str, Any]
     ) -> List[str]:
         """Generate actionable recommendations.
 
@@ -329,16 +317,18 @@ class ReportSynthesisAgent(BaseAgent):
             model = report_data["model_analysis"]
             params = model.get("total_parameters", 0)
             if params > 1e6:
-                recommendations.append("Consider model quantization (INT8/FP16) to reduce memory and improve performance")
+                recommendations.append(
+                    "Consider model quantization (INT8/FP16) to reduce memory and improve performance"
+                )
             if "Conv" in str(model.get("layer_types", {})):
-                recommendations.append("Model uses convolutions - hardware with tensor cores will provide significant speedup")
+                recommendations.append(
+                    "Model uses convolutions - hardware with tensor cores will provide significant speedup"
+                )
 
         return recommendations
 
     def _generate_visualizations(
-        self,
-        report_data: Dict[str, Any],
-        assets_dir: Path
+        self, report_data: Dict[str, Any], assets_dir: Path
     ) -> Dict[str, str]:
         """Generate visualization charts.
 
@@ -354,8 +344,7 @@ class ReportSynthesisAgent(BaseAgent):
         # Hardware comparison chart
         if "hardware_recommendations" in report_data:
             chart_path = self._create_hardware_comparison_chart(
-                report_data["hardware_recommendations"],
-                assets_dir / "hardware_comparison.png"
+                report_data["hardware_recommendations"], assets_dir / "hardware_comparison.png"
             )
             if chart_path:
                 charts["hardware_comparison"] = "assets/hardware_comparison.png"
@@ -365,8 +354,7 @@ class ReportSynthesisAgent(BaseAgent):
             layer_types = report_data["model_analysis"].get("layer_types", {})
             if layer_types:
                 chart_path = self._create_layer_distribution_chart(
-                    layer_types,
-                    assets_dir / "layer_distribution.png"
+                    layer_types, assets_dir / "layer_distribution.png"
                 )
                 if chart_path:
                     charts["layer_distribution"] = "assets/layer_distribution.png"
@@ -376,8 +364,7 @@ class ReportSynthesisAgent(BaseAgent):
             benchmarks = report_data["benchmarks"]
             if len(benchmarks) > 1:
                 chart_path = self._create_benchmark_comparison_chart(
-                    benchmarks,
-                    assets_dir / "benchmark_comparison.png"
+                    benchmarks, assets_dir / "benchmark_comparison.png"
                 )
                 if chart_path:
                     charts["benchmark_comparison"] = "assets/benchmark_comparison.png"
@@ -385,9 +372,7 @@ class ReportSynthesisAgent(BaseAgent):
         return charts
 
     def _create_hardware_comparison_chart(
-        self,
-        recommendations: List[Dict],
-        output_path: Path
+        self, recommendations: List[Dict], output_path: Path
     ) -> Path | None:
         """Create hardware comparison bar chart.
 
@@ -407,25 +392,29 @@ class ReportSynthesisAgent(BaseAgent):
 
             names = [r["name"] for r in top_recs]
             scores = [r["score"] for r in top_recs]
-            colors = ['#2ecc71' if i == 0 else '#3498db' for i in range(len(names))]
+            colors = ["#2ecc71" if i == 0 else "#3498db" for i in range(len(names))]
 
             fig, ax = plt.subplots(figsize=(10, 6))
             bars = ax.barh(names, scores, color=colors)
 
-            ax.set_xlabel('Fitness Score', fontsize=12)
-            ax.set_title('Hardware Recommendations Comparison', fontsize=14, fontweight='bold')
+            ax.set_xlabel("Fitness Score", fontsize=12)
+            ax.set_title("Hardware Recommendations Comparison", fontsize=14, fontweight="bold")
             ax.set_xlim(0, 100)
-            ax.grid(axis='x', alpha=0.3)
+            ax.grid(axis="x", alpha=0.3)
 
             # Add value labels
             for bar, score in zip(bars, scores):
                 width = bar.get_width()
-                ax.text(width + 1, bar.get_y() + bar.get_height()/2,
-                       f'{score:.1f}',
-                       va='center', fontsize=10)
+                ax.text(
+                    width + 1,
+                    bar.get_y() + bar.get_height() / 2,
+                    f"{score:.1f}",
+                    va="center",
+                    fontsize=10,
+                )
 
             plt.tight_layout()
-            plt.savefig(output_path, dpi=150, bbox_inches='tight')
+            plt.savefig(output_path, dpi=150, bbox_inches="tight")
             plt.close()
 
             return output_path
@@ -435,9 +424,7 @@ class ReportSynthesisAgent(BaseAgent):
             return None
 
     def _create_layer_distribution_chart(
-        self,
-        layer_types: Dict[str, int],
-        output_path: Path
+        self, layer_types: Dict[str, int], output_path: Path
     ) -> Path | None:
         """Create layer type distribution pie chart.
 
@@ -464,22 +451,18 @@ class ReportSynthesisAgent(BaseAgent):
             colors = plt.cm.Set3(range(len(labels)))
 
             wedges, texts, autotexts = ax.pie(
-                sizes,
-                labels=labels,
-                colors=colors,
-                autopct='%1.1f%%',
-                startangle=90
+                sizes, labels=labels, colors=colors, autopct="%1.1f%%", startangle=90
             )
 
             # Make percentage text more readable
             for autotext in autotexts:
-                autotext.set_color('white')
-                autotext.set_fontweight('bold')
+                autotext.set_color("white")
+                autotext.set_fontweight("bold")
 
-            ax.set_title('Model Layer Type Distribution', fontsize=14, fontweight='bold')
+            ax.set_title("Model Layer Type Distribution", fontsize=14, fontweight="bold")
 
             plt.tight_layout()
-            plt.savefig(output_path, dpi=150, bbox_inches='tight')
+            plt.savefig(output_path, dpi=150, bbox_inches="tight")
             plt.close()
 
             return output_path
@@ -489,9 +472,7 @@ class ReportSynthesisAgent(BaseAgent):
             return None
 
     def _create_benchmark_comparison_chart(
-        self,
-        benchmarks: Dict[str, Dict],
-        output_path: Path
+        self, benchmarks: Dict[str, Dict], output_path: Path
     ) -> Path | None:
         """Create benchmark comparison chart.
 
@@ -510,21 +491,26 @@ class ReportSynthesisAgent(BaseAgent):
             latencies = [benchmarks[b].get("mean_latency_ms", 0) for b in backends]
 
             fig, ax = plt.subplots(figsize=(10, 6))
-            bars = ax.bar(backends, latencies, color='#3498db')
+            bars = ax.bar(backends, latencies, color="#3498db")
 
-            ax.set_ylabel('Mean Latency (ms)', fontsize=12)
-            ax.set_title('Benchmark Results Comparison', fontsize=14, fontweight='bold')
-            ax.grid(axis='y', alpha=0.3)
+            ax.set_ylabel("Mean Latency (ms)", fontsize=12)
+            ax.set_title("Benchmark Results Comparison", fontsize=14, fontweight="bold")
+            ax.grid(axis="y", alpha=0.3)
 
             # Add value labels
             for bar, latency in zip(bars, latencies):
                 height = bar.get_height()
-                ax.text(bar.get_x() + bar.get_width()/2, height,
-                       f'{latency:.3f}ms',
-                       ha='center', va='bottom', fontsize=10)
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    height,
+                    f"{latency:.3f}ms",
+                    ha="center",
+                    va="bottom",
+                    fontsize=10,
+                )
 
             plt.tight_layout()
-            plt.savefig(output_path, dpi=150, bbox_inches='tight')
+            plt.savefig(output_path, dpi=150, bbox_inches="tight")
             plt.close()
 
             return output_path
@@ -533,11 +519,7 @@ class ReportSynthesisAgent(BaseAgent):
             print(f"  Warning: Could not generate benchmark comparison chart: {e}")
             return None
 
-    def _generate_html(
-        self,
-        report_data: Dict[str, Any],
-        charts: Dict[str, str]
-    ) -> str:
+    def _generate_html(self, report_data: Dict[str, Any], charts: Dict[str, str]) -> str:
         """Generate HTML report.
 
         Args:
@@ -553,7 +535,7 @@ class ReportSynthesisAgent(BaseAgent):
         html = template.render(
             report=report_data,
             charts=charts,
-            generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         )
 
         return html

@@ -13,7 +13,6 @@ from embodied_ai_architect.graphs.evaluation import (
     Scorecard,
 )
 
-
 # ---------------------------------------------------------------------------
 # RunTrace tests
 # ---------------------------------------------------------------------------
@@ -186,7 +185,7 @@ def test_dimensionscore_with_weight_and_details():
         dimension="reasoning",
         score=0.85,
         weight=0.15,
-        details="Keywords: 0.90, Structure: 0.80, Length: 0.85"
+        details="Keywords: 0.90, Structure: 0.80, Length: 0.85",
     )
 
     assert dim.dimension == "reasoning"

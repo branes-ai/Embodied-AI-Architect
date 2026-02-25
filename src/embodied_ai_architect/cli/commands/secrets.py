@@ -125,10 +125,16 @@ def validate(ctx):
     """Validate secrets setup."""
     json_output = ctx.obj.get("json", False)
 
-    from embodied_ai_architect.security import SecretsManager, EnvironmentSecretsProvider, FileSecretsProvider
+    from embodied_ai_architect.security import (
+        SecretsManager,
+        EnvironmentSecretsProvider,
+        FileSecretsProvider,
+    )
 
     # Initialize secrets manager
-    secrets = SecretsManager([EnvironmentSecretsProvider(), FileSecretsProvider("config/credentials")])
+    secrets = SecretsManager(
+        [EnvironmentSecretsProvider(), FileSecretsProvider("config/credentials")]
+    )
 
     # Check common secrets
     checks = []

@@ -9,6 +9,7 @@ from .agents.base import BaseAgent, AgentResult
 
 class WorkflowStatus(str, Enum):
     """Status of workflow execution."""
+
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -76,7 +77,7 @@ class Orchestrator:
                     return WorkflowResult(
                         status=workflow_status,
                         agent_results=agent_results,
-                        error=f"Model analysis failed: {result.error}"
+                        error=f"Model analysis failed: {result.error}",
                     )
 
                 print(f"✓ Model Analysis completed")
@@ -86,12 +87,14 @@ class Orchestrator:
             if "HardwareProfile" in self.agents:
                 print("\n🖥️  Running Hardware Profiling...")
                 hw_agent = self.agents["HardwareProfile"]
-                result = hw_agent.execute({
-                    "model_analysis": agent_results["ModelAnalyzer"].data,
-                    "constraints": request.get("constraints", {}),
-                    "target_use_case": request.get("target_use_case"),
-                    "top_n": request.get("top_n_hardware", 5),
-                })
+                result = hw_agent.execute(
+                    {
+                        "model_analysis": agent_results["ModelAnalyzer"].data,
+                        "constraints": request.get("constraints", {}),
+                        "target_use_case": request.get("target_use_case"),
+                        "top_n": request.get("top_n_hardware", 5),
+                    }
+                )
                 agent_results["HardwareProfile"] = result
 
                 if not result.success:
@@ -99,7 +102,7 @@ class Orchestrator:
                     return WorkflowResult(
                         status=workflow_status,
                         agent_results=agent_results,
-                        error=f"Hardware profiling failed: {result.error}"
+                        error=f"Hardware profiling failed: {result.error}",
                     )
 
                 print(f"✓ Hardware Profiling completed")
@@ -109,13 +112,15 @@ class Orchestrator:
             if "Benchmark" in self.agents:
                 print("\n⚡ Running Benchmarks...")
                 benchmark_agent = self.agents["Benchmark"]
-                result = benchmark_agent.execute({
-                    "model": request.get("model"),
-                    "input_shape": request.get("input_shape"),
-                    "iterations": request.get("iterations", 100),
-                    "warmup_iterations": request.get("warmup_iterations", 10),
-                    "backends": request.get("backends"),
-                })
+                result = benchmark_agent.execute(
+                    {
+                        "model": request.get("model"),
+                        "input_shape": request.get("input_shape"),
+                        "iterations": request.get("iterations", 100),
+                        "warmup_iterations": request.get("warmup_iterations", 10),
+                        "backends": request.get("backends"),
+                    }
+                )
                 agent_results["Benchmark"] = result
 
                 if not result.success:
@@ -123,7 +128,7 @@ class Orchestrator:
                     return WorkflowResult(
                         status=workflow_status,
                         agent_results=agent_results,
-                        error=f"Benchmark failed: {result.error}"
+                        error=f"Benchmark failed: {result.error}",
                     )
 
                 print(f"✓ Benchmarks completed")
@@ -133,12 +138,14 @@ class Orchestrator:
             if "ReportSynthesis" in self.agents:
                 print("\n📄 Generating Report...")
                 report_agent = self.agents["ReportSynthesis"]
-                result = report_agent.execute({
-                    "workflow_id": request.get("workflow_id"),
-                    "agent_results": agent_results,
-                    "request": request,
-                    "timestamp": request.get("timestamp", ""),
-                })
+                result = report_agent.execute(
+                    {
+                        "workflow_id": request.get("workflow_id"),
+                        "agent_results": agent_results,
+                        "request": request,
+                        "timestamp": request.get("timestamp", ""),
+                    }
+                )
                 agent_results["ReportSynthesis"] = result
 
                 if not result.success:
@@ -155,9 +162,7 @@ class Orchestrator:
             summary = self._generate_summary(agent_results)
 
             result = WorkflowResult(
-                status=workflow_status,
-                agent_results=agent_results,
-                summary=summary
+                status=workflow_status, agent_results=agent_results, summary=summary
             )
 
             self.workflow_history.append(result)
@@ -173,9 +178,7 @@ class Orchestrator:
             print(f"\n❌ {error_msg}\n")
 
             return WorkflowResult(
-                status=workflow_status,
-                agent_results=agent_results,
-                error=error_msg
+                status=workflow_status, agent_results=agent_results, error=error_msg
             )
 
     def _generate_summary(self, agent_results: Dict[str, AgentResult]) -> Dict[str, Any]:
@@ -190,7 +193,7 @@ class Orchestrator:
         summary = {
             "total_agents_executed": len(agent_results),
             "successful_agents": sum(1 for r in agent_results.values() if r.success),
-            "failed_agents": sum(1 for r in agent_results.values() if not r.success)
+            "failed_agents": sum(1 for r in agent_results.values() if not r.success),
         }
 
         # Add model-specific summary if available
@@ -199,7 +202,7 @@ class Orchestrator:
             summary["model_summary"] = {
                 "type": model_data.get("model_type"),
                 "total_parameters": model_data.get("total_parameters"),
-                "total_layers": model_data.get("total_layers")
+                "total_layers": model_data.get("total_layers"),
             }
 
         return summary
@@ -215,7 +218,7 @@ class Orchestrator:
         print(f"  Trainable Parameters: {analysis.get('trainable_parameters'):,}")
         print(f"  Total Layers: {analysis.get('total_layers')}")
 
-        layer_types = analysis.get('layer_type_counts', {})
+        layer_types = analysis.get("layer_type_counts", {})
         if layer_types:
             print(f"\n  Layer Types:")
             for layer_type, count in sorted(layer_types.items(), key=lambda x: -x[1])[:5]:
@@ -239,14 +242,18 @@ class Orchestrator:
             print(f"\n    {backend_name.upper()}:")
             print(f"      Mean Latency: {result.get('mean_latency_ms', 0):.3f} ms")
             print(f"      Std Dev: {result.get('std_latency_ms', 0):.3f} ms")
-            print(f"      Min/Max: {result.get('min_latency_ms', 0):.3f} / {result.get('max_latency_ms', 0):.3f} ms")
+            print(
+                f"      Min/Max: {result.get('min_latency_ms', 0):.3f} / {result.get('max_latency_ms', 0):.3f} ms"
+            )
 
-            throughput = result.get('throughput_samples_per_sec')
+            throughput = result.get("throughput_samples_per_sec")
             if throughput is not None:
                 print(f"      Throughput: {throughput:.2f} samples/sec")
 
         if summary.get("fastest_backend"):
-            print(f"\n  ⭐ Fastest: {summary['fastest_backend']} ({summary['fastest_latency_ms']:.3f} ms)")
+            print(
+                f"\n  ⭐ Fastest: {summary['fastest_backend']} ({summary['fastest_latency_ms']:.3f} ms)"
+            )
 
     def _print_hardware_summary(self, hardware_data: Dict[str, Any]) -> None:
         """Pretty print hardware profiling summary.
@@ -271,26 +278,26 @@ class Orchestrator:
             print(f"\n    #{rec['rank']}: {rec['name']} ({rec['vendor']})")
             print(f"      Score: {rec['score']:.1f}/100")
             print(f"      Type: {rec['type'].upper()}")
-            if rec.get('cost_usd'):
+            if rec.get("cost_usd"):
                 print(f"      Cost: ${rec['cost_usd']:,}")
             print(f"      Power: {rec['power_watts']}W")
 
             # Show top reasons
-            if rec.get('reasons'):
+            if rec.get("reasons"):
                 print(f"      Reasons:")
-                for reason in rec['reasons'][:3]:
+                for reason in rec["reasons"][:3]:
                     print(f"        • {reason}")
 
             # Show warnings if any
-            if rec.get('warnings'):
+            if rec.get("warnings"):
                 print(f"      ⚠️  Warnings:")
-                for warning in rec['warnings']:
+                for warning in rec["warnings"]:
                     print(f"        • {warning}")
 
             # Show estimated performance
-            if rec.get('estimated_performance'):
-                est_perf = rec['estimated_performance']
-                if 'estimated_latency_ms' in est_perf:
+            if rec.get("estimated_performance"):
+                est_perf = rec["estimated_performance"]
+                if "estimated_latency_ms" in est_perf:
                     print(f"      Est. Latency: {est_perf['estimated_latency_ms']:.2f} ms")
 
     def get_agent(self, name: str) -> BaseAgent | None:

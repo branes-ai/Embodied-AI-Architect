@@ -35,6 +35,7 @@ try:
         OperatorBenchmarkResult,
         ArchitectureBenchmarkResult,
     )
+
     HAS_SCHEMAS = True
 except ImportError:
     HAS_SCHEMAS = False
@@ -378,10 +379,13 @@ def list_architectures(platform_type: str | None = None) -> str:
         return json.dumps(output, indent=2)
 
     except Exception as e:
-        return json.dumps({
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def show_architecture(architecture_id: str) -> str:
@@ -395,24 +399,29 @@ def show_architecture(architecture_id: str) -> str:
         arch = registry.architectures.get(architecture_id)
 
         if not arch:
-            return json.dumps({
-                "error": f"Architecture '{architecture_id}' not found",
-                "available": list(registry.architectures.keys()),
-            }, indent=2)
+            return json.dumps(
+                {
+                    "error": f"Architecture '{architecture_id}' not found",
+                    "available": list(registry.architectures.keys()),
+                },
+                indent=2,
+            )
 
         # Get operator details
         operator_details = []
         for op_inst in arch.operators:
             op_entry = registry.operators.get(op_inst.operator_id)
-            operator_details.append({
-                "instance_id": op_inst.id,
-                "operator_id": op_inst.operator_id,
-                "operator_name": op_entry.name if op_entry else "Unknown",
-                "category": op_entry.category.value if op_entry else "unknown",
-                "rate_hz": op_inst.rate_hz,
-                "execution_target": op_inst.execution_target,
-                "config": op_inst.config if op_inst.config else None,
-            })
+            operator_details.append(
+                {
+                    "instance_id": op_inst.id,
+                    "operator_id": op_inst.operator_id,
+                    "operator_name": op_entry.name if op_entry else "Unknown",
+                    "category": op_entry.category.value if op_entry else "unknown",
+                    "rate_hz": op_inst.rate_hz,
+                    "execution_target": op_inst.execution_target,
+                    "config": op_inst.config if op_inst.config else None,
+                }
+            )
 
         # Generate Mermaid diagram
         mermaid = architecture_to_mermaid(arch)
@@ -457,10 +466,13 @@ def show_architecture(architecture_id: str) -> str:
         return json.dumps(output, indent=2)
 
     except Exception as e:
-        return json.dumps({
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def _get_operator_perf(
@@ -540,9 +552,12 @@ def analyze_architecture(
         arch = registry.architectures.get(architecture_id)
 
         if not arch:
-            return json.dumps({
-                "error": f"Architecture '{architecture_id}' not found",
-            }, indent=2)
+            return json.dumps(
+                {
+                    "error": f"Architecture '{architecture_id}' not found",
+                },
+                indent=2,
+            )
 
         # Check if hardware exists
         hardware = registry.hardware.get(hardware_id)
@@ -580,7 +595,7 @@ def analyze_architecture(
             # Calculate rate feasibility
             target_rate = op_inst.rate_hz
             if target_rate:
-                max_rate = 1000.0 / latency_ms if latency_ms > 0 else float('inf')
+                max_rate = 1000.0 / latency_ms if latency_ms > 0 else float("inf")
                 rate_feasible = max_rate >= target_rate
             else:
                 max_rate = None
@@ -669,12 +684,8 @@ def analyze_architecture(
                     f"Optimize or replace '{bottleneck_op}' operator ({bottleneck_latency:.1f}ms)"
                 )
             if latency_margin and latency_margin < -20:
-                suggestions.append(
-                    "Consider using a faster variant or more powerful hardware"
-                )
-            suggestions.append(
-                "Check if operators can run in parallel to reduce critical path"
-            )
+                suggestions.append("Consider using a faster variant or more powerful hardware")
+            suggestions.append("Check if operators can run in parallel to reduce critical path")
 
         # Create result
         result = ArchitectureAnalysisResult(
@@ -721,13 +732,19 @@ def analyze_architecture(
             },
             "constraints": {
                 "latency_target_ms": result.latency_target_ms,
-                "latency_margin_pct": round(result.latency_margin_pct, 1) if result.latency_margin_pct else None,
+                "latency_margin_pct": (
+                    round(result.latency_margin_pct, 1) if result.latency_margin_pct else None
+                ),
                 "power_budget_w": result.power_budget_w,
-                "power_margin_pct": round(result.power_margin_pct, 1) if result.power_margin_pct else None,
+                "power_margin_pct": (
+                    round(result.power_margin_pct, 1) if result.power_margin_pct else None
+                ),
             },
             "bottleneck": {
                 "operator": result.bottleneck_operator,
-                "latency_ms": round(result.bottleneck_latency_ms, 2) if result.bottleneck_latency_ms else None,
+                "latency_ms": (
+                    round(result.bottleneck_latency_ms, 2) if result.bottleneck_latency_ms else None
+                ),
                 "type": result.bottleneck_type,
             },
             "critical_path": result.critical_path,
@@ -759,11 +776,14 @@ def analyze_architecture(
         return json.dumps(output, indent=2)
 
     except Exception as e:
-        return json.dumps({
-            "verdict": "UNKNOWN",
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "verdict": "UNKNOWN",
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def check_scheduling(
@@ -781,9 +801,12 @@ def check_scheduling(
         arch = registry.architectures.get(architecture_id)
 
         if not arch:
-            return json.dumps({
-                "error": f"Architecture '{architecture_id}' not found",
-            }, indent=2)
+            return json.dumps(
+                {
+                    "error": f"Architecture '{architecture_id}' not found",
+                },
+                indent=2,
+            )
 
         # Apply variant if specified
         operator_id_map, config_map = _apply_variant(arch, variant_id, registry)
@@ -820,7 +843,7 @@ def check_scheduling(
 
             if target_rate:
                 # Maximum rate = 1 / latency
-                max_rate = 1000.0 / latency_ms if latency_ms > 0 else float('inf')
+                max_rate = 1000.0 / latency_ms if latency_ms > 0 else float("inf")
                 achievable = max_rate >= target_rate
                 margin = ((max_rate - target_rate) / target_rate) * 100 if target_rate > 0 else 100
 
@@ -840,14 +863,16 @@ def check_scheduling(
             else:
                 limiting = None
 
-            rate_analysis.append(RateFeasibility(
-                operator_instance_id=op_inst.id,
-                target_rate_hz=target_rate or 0.0,
-                achievable=achievable,
-                actual_rate_hz=max_rate,
-                margin_pct=margin,
-                limiting_factor=limiting,
-            ))
+            rate_analysis.append(
+                RateFeasibility(
+                    operator_instance_id=op_inst.id,
+                    target_rate_hz=target_rate or 0.0,
+                    achievable=achievable,
+                    actual_rate_hz=max_rate,
+                    margin_pct=margin,
+                    limiting_factor=limiting,
+                )
+            )
 
             if latency_ms > worst_latency:
                 worst_latency = latency_ms
@@ -858,9 +883,7 @@ def check_scheduling(
             target_utilization_pct[target] = sum(util_list) * 100 if util_list else 0.0
 
         # Check if any target is oversubscribed
-        oversubscribed_targets = [
-            t for t, u in target_utilization_pct.items() if u > 100
-        ]
+        oversubscribed_targets = [t for t, u in target_utilization_pct.items() if u > 100]
 
         # Determine verdict
         if all_feasible and not oversubscribed_targets:
@@ -922,9 +945,7 @@ def check_scheduling(
         # For backward compatibility, extract CPU utilization
         cpu_util = target_utilization_pct.get("cpu", 0.0)
         # Sum all non-CPU accelerator utilization
-        accel_util = sum(
-            u for t, u in target_utilization_pct.items() if t != "cpu"
-        )
+        accel_util = sum(u for t, u in target_utilization_pct.items() if t != "cpu")
 
         result = SchedulingAnalysisResult(
             verdict=verdict,
@@ -979,11 +1000,14 @@ def check_scheduling(
         return json.dumps(output, indent=2)
 
     except Exception as e:
-        return json.dumps({
-            "verdict": "UNKNOWN",
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "verdict": "UNKNOWN",
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def _find_alternative_operators(
@@ -1012,15 +1036,13 @@ def _find_alternative_operators(
 
         # Check if it's a lighter variant (same subcategory or compatible)
         subcategory_match = (
-            hasattr(op_entry, 'subcategory') and
-            hasattr(op, 'subcategory') and
-            op_entry.subcategory == op.subcategory
+            hasattr(op_entry, "subcategory")
+            and hasattr(op, "subcategory")
+            and op_entry.subcategory == op.subcategory
         )
 
         # Or check for same base name (e.g., yolo_detector_n vs yolo_detector_s)
-        base_name_match = (
-            op_entry.id.rsplit('_', 1)[0] == op.id.rsplit('_', 1)[0]
-        )
+        base_name_match = op_entry.id.rsplit("_", 1)[0] == op.id.rsplit("_", 1)[0]
 
         if not (subcategory_match or base_name_match):
             continue
@@ -1030,15 +1052,17 @@ def _find_alternative_operators(
 
         if alt_latency < current_latency:
             reduction_pct = ((current_latency - alt_latency) / current_latency) * 100
-            alternatives.append({
-                "operator_id": op.id,
-                "operator_name": op.name,
-                "latency_ms": alt_latency,
-                "memory_mb": alt_memory,
-                "latency_reduction_pct": round(reduction_pct, 1),
-                "latency_improvement_ms": round(current_latency - alt_latency, 2),
-                "tags": op.tags[:3] if op.tags else [],
-            })
+            alternatives.append(
+                {
+                    "operator_id": op.id,
+                    "operator_name": op.name,
+                    "latency_ms": alt_latency,
+                    "memory_mb": alt_memory,
+                    "latency_reduction_pct": round(reduction_pct, 1),
+                    "latency_improvement_ms": round(current_latency - alt_latency, 2),
+                    "tags": op.tags[:3] if op.tags else [],
+                }
+            )
 
     # Sort by latency (fastest first)
     alternatives.sort(key=lambda x: x["latency_ms"])
@@ -1060,9 +1084,12 @@ def identify_bottleneck(
         arch = registry.architectures.get(architecture_id)
 
         if not arch:
-            return json.dumps({
-                "error": f"Architecture '{architecture_id}' not found",
-            }, indent=2)
+            return json.dumps(
+                {
+                    "error": f"Architecture '{architecture_id}' not found",
+                },
+                indent=2,
+            )
 
         # Apply variant if specified
         operator_id_map, config_map = _apply_variant(arch, variant_id, registry)
@@ -1086,16 +1113,18 @@ def identify_bottleneck(
 
             exec_target = _normalize_execution_target(op_inst.execution_target)
 
-            operator_analysis.append({
-                "instance_id": op_inst.id,
-                "operator_id": effective_op_id,
-                "latency_ms": latency_ms,
-                "memory_mb": memory_mb,
-                "power_w": power_w,
-                "compute_flops": compute_flops,
-                "execution_target": exec_target,
-                "op_entry": op_entry,  # Keep for alternative lookup
-            })
+            operator_analysis.append(
+                {
+                    "instance_id": op_inst.id,
+                    "operator_id": effective_op_id,
+                    "latency_ms": latency_ms,
+                    "memory_mb": memory_mb,
+                    "power_w": power_w,
+                    "compute_flops": compute_flops,
+                    "execution_target": exec_target,
+                    "op_entry": op_entry,  # Keep for alternative lookup
+                }
+            )
             total_latency += latency_ms
 
         # Find the bottleneck (operator with highest latency)
@@ -1177,17 +1206,24 @@ def identify_bottleneck(
                 f"Bottleneck: {bottleneck['instance_id']} ({bottleneck['operator_id']}) "
                 f"takes {bottleneck['latency_ms']:.1f}ms ({bottleneck_pct:.0f}% of total). "
                 f"Type: {bottleneck_type}. "
-                + (f"{len(alternatives)} faster alternatives available." if alternatives else "No direct alternatives in catalog.")
+                + (
+                    f"{len(alternatives)} faster alternatives available."
+                    if alternatives
+                    else "No direct alternatives in catalog."
+                )
             ),
         }
 
         return json.dumps(output, indent=2, default=str)
 
     except Exception as e:
-        return json.dumps({
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def suggest_optimizations(
@@ -1206,9 +1242,12 @@ def suggest_optimizations(
         arch = registry.architectures.get(architecture_id)
 
         if not arch:
-            return json.dumps({
-                "error": f"Architecture '{architecture_id}' not found",
-            }, indent=2)
+            return json.dumps(
+                {
+                    "error": f"Architecture '{architecture_id}' not found",
+                },
+                indent=2,
+            )
 
         # Use architecture's target if not specified
         if target_latency_ms is None:
@@ -1238,14 +1277,16 @@ def suggest_optimizations(
 
             exec_target = _normalize_execution_target(op_inst.execution_target)
 
-            operator_analysis.append({
-                "instance_id": op_inst.id,
-                "operator_id": effective_op_id,
-                "latency_ms": latency_ms,
-                "memory_mb": memory_mb,
-                "execution_target": exec_target,
-                "op_entry": op_entry,
-            })
+            operator_analysis.append(
+                {
+                    "instance_id": op_inst.id,
+                    "operator_id": effective_op_id,
+                    "latency_ms": latency_ms,
+                    "memory_mb": memory_mb,
+                    "execution_target": exec_target,
+                    "op_entry": op_entry,
+                }
+            )
 
             total_latency += latency_ms
             total_memory = max(total_memory, memory_mb)
@@ -1267,39 +1308,45 @@ def suggest_optimizations(
                 if alternatives:
                     best_alt = alternatives[0]
                     new_total = total_latency - op["latency_ms"] + best_alt["latency_ms"]
-                    suggestions.append({
-                        "type": "operator_swap",
-                        "priority": "high" if op["latency_ms"] > total_latency * 0.3 else "medium",
-                        "operator_instance": op["instance_id"],
-                        "current_operator": op["operator_id"],
-                        "suggested_operator": best_alt["operator_id"],
-                        "current_latency_ms": round(op["latency_ms"], 2),
-                        "new_latency_ms": round(best_alt["latency_ms"], 2),
-                        "improvement_ms": round(op["latency_ms"] - best_alt["latency_ms"], 2),
-                        "new_total_latency_ms": round(new_total, 2),
-                        "description": (
-                            f"Replace {op['operator_id']} with {best_alt['operator_id']} "
-                            f"to save {op['latency_ms'] - best_alt['latency_ms']:.1f}ms "
-                            f"({best_alt['latency_reduction_pct']:.0f}% reduction)"
-                        ),
-                    })
+                    suggestions.append(
+                        {
+                            "type": "operator_swap",
+                            "priority": (
+                                "high" if op["latency_ms"] > total_latency * 0.3 else "medium"
+                            ),
+                            "operator_instance": op["instance_id"],
+                            "current_operator": op["operator_id"],
+                            "suggested_operator": best_alt["operator_id"],
+                            "current_latency_ms": round(op["latency_ms"], 2),
+                            "new_latency_ms": round(best_alt["latency_ms"], 2),
+                            "improvement_ms": round(op["latency_ms"] - best_alt["latency_ms"], 2),
+                            "new_total_latency_ms": round(new_total, 2),
+                            "description": (
+                                f"Replace {op['operator_id']} with {best_alt['operator_id']} "
+                                f"to save {op['latency_ms'] - best_alt['latency_ms']:.1f}ms "
+                                f"({best_alt['latency_reduction_pct']:.0f}% reduction)"
+                            ),
+                        }
+                    )
 
         # 2. Quantization suggestions (for GPU operators with high memory)
         for op in operator_analysis:
             if op["execution_target"] in ["gpu", "npu"] and op["memory_mb"] > 200:
-                suggestions.append({
-                    "type": "quantization",
-                    "priority": "medium",
-                    "operator_instance": op["instance_id"],
-                    "current_memory_mb": round(op["memory_mb"], 1),
-                    "estimated_memory_mb": round(op["memory_mb"] * 0.5, 1),
-                    "estimated_speedup": "1.5-2x",
-                    "description": (
-                        f"Apply INT8 quantization to {op['operator_id']} "
-                        f"to reduce memory from {op['memory_mb']:.0f}MB to ~{op['memory_mb']*0.5:.0f}MB "
-                        f"and potentially improve throughput 1.5-2x"
-                    ),
-                })
+                suggestions.append(
+                    {
+                        "type": "quantization",
+                        "priority": "medium",
+                        "operator_instance": op["instance_id"],
+                        "current_memory_mb": round(op["memory_mb"], 1),
+                        "estimated_memory_mb": round(op["memory_mb"] * 0.5, 1),
+                        "estimated_speedup": "1.5-2x",
+                        "description": (
+                            f"Apply INT8 quantization to {op['operator_id']} "
+                            f"to reduce memory from {op['memory_mb']:.0f}MB to ~{op['memory_mb']*0.5:.0f}MB "
+                            f"and potentially improve throughput 1.5-2x"
+                        ),
+                    }
+                )
 
         # 3. Hardware upgrade suggestions
         if target_latency_ms and total_latency > target_latency_ms:
@@ -1309,60 +1356,70 @@ def suggest_optimizations(
             # Suggest more powerful hardware
             hardware_upgrades = []
             if "Nano" in hardware_id:
-                hardware_upgrades.append({
-                    "hardware_id": "Jetson-Orin-AGX",
-                    "expected_speedup": "2-3x",
-                    "reason": "More CUDA cores and memory bandwidth",
-                })
+                hardware_upgrades.append(
+                    {
+                        "hardware_id": "Jetson-Orin-AGX",
+                        "expected_speedup": "2-3x",
+                        "reason": "More CUDA cores and memory bandwidth",
+                    }
+                )
             elif "Orin" in hardware_id and "AGX" not in hardware_id:
-                hardware_upgrades.append({
-                    "hardware_id": "Jetson-Orin-AGX",
-                    "expected_speedup": "1.5-2x",
-                    "reason": "Higher GPU frequency and more cores",
-                })
+                hardware_upgrades.append(
+                    {
+                        "hardware_id": "Jetson-Orin-AGX",
+                        "expected_speedup": "1.5-2x",
+                        "reason": "Higher GPU frequency and more cores",
+                    }
+                )
 
             if hardware_upgrades:
                 for hw in hardware_upgrades:
-                    suggestions.append({
-                        "type": "hardware_upgrade",
-                        "priority": "high" if gap_pct > 50 else "medium",
-                        "current_hardware": hardware_id,
-                        "suggested_hardware": hw["hardware_id"],
-                        "expected_speedup": hw["expected_speedup"],
-                        "reason": hw["reason"],
-                        "description": (
-                            f"Upgrade from {hardware_id} to {hw['hardware_id']} "
-                            f"for {hw['expected_speedup']} speedup"
-                        ),
-                    })
+                    suggestions.append(
+                        {
+                            "type": "hardware_upgrade",
+                            "priority": "high" if gap_pct > 50 else "medium",
+                            "current_hardware": hardware_id,
+                            "suggested_hardware": hw["hardware_id"],
+                            "expected_speedup": hw["expected_speedup"],
+                            "reason": hw["reason"],
+                            "description": (
+                                f"Upgrade from {hardware_id} to {hw['hardware_id']} "
+                                f"for {hw['expected_speedup']} speedup"
+                            ),
+                        }
+                    )
 
         # 4. Parallelization suggestions
         if len(gpu_ops) > 1:
-            suggestions.append({
-                "type": "parallelization",
-                "priority": "low",
-                "operators": gpu_ops,
-                "description": (
-                    f"Consider running {len(gpu_ops)} GPU operators in parallel "
-                    f"using CUDA streams if data dependencies allow"
-                ),
-            })
+            suggestions.append(
+                {
+                    "type": "parallelization",
+                    "priority": "low",
+                    "operators": gpu_ops,
+                    "description": (
+                        f"Consider running {len(gpu_ops)} GPU operators in parallel "
+                        f"using CUDA streams if data dependencies allow"
+                    ),
+                }
+            )
 
         # 5. Check existing variants
         if arch.variants and not variant_id:
             for var in arch.variants:
                 if var.target_hardware and hardware_id in var.target_hardware:
-                    suggestions.append({
-                        "type": "use_variant",
-                        "priority": "high",
-                        "variant_id": var.id,
-                        "variant_name": var.name,
-                        "expected_latency_ms": var.expected_latency_ms,
-                        "description": (
-                            f"Use pre-defined variant '{var.name}' "
-                            f"optimized for {hardware_id}"
-                        ),
-                    })
+                    suggestions.append(
+                        {
+                            "type": "use_variant",
+                            "priority": "high",
+                            "variant_id": var.id,
+                            "variant_name": var.name,
+                            "expected_latency_ms": var.expected_latency_ms,
+                            "description": (
+                                f"Use pre-defined variant '{var.name}' "
+                                f"optimized for {hardware_id}"
+                            ),
+                        }
+                    )
 
         # Sort by priority
         priority_order = {"high": 0, "medium": 1, "low": 2}
@@ -1382,29 +1439,39 @@ def suggest_optimizations(
                 "total_latency_ms": round(total_latency, 2),
                 "target_latency_ms": target_latency_ms,
                 "meets_target": total_latency <= target_latency_ms if target_latency_ms else None,
-                "gap_ms": round(total_latency - target_latency_ms, 2) if target_latency_ms else None,
+                "gap_ms": (
+                    round(total_latency - target_latency_ms, 2) if target_latency_ms else None
+                ),
             },
             "potential_improvement": {
                 "latency_savings_ms": round(potential_savings, 2),
                 "new_latency_ms": round(potential_latency, 2),
-                "would_meet_target": potential_latency <= target_latency_ms if target_latency_ms else None,
+                "would_meet_target": (
+                    potential_latency <= target_latency_ms if target_latency_ms else None
+                ),
             },
             "suggestions": suggestions,
             "summary": (
                 f"Found {len(suggestions)} optimization opportunities. "
-                + (f"Potential latency reduction: {potential_savings:.1f}ms "
-                   f"({potential_savings/total_latency*100:.0f}%)."
-                   if potential_savings > 0 else "")
+                + (
+                    f"Potential latency reduction: {potential_savings:.1f}ms "
+                    f"({potential_savings/total_latency*100:.0f}%)."
+                    if potential_savings > 0
+                    else ""
+                )
             ),
         }
 
         return json.dumps(output, indent=2, default=str)
 
     except Exception as e:
-        return json.dumps({
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def compare_variants(
@@ -1422,15 +1489,16 @@ def compare_variants(
         arch = registry.architectures.get(architecture_id)
 
         if not arch:
-            return json.dumps({
-                "error": f"Architecture '{architecture_id}' not found",
-            }, indent=2)
+            return json.dumps(
+                {
+                    "error": f"Architecture '{architecture_id}' not found",
+                },
+                indent=2,
+            )
 
         # Determine which variants to compare
         if variant_ids:
-            variants_to_compare = [
-                v for v in arch.variants if v.id in variant_ids
-            ]
+            variants_to_compare = [v for v in arch.variants if v.id in variant_ids]
         else:
             variants_to_compare = arch.variants
 
@@ -1439,50 +1507,55 @@ def compare_variants(
 
         # Analyze base architecture
         base_analysis = json.loads(analyze_architecture(architecture_id, hardware_id))
-        results.append({
-            "id": "base",
-            "name": arch.name + " (base)",
-            "latency_ms": base_analysis.get("metrics", {}).get("end_to_end_latency_ms"),
-            "throughput_fps": base_analysis.get("metrics", {}).get("throughput_fps"),
-            "power_w": base_analysis.get("metrics", {}).get("total_power_w"),
-            "memory_mb": base_analysis.get("metrics", {}).get("total_memory_mb"),
-            "verdict": base_analysis.get("verdict"),
-            "meets_target": base_analysis.get("verdict") == "PASS",
-        })
+        results.append(
+            {
+                "id": "base",
+                "name": arch.name + " (base)",
+                "latency_ms": base_analysis.get("metrics", {}).get("end_to_end_latency_ms"),
+                "throughput_fps": base_analysis.get("metrics", {}).get("throughput_fps"),
+                "power_w": base_analysis.get("metrics", {}).get("total_power_w"),
+                "memory_mb": base_analysis.get("metrics", {}).get("total_memory_mb"),
+                "verdict": base_analysis.get("verdict"),
+                "meets_target": base_analysis.get("verdict") == "PASS",
+            }
+        )
 
         # Analyze each variant
         for var in variants_to_compare:
-            var_analysis = json.loads(
-                analyze_architecture(architecture_id, hardware_id, var.id)
+            var_analysis = json.loads(analyze_architecture(architecture_id, hardware_id, var.id))
+            results.append(
+                {
+                    "id": var.id,
+                    "name": var.name,
+                    "description": var.description,
+                    "target_hardware": var.target_hardware,
+                    "latency_ms": var_analysis.get("metrics", {}).get("end_to_end_latency_ms"),
+                    "throughput_fps": var_analysis.get("metrics", {}).get("throughput_fps"),
+                    "power_w": var_analysis.get("metrics", {}).get("total_power_w"),
+                    "memory_mb": var_analysis.get("metrics", {}).get("total_memory_mb"),
+                    "verdict": var_analysis.get("verdict"),
+                    "meets_target": var_analysis.get("verdict") == "PASS",
+                    "expected_latency_ms": var.expected_latency_ms,
+                    "operator_overrides": var.operator_overrides,
+                }
             )
-            results.append({
-                "id": var.id,
-                "name": var.name,
-                "description": var.description,
-                "target_hardware": var.target_hardware,
-                "latency_ms": var_analysis.get("metrics", {}).get("end_to_end_latency_ms"),
-                "throughput_fps": var_analysis.get("metrics", {}).get("throughput_fps"),
-                "power_w": var_analysis.get("metrics", {}).get("total_power_w"),
-                "memory_mb": var_analysis.get("metrics", {}).get("total_memory_mb"),
-                "verdict": var_analysis.get("verdict"),
-                "meets_target": var_analysis.get("verdict") == "PASS",
-                "expected_latency_ms": var.expected_latency_ms,
-                "operator_overrides": var.operator_overrides,
-            })
 
         # Sort by latency (fastest first)
-        results.sort(key=lambda x: x.get("latency_ms") or float('inf'))
+        results.sort(key=lambda x: x.get("latency_ms") or float("inf"))
 
         # Find best option
         passing = [r for r in results if r.get("meets_target")]
         if passing:
-            best = min(passing, key=lambda x: x.get("latency_ms") or float('inf'))
-            recommendation = f"Recommended: '{best['name']}' - fastest option that meets requirements"
+            best = min(passing, key=lambda x: x.get("latency_ms") or float("inf"))
+            recommendation = (
+                f"Recommended: '{best['name']}' - fastest option that meets requirements"
+            )
         else:
             best = results[0] if results else None
             recommendation = (
                 f"No variant meets target. '{best['name']}' is fastest but still exceeds target."
-                if best else "No variants available"
+                if best
+                else "No variants available"
             )
 
         output = {
@@ -1501,10 +1574,13 @@ def compare_variants(
         return json.dumps(output, indent=2, default=str)
 
     except Exception as e:
-        return json.dumps({
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def _simulate_operator_benchmark(
@@ -1569,9 +1645,12 @@ def benchmark_architecture(
         arch = registry.architectures.get(architecture_id)
 
         if not arch:
-            return json.dumps({
-                "error": f"Architecture '{architecture_id}' not found",
-            }, indent=2)
+            return json.dumps(
+                {
+                    "error": f"Architecture '{architecture_id}' not found",
+                },
+                indent=2,
+            )
 
         # Check if hardware exists
         hardware = registry.hardware.get(hardware_id)
@@ -1592,9 +1671,7 @@ def benchmark_architecture(
             op_entry = registry.operators.get(effective_op_id)
 
             if op_entry:
-                estimated_latency, memory_mb, power_w = _get_operator_perf(
-                    op_entry, hardware_id
-                )
+                estimated_latency, memory_mb, power_w = _get_operator_perf(op_entry, hardware_id)
             else:
                 estimated_latency = 1.0
                 memory_mb = 10.0
@@ -1641,7 +1718,8 @@ def benchmark_architecture(
         # Calculate overall estimate error
         overall_estimate_error = (
             (total_measured_latency - total_estimated_latency) / total_estimated_latency * 100
-            if total_estimated_latency > 0 else 0
+            if total_estimated_latency > 0
+            else 0
         )
 
         # Determine verdict
@@ -1671,8 +1749,7 @@ def benchmark_architecture(
 
         # Calculate bottleneck contribution
         bottleneck_contribution = (
-            (bottleneck_latency / total_measured_latency) * 100
-            if total_measured_latency > 0 else 0
+            (bottleneck_latency / total_measured_latency) * 100 if total_measured_latency > 0 else 0
         )
 
         # Create result
@@ -1725,7 +1802,9 @@ def benchmark_architecture(
                 "end_to_end_latency_ms": round(result.measured_latency_ms, 2),
                 "latency_std_ms": round(result.measured_latency_std_ms, 2),
                 "throughput_fps": round(result.measured_throughput_fps, 1),
-                "peak_memory_mb": round(result.measured_memory_mb, 1) if result.measured_memory_mb else None,
+                "peak_memory_mb": (
+                    round(result.measured_memory_mb, 1) if result.measured_memory_mb else None
+                ),
             },
             "comparison_to_estimate": {
                 "estimated_latency_ms": round(result.estimated_latency_ms, 2),
@@ -1734,7 +1813,9 @@ def benchmark_architecture(
             "constraint_check": {
                 "target_latency_ms": result.latency_target_ms,
                 "meets_target": result.meets_latency_target,
-                "margin_pct": round(result.latency_margin_pct, 1) if result.latency_margin_pct else None,
+                "margin_pct": (
+                    round(result.latency_margin_pct, 1) if result.latency_margin_pct else None
+                ),
             },
             "bottleneck": {
                 "operator": result.measured_bottleneck_operator,
@@ -1749,8 +1830,12 @@ def benchmark_architecture(
                     "measured_ms": round(r.mean_latency_ms, 2),
                     "std_ms": round(r.std_latency_ms, 2),
                     "p95_ms": round(r.p95_latency_ms, 2) if r.p95_latency_ms else None,
-                    "estimated_ms": round(r.estimated_latency_ms, 2) if r.estimated_latency_ms else None,
-                    "estimate_error_pct": round(r.estimate_error_pct, 1) if r.estimate_error_pct else None,
+                    "estimated_ms": (
+                        round(r.estimated_latency_ms, 2) if r.estimated_latency_ms else None
+                    ),
+                    "estimate_error_pct": (
+                        round(r.estimate_error_pct, 1) if r.estimate_error_pct else None
+                    ),
                 }
                 for r in result.operator_results
             ],
@@ -1760,11 +1845,14 @@ def benchmark_architecture(
         return json.dumps(output, indent=2, default=str)
 
     except Exception as e:
-        return json.dumps({
-            "verdict": "UNKNOWN",
-            "error": str(e),
-            "traceback": traceback.format_exc(),
-        }, indent=2)
+        return json.dumps(
+            {
+                "verdict": "UNKNOWN",
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+            },
+            indent=2,
+        )
 
 
 def create_architecture_tool_executors() -> dict[str, callable]:

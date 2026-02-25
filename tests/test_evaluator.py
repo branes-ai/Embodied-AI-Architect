@@ -24,14 +24,30 @@ def _make_trace(demo_name: str = "test", **kwargs) -> RunTrace:
             "nodes": {
                 "t1": {"agent": "workload_analyzer", "dependencies": [], "status": "completed"},
                 "t2": {"agent": "hw_explorer", "dependencies": ["t1"], "status": "completed"},
-                "t3": {"agent": "architecture_composer", "dependencies": ["t2"], "status": "completed"},
+                "t3": {
+                    "agent": "architecture_composer",
+                    "dependencies": ["t2"],
+                    "status": "completed",
+                },
                 "t4": {"agent": "ppa_assessor", "dependencies": ["t3"], "status": "completed"},
                 "t5": {"agent": "critic", "dependencies": ["t4"], "status": "completed"},
                 "t6": {"agent": "report_generator", "dependencies": ["t5"], "status": "completed"},
             },
         },
-        ppa_metrics={"power_watts": 4.5, "latency_ms": 30.0, "cost_usd": 25.0, "verdicts": {"power": "PASS", "latency": "PASS", "cost": "PASS"}},
-        tool_calls=["workload_analyzer", "hw_explorer", "architecture_composer", "ppa_assessor", "critic", "report_generator"],
+        ppa_metrics={
+            "power_watts": 4.5,
+            "latency_ms": 30.0,
+            "cost_usd": 25.0,
+            "verdicts": {"power": "PASS", "latency": "PASS", "cost": "PASS"},
+        },
+        tool_calls=[
+            "workload_analyzer",
+            "hw_explorer",
+            "architecture_composer",
+            "ppa_assessor",
+            "critic",
+            "report_generator",
+        ],
         design_rationale=[
             "[workload_analyzer] Analyzed drone perception workload",
             "[hw_explorer] Explored 6 hardware candidates for power-constrained drone",
@@ -61,8 +77,12 @@ def _make_gold(demo_name: str = "test", **kwargs) -> GoldStandard:
         },
         expected_ppa={"power_watts": 5.0, "latency_ms": 33.3, "cost_usd": 30.0},
         expected_tool_calls=[
-            "workload_analyzer", "hw_explorer", "architecture_composer",
-            "ppa_assessor", "critic", "report_generator",
+            "workload_analyzer",
+            "hw_explorer",
+            "architecture_composer",
+            "ppa_assessor",
+            "critic",
+            "report_generator",
         ],
         rationale_keywords=["drone", "perception", "power", "workload"],
         max_duration_seconds=30.0,
@@ -129,9 +149,7 @@ class TestAgenticEvaluator:
 
     def test_passing_threshold(self):
         gold = _make_gold()
-        evaluator = AgenticEvaluator(
-            gold_standards={"test": gold}, passing_threshold=0.99
-        )
+        evaluator = AgenticEvaluator(gold_standards={"test": gold}, passing_threshold=0.99)
         trace = _make_trace()
         scorecard = evaluator.evaluate_run(trace)
         # With very high threshold, likely fails
@@ -142,7 +160,11 @@ class TestAgenticEvaluator:
         initial = {"status": "planning", "history": []}
         final = {
             "status": "complete",
-            "task_graph": {"nodes": {"t1": {"agent": "workload_analyzer", "status": "completed", "dependencies": []}}},
+            "task_graph": {
+                "nodes": {
+                    "t1": {"agent": "workload_analyzer", "status": "completed", "dependencies": []}
+                }
+            },
             "ppa_metrics": {"power_watts": 5.0},
             "history": [{"agent": "workload_analyzer", "action": "Completed task 'analyze'"}],
             "design_rationale": ["[workload_analyzer] done"],

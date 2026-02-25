@@ -6,6 +6,7 @@ from typing import Any
 
 try:
     import anthropic
+
     HAS_ANTHROPIC = True
 except ImportError:
     HAS_ANTHROPIC = False
@@ -14,6 +15,7 @@ except ImportError:
 @dataclass
 class ToolCall:
     """Represents a tool call from the LLM."""
+
     id: str
     name: str
     args: dict[str, Any]
@@ -22,6 +24,7 @@ class ToolCall:
 @dataclass
 class LLMResponse:
     """Response from the LLM."""
+
     text: str = ""
     tool_calls: list[ToolCall] = field(default_factory=list)
     stop_reason: str = ""
@@ -49,8 +52,7 @@ class LLMClient:
         """
         if not HAS_ANTHROPIC:
             raise ImportError(
-                "anthropic package not installed. "
-                "Install with: pip install anthropic"
+                "anthropic package not installed. " "Install with: pip install anthropic"
             )
 
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")

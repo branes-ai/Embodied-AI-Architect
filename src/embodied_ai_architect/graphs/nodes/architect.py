@@ -12,7 +12,6 @@ from embodied_ai_architect.graphs.state import (
     is_over_budget,
 )
 
-
 # System prompt for the architect LLM
 ARCHITECT_SYSTEM_PROMPT = """You are an embedded systems architect optimizing a real-time perception pipeline.
 
@@ -86,12 +85,14 @@ def format_optimization_request(state: EmbodiedPipelineState) -> str:
     tracks = state.get("tracks", {})
     num_tracks = len(tracks.get("tracks", []))
 
-    lines.extend([
-        "",
-        f"Current workload:",
-        f"- Detections: {num_detections}",
-        f"- Active tracks: {num_tracks}",
-    ])
+    lines.extend(
+        [
+            "",
+            f"Current workload:",
+            f"- Detections: {num_detections}",
+            f"- Active tracks: {num_tracks}",
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -208,9 +209,7 @@ def create_architect_node(
             if auto_optimize:
                 updates = apply_suggestions(state, suggestions)
                 updates["_architect_reasoning"] = suggestions.get("reasoning", "")
-                updates["next_stage"] = state.get(
-                    "next_stage", PipelineStage.COMPLETE.value
-                )
+                updates["next_stage"] = state.get("next_stage", PipelineStage.COMPLETE.value)
                 return updates
             else:
                 # Just log suggestions without applying

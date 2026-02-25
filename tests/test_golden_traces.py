@@ -27,7 +27,9 @@ def _make_trace(**kwargs) -> RunTrace:
             },
         },
         ppa_metrics={
-            "power_watts": 5.0, "latency_ms": 30.0, "cost_usd": 25.0,
+            "power_watts": 5.0,
+            "latency_ms": 30.0,
+            "cost_usd": 25.0,
             "verdicts": {"power": "PASS", "latency": "PASS"},
         },
         tool_calls=["workload_analyzer", "hw_explorer"],
@@ -92,14 +94,20 @@ class TestCompareTraces:
         assert result.task_graph_match is False
 
     def test_ppa_regression_detected(self):
-        golden = _make_trace(ppa_metrics={
-            "power_watts": 5.0, "latency_ms": 30.0,
-            "verdicts": {"power": "PASS"},
-        })
-        current = _make_trace(ppa_metrics={
-            "power_watts": 6.5, "latency_ms": 30.0,  # >10% worse
-            "verdicts": {"power": "PASS"},
-        })
+        golden = _make_trace(
+            ppa_metrics={
+                "power_watts": 5.0,
+                "latency_ms": 30.0,
+                "verdicts": {"power": "PASS"},
+            }
+        )
+        current = _make_trace(
+            ppa_metrics={
+                "power_watts": 6.5,
+                "latency_ms": 30.0,  # >10% worse
+                "verdicts": {"power": "PASS"},
+            }
+        )
         result = compare_traces(current, golden)
         assert result.ppa_regression is True
         assert result.is_regression is True

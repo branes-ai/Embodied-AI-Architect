@@ -251,9 +251,10 @@ class TestProcessNodeStrategies:
         # Exhaust all workload/ip_blocks power strategies
         store = WorkingMemoryStore()
         for strat in OPTIMIZATION_STRATEGIES:
-            if strat["applies_to"] in ("workload_profile", "ip_blocks") and "power" in strat[
-                "applicable_when"
-            ]:
+            if (
+                strat["applies_to"] in ("workload_profile", "ip_blocks")
+                and "power" in strat["applicable_when"]
+            ):
                 store.record_attempt("design_optimizer", strat["name"], "tried", 0)
         state["working_memory"] = store.model_dump()
 

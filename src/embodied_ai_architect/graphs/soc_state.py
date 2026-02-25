@@ -30,7 +30,6 @@ from pydantic import BaseModel, Field
 
 from embodied_ai_architect.graphs.task_graph import TaskGraph
 
-
 # ---------------------------------------------------------------------------
 # Supporting types
 # ---------------------------------------------------------------------------
@@ -67,18 +66,14 @@ class DesignConstraints(BaseModel):
     max_latency_ms: Optional[float] = Field(
         default=None, description="End-to-end perception latency target in ms"
     )
-    min_fps: Optional[float] = Field(
-        default=None, description="Minimum frames per second"
-    )
+    min_fps: Optional[float] = Field(default=None, description="Minimum frames per second")
     latency_tier: Optional[str] = Field(
         default=None,
         description="Latency tier from embodied-schemas (e.g. 'real_time')",
     )
 
     # Area / cost
-    max_area_mm2: Optional[float] = Field(
-        default=None, description="Maximum die area in mm^2"
-    )
+    max_area_mm2: Optional[float] = Field(default=None, description="Maximum die area in mm^2")
     max_cost_usd: Optional[float] = Field(
         default=None, description="Maximum BOM cost at target volume"
     )
@@ -422,9 +417,7 @@ def get_task_result(state: SoCDesignState, task_id: str) -> dict[str, Any]:
     return graph.get_result(task_id)
 
 
-def get_dependency_results(
-    state: SoCDesignState, task: Any
-) -> dict[str, dict[str, Any]]:
+def get_dependency_results(state: SoCDesignState, task: Any) -> dict[str, dict[str, Any]]:
     """Get results from all dependencies of a task.
 
     Args:

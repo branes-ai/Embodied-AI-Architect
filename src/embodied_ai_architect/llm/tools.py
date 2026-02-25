@@ -31,6 +31,7 @@ try:
         get_architecture_tool_definitions,
         create_architecture_tool_executors,
     )
+
     HAS_ARCHITECTURE_TOOLS = True
 except ImportError:
     HAS_ARCHITECTURE_TOOLS = False
@@ -43,6 +44,7 @@ try:
         get_codebase_tool_definitions,
         create_codebase_tool_executors,
     )
+
     HAS_CODEBASE_TOOLS = True
 except ImportError:
     HAS_CODEBASE_TOOLS = False
@@ -55,6 +57,7 @@ try:
         get_optimization_tool_definitions,
         create_optimization_tool_executors,
     )
+
     HAS_MOO = True
 except ImportError:
     HAS_MOO = False
@@ -330,12 +333,14 @@ def create_tool_executors() -> dict[str, Callable]:
             if cost_limit_usd is not None:
                 constraints["cost_usd"] = cost_limit_usd
 
-            result = hardware_profiler.execute({
-                "model_analysis": model_analysis,
-                "constraints": constraints,
-                "target_use_case": use_case,
-                "top_n": top_n,
-            })
+            result = hardware_profiler.execute(
+                {
+                    "model_analysis": model_analysis,
+                    "constraints": constraints,
+                    "target_use_case": use_case,
+                    "top_n": top_n,
+                }
+            )
 
             if result.success:
                 return json.dumps(result.data, indent=2, default=str)
@@ -353,13 +358,15 @@ def create_tool_executors() -> dict[str, Callable]:
     ) -> str:
         """Execute benchmark."""
         try:
-            result = benchmark_agent.execute({
-                "model": model_path,
-                "backends": [backend],
-                "input_shape": input_shape,
-                "iterations": iterations,
-                "warmup_iterations": warmup_iterations,
-            })
+            result = benchmark_agent.execute(
+                {
+                    "model": model_path,
+                    "backends": [backend],
+                    "input_shape": input_shape,
+                    "iterations": iterations,
+                    "warmup_iterations": warmup_iterations,
+                }
+            )
 
             if result.success:
                 return json.dumps(result.data, indent=2, default=str)

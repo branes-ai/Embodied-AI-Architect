@@ -10,7 +10,6 @@ from embodied_ai_architect.graphs.eda_tools import (
     EDAToolchain,
 )
 
-
 SIMPLE_RTL = """\
 module counter #(
     parameter WIDTH = 8

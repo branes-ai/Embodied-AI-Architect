@@ -148,13 +148,13 @@ class PathFollower(Operator):
         local_y = -dx * np.sin(theta) + dy * np.cos(theta)
 
         # Distance to lookahead
-        L = np.sqrt(local_x ** 2 + local_y ** 2)
+        L = np.sqrt(local_x**2 + local_y**2)
 
         if L < 0.01:
             return 0.0, 0.0
 
         # Curvature = 2 * y / L^2
-        curvature = 2 * local_y / (L ** 2)
+        curvature = 2 * local_y / (L**2)
 
         # Velocity (reduce when turning sharply)
         v = self.max_linear_vel * (1 - abs(curvature) / 2)

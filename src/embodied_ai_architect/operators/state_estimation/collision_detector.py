@@ -44,7 +44,9 @@ class CollisionDetector(Operator):
         self.ego_radius = config.get("ego_radius", 0.5)
 
         self._is_setup = True
-        print(f"[CollisionDetector] Ready (critical={self.critical_distance}m, warning={self.warning_distance}m)")
+        print(
+            f"[CollisionDetector] Ready (critical={self.critical_distance}m, warning={self.warning_distance}m)"
+        )
 
     def process(self, inputs: dict[str, Any]) -> dict[str, Any]:
         """Detect collisions from trajectory predictions.
@@ -124,13 +126,15 @@ class CollisionDetector(Operator):
             if collision_time is not None:
                 min_ttc = min(min_ttc, collision_time)
 
-            collision_risks.append({
-                "object_id": obj_id,
-                "risk_level": risk_level,
-                "min_distance": min_dist,
-                "collision_time": collision_time,
-                "collision_point": collision_point,
-            })
+            collision_risks.append(
+                {
+                    "object_id": obj_id,
+                    "risk_level": risk_level,
+                    "min_distance": min_dist,
+                    "collision_time": collision_time,
+                    "collision_point": collision_point,
+                }
+            )
 
         return {
             "collision_risks": collision_risks,

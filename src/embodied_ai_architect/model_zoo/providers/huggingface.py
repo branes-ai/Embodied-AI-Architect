@@ -12,7 +12,6 @@ from typing import Any, Optional
 
 from .base import ModelProvider, ModelFormat, ModelQuery, ModelArtifact
 
-
 # HuggingFace model catalog with known specifications
 # Focused on vision models suitable for embodied AI / edge deployment
 HUGGINGFACE_MODELS = {
@@ -362,8 +361,7 @@ class HuggingFaceProvider(ModelProvider):
             from transformers import AutoModelForDepthEstimation
         except ImportError:
             raise ImportError(
-                "transformers not installed. "
-                "Install with: pip install transformers"
+                "transformers not installed. " "Install with: pip install transformers"
             )
 
         # Determine model type and load appropriate class
