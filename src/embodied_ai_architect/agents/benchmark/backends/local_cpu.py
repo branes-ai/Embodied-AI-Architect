@@ -33,7 +33,7 @@ class LocalCPUBackend(BenchmarkBackend):
         input_shape: tuple,
         iterations: int = 100,
         warmup_iterations: int = 10,
-        config: Dict[str, Any] | None = None
+        config: Dict[str, Any] | None = None,
     ) -> BenchmarkResult:
         """Execute benchmark on local CPU.
 
@@ -98,7 +98,7 @@ class LocalCPUBackend(BenchmarkBackend):
             metadata={
                 "input_shape": list(input_shape),
                 "batch_size": batch_size,
-            }
+            },
         )
 
     def get_capabilities(self) -> Dict[str, Any]:

@@ -184,7 +184,7 @@ def format_timing_summary(state: EmbodiedPipelineState) -> str:
     budget = state.get("latency_budget_ms", float("inf"))
     status = "OK" if total <= budget else "OVER BUDGET"
 
-    lines.append(f"  --------")
+    lines.append("  --------")
     lines.append(f"  Total: {total:.2f}ms ({status})")
 
     return "\n".join(lines)

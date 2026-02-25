@@ -22,6 +22,7 @@ try:
         get_architecture_tool_definitions,
         create_architecture_tool_executors,
     )
+
     HAS_ARCHITECTURE_TOOLS = True
 except ImportError:
     HAS_ARCHITECTURE_TOOLS = False

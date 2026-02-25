@@ -3,7 +3,6 @@
 import pytest
 
 from embodied_ai_architect.graphs.rtl_templates import (
-    COMPONENT_TEMPLATES,
     RTLTemplateEngine,
 )
 from embodied_ai_architect.graphs.kpu_config import KPU_PRESETS

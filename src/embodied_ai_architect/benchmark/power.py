@@ -5,7 +5,6 @@ Supports AMD (ryzen_smu), Intel (RAPL), and external measurement.
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 import statistics
 import subprocess
 import threading
@@ -186,7 +185,9 @@ class RAPLMonitor:
 
                 # Handle counter wraparound
                 if delta_energy < 0:
-                    max_energy = int((self.package_path.parent / "max_energy_range_uj").read_text().strip())
+                    max_energy = int(
+                        (self.package_path.parent / "max_energy_range_uj").read_text().strip()
+                    )
                     delta_energy += max_energy
 
                 if delta_time > 0:

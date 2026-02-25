@@ -125,7 +125,7 @@ class RTLSynthesisTool:
                 cwd=self.work_dir,
             )
             if proc.returncode != 0:
-                errors = [l for l in proc.stderr.splitlines() if "error" in l.lower()]
+                errors = [line for line in proc.stderr.splitlines() if "error" in line.lower()]
                 if not errors:
                     errors = [proc.stderr[:500] if proc.stderr else "Unknown synthesis error"]
                 return SynthesisResult(
@@ -136,9 +136,7 @@ class RTLSynthesisTool:
 
             result = self._parse_stats(proc.stdout)
             result.netlist_path = str(self.work_dir / "netlist.json")
-            result.log_excerpt = (
-                proc.stdout[-2000:] if len(proc.stdout) > 2000 else proc.stdout
-            )
+            result.log_excerpt = proc.stdout[-2000:] if len(proc.stdout) > 2000 else proc.stdout
             return result.to_dict()
 
         except FileNotFoundError:

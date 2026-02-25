@@ -1,6 +1,5 @@
 """Remote SSH benchmark backend - Execute benchmarks on remote machines via SSH."""
 
-import time
 import tempfile
 from pathlib import Path
 from typing import Any, Dict
@@ -34,7 +33,7 @@ class RemoteSSHBackend(BenchmarkBackend):
         secrets_manager=None,
         ssh_key_secret: str = "ssh_key",
         port: int = 22,
-        remote_workdir: str = "/tmp/embodied_ai_benchmark"
+        remote_workdir: str = "/tmp/embodied_ai_benchmark",
     ):
         """Initialize remote SSH backend.
 
@@ -54,6 +53,7 @@ class RemoteSSHBackend(BenchmarkBackend):
 
         try:
             import paramiko
+
             self.paramiko = paramiko
         except ImportError:
             raise ImportError(
@@ -94,7 +94,11 @@ class RemoteSSHBackend(BenchmarkBackend):
             SecretNotFoundError: If SSH key not found
             Exception: If connection fails
         """
-        if self._client and self._client.get_transport() and self._client.get_transport().is_active():
+        if (
+            self._client
+            and self._client.get_transport()
+            and self._client.get_transport().is_active()
+        ):
             return self._client
 
         # Get SSH key from secrets manager
@@ -117,7 +121,7 @@ class RemoteSSHBackend(BenchmarkBackend):
                 port=self.port,
                 username=self.user,
                 key_filename=ssh_key_path,
-                timeout=10
+                timeout=10,
             )
             print(f"  ✓ Connected to {self.host}")
             self._client = client
@@ -194,7 +198,7 @@ class RemoteSSHBackend(BenchmarkBackend):
         input_shape: tuple,
         iterations: int = 100,
         warmup_iterations: int = 10,
-        config: Dict[str, Any] | None = None
+        config: Dict[str, Any] | None = None,
     ) -> BenchmarkResult:
         """Execute benchmark on remote machine.
 
@@ -236,12 +240,7 @@ class RemoteSSHBackend(BenchmarkBackend):
 
             # 3. Generate benchmark script
             script_path = tmpdir / "benchmark_script.py"
-            self._generate_benchmark_script(
-                script_path,
-                input_shape,
-                iterations,
-                warmup_iterations
-            )
+            self._generate_benchmark_script(script_path, input_shape, iterations, warmup_iterations)
 
             # 4. Transfer script
             remote_script = f"{self.remote_workdir}/benchmark_script.py"
@@ -297,11 +296,7 @@ def load_model(state_dict_path):
         output_path.write_text(model_code)
 
     def _generate_benchmark_script(
-        self,
-        output_path: Path,
-        input_shape: tuple,
-        iterations: int,
-        warmup_iterations: int
+        self, output_path: Path, input_shape: tuple, iterations: int, warmup_iterations: int
     ):
         """Generate Python script for remote benchmarking.
 
@@ -373,30 +368,26 @@ if __name__ == '__main__':
         import json
 
         # Find JSON in output
-        lines = stdout.strip().split('\n')
+        lines = stdout.strip().split("\n")
         for line in lines:
             try:
                 data = json.loads(line)
-                if 'mean_latency_ms' in data:
+                if "mean_latency_ms" in data:
                     # Calculate throughput
                     batch_size = 1  # Assuming batch size of 1
-                    throughput = (1000.0 / data['mean_latency_ms']) * batch_size
+                    throughput = (1000.0 / data["mean_latency_ms"]) * batch_size
 
                     return BenchmarkResult(
                         backend_name=self.name,
                         device=f"remote_cpu@{self.host}",
-                        mean_latency_ms=data['mean_latency_ms'],
-                        std_latency_ms=data['std_latency_ms'],
-                        min_latency_ms=data['min_latency_ms'],
-                        max_latency_ms=data['max_latency_ms'],
+                        mean_latency_ms=data["mean_latency_ms"],
+                        std_latency_ms=data["std_latency_ms"],
+                        min_latency_ms=data["min_latency_ms"],
+                        max_latency_ms=data["max_latency_ms"],
                         throughput_samples_per_sec=throughput,
-                        iterations=data['iterations'],
-                        warmup_iterations=data['warmup_iterations'],
-                        metadata={
-                            "host": self.host,
-                            "user": self.user,
-                            "remote": True
-                        }
+                        iterations=data["iterations"],
+                        warmup_iterations=data["warmup_iterations"],
+                        metadata={"host": self.host, "user": self.user, "remote": True},
                     )
             except json.JSONDecodeError:
                 continue
@@ -416,7 +407,7 @@ if __name__ == '__main__':
             "measures_memory": False,
             "measures_energy": False,
             "supports_remote": True,
-            "requires_secrets": True
+            "requires_secrets": True,
         }
 
     def __del__(self):
@@ -424,5 +415,5 @@ if __name__ == '__main__':
         if self._client:
             try:
                 self._client.close()
-            except:
+            except Exception:
                 pass

@@ -1,7 +1,7 @@
 """Base interface for benchmark execution backends."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import Any, Dict
 from pydantic import BaseModel
 import torch.nn as nn
 
@@ -61,7 +61,7 @@ class BenchmarkBackend(ABC):
         input_shape: tuple,
         iterations: int = 100,
         warmup_iterations: int = 10,
-        config: Dict[str, Any] | None = None
+        config: Dict[str, Any] | None = None,
     ) -> BenchmarkResult:
         """Execute a benchmark on this backend.
 

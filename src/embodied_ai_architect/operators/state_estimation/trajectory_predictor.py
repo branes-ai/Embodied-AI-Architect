@@ -34,7 +34,7 @@ class TrajectoryPredictor(Operator):
             execution_target: Only cpu supported
         """
         if execution_target != "cpu":
-            print(f"[TrajectoryPredictor] Warning: Only CPU supported")
+            print("[TrajectoryPredictor] Warning: Only CPU supported")
 
         self._execution_target = "cpu"
         self._config = config
@@ -94,14 +94,18 @@ class TrajectoryPredictor(Operator):
             # Generate prediction
             trajectory = self._predict_trajectory(position, velocity)
 
-            predictions.append({
-                "object_id": obj_id,
-                "current_position": position,
-                "velocity": velocity,
-                "predicted_trajectory": trajectory,
-                "prediction_horizon_s": self.prediction_horizon_s,
-                "timestamps": [timestamp + i * self.dt for i in range(self.prediction_steps + 1)],
-            })
+            predictions.append(
+                {
+                    "object_id": obj_id,
+                    "current_position": position,
+                    "velocity": velocity,
+                    "predicted_trajectory": trajectory,
+                    "prediction_horizon_s": self.prediction_horizon_s,
+                    "timestamps": [
+                        timestamp + i * self.dt for i in range(self.prediction_steps + 1)
+                    ],
+                }
+            )
 
         return {
             "predictions": predictions,

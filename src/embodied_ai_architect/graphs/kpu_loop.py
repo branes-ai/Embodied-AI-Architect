@@ -60,7 +60,7 @@ def run_kpu_loop(
     """
     from embodied_ai_architect.graphs.bandwidth import check_bandwidth_match
     from embodied_ai_architect.graphs.floorplan import estimate_floorplan
-    from embodied_ai_architect.graphs.kpu_config import KPUMicroArchConfig, create_kpu_config
+    from embodied_ai_architect.graphs.kpu_config import create_kpu_config
 
     if loop_config is None:
         loop_config = KPULoopConfig()
@@ -90,15 +90,17 @@ def run_kpu_loop(
         )
 
         # Record history
-        history.append({
-            "iteration": iteration,
-            "config_name": config.name,
-            "floorplan_feasible": fp.feasible,
-            "pitch_matched": fp.pitch_matched,
-            "total_area_mm2": fp.total_area_mm2,
-            "bandwidth_balanced": bw.balanced,
-            "peak_utilization": bw.peak_utilization,
-        })
+        history.append(
+            {
+                "iteration": iteration,
+                "config_name": config.name,
+                "floorplan_feasible": fp.feasible,
+                "pitch_matched": fp.pitch_matched,
+                "total_area_mm2": fp.total_area_mm2,
+                "bandwidth_balanced": bw.balanced,
+                "peak_utilization": bw.peak_utilization,
+            }
+        )
 
         # Step 4: Check if both pass
         if fp.feasible and bw.balanced:
@@ -158,29 +160,21 @@ def _apply_adjustments(config, fp, bw, max_area: float):
     # Fix pitch mismatch
     if not fp.pitch_matched:
         if fp.pitch_ratio_width > 1.0 + fp.pitch_tolerance:
-            d["compute_tile"]["array_cols"] = max(
-                4, d["compute_tile"]["array_cols"] - 2
-            )
+            d["compute_tile"]["array_cols"] = max(4, d["compute_tile"]["array_cols"] - 2)
         elif fp.pitch_ratio_width < 1.0 - fp.pitch_tolerance:
             d["memory_tile"]["l3_num_banks"] += 1
 
         if fp.pitch_ratio_height > 1.0 + fp.pitch_tolerance:
-            d["compute_tile"]["vector_lanes"] = max(
-                4, d["compute_tile"]["vector_lanes"] - 2
-            )
+            d["compute_tile"]["vector_lanes"] = max(4, d["compute_tile"]["vector_lanes"] - 2)
         elif fp.pitch_ratio_height < 1.0 - fp.pitch_tolerance:
             d["memory_tile"]["num_block_movers"] += 1
 
     # Fix bandwidth
     if not bw.balanced and bw.bottleneck_link:
         if "dram" in bw.bottleneck_link:
-            d["dram"]["num_controllers"] = min(
-                8, d["dram"]["num_controllers"] + 1
-            )
+            d["dram"]["num_controllers"] = min(8, d["dram"]["num_controllers"] + 1)
         elif "l3" in bw.bottleneck_link or "noc" in bw.bottleneck_link:
-            d["noc"]["link_width_bits"] = min(
-                1024, d["noc"]["link_width_bits"] * 2
-            )
+            d["noc"]["link_width_bits"] = min(1024, d["noc"]["link_width_bits"] * 2)
         elif "l2" in bw.bottleneck_link:
             d["compute_tile"]["l2_num_banks"] += 2
         elif "l1" in bw.bottleneck_link:

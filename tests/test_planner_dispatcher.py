@@ -28,7 +28,6 @@ from embodied_ai_architect.graphs.soc_state import (
 )
 from embodied_ai_architect.graphs.task_graph import TaskNode, TaskStatus
 
-
 # ============================================================================
 # Mock LLM
 # ============================================================================
@@ -66,60 +65,79 @@ class MockLLMClient:
 # Fixtures
 # ============================================================================
 
-SIMPLE_PLAN_JSON = json.dumps({
-    "tasks": [
-        {"id": "t1", "name": "Analyze workload", "agent": "workload_analyzer", "dependencies": []},
-        {
-            "id": "t2",
-            "name": "Explore hardware",
-            "agent": "hw_explorer",
-            "dependencies": ["t1"],
-        },
-        {
-            "id": "t3",
-            "name": "Assess PPA",
-            "agent": "ppa_assessor",
-            "dependencies": ["t2"],
-        },
-        {
-            "id": "t4",
-            "name": "Generate report",
-            "agent": "report_generator",
-            "dependencies": ["t3"],
-        },
-    ]
-})
+SIMPLE_PLAN_JSON = json.dumps(
+    {
+        "tasks": [
+            {
+                "id": "t1",
+                "name": "Analyze workload",
+                "agent": "workload_analyzer",
+                "dependencies": [],
+            },
+            {
+                "id": "t2",
+                "name": "Explore hardware",
+                "agent": "hw_explorer",
+                "dependencies": ["t1"],
+            },
+            {
+                "id": "t3",
+                "name": "Assess PPA",
+                "agent": "ppa_assessor",
+                "dependencies": ["t2"],
+            },
+            {
+                "id": "t4",
+                "name": "Generate report",
+                "agent": "report_generator",
+                "dependencies": ["t3"],
+            },
+        ]
+    }
+)
 
-DIAMOND_PLAN_JSON = json.dumps({
-    "tasks": [
-        {"id": "t1", "name": "Analyze perception workload", "agent": "workload_analyzer", "dependencies": []},
-        {"id": "t2", "name": "Analyze environmental constraints", "agent": "workload_analyzer", "dependencies": []},
-        {
-            "id": "t3",
-            "name": "Enumerate hardware",
-            "agent": "hw_explorer",
-            "dependencies": ["t1", "t2"],
-        },
-        {
-            "id": "t4",
-            "name": "Compose architecture",
-            "agent": "architecture_composer",
-            "dependencies": ["t3"],
-        },
-        {
-            "id": "t5",
-            "name": "PPA assessment",
-            "agent": "ppa_assessor",
-            "dependencies": ["t4"],
-        },
-        {
-            "id": "t6",
-            "name": "Generate report",
-            "agent": "report_generator",
-            "dependencies": ["t5"],
-        },
-    ]
-})
+DIAMOND_PLAN_JSON = json.dumps(
+    {
+        "tasks": [
+            {
+                "id": "t1",
+                "name": "Analyze perception workload",
+                "agent": "workload_analyzer",
+                "dependencies": [],
+            },
+            {
+                "id": "t2",
+                "name": "Analyze environmental constraints",
+                "agent": "workload_analyzer",
+                "dependencies": [],
+            },
+            {
+                "id": "t3",
+                "name": "Enumerate hardware",
+                "agent": "hw_explorer",
+                "dependencies": ["t1", "t2"],
+            },
+            {
+                "id": "t4",
+                "name": "Compose architecture",
+                "agent": "architecture_composer",
+                "dependencies": ["t3"],
+            },
+            {
+                "id": "t5",
+                "name": "PPA assessment",
+                "agent": "ppa_assessor",
+                "dependencies": ["t4"],
+            },
+            {
+                "id": "t6",
+                "name": "Generate report",
+                "agent": "report_generator",
+                "dependencies": ["t5"],
+            },
+        ]
+    }
+)
 
 
 @pytest.fixture()
@@ -138,10 +156,12 @@ def drone_state():
 
 def make_mock_executor(result: dict[str, Any] | None = None, fail: bool = False):
     """Create a mock agent executor that returns a canned result or raises."""
+
     def executor(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         if fail:
             raise RuntimeError(f"Simulated failure in {task.agent}")
         return result or {"summary": f"Completed {task.name}", "data": {}}
+
     return executor
 
 
@@ -163,9 +183,11 @@ class TestParsePlanJson:
         assert len(tasks) == 4
 
     def test_parse_bare_array(self):
-        raw = json.dumps([
-            {"id": "t1", "name": "A", "agent": "a", "dependencies": []},
-        ])
+        raw = json.dumps(
+            [
+                {"id": "t1", "name": "A", "agent": "a", "dependencies": []},
+            ]
+        )
         tasks = parse_plan_json(raw)
         assert len(tasks) == 1
 
@@ -205,16 +227,20 @@ class TestTasksToGraph:
         assert {t.id for t in ready} == {"t1", "t2"}
 
     def test_preserves_pre_postconditions(self):
-        raw = json.dumps({
-            "tasks": [{
-                "id": "t1",
-                "name": "A",
-                "agent": "a",
-                "dependencies": [],
-                "preconditions": ["model file exists"],
-                "postconditions": ["workload profile populated"],
-            }]
-        })
+        raw = json.dumps(
+            {
+                "tasks": [
+                    {
+                        "id": "t1",
+                        "name": "A",
+                        "agent": "a",
+                        "dependencies": [],
+                        "preconditions": ["model file exists"],
+                        "postconditions": ["workload profile populated"],
+                    }
+                ]
+            }
+        )
         tasks = parse_plan_json(raw)
         graph = tasks_to_graph(tasks)
         assert graph.nodes["t1"].preconditions == ["model file exists"]
@@ -229,8 +255,18 @@ class TestTasksToGraph:
 class TestPlannerNode:
     def test_static_plan(self, drone_state):
         static_plan = [
-            {"id": "t1", "name": "Analyze workload", "agent": "workload_analyzer", "dependencies": []},
-            {"id": "t2", "name": "Explore hardware", "agent": "hw_explorer", "dependencies": ["t1"]},
+            {
+                "id": "t1",
+                "name": "Analyze workload",
+                "agent": "workload_analyzer",
+                "dependencies": [],
+            },
+            {
+                "id": "t2",
+                "name": "Explore hardware",
+                "agent": "hw_explorer",
+                "dependencies": ["t1"],
+            },
         ]
         planner = PlannerNode(static_plan=static_plan)
         updates = planner(drone_state)
@@ -294,10 +330,12 @@ class TestDispatcherBasic:
 
     def test_register_many(self):
         dispatcher = Dispatcher()
-        dispatcher.register_many({
-            "a": make_mock_executor(),
-            "b": make_mock_executor(),
-        })
+        dispatcher.register_many(
+            {
+                "a": make_mock_executor(),
+                "b": make_mock_executor(),
+            }
+        )
         assert set(dispatcher.registered_agents) == {"a", "b"}
 
 
@@ -313,20 +351,22 @@ class TestDispatcherExecution:
     def full_dispatcher(self):
         """Dispatcher with all agents registered as mocks."""
         dispatcher = Dispatcher()
-        dispatcher.register_many({
-            "workload_analyzer": make_mock_executor(
-                {"summary": "Workload analyzed", "operators": ["conv2d", "matmul"]}
-            ),
-            "hw_explorer": make_mock_executor(
-                {"summary": "Hardware explored", "candidates": ["jetson", "kpu"]}
-            ),
-            "ppa_assessor": make_mock_executor(
-                {"summary": "PPA assessed", "power_watts": 4.8, "latency_ms": 32.0}
-            ),
-            "report_generator": make_mock_executor(
-                {"summary": "Report generated", "format": "html"}
-            ),
-        })
+        dispatcher.register_many(
+            {
+                "workload_analyzer": make_mock_executor(
+                    {"summary": "Workload analyzed", "operators": ["conv2d", "matmul"]}
+                ),
+                "hw_explorer": make_mock_executor(
+                    {"summary": "Hardware explored", "candidates": ["jetson", "kpu"]}
+                ),
+                "ppa_assessor": make_mock_executor(
+                    {"summary": "PPA assessed", "power_watts": 4.8, "latency_ms": 32.0}
+                ),
+                "report_generator": make_mock_executor(
+                    {"summary": "Report generated", "format": "html"}
+                ),
+            }
+        )
         return dispatcher
 
     def test_single_step(self, planned_state, full_dispatcher):
@@ -344,9 +384,7 @@ class TestDispatcherExecution:
         assert result["status"] == DesignStatus.COMPLETE.value
         graph = get_task_graph(result)
         assert graph.is_complete
-        assert all(
-            t.status == TaskStatus.COMPLETED for t in graph.nodes.values()
-        )
+        assert all(t.status == TaskStatus.COMPLETED for t in graph.nodes.values())
 
     def test_decisions_recorded(self, planned_state, full_dispatcher):
         """Each completed task should produce a design decision."""
@@ -373,12 +411,14 @@ class TestDispatcherExecution:
     def test_agent_exception_fails_task(self, planned_state):
         """Agent exceptions should be caught and recorded as task failures."""
         dispatcher = Dispatcher()
-        dispatcher.register_many({
-            "workload_analyzer": make_mock_executor(fail=True),
-            "hw_explorer": make_mock_executor(),
-            "ppa_assessor": make_mock_executor(),
-            "report_generator": make_mock_executor(),
-        })
+        dispatcher.register_many(
+            {
+                "workload_analyzer": make_mock_executor(fail=True),
+                "hw_explorer": make_mock_executor(),
+                "ppa_assessor": make_mock_executor(),
+                "report_generator": make_mock_executor(),
+            }
+        )
 
         result = dispatcher.run(planned_state)
         graph = get_task_graph(result)
@@ -408,13 +448,15 @@ class TestDispatcherDiamond:
         state = {**drone_state, **updates}
 
         dispatcher = Dispatcher()
-        dispatcher.register_many({
-            "workload_analyzer": make_mock_executor({"summary": "Analyzed"}),
-            "hw_explorer": make_mock_executor({"summary": "Explored"}),
-            "architecture_composer": make_mock_executor({"summary": "Composed"}),
-            "ppa_assessor": make_mock_executor({"summary": "Assessed"}),
-            "report_generator": make_mock_executor({"summary": "Reported"}),
-        })
+        dispatcher.register_many(
+            {
+                "workload_analyzer": make_mock_executor({"summary": "Analyzed"}),
+                "hw_explorer": make_mock_executor({"summary": "Explored"}),
+                "architecture_composer": make_mock_executor({"summary": "Composed"}),
+                "ppa_assessor": make_mock_executor({"summary": "Assessed"}),
+                "report_generator": make_mock_executor({"summary": "Reported"}),
+            }
+        )
 
         # First step: t1 and t2 dispatched in parallel
         result = dispatcher.step(state)
@@ -430,13 +472,15 @@ class TestDispatcherDiamond:
         state = {**drone_state, **updates}
 
         dispatcher = Dispatcher()
-        dispatcher.register_many({
-            "workload_analyzer": make_mock_executor(),
-            "hw_explorer": make_mock_executor(),
-            "architecture_composer": make_mock_executor(),
-            "ppa_assessor": make_mock_executor(),
-            "report_generator": make_mock_executor(),
-        })
+        dispatcher.register_many(
+            {
+                "workload_analyzer": make_mock_executor(),
+                "hw_explorer": make_mock_executor(),
+                "architecture_composer": make_mock_executor(),
+                "ppa_assessor": make_mock_executor(),
+                "report_generator": make_mock_executor(),
+            }
+        )
 
         result = dispatcher.run(state)
         assert result["status"] == DesignStatus.COMPLETE.value
@@ -485,15 +529,18 @@ class TestIntegration:
                 result = {"summary": f"Completed {task.name}", "agent": task.agent}
                 results_log.append(result)
                 return result
+
             return executor
 
-        dispatcher.register_many({
-            "workload_analyzer": tracking_executor("workload"),
-            "hw_explorer": tracking_executor("hw"),
-            "architecture_composer": tracking_executor("arch"),
-            "ppa_assessor": tracking_executor("ppa"),
-            "report_generator": tracking_executor("report"),
-        })
+        dispatcher.register_many(
+            {
+                "workload_analyzer": tracking_executor("workload"),
+                "hw_explorer": tracking_executor("hw"),
+                "architecture_composer": tracking_executor("arch"),
+                "ppa_assessor": tracking_executor("ppa"),
+                "report_generator": tracking_executor("report"),
+            }
+        )
 
         state = dispatcher.run(state)
 

@@ -23,7 +23,6 @@ import math
 
 from pydantic import BaseModel, Field
 
-
 # ---------------------------------------------------------------------------
 # Process economics database
 # ---------------------------------------------------------------------------
@@ -41,22 +40,118 @@ PROCESS_ECONOMICS: dict[int, dict[str, float]] = {
     #                   (typically 2-5× mask cost; dominates total NRE)
     #   test_nre      — probe card fabrication, test program development,
     #                   reliability qualification ($100K–$1M+)
-    180: {"wafer_cost_usd": 1_500, "defect_density": 0.02, "mask_set_cost_usd": 50_000, "design_nre_usd": 100_000, "test_nre_usd": 50_000},
-    130: {"wafer_cost_usd": 2_000, "defect_density": 0.03, "mask_set_cost_usd": 100_000, "design_nre_usd": 250_000, "test_nre_usd": 75_000},
-    90: {"wafer_cost_usd": 2_500, "defect_density": 0.04, "mask_set_cost_usd": 200_000, "design_nre_usd": 500_000, "test_nre_usd": 100_000},
-    65: {"wafer_cost_usd": 3_000, "defect_density": 0.05, "mask_set_cost_usd": 500_000, "design_nre_usd": 1_500_000, "test_nre_usd": 200_000},
-    40: {"wafer_cost_usd": 3_500, "defect_density": 0.06, "mask_set_cost_usd": 1_000_000, "design_nre_usd": 3_000_000, "test_nre_usd": 300_000},
-    28: {"wafer_cost_usd": 4_000, "defect_density": 0.08, "mask_set_cost_usd": 2_000_000, "design_nre_usd": 5_000_000, "test_nre_usd": 500_000},
-    22: {"wafer_cost_usd": 5_000, "defect_density": 0.09, "mask_set_cost_usd": 3_000_000, "design_nre_usd": 8_000_000, "test_nre_usd": 600_000},
-    16: {"wafer_cost_usd": 6_000, "defect_density": 0.10, "mask_set_cost_usd": 5_000_000, "design_nre_usd": 15_000_000, "test_nre_usd": 800_000},
-    14: {"wafer_cost_usd": 6_500, "defect_density": 0.10, "mask_set_cost_usd": 6_000_000, "design_nre_usd": 18_000_000, "test_nre_usd": 800_000},
-    12: {"wafer_cost_usd": 7_000, "defect_density": 0.11, "mask_set_cost_usd": 8_000_000, "design_nre_usd": 25_000_000, "test_nre_usd": 1_000_000},
-    10: {"wafer_cost_usd": 8_000, "defect_density": 0.12, "mask_set_cost_usd": 10_000_000, "design_nre_usd": 30_000_000, "test_nre_usd": 1_000_000},
-    7: {"wafer_cost_usd": 10_000, "defect_density": 0.14, "mask_set_cost_usd": 15_000_000, "design_nre_usd": 50_000_000, "test_nre_usd": 1_500_000},
-    5: {"wafer_cost_usd": 13_000, "defect_density": 0.16, "mask_set_cost_usd": 25_000_000, "design_nre_usd": 100_000_000, "test_nre_usd": 2_000_000},
-    4: {"wafer_cost_usd": 15_000, "defect_density": 0.18, "mask_set_cost_usd": 30_000_000, "design_nre_usd": 120_000_000, "test_nre_usd": 2_500_000},
-    3: {"wafer_cost_usd": 18_000, "defect_density": 0.20, "mask_set_cost_usd": 40_000_000, "design_nre_usd": 150_000_000, "test_nre_usd": 3_000_000},
-    2: {"wafer_cost_usd": 22_000, "defect_density": 0.22, "mask_set_cost_usd": 50_000_000, "design_nre_usd": 200_000_000, "test_nre_usd": 4_000_000},
+    180: {
+        "wafer_cost_usd": 1_500,
+        "defect_density": 0.02,
+        "mask_set_cost_usd": 50_000,
+        "design_nre_usd": 100_000,
+        "test_nre_usd": 50_000,
+    },
+    130: {
+        "wafer_cost_usd": 2_000,
+        "defect_density": 0.03,
+        "mask_set_cost_usd": 100_000,
+        "design_nre_usd": 250_000,
+        "test_nre_usd": 75_000,
+    },
+    90: {
+        "wafer_cost_usd": 2_500,
+        "defect_density": 0.04,
+        "mask_set_cost_usd": 200_000,
+        "design_nre_usd": 500_000,
+        "test_nre_usd": 100_000,
+    },
+    65: {
+        "wafer_cost_usd": 3_000,
+        "defect_density": 0.05,
+        "mask_set_cost_usd": 500_000,
+        "design_nre_usd": 1_500_000,
+        "test_nre_usd": 200_000,
+    },
+    40: {
+        "wafer_cost_usd": 3_500,
+        "defect_density": 0.06,
+        "mask_set_cost_usd": 1_000_000,
+        "design_nre_usd": 3_000_000,
+        "test_nre_usd": 300_000,
+    },
+    28: {
+        "wafer_cost_usd": 4_000,
+        "defect_density": 0.08,
+        "mask_set_cost_usd": 2_000_000,
+        "design_nre_usd": 5_000_000,
+        "test_nre_usd": 500_000,
+    },
+    22: {
+        "wafer_cost_usd": 5_000,
+        "defect_density": 0.09,
+        "mask_set_cost_usd": 3_000_000,
+        "design_nre_usd": 8_000_000,
+        "test_nre_usd": 600_000,
+    },
+    16: {
+        "wafer_cost_usd": 6_000,
+        "defect_density": 0.10,
+        "mask_set_cost_usd": 5_000_000,
+        "design_nre_usd": 15_000_000,
+        "test_nre_usd": 800_000,
+    },
+    14: {
+        "wafer_cost_usd": 6_500,
+        "defect_density": 0.10,
+        "mask_set_cost_usd": 6_000_000,
+        "design_nre_usd": 18_000_000,
+        "test_nre_usd": 800_000,
+    },
+    12: {
+        "wafer_cost_usd": 7_000,
+        "defect_density": 0.11,
+        "mask_set_cost_usd": 8_000_000,
+        "design_nre_usd": 25_000_000,
+        "test_nre_usd": 1_000_000,
+    },
+    10: {
+        "wafer_cost_usd": 8_000,
+        "defect_density": 0.12,
+        "mask_set_cost_usd": 10_000_000,
+        "design_nre_usd": 30_000_000,
+        "test_nre_usd": 1_000_000,
+    },
+    7: {
+        "wafer_cost_usd": 10_000,
+        "defect_density": 0.14,
+        "mask_set_cost_usd": 15_000_000,
+        "design_nre_usd": 50_000_000,
+        "test_nre_usd": 1_500_000,
+    },
+    5: {
+        "wafer_cost_usd": 13_000,
+        "defect_density": 0.16,
+        "mask_set_cost_usd": 25_000_000,
+        "design_nre_usd": 100_000_000,
+        "test_nre_usd": 2_000_000,
+    },
+    4: {
+        "wafer_cost_usd": 15_000,
+        "defect_density": 0.18,
+        "mask_set_cost_usd": 30_000_000,
+        "design_nre_usd": 120_000_000,
+        "test_nre_usd": 2_500_000,
+    },
+    3: {
+        "wafer_cost_usd": 18_000,
+        "defect_density": 0.20,
+        "mask_set_cost_usd": 40_000_000,
+        "design_nre_usd": 150_000_000,
+        "test_nre_usd": 3_000_000,
+    },
+    2: {
+        "wafer_cost_usd": 22_000,
+        "defect_density": 0.22,
+        "mask_set_cost_usd": 50_000_000,
+        "design_nre_usd": 200_000_000,
+        "test_nre_usd": 4_000_000,
+    },
 }
 
 # Package costs per unit
@@ -92,12 +187,8 @@ class ManufacturingCostBreakdown(BaseModel):
     die_cost_usd: float = Field(..., description="Wafer cost / (dies × yield)")
     package_cost_usd: float = Field(..., description="Package cost per unit")
     test_cost_usd: float = Field(..., description="Test cost per die")
-    nre_per_unit_usd: float = Field(
-        ..., description="Total NRE (masks + design + test) / volume"
-    )
-    total_unit_cost_usd: float = Field(
-        ..., description="die + package + test + NRE per unit"
-    )
+    nre_per_unit_usd: float = Field(..., description="Total NRE (masks + design + test) / volume")
+    total_unit_cost_usd: float = Field(..., description="die + package + test + NRE per unit")
 
 
 # ---------------------------------------------------------------------------

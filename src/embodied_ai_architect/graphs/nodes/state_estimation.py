@@ -64,11 +64,13 @@ def create_ekf_node(
         # Execute with timing
         with NodeTimer(state, "ekf") as timer:
             try:
-                result = operator.process({
-                    "accel": accel,
-                    "gyro": gyro,
-                    "dt": imu_data.get("dt", 0.01),
-                })
+                result = operator.process(
+                    {
+                        "accel": accel,
+                        "gyro": gyro,
+                        "dt": imu_data.get("dt", 0.01),
+                    }
+                )
             except Exception as e:
                 return {
                     "next_stage": PipelineStage.ERROR.value,
@@ -146,9 +148,7 @@ def create_trajectory_node(
                 }
 
         # Store result for parallel execution join
-        parallel_update = merge_parallel_result(
-            state, "trajectory", {"trajectories": result}
-        )
+        parallel_update = merge_parallel_result(state, "trajectory", {"trajectories": result})
 
         return {
             **parallel_update,
@@ -222,10 +222,12 @@ def create_collision_node(
         # Execute with timing
         with NodeTimer(state, "collision") as timer:
             try:
-                result = operator.process({
-                    "predictions": predictions,
-                    "ego_position": ego_position,
-                })
+                result = operator.process(
+                    {
+                        "predictions": predictions,
+                        "ego_position": ego_position,
+                    }
+                )
             except Exception as e:
                 return {
                     "next_stage": PipelineStage.ERROR.value,

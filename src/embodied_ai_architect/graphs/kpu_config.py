@@ -18,10 +18,9 @@ Usage:
 from __future__ import annotations
 
 import math
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
-
 
 # ---------------------------------------------------------------------------
 # Sub-component configs
@@ -39,11 +38,7 @@ class DRAMConfig(BaseModel):
 
     @property
     def total_bandwidth_gbps(self) -> float:
-        return (
-            self.num_controllers
-            * self.channels_per_controller
-            * self.bandwidth_per_channel_gbps
-        )
+        return self.num_controllers * self.channels_per_controller * self.bandwidth_per_channel_gbps
 
 
 class NoCConfig(BaseModel):
@@ -77,9 +72,7 @@ class ComputeTileConfig(BaseModel):
     array_cols: int = 16
     vector_lanes: int = 16
     frequency_mhz: float = 500.0
-    supported_precisions: list[str] = Field(
-        default_factory=lambda: ["int8", "fp16", "bf16"]
-    )
+    supported_precisions: list[str] = Field(default_factory=lambda: ["int8", "fp16", "bf16"])
     # L2 (inside compute tile)
     l2_size_bytes: int = 256 * 1024
     l2_num_banks: int = 8
@@ -231,7 +224,9 @@ KPU_PRESETS: dict[str, KPUMicroArchConfig] = {
             bandwidth_per_channel_gbps=6.4,
             capacity_gb=4.0,
         ),
-        noc=NoCConfig(topology="mesh_2d", link_width_bits=256, frequency_mhz=1000.0, num_routers=16),
+        noc=NoCConfig(
+            topology="mesh_2d", link_width_bits=256, frequency_mhz=1000.0, num_routers=16
+        ),
         compute_tile=ComputeTileConfig(
             num_tiles=4,
             array_rows=16,
@@ -265,7 +260,9 @@ KPU_PRESETS: dict[str, KPUMicroArchConfig] = {
             bandwidth_per_channel_gbps=25.6,
             capacity_gb=16.0,
         ),
-        noc=NoCConfig(topology="mesh_2d", link_width_bits=512, frequency_mhz=2000.0, num_routers=64),
+        noc=NoCConfig(
+            topology="mesh_2d", link_width_bits=512, frequency_mhz=2000.0, num_routers=64
+        ),
         compute_tile=ComputeTileConfig(
             num_tiles=16,
             array_rows=32,
@@ -323,7 +320,7 @@ def create_kpu_config(
     gflops = workload.get("total_estimated_gflops", workload.get("estimated_gflops", 5.0))
     memory_mb = workload.get("total_estimated_memory_mb", workload.get("estimated_memory_mb", 20.0))
     max_power = constraints.get("max_power_watts", 10.0)
-    max_area = constraints.get("max_area_mm2", 100.0)
+    constraints.get("max_area_mm2", 100.0)
     process_nm = constraints.get("target_process_nm", 28)
 
     # Size systolic array based on GFLOPS target

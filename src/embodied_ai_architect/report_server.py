@@ -69,15 +69,17 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
                     if metadata_file.exists():
                         try:
                             metadata = json.loads(metadata_file.read_text())
-                        except:
+                        except Exception:
                             pass
 
-                    reports.append({
-                        "workflow_id": report_dir.name,
-                        "path": f"/{report_dir.name}/report.html",
-                        "generated_at": metadata.get("generated_at", "Unknown"),
-                        "has_json": (report_dir / "report.json").exists()
-                    })
+                    reports.append(
+                        {
+                            "workflow_id": report_dir.name,
+                            "path": f"/{report_dir.name}/report.html",
+                            "generated_at": metadata.get("generated_at", "Unknown"),
+                            "has_json": (report_dir / "report.json").exists(),
+                        }
+                    )
 
         return reports
 

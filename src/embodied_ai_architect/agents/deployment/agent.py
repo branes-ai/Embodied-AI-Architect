@@ -131,14 +131,10 @@ class DeploymentAgent(BaseAgent):
 
             # Validate inputs
             if model is None:
-                return AgentResult(
-                    success=False, data={}, error="No model provided"
-                )
+                return AgentResult(success=False, data={}, error="No model provided")
 
             if input_shape is None:
-                return AgentResult(
-                    success=False, data={}, error="No input_shape provided"
-                )
+                return AgentResult(success=False, data={}, error="No input_shape provided")
 
             if target_name not in self.targets:
                 available = list(self.targets.keys())
@@ -262,9 +258,7 @@ class DeploymentAgent(BaseAgent):
 
         # Handle state_dict vs full model
         if isinstance(model, dict):
-            raise ValueError(
-                "Model is a state_dict. Please provide a full model or ONNX file."
-            )
+            raise ValueError("Model is a state_dict. Please provide a full model or ONNX file.")
 
         # Export to ONNX
         logs.append("  Exporting to ONNX...")

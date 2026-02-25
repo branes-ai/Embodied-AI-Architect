@@ -1,9 +1,5 @@
 """Tests for KPU specialist agents (configurator, validators, optimizer)."""
 
-import copy
-
-import pytest
-
 from embodied_ai_architect.graphs.kpu_config import KPU_PRESETS
 from embodied_ai_architect.graphs.kpu_specialists import (
     bandwidth_validator,
@@ -16,7 +12,6 @@ from embodied_ai_architect.graphs.soc_state import (
     create_initial_soc_state,
 )
 from embodied_ai_architect.graphs.task_graph import TaskNode
-
 
 # ---------------------------------------------------------------------------
 # Helpers

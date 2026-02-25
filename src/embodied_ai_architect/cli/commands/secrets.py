@@ -103,7 +103,7 @@ def set(ctx, secret_key, env, file):
 
     if env:
         console.print("\n[yellow]⚠[/yellow] Environment variable setting not persistent")
-        console.print(f"\n[dim]Add to your shell profile:[/dim]")
+        console.print("\n[dim]Add to your shell profile:[/dim]")
         console.print(f"export EMBODIED_AI_{secret_key.upper()}=<your-secret>")
 
     if file:
@@ -125,10 +125,16 @@ def validate(ctx):
     """Validate secrets setup."""
     json_output = ctx.obj.get("json", False)
 
-    from embodied_ai_architect.security import SecretsManager, EnvironmentSecretsProvider, FileSecretsProvider
+    from embodied_ai_architect.security import (
+        SecretsManager,
+        EnvironmentSecretsProvider,
+        FileSecretsProvider,
+    )
 
     # Initialize secrets manager
-    secrets = SecretsManager([EnvironmentSecretsProvider(), FileSecretsProvider("config/credentials")])
+    secrets = SecretsManager(
+        [EnvironmentSecretsProvider(), FileSecretsProvider("config/credentials")]
+    )
 
     # Check common secrets
     checks = []

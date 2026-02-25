@@ -4,12 +4,10 @@ This module implements a Claude Code-style interactive agent that can
 reason about user requests and call tools to accomplish tasks.
 """
 
-import json
 from typing import Any, Callable
 
 from .client import LLMClient, LLMResponse
 from .tools import get_tool_definitions, create_tool_executors
-
 
 SYSTEM_PROMPT = """\
 You are the Embodied AI Architect, an expert assistant for designing and deploying
@@ -189,10 +187,12 @@ class ArchitectAgent:
 
             if response.has_tool_calls:
                 # Add assistant message with tool use
-                self.messages.append({
-                    "role": "assistant",
-                    "content": self._format_tool_use_content(response),
-                })
+                self.messages.append(
+                    {
+                        "role": "assistant",
+                        "content": self._format_tool_use_content(response),
+                    }
+                )
 
                 # Execute each tool and collect results
                 tool_results = []
@@ -205,23 +205,29 @@ class ArchitectAgent:
                     if on_tool_end:
                         on_tool_end(tool_call.name, result)
 
-                    tool_results.append({
-                        "type": "tool_result",
-                        "tool_use_id": tool_call.id,
-                        "content": result,
-                    })
+                    tool_results.append(
+                        {
+                            "type": "tool_result",
+                            "tool_use_id": tool_call.id,
+                            "content": result,
+                        }
+                    )
 
                 # Add tool results
-                self.messages.append({
-                    "role": "user",
-                    "content": tool_results,
-                })
+                self.messages.append(
+                    {
+                        "role": "user",
+                        "content": tool_results,
+                    }
+                )
             else:
                 # No tool calls - we have the final response
-                self.messages.append({
-                    "role": "assistant",
-                    "content": response.text,
-                })
+                self.messages.append(
+                    {
+                        "role": "assistant",
+                        "content": response.text,
+                    }
+                )
                 return response.text
 
         # Hit max iterations
@@ -265,12 +271,14 @@ class ArchitectAgent:
             content.append({"type": "text", "text": response.text})
 
         for tool_call in response.tool_calls:
-            content.append({
-                "type": "tool_use",
-                "id": tool_call.id,
-                "name": tool_call.name,
-                "input": tool_call.args,
-            })
+            content.append(
+                {
+                    "type": "tool_use",
+                    "id": tool_call.id,
+                    "name": tool_call.name,
+                    "input": tool_call.args,
+                }
+            )
 
         return content
 

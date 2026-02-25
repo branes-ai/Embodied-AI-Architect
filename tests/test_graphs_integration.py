@@ -17,6 +17,7 @@ try:
         HAS_GRAPHS,
         HAS_PYDANTIC,
     )
+
     DEPS_AVAILABLE = HAS_GRAPHS and HAS_PYDANTIC
 except ImportError:
     DEPS_AVAILABLE = False
@@ -24,8 +25,7 @@ except ImportError:
     HAS_PYDANTIC = False
 
 pytestmark = pytest.mark.skipif(
-    not DEPS_AVAILABLE,
-    reason="graphs and/or embodied-schemas not installed"
+    not DEPS_AVAILABLE, reason="graphs and/or embodied-schemas not installed"
 )
 
 
@@ -220,16 +220,20 @@ class TestFullAnalysis:
 
     def test_precision_parameter(self):
         """Test that precision parameter is respected."""
-        result_fp32 = json.loads(full_analysis(
-            model_name="resnet18",
-            hardware_name="H100-SXM5-80GB",
-            precision="FP32",
-        ))
-        result_fp16 = json.loads(full_analysis(
-            model_name="resnet18",
-            hardware_name="H100-SXM5-80GB",
-            precision="FP16",
-        ))
+        result_fp32 = json.loads(
+            full_analysis(
+                model_name="resnet18",
+                hardware_name="H100-SXM5-80GB",
+                precision="FP32",
+            )
+        )
+        result_fp16 = json.loads(
+            full_analysis(
+                model_name="resnet18",
+                hardware_name="H100-SXM5-80GB",
+                precision="FP16",
+            )
+        )
 
         assert result_fp32["precision"] == "fp32"
         assert result_fp16["precision"] == "fp16"
@@ -294,12 +298,15 @@ class TestVerdictFirstPattern:
 class TestMultipleHardware:
     """Tests across multiple hardware targets."""
 
-    @pytest.mark.parametrize("hardware", [
-        "H100-SXM5-80GB",
-        "A100-SXM4-80GB",
-        "Jetson-Orin-AGX",
-        "TPU-v4",
-    ])
+    @pytest.mark.parametrize(
+        "hardware",
+        [
+            "H100-SXM5-80GB",
+            "A100-SXM4-80GB",
+            "Jetson-Orin-AGX",
+            "TPU-v4",
+        ],
+    )
     def test_hardware_targets(self, hardware):
         """Test that different hardware targets work."""
         result_json = full_analysis(
@@ -311,11 +318,14 @@ class TestMultipleHardware:
         assert result["verdict"] in ["PASS", "FAIL", "PARTIAL", "UNKNOWN"]
         assert result["metrics"]["latency_ms"] > 0
 
-    @pytest.mark.parametrize("model", [
-        "resnet18",
-        "resnet50",
-        "mobilenet_v2",
-    ])
+    @pytest.mark.parametrize(
+        "model",
+        [
+            "resnet18",
+            "resnet50",
+            "mobilenet_v2",
+        ],
+    )
     def test_model_targets(self, model):
         """Test that different models work."""
         result_json = full_analysis(

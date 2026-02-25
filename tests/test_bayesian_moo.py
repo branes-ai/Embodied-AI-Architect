@@ -9,10 +9,10 @@ import pytest
 botorch = pytest.importorskip("botorch", reason="botorch not installed")
 gpytorch = pytest.importorskip("gpytorch", reason="gpytorch not installed")
 
-from embodied_ai_architect.graphs.moo.design_space import create_soc_design_space
-from embodied_ai_architect.graphs.moo.evaluator import DesignEvaluator
-from embodied_ai_architect.graphs.moo.executor import LocalThreadExecutor
-from embodied_ai_architect.graphs.moo.bayesian_opt import (
+from embodied_ai_architect.graphs.moo.design_space import create_soc_design_space  # noqa: E402
+from embodied_ai_architect.graphs.moo.evaluator import DesignEvaluator  # noqa: E402
+from embodied_ai_architect.graphs.moo.executor import LocalThreadExecutor  # noqa: E402
+from embodied_ai_architect.graphs.moo.bayesian_opt import (  # noqa: E402
     BayesianMOO,
     BayesianOptConfig,
     BayesianOptResult,
@@ -89,7 +89,7 @@ class TestBayesianMOO:
         bo = BayesianMOO(design_space, evaluator, executor, cfg)
 
         calls = []
-        result = bo.run(callback=lambda i, e, hv: calls.append((i, e, hv)))
+        bo.run(callback=lambda i, e, hv: calls.append((i, e, hv)))
 
         assert len(calls) == 2  # one per iteration
 

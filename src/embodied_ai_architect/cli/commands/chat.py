@@ -7,10 +7,8 @@ and run benchmarks.
 
 import click
 from rich.console import Console
-from rich.live import Live
 from rich.markdown import Markdown
 from rich.panel import Panel
-from rich.spinner import Spinner
 from rich.text import Text
 
 console = Console()
@@ -23,7 +21,8 @@ console = Console()
     help="Claude model to use",
 )
 @click.option(
-    "--verbose", "-v",
+    "--verbose",
+    "-v",
     is_flag=True,
     help="Show detailed tool execution info",
 )
@@ -58,6 +57,7 @@ def chat(ctx, model: str, verbose: bool):
 
     # Check for API key
     import os
+
     if not os.environ.get("ANTHROPIC_API_KEY"):
         console.print(
             Panel(
@@ -89,7 +89,7 @@ def chat(ctx, model: str, verbose: bool):
             "  [green]exit[/green] or [green]quit[/green] - End session\n"
             "  [green]reset[/green] - Clear conversation history\n"
             "  [green]help[/green] - Show example queries\n\n"
-            "[dim]Try:[/dim] \"Can ResNet-18 meet 10ms latency on H100?\"",
+            '[dim]Try:[/dim] "Can ResNet-18 meet 10ms latency on H100?"',
             border_style="cyan",
         )
     )
@@ -139,7 +139,7 @@ def _run_agent_turn(agent, user_input: str, verbose: bool) -> None:
         user_input: User's message
         verbose: Whether to show detailed info
     """
-    tool_status = Text()
+    Text()
     current_tool = None
 
     def on_tool_start(name: str, args: dict) -> None:
@@ -190,16 +190,16 @@ def _show_help() -> None:
             "[green]reset[/green] - Clear conversation history\n"
             "[green]help[/green] - Show this message\n\n"
             "[bold]Constraint Checking (Verdict-First)[/bold]\n\n"
-            "• \"Can ResNet-18 meet 10ms latency on H100?\"\n"
-            "• \"Does MobileNetV2 fit in 512MB memory?\"\n"
-            "• \"Can YOLOv8n run under 15W on Jetson Orin?\"\n\n"
+            '• "Can ResNet-18 meet 10ms latency on H100?"\n'
+            '• "Does MobileNetV2 fit in 512MB memory?"\n'
+            '• "Can YOLOv8n run under 15W on Jetson Orin?"\n\n'
             "[bold]Analysis & Comparison[/bold]\n\n"
-            "• \"Full analysis of ResNet-50 on A100\"\n"
-            "• \"Compare ResNet-18 on H100 vs Jetson Orin AGX\"\n"
-            "• \"Is ResNet-18 compute-bound or memory-bound on A100?\"\n\n"
+            '• "Full analysis of ResNet-50 on A100"\n'
+            '• "Compare ResNet-18 on H100 vs Jetson Orin AGX"\n'
+            '• "Is ResNet-18 compute-bound or memory-bound on A100?"\n\n'
             "[bold]Discovery[/bold]\n\n"
-            "• \"List available hardware targets\"\n"
-            "• \"What edge GPUs can you analyze?\"",
+            '• "List available hardware targets"\n'
+            '• "What edge GPUs can you analyze?"',
             title="Help",
             border_style="blue",
         )

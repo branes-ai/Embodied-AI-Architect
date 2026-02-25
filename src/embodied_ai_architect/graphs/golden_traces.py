@@ -144,9 +144,7 @@ def compare_traces(current: RunTrace, golden: RunTrace) -> TraceComparison:
     golden_iters = len(golden.iteration_history)
     iteration_regression = current_iters > golden_iters and golden_iters > 0
     if iteration_regression:
-        details.append(
-            f"Iteration regression: {current_iters} vs golden {golden_iters}"
-        )
+        details.append(f"Iteration regression: {current_iters} vs golden {golden_iters}")
 
     # Tool call diff
     current_calls = set(current.tool_calls)

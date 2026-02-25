@@ -1,12 +1,12 @@
 """Deployment targets for different hardware platforms."""
 
-from .base import DeploymentTarget
+from .base import DeploymentTarget  # noqa: F401
 
 _available_targets = ["DeploymentTarget"]
 
 # Jetson/TensorRT target (optional: tensorrt, pycuda)
 try:
-    from .jetson import JetsonTarget
+    from .jetson import JetsonTarget  # noqa: F401
 
     _available_targets.append("JetsonTarget")
 except ImportError:
@@ -14,7 +14,7 @@ except ImportError:
 
 # OpenVINO target (optional: openvino, nncf)
 try:
-    from .openvino import OpenVINOTarget
+    from .openvino import OpenVINOTarget  # noqa: F401
 
     _available_targets.append("OpenVINOTarget")
 except ImportError:
@@ -22,7 +22,7 @@ except ImportError:
 
 # Coral Edge TPU target (optional: tensorflow, onnx2tf)
 try:
-    from .coral import CoralTarget
+    from .coral import CoralTarget  # noqa: F401
 
     _available_targets.append("CoralTarget")
 except ImportError:
@@ -30,7 +30,7 @@ except ImportError:
 
 # Stillwater KPU target (optional: onnx)
 try:
-    from .kpu import StillwaterKPUTarget
+    from .kpu import StillwaterKPUTarget  # noqa: F401
 
     _available_targets.append("StillwaterKPUTarget")
 except ImportError:
@@ -38,7 +38,7 @@ except ImportError:
 
 # NVIDIA NVDLA target (optional: onnx)
 try:
-    from .nvdla import NVDLATarget
+    from .nvdla import NVDLATarget  # noqa: F401
 
     _available_targets.append("NVDLATarget")
 except ImportError:

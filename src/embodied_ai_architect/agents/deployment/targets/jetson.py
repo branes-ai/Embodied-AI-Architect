@@ -85,9 +85,7 @@ class JetsonTarget(DeploymentTarget):
         4. Build and serialize engine
         """
         if not self.is_available():
-            raise RuntimeError(
-                "TensorRT not available. Install with: pip install tensorrt"
-            )
+            raise RuntimeError("TensorRT not available. Install with: pip install tensorrt")
 
         if precision == DeploymentPrecision.INT8 and calibration is None:
             raise ValueError("INT8 precision requires calibration config")
@@ -159,8 +157,7 @@ class JetsonTarget(DeploymentTarget):
             import pycuda.driver as cuda
         except ImportError:
             raise ImportError(
-                "pycuda required for INT8 calibration. "
-                "Install with: pip install pycuda"
+                "pycuda required for INT8 calibration. " "Install with: pip install pycuda"
             )
 
         data_path = Path(config.data_path)
@@ -382,18 +379,13 @@ class JetsonTarget(DeploymentTarget):
         try:
             import onnxruntime as ort
 
-            return ort.InferenceSession(
-                str(model_path), providers=["CPUExecutionProvider"]
-            )
+            return ort.InferenceSession(str(model_path), providers=["CPUExecutionProvider"])
         except ImportError:
             raise ImportError(
-                "onnxruntime required for validation. "
-                "Install with: pip install onnxruntime"
+                "onnxruntime required for validation. " "Install with: pip install onnxruntime"
             )
 
-    def _create_test_loader(
-        self, config: ValidationConfig, input_shape: tuple[int, ...]
-    ):
+    def _create_test_loader(self, config: ValidationConfig, input_shape: tuple[int, ...]):
         """Create test data loader."""
         if config.test_data_path is None:
             # Generate random test data

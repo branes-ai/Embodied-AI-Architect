@@ -32,7 +32,8 @@ def design():
 
 @design.command("new")
 @click.option(
-    "-o", "--output",
+    "-o",
+    "--output",
     type=click.Path(dir_okay=False),
     help="Output YAML file path",
 )
@@ -79,15 +80,14 @@ def design_new(ctx, output: Optional[str], no_interactive: bool):
         console.print()
         console.print("[bold]Generated YAML:[/bold]")
         console.print(Panel(requirements_to_yaml(requirements), border_style="dim"))
-        console.print(
-            "[dim]Tip: Use -o requirements.yaml to save to file[/dim]"
-        )
+        console.print("[dim]Tip: Use -o requirements.yaml to save to file[/dim]")
 
 
 @design.command("from-usecase")
 @click.argument("usecase_id")
 @click.option(
-    "-o", "--output",
+    "-o",
+    "--output",
     type=click.Path(dir_okay=False),
     help="Output YAML file path",
 )
@@ -156,7 +156,8 @@ def design_show(ctx, requirements_file: str):
 @design.command("synthesize")
 @click.argument("requirements_file", type=click.Path(exists=True))
 @click.option(
-    "-o", "--output",
+    "-o",
+    "--output",
     type=click.Path(dir_okay=False),
     default="pipeline.yaml",
     help="Output pipeline YAML file",
@@ -283,14 +284,16 @@ def _find_models_for_requirements(requirements) -> list[dict]:
         if candidates:
             # Select best match (smallest that meets constraints)
             selected = candidates[0]
-            models.append({
-                "task": task.value,
-                "id": selected.id,
-                "name": selected.name,
-                "provider": selected.provider,
-                "params": selected.parameters,
-                "accuracy": selected.accuracy,
-            })
+            models.append(
+                {
+                    "task": task.value,
+                    "id": selected.id,
+                    "name": selected.name,
+                    "provider": selected.provider,
+                    "params": selected.parameters,
+                    "accuracy": selected.accuracy,
+                }
+            )
             console.print(f"  [green]✓[/green] {task.value}: {selected.name}")
         else:
             console.print(f"  [yellow]![/yellow] {task.value}: No matching model found")
@@ -339,7 +342,7 @@ def _acquire_models(models: list[dict]) -> dict[str, Path]:
         try:
             path = acquire(model_id, format="onnx")
             paths[model_id] = path
-            console.print(f"[green]✓[/green]")
+            console.print("[green]✓[/green]")
         except Exception as e:
             console.print(f"[red]✗[/red] {e}")
 
@@ -408,7 +411,6 @@ def _validate_models(models: list[dict], model_paths: dict, requirements) -> Non
 
 def _generate_pipeline(requirements, models: list[dict], model_paths: dict) -> dict:
     """Generate pipeline configuration from requirements and models."""
-    from embodied_ai_architect.requirements import TaskType
 
     operators = []
 

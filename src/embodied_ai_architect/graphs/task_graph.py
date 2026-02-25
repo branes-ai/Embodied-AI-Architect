@@ -23,7 +23,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 
 class TaskStatus(str, Enum):
@@ -175,9 +175,7 @@ class TaskGraph(BaseModel):
             t.id for t in self.nodes.values() if task_id in t.dependencies and t.id != task_id
         ]
         if dependents:
-            raise ValueError(
-                f"Cannot remove task '{task_id}': tasks {dependents} depend on it"
-            )
+            raise ValueError(f"Cannot remove task '{task_id}': tasks {dependents} depend on it")
 
         return self.nodes.pop(task_id)
 
@@ -259,9 +257,7 @@ class TaskGraph(BaseModel):
         """
         task = self._get_task(task_id)
         if task.status in (TaskStatus.RUNNING, TaskStatus.COMPLETED):
-            raise ValueError(
-                f"Cannot skip task '{task_id}': status is '{task.status.value}'"
-            )
+            raise ValueError(f"Cannot skip task '{task_id}': status is '{task.status.value}'")
         task.status = TaskStatus.SKIPPED
         task.metadata["skip_reason"] = reason
         self._propagate_readiness(task_id)
@@ -449,9 +445,7 @@ class TaskGraph(BaseModel):
                 return True
         return False
 
-    def _topo_sort_batch(
-        self, tasks: list[TaskNode], batch: dict[str, TaskNode]
-    ) -> list[TaskNode]:
+    def _topo_sort_batch(self, tasks: list[TaskNode], batch: dict[str, TaskNode]) -> list[TaskNode]:
         """Topological sort of a batch of tasks (for add_tasks).
 
         Tasks that depend on already-existing graph nodes sort first.

@@ -1,7 +1,5 @@
 """Tests for the governance layer."""
 
-import pytest
-
 from embodied_ai_architect.graphs.governance import (
     AuditEntry,
     GovernanceGuard,
@@ -99,9 +97,7 @@ class TestGovernanceGuard:
         assert guard.check_budget(201) is False
 
     def test_requires_approval(self):
-        guard = GovernanceGuard(
-            GovernancePolicy(approval_required_actions=["deploy", "tape_out"])
-        )
+        guard = GovernanceGuard(GovernancePolicy(approval_required_actions=["deploy", "tape_out"]))
         assert guard.requires_approval("deploy") is True
         assert guard.requires_approval("tape_out") is True
         assert guard.requires_approval("optimize") is False
@@ -119,9 +115,7 @@ class TestGovernanceGuard:
         assert guard.should_escalate_to_human(5) is True
 
     def test_should_not_escalate_when_disabled(self):
-        guard = GovernanceGuard(
-            GovernancePolicy(require_human_approval_on_fail=False)
-        )
+        guard = GovernanceGuard(GovernancePolicy(require_human_approval_on_fail=False))
         assert guard.should_escalate_to_human(100) is False
 
     def test_record(self):

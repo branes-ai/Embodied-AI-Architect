@@ -18,7 +18,6 @@ from typing import Any, Optional
 
 from .base import ModelProvider, ModelFormat, ModelQuery, ModelArtifact
 
-
 # MediaPipe model catalog
 # Models hosted at storage.googleapis.com/mediapipe-models/
 MEDIAPIPE_MODELS = {

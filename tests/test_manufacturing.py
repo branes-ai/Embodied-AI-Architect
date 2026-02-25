@@ -1,10 +1,7 @@
 """Tests for the manufacturing cost model."""
 
-import pytest
-
 from embodied_ai_architect.graphs.manufacturing import (
     ManufacturingCostBreakdown,
-    PROCESS_ECONOMICS,
     dies_per_wafer,
     estimate_manufacturing_cost,
     murphy_yield,

@@ -16,16 +16,13 @@ from embodied_ai_architect.graphs.soc_state import (
     DesignConstraints,
     DesignStatus,
     PPAMetrics,
-    SoCDesignState,
     create_initial_soc_state,
 )
-from embodied_ai_architect.graphs.task_graph import TaskNode
 
 # We need langgraph for these tests
 langgraph = pytest.importorskip("langgraph", reason="langgraph not installed")
 
-from embodied_ai_architect.graphs.soc_graph import build_soc_design_graph
-
+from embodied_ai_architect.graphs.soc_graph import build_soc_design_graph  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -98,15 +95,21 @@ def _make_passing_dispatcher():
         }
 
     d = Dispatcher()
-    d.register_many({
-        "workload_analyzer": workload_analyzer,
-        "hw_explorer": hw_explorer,
-        "architecture_composer": architecture_composer,
-        "ppa_assessor": passing_ppa,
-        "critic": critic,
-        "report_generator": report_generator,
-        "design_optimizer": lambda t, s: {"summary": "no-op", "applied": False, "strategy": None},
-    })
+    d.register_many(
+        {
+            "workload_analyzer": workload_analyzer,
+            "hw_explorer": hw_explorer,
+            "architecture_composer": architecture_composer,
+            "ppa_assessor": passing_ppa,
+            "critic": critic,
+            "report_generator": report_generator,
+            "design_optimizer": lambda t, s: {
+                "summary": "no-op",
+                "applied": False,
+                "strategy": None,
+            },
+        }
+    )
     return d
 
 
@@ -125,7 +128,7 @@ def _make_failing_then_passing_dispatcher(fail_iterations=1):
 
     def conditional_ppa(task, state):
         call_count["ppa"] += 1
-        iteration = state.get("iteration", 0)
+        state.get("iteration", 0)
         constraints = state.get("constraints", {})
         max_power = constraints.get("max_power_watts", 5.0)
         max_latency = constraints.get("max_latency_ms", 33.3)
@@ -161,15 +164,17 @@ def _make_failing_then_passing_dispatcher(fail_iterations=1):
         }
 
     d = Dispatcher()
-    d.register_many({
-        "workload_analyzer": workload_analyzer,
-        "hw_explorer": hw_explorer,
-        "architecture_composer": architecture_composer,
-        "ppa_assessor": conditional_ppa,
-        "critic": critic,
-        "report_generator": report_generator,
-        "design_optimizer": design_optimizer,
-    })
+    d.register_many(
+        {
+            "workload_analyzer": workload_analyzer,
+            "hw_explorer": hw_explorer,
+            "architecture_composer": architecture_composer,
+            "ppa_assessor": conditional_ppa,
+            "critic": critic,
+            "report_generator": report_generator,
+            "design_optimizer": design_optimizer,
+        }
+    )
     return d
 
 
@@ -256,15 +261,17 @@ class TestIterationLimit:
             }
 
         d = Dispatcher()
-        d.register_many({
-            "workload_analyzer": workload_analyzer,
-            "hw_explorer": hw_explorer,
-            "architecture_composer": architecture_composer,
-            "ppa_assessor": always_failing_ppa,
-            "critic": critic,
-            "report_generator": report_generator,
-            "design_optimizer": design_optimizer,
-        })
+        d.register_many(
+            {
+                "workload_analyzer": workload_analyzer,
+                "hw_explorer": hw_explorer,
+                "architecture_composer": architecture_composer,
+                "ppa_assessor": always_failing_ppa,
+                "critic": critic,
+                "report_generator": report_generator,
+                "design_optimizer": design_optimizer,
+            }
+        )
 
         gov = GovernanceGuard(GovernancePolicy(iteration_limit=3))
         planner = PlannerNode(static_plan=DEMO_PLAN)
@@ -324,19 +331,21 @@ class TestHeterogeneousIPBlocks:
             }
 
         d = Dispatcher()
-        d.register_many({
-            "workload_analyzer": workload_analyzer,
-            "hw_explorer": hw_explorer,
-            "architecture_composer": architecture_composer,
-            "ppa_assessor": passing_ppa,
-            "critic": critic,
-            "report_generator": report_generator,
-            "design_optimizer": lambda t, s: {
-                "summary": "no-op",
-                "applied": False,
-                "strategy": None,
-            },
-        })
+        d.register_many(
+            {
+                "workload_analyzer": workload_analyzer,
+                "hw_explorer": hw_explorer,
+                "architecture_composer": architecture_composer,
+                "ppa_assessor": passing_ppa,
+                "critic": critic,
+                "report_generator": report_generator,
+                "design_optimizer": lambda t, s: {
+                    "summary": "no-op",
+                    "applied": False,
+                    "strategy": None,
+                },
+            }
+        )
 
         planner = PlannerNode(static_plan=DEMO_PLAN)
         graph = build_soc_design_graph(dispatcher=d, planner=planner)

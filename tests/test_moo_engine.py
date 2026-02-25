@@ -93,7 +93,7 @@ class TestOptimizationEngine:
 
         calls = []
         try:
-            result = engine.run(callback=lambda l, i, e, m: calls.append((l, i, e, m)))
+            engine.run(callback=lambda layer, i, e, m: calls.append((layer, i, e, m)))
         finally:
             engine.shutdown()
 

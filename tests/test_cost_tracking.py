@@ -77,17 +77,13 @@ class TestGovernancePolicySafetyExtensions:
 
 class TestGovernanceGuardSafetyMethods:
     def test_auto_detect_safety_critical(self):
-        policy = GovernancePolicy(
-            safety_critical_actions=["change_safety_architecture"]
-        )
+        policy = GovernancePolicy(safety_critical_actions=["change_safety_architecture"])
         guard = GovernanceGuard(policy)
         assert guard.auto_detect_safety_critical("change_safety_architecture") is True
         assert guard.auto_detect_safety_critical("normal_action") is False
 
     def test_flag_safety_decision(self):
-        policy = GovernancePolicy(
-            safety_critical_actions=["remove_redundancy"]
-        )
+        policy = GovernancePolicy(safety_critical_actions=["remove_redundancy"])
         guard = GovernanceGuard(policy)
         entry = guard.flag_safety_decision("critic", "remove_redundancy", iteration=3)
         assert entry.agent == "critic"

@@ -1,7 +1,6 @@
 """Tests for the deployment agent and targets."""
 
 import pytest
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -12,6 +11,7 @@ import torch.nn as nn
 # Check for PIL availability
 try:
     from PIL import Image
+
     HAS_PIL = True
 except ImportError:
     HAS_PIL = False
@@ -19,6 +19,7 @@ except ImportError:
 # Check for NNCF availability
 try:
     import nncf  # noqa: F401
+
     HAS_NNCF = True
 except ImportError:
     HAS_NNCF = False
@@ -26,6 +27,7 @@ except ImportError:
 # Check for TensorFlow availability (for Coral)
 try:
     import tensorflow as tf  # noqa: F401
+
     HAS_TENSORFLOW = True
 except ImportError:
     HAS_TENSORFLOW = False
@@ -116,15 +118,17 @@ def calibration_images(tmp_path):
             img_array = np.random.randint(100, 200, (*image_size, 3), dtype=np.uint8)
             # Add random rectangles
             for _ in range(3):
-                x, y = np.random.randint(0, image_size[0]-8), np.random.randint(0, image_size[1]-8)
+                x, y = np.random.randint(0, image_size[0] - 8), np.random.randint(
+                    0, image_size[1] - 8
+                )
                 w, h = np.random.randint(4, 12), np.random.randint(4, 12)
                 color = np.random.randint(0, 255, 3)
-                img_array[x:min(x+w, image_size[0]), y:min(y+h, image_size[1])] = color
+                img_array[x : min(x + w, image_size[0]), y : min(y + h, image_size[1])] = color
         else:
             # Pure random noise (stress test)
             img_array = np.random.randint(0, 255, (*image_size, 3), dtype=np.uint8)
 
-        img = Image.fromarray(img_array, mode='RGB')
+        img = Image.fromarray(img_array, mode="RGB")
         img.save(calib_dir / f"calib_{i:03d}.png")
 
     return calib_dir
@@ -152,24 +156,26 @@ def calibration_images_224(tmp_path):
                 img_array[y, x] = [
                     int(128 + 64 * np.sin(x / 30 + i)),
                     int(128 + 64 * np.cos(y / 30 + i)),
-                    int(128 + 64 * np.sin((x + y) / 40 + i))
+                    int(128 + 64 * np.sin((x + y) / 40 + i)),
                 ]
 
         # Add some "objects" (circles/rectangles)
         for _ in range(5):
-            cx, cy = np.random.randint(20, image_size[0]-20), np.random.randint(20, image_size[1]-20)
+            cx, cy = np.random.randint(20, image_size[0] - 20), np.random.randint(
+                20, image_size[1] - 20
+            )
             radius = np.random.randint(10, 40)
             color = np.random.randint(0, 255, 3)
 
-            y_indices, x_indices = np.ogrid[:image_size[0], :image_size[1]]
-            mask = (x_indices - cx)**2 + (y_indices - cy)**2 <= radius**2
+            y_indices, x_indices = np.ogrid[: image_size[0], : image_size[1]]
+            mask = (x_indices - cx) ** 2 + (y_indices - cy) ** 2 <= radius**2
             img_array[mask] = color
 
         # Add noise
         noise = np.random.randint(-20, 20, (*image_size, 3))
         img_array = np.clip(img_array.astype(np.int16) + noise, 0, 255).astype(np.uint8)
 
-        img = Image.fromarray(img_array, mode='RGB')
+        img = Image.fromarray(img_array, mode="RGB")
         img.save(calib_dir / f"calib_{i:03d}.jpg")
 
     return calib_dir
@@ -274,11 +280,13 @@ class TestDeploymentAgent:
         # Mock to have no targets
         with patch.object(DeploymentAgent, "_auto_discover_targets"):
             agent = DeploymentAgent()
-            result = agent.execute({
-                "model": str(simple_onnx_model),
-                "target": "nonexistent",
-                "input_shape": [1, 3, 32, 32],
-            })
+            result = agent.execute(
+                {
+                    "model": str(simple_onnx_model),
+                    "target": "nonexistent",
+                    "input_shape": [1, 3, 32, 32],
+                }
+            )
             assert not result.success
             assert "not available" in result.error.lower()
 
@@ -297,6 +305,7 @@ class TestDeploymentTargetBase:
 # Only run OpenVINO tests if available
 try:
     import openvino  # noqa: F401
+
     HAS_OPENVINO = True
 except ImportError:
     HAS_OPENVINO = False
@@ -425,13 +434,15 @@ class TestDeploymentAgentWithOpenVINO:
         if not agent.list_targets():
             pytest.skip("No deployment targets available")
 
-        result = agent.execute({
-            "model": str(simple_onnx_model),
-            "target": "openvino",
-            "precision": "fp32",
-            "input_shape": [1, 3, 32, 32],
-            "output_dir": str(tmp_path),
-        })
+        result = agent.execute(
+            {
+                "model": str(simple_onnx_model),
+                "target": "openvino",
+                "precision": "fp32",
+                "input_shape": [1, 3, 32, 32],
+                "output_dir": str(tmp_path),
+            }
+        )
 
         assert result.success, f"Deployment failed: {result.error}"
         assert "artifact" in result.data
@@ -446,13 +457,15 @@ class TestDeploymentAgentWithOpenVINO:
         if not agent.list_targets():
             pytest.skip("No deployment targets available")
 
-        result = agent.execute({
-            "model": str(simple_pytorch_model),
-            "target": "openvino",
-            "precision": "fp32",
-            "input_shape": [1, 3, 32, 32],
-            "output_dir": str(tmp_path),
-        })
+        result = agent.execute(
+            {
+                "model": str(simple_pytorch_model),
+                "target": "openvino",
+                "precision": "fp32",
+                "input_shape": [1, 3, 32, 32],
+                "output_dir": str(tmp_path),
+            }
+        )
 
         assert result.success, f"Deployment failed: {result.error}"
         # Should have exported to ONNX first
@@ -462,6 +475,7 @@ class TestDeploymentAgentWithOpenVINO:
 # =============================================================================
 # INT8 Calibration Tests
 # =============================================================================
+
 
 @pytest.mark.skipif(not HAS_OPENVINO, reason="OpenVINO not installed")
 @pytest.mark.skipif(not HAS_NNCF, reason="NNCF not installed")
@@ -647,16 +661,18 @@ class TestDeploymentAgentInt8:
         if "openvino" not in agent.list_targets():
             pytest.skip("OpenVINO target not available")
 
-        result = agent.execute({
-            "model": str(simple_onnx_model),
-            "target": "openvino",
-            "precision": "int8",
-            "input_shape": [1, 3, 32, 32],
-            "calibration_data": str(calibration_images),
-            "calibration_samples": 10,
-            "calibration_preprocessing": "imagenet",
-            "output_dir": str(tmp_path),
-        })
+        result = agent.execute(
+            {
+                "model": str(simple_onnx_model),
+                "target": "openvino",
+                "precision": "int8",
+                "input_shape": [1, 3, 32, 32],
+                "calibration_data": str(calibration_images),
+                "calibration_samples": 10,
+                "calibration_preprocessing": "imagenet",
+                "output_dir": str(tmp_path),
+            }
+        )
 
         assert result.success, f"INT8 deployment failed: {result.error}"
         assert result.data["artifact"]["precision"] == "int8"
@@ -674,18 +690,20 @@ class TestDeploymentAgentInt8:
         if "openvino" not in agent.list_targets():
             pytest.skip("OpenVINO target not available")
 
-        result = agent.execute({
-            "model": str(simple_onnx_model),
-            "target": "openvino",
-            "precision": "int8",
-            "input_shape": [1, 3, 32, 32],
-            "calibration_data": str(calibration_images),
-            "calibration_samples": 10,
-            "test_data": str(calibration_images),  # Use same images for validation
-            "validation_samples": 5,
-            "accuracy_tolerance": 5.0,
-            "output_dir": str(tmp_path),
-        })
+        result = agent.execute(
+            {
+                "model": str(simple_onnx_model),
+                "target": "openvino",
+                "precision": "int8",
+                "input_shape": [1, 3, 32, 32],
+                "calibration_data": str(calibration_images),
+                "calibration_samples": 10,
+                "test_data": str(calibration_images),  # Use same images for validation
+                "validation_samples": 5,
+                "accuracy_tolerance": 5.0,
+                "output_dir": str(tmp_path),
+            }
+        )
 
         assert result.success, f"INT8 deployment with validation failed: {result.error}"
 
@@ -703,14 +721,16 @@ class TestDeploymentAgentInt8:
         if "openvino" not in agent.list_targets():
             pytest.skip("OpenVINO target not available")
 
-        result = agent.execute({
-            "model": str(simple_onnx_model),
-            "target": "openvino",
-            "precision": "int8",
-            "input_shape": [1, 3, 32, 32],
-            # No calibration_data provided
-            "output_dir": str(tmp_path),
-        })
+        result = agent.execute(
+            {
+                "model": str(simple_onnx_model),
+                "target": "openvino",
+                "precision": "int8",
+                "input_shape": [1, 3, 32, 32],
+                # No calibration_data provided
+                "output_dir": str(tmp_path),
+            }
+        )
 
         assert not result.success
         assert "calibration" in result.error.lower()
@@ -719,6 +739,7 @@ class TestDeploymentAgentInt8:
 # =============================================================================
 # Jetson INT8 Calibration Tests (Mocked)
 # =============================================================================
+
 
 class TestJetsonInt8CalibrationMocked:
     """Tests for Jetson INT8 calibration with mocked TensorRT."""
@@ -729,7 +750,15 @@ class TestJetsonInt8CalibrationMocked:
         mock_trt = MagicMock()
         mock_trt.IInt8EntropyCalibrator2 = MagicMock
 
-        with patch.dict('sys.modules', {'tensorrt': mock_trt, 'pycuda': MagicMock(), 'pycuda.driver': MagicMock(), 'pycuda.autoinit': MagicMock()}):
+        with patch.dict(
+            "sys.modules",
+            {
+                "tensorrt": mock_trt,
+                "pycuda": MagicMock(),
+                "pycuda.driver": MagicMock(),
+                "pycuda.autoinit": MagicMock(),
+            },
+        ):
             from embodied_ai_architect.agents.deployment.models import CalibrationConfig
 
             config = CalibrationConfig(
@@ -750,7 +779,6 @@ class TestJetsonInt8CalibrationMocked:
         # This test verifies the validation logic without actual TensorRT
 
         from embodied_ai_architect.agents.deployment.models import (
-            CalibrationConfig,
             DeploymentPrecision,
         )
 
@@ -832,6 +860,7 @@ class TestCalibrationImageLoading:
 # Coral Edge TPU Tests
 # =============================================================================
 
+
 class TestCoralTargetBasic:
     """Basic tests for Coral Edge TPU target (no TensorFlow required)."""
 
@@ -857,7 +886,6 @@ class TestCoralTargetBasic:
     def test_coral_int8_only_requirement(self):
         """Test that Coral enforces INT8-only precision."""
         from embodied_ai_architect.agents.deployment.targets.coral import CoralTarget
-        from embodied_ai_architect.agents.deployment.models import DeploymentPrecision
 
         target = CoralTarget()
 
@@ -1025,14 +1053,16 @@ class TestDeploymentAgentCoral:
         if "coral" not in agent.list_targets():
             pytest.skip("Coral target not available")
 
-        result = agent.execute({
-            "model": str(simple_onnx_model),
-            "target": "coral",
-            "precision": "int8",
-            "input_shape": [1, 3, 32, 32],
-            "output_dir": str(tmp_path),
-            # No calibration_data
-        })
+        result = agent.execute(
+            {
+                "model": str(simple_onnx_model),
+                "target": "coral",
+                "precision": "int8",
+                "input_shape": [1, 3, 32, 32],
+                "output_dir": str(tmp_path),
+                # No calibration_data
+            }
+        )
 
         assert not result.success
         assert "calibration" in result.error.lower()
@@ -1046,14 +1076,16 @@ class TestDeploymentAgentCoral:
         if "coral" not in agent.list_targets():
             pytest.skip("Coral target not available")
 
-        result = agent.execute({
-            "model": str(simple_onnx_model),
-            "target": "coral",
-            "precision": "fp16",  # Wrong precision
-            "input_shape": [1, 3, 32, 32],
-            "calibration_data": str(calibration_images),
-            "output_dir": str(tmp_path),
-        })
+        result = agent.execute(
+            {
+                "model": str(simple_onnx_model),
+                "target": "coral",
+                "precision": "fp16",  # Wrong precision
+                "input_shape": [1, 3, 32, 32],
+                "calibration_data": str(calibration_images),
+                "output_dir": str(tmp_path),
+            }
+        )
 
         assert not result.success
         assert "int8" in result.error.lower()
@@ -1092,10 +1124,7 @@ class TestPowerMonitor:
         import time
 
         base_time = time.time()
-        samples = [
-            PowerSample(timestamp=base_time + i, total_watts=10.0 + i)
-            for i in range(5)
-        ]
+        samples = [PowerSample(timestamp=base_time + i, total_watts=10.0 + i) for i in range(5)]
 
         measurement = PowerMeasurement(
             samples=samples,
@@ -1135,6 +1164,7 @@ class TestPowerMonitor:
         # Should be available if psutil is installed
         try:
             import psutil  # noqa: F401
+
             assert monitor.is_available()
         except ImportError:
             assert not monitor.is_available()
@@ -1606,6 +1636,7 @@ class TestKPUTargetBasic:
         # Available if PyTorch 2.0+ with torch.compile is installed
         try:
             import torch  # noqa: F401
+
             if hasattr(torch, "compile"):
                 assert target.is_available() is True
             else:
@@ -1857,9 +1888,7 @@ class TestStubCompiler:
         compiler = StubKPUCompiler()
         config = KPUConfig()
 
-        estimate = compiler.estimate_memory(
-            simple_onnx_model, config, KPUPrecision.INT8
-        )
+        estimate = compiler.estimate_memory(simple_onnx_model, config, KPUPrecision.INT8)
 
         assert "weights" in estimate
         assert "activations" in estimate
@@ -1992,6 +2021,7 @@ class TestNVDLATargetBasic:
         # Available if onnx is installed
         try:
             import onnx  # noqa: F401
+
             assert target.is_available() is True
         except ImportError:
             assert target.is_available() is False

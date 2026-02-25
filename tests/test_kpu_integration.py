@@ -5,12 +5,9 @@ Tests the full flow: KPU config → floorplan → bandwidth → optimization loo
 
 from __future__ import annotations
 
-import pytest
 
 from embodied_ai_architect.graphs.kpu_config import (
-    KPUMicroArchConfig,
     KPU_PRESETS,
-    create_kpu_config,
 )
 from embodied_ai_architect.graphs.floorplan import estimate_floorplan
 from embodied_ai_architect.graphs.bandwidth import check_bandwidth_match
@@ -66,7 +63,7 @@ class TestBandwidthTriggersUpgrade:
         config = config.model_copy(
             update={"dram": config.dram.model_copy(update={"num_controllers": 1})}
         )
-        bw = check_bandwidth_match(config, {"gflops": 20.0})
+        check_bandwidth_match(config, {"gflops": 20.0})
         # With low DRAM, there may be a bottleneck
         # The loop should try to fix it
         result = run_kpu_loop(

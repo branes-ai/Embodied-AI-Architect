@@ -13,13 +13,11 @@ For verbose output showing agent responses:
     pytest tests/test_verdict_tools_cli.py -v --live-api -s
 """
 
-import json
 import os
 import pytest
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from dataclasses import dataclass, field
-
 
 # =============================================================================
 # Test Configuration
@@ -57,6 +55,7 @@ def skip_without_api_key():
 @dataclass
 class PromptTestCase:
     """Definition of a prompt test case."""
+
     name: str
     prompt: str
     expected_tools: list[str]  # Tools that should be called
@@ -222,6 +221,7 @@ SMOKE_TEST_CASES = [
 @dataclass
 class ToolCallRecord:
     """Record of a tool call."""
+
     name: str
     args: dict[str, Any]
     result: str
@@ -282,6 +282,7 @@ class VerdictToolsTester:
         """Initialize the agent."""
         if self.use_live_api:
             from embodied_ai_architect.llm import LLMClient, ArchitectAgent
+
             llm = LLMClient()
             self.agent = ArchitectAgent(llm=llm, verbose=True)
         else:
@@ -323,13 +324,10 @@ class VerdictToolsTester:
 
             # Check expected tools (at least one should be called)
             if test_case.expected_tools:
-                found_expected = any(
-                    tool in tools_called for tool in test_case.expected_tools
-                )
+                found_expected = any(tool in tools_called for tool in test_case.expected_tools)
                 if not found_expected:
                     errors.append(
-                        f"Expected one of {test_case.expected_tools}, "
-                        f"got {tools_called}"
+                        f"Expected one of {test_case.expected_tools}, " f"got {tools_called}"
                     )
 
             # Extract verdict from response
@@ -339,8 +337,7 @@ class VerdictToolsTester:
             if test_case.expected_verdict:
                 if verdict_found != test_case.expected_verdict:
                     errors.append(
-                        f"Expected verdict {test_case.expected_verdict}, "
-                        f"got {verdict_found}"
+                        f"Expected verdict {test_case.expected_verdict}, " f"got {verdict_found}"
                     )
 
             # Check expected substrings in response
@@ -386,9 +383,9 @@ class VerdictToolsTester:
         """Generate mock response for unit testing."""
         # This simulates what the agent would return
         if test_case.expected_verdict == "PASS":
-            return f"**PASS** - The constraint is met with good headroom."
+            return "**PASS** - The constraint is met with good headroom."
         elif test_case.expected_verdict == "FAIL":
-            return f"**FAIL** - The constraint cannot be met."
+            return "**FAIL** - The constraint cannot be met."
         else:
             return "Analysis complete. See details above."
 
@@ -443,10 +440,7 @@ class TestVerdictToolsUnit:
             assert isinstance(tc.expected_in_response, list)
 
 
-@pytest.mark.skipif(
-    not os.environ.get("ANTHROPIC_API_KEY"),
-    reason="ANTHROPIC_API_KEY not set"
-)
+@pytest.mark.skipif(not os.environ.get("ANTHROPIC_API_KEY"), reason="ANTHROPIC_API_KEY not set")
 class TestVerdictToolsLive:
     """Live API tests - require ANTHROPIC_API_KEY."""
 
@@ -467,7 +461,7 @@ class TestVerdictToolsLive:
         print(f"Tools called: {result['tools_called']}")
         print(f"Verdict found: {result['verdict_found']}")
         print(f"Response preview: {result['response'][:200]}...")
-        if result['errors']:
+        if result["errors"]:
             print(f"Errors: {result['errors']}")
         print(f"{'='*60}")
 
@@ -542,12 +536,12 @@ def run_interactive_tests():
         result = tester.run_test(tc)
 
         if result["success"]:
-            print(f"  ✓ PASSED")
+            print("  ✓ PASSED")
             print(f"    Tools: {result['tools_called']}")
             print(f"    Verdict: {result['verdict_found']}")
             results["passed"] += 1
         else:
-            print(f"  ✗ FAILED")
+            print("  ✗ FAILED")
             for error in result["errors"]:
                 print(f"    - {error}")
             results["failed"] += 1
@@ -570,5 +564,6 @@ def run_interactive_tests():
 
 if __name__ == "__main__":
     import sys
+
     success = run_interactive_tests()
     sys.exit(0 if success else 1)

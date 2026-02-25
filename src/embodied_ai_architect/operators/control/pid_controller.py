@@ -44,7 +44,7 @@ class PIDController(Operator):
             execution_target: Only cpu supported
         """
         if execution_target != "cpu":
-            print(f"[PIDController] Warning: Only CPU supported")
+            print("[PIDController] Warning: Only CPU supported")
 
         self._execution_target = "cpu"
         self._config = config
@@ -58,8 +58,12 @@ class PIDController(Operator):
         if isinstance(kp, (list, np.ndarray)):
             self.num_axes = len(kp)
             self.kp = np.array(kp)
-            self.ki = np.array(ki) if isinstance(ki, (list, np.ndarray)) else np.full(self.num_axes, ki)
-            self.kd = np.array(kd) if isinstance(kd, (list, np.ndarray)) else np.full(self.num_axes, kd)
+            self.ki = (
+                np.array(ki) if isinstance(ki, (list, np.ndarray)) else np.full(self.num_axes, ki)
+            )
+            self.kd = (
+                np.array(kd) if isinstance(kd, (list, np.ndarray)) else np.full(self.num_axes, kd)
+            )
         else:
             self.num_axes = config.get("num_axes", 1)
             self.kp = np.full(self.num_axes, kp)
@@ -112,7 +116,7 @@ class PIDController(Operator):
         # Ensure setpoint matches num_axes (take first N or pad)
         setpoint = np.atleast_1d(setpoint).flatten()
         if len(setpoint) > self.num_axes:
-            setpoint = setpoint[:self.num_axes]
+            setpoint = setpoint[: self.num_axes]
         elif len(setpoint) < self.num_axes:
             setpoint = np.pad(setpoint, (0, self.num_axes - len(setpoint)))
 
@@ -121,7 +125,7 @@ class PIDController(Operator):
             measurement = np.atleast_1d(inputs["measurement"]).flatten()
             # Ensure measurement matches num_axes
             if len(measurement) > self.num_axes:
-                measurement = measurement[:self.num_axes]
+                measurement = measurement[: self.num_axes]
             elif len(measurement) < self.num_axes:
                 measurement = np.pad(measurement, (0, self.num_axes - len(measurement)))
         else:

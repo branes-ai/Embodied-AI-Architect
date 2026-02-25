@@ -22,8 +22,13 @@ try:
     )
 except ImportError:
     HAS_GRAPHS = False
-    get_graphs_tool_definitions = lambda: []
-    create_graphs_tool_executors = lambda: {}
+
+    def get_graphs_tool_definitions():
+        return []
+
+    def create_graphs_tool_executors():
+        return {}
+
 
 # Import architecture analysis tools
 try:
@@ -31,11 +36,17 @@ try:
         get_architecture_tool_definitions,
         create_architecture_tool_executors,
     )
+
     HAS_ARCHITECTURE_TOOLS = True
 except ImportError:
     HAS_ARCHITECTURE_TOOLS = False
-    get_architecture_tool_definitions = lambda: []
-    create_architecture_tool_executors = lambda: {}
+
+    def get_architecture_tool_definitions():
+        return []
+
+    def create_architecture_tool_executors():
+        return {}
+
 
 # Import codebase analysis tools
 try:
@@ -43,11 +54,17 @@ try:
         get_codebase_tool_definitions,
         create_codebase_tool_executors,
     )
+
     HAS_CODEBASE_TOOLS = True
 except ImportError:
     HAS_CODEBASE_TOOLS = False
-    get_codebase_tool_definitions = lambda: []
-    create_codebase_tool_executors = lambda: {}
+
+    def get_codebase_tool_definitions():
+        return []
+
+    def create_codebase_tool_executors():
+        return {}
+
 
 # Import optimization tools (optional, requires numpy)
 try:
@@ -55,11 +72,16 @@ try:
         get_optimization_tool_definitions,
         create_optimization_tool_executors,
     )
+
     HAS_MOO = True
 except ImportError:
     HAS_MOO = False
-    get_optimization_tool_definitions = lambda: []
-    create_optimization_tool_executors = lambda: {}
+
+    def get_optimization_tool_definitions():
+        return []
+
+    def create_optimization_tool_executors():
+        return {}
 
 
 def get_tool_definitions() -> list[dict[str, Any]]:
@@ -330,12 +352,14 @@ def create_tool_executors() -> dict[str, Callable]:
             if cost_limit_usd is not None:
                 constraints["cost_usd"] = cost_limit_usd
 
-            result = hardware_profiler.execute({
-                "model_analysis": model_analysis,
-                "constraints": constraints,
-                "target_use_case": use_case,
-                "top_n": top_n,
-            })
+            result = hardware_profiler.execute(
+                {
+                    "model_analysis": model_analysis,
+                    "constraints": constraints,
+                    "target_use_case": use_case,
+                    "top_n": top_n,
+                }
+            )
 
             if result.success:
                 return json.dumps(result.data, indent=2, default=str)
@@ -353,13 +377,15 @@ def create_tool_executors() -> dict[str, Callable]:
     ) -> str:
         """Execute benchmark."""
         try:
-            result = benchmark_agent.execute({
-                "model": model_path,
-                "backends": [backend],
-                "input_shape": input_shape,
-                "iterations": iterations,
-                "warmup_iterations": warmup_iterations,
-            })
+            result = benchmark_agent.execute(
+                {
+                    "model": model_path,
+                    "backends": [backend],
+                    "input_shape": input_shape,
+                    "iterations": iterations,
+                    "warmup_iterations": warmup_iterations,
+                }
+            )
 
             if result.success:
                 return json.dumps(result.data, indent=2, default=str)

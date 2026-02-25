@@ -1,7 +1,5 @@
 """Tests for floorplan estimator."""
 
-import pytest
-
 from embodied_ai_architect.graphs.kpu_config import (
     ComputeTileConfig,
     KPUMicroArchConfig,

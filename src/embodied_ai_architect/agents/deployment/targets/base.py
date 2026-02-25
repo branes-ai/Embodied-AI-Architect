@@ -146,7 +146,9 @@ class DeploymentTarget(ABC):
         inferences_per_joule = None
         if measurement.duration_sec > 0 and config.measurement_iterations > 0:
             total_energy_joules = mean_watts * measurement.duration_sec
-            energy_per_inference = (total_energy_joules / config.measurement_iterations) * 1000  # mJ
+            energy_per_inference = (
+                total_energy_joules / config.measurement_iterations
+            ) * 1000  # mJ
             if total_energy_joules > 0:
                 inferences_per_joule = config.measurement_iterations / total_energy_joules
 
@@ -155,7 +157,9 @@ class DeploymentTarget(ABC):
             predicted_watts=round(predicted_watts, 2) if predicted_watts else None,
             deviation_percent=round(deviation, 1) if deviation is not None else None,
             within_budget=within_budget,
-            energy_per_inference_mj=round(energy_per_inference, 3) if energy_per_inference else None,
+            energy_per_inference_mj=(
+                round(energy_per_inference, 3) if energy_per_inference else None
+            ),
             inferences_per_joule=round(inferences_per_joule, 2) if inferences_per_joule else None,
             measurement_method=monitor.name,
             gpu_power_watts=measurement.mean_gpu_watts,

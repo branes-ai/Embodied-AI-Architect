@@ -89,9 +89,7 @@ def rtl_generator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
                 tb_source = None
 
             # Run through EDA loop
-            result = run_rtl_loop(
-                module_name, rtl_source, loop_config, testbench_source=tb_source
-            )
+            result = run_rtl_loop(module_name, rtl_source, loop_config, testbench_source=tb_source)
 
             rtl_lint_results[module_name] = result.lint_result
             rtl_synthesis_results[module_name] = result.synthesis_result
@@ -111,13 +109,9 @@ def rtl_generator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
 
     # Summary
     total_cells = sum(
-        r.get("area_cells", 0)
-        for r in rtl_synthesis_results.values()
-        if r.get("success")
+        r.get("area_cells", 0) for r in rtl_synthesis_results.values() if r.get("success")
     )
-    pass_count = sum(
-        1 for r in rtl_synthesis_results.values() if r.get("success")
-    )
+    pass_count = sum(1 for r in rtl_synthesis_results.values() if r.get("success"))
 
     state_updates = {
         "rtl_modules": rtl_modules,
@@ -197,8 +191,7 @@ def rtl_ppa_assessor(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     if floorplan_area > 0:
         effective_area = floorplan_area
         cross_check = (
-            f" (floorplan: {floorplan_area:.1f}mm², "
-            f"synthesis logic: {total_area_mm2:.3f}mm²)"
+            f" (floorplan: {floorplan_area:.1f}mm², " f"synthesis logic: {total_area_mm2:.3f}mm²)"
         )
     else:
         effective_area = total_area_mm2

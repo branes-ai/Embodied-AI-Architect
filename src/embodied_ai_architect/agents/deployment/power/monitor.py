@@ -382,6 +382,7 @@ class PsutilMonitor(PowerMonitor):
         """Check if psutil is available."""
         try:
             import psutil
+
             self._psutil = psutil
             return True
         except ImportError:
@@ -416,9 +417,9 @@ def get_power_monitor() -> PowerMonitor | None:
     # Try monitors in order of preference
     monitors = [
         TegrastatsMonitor(),  # Jetson (most accurate for edge)
-        NvidiaSmiMonitor(),   # Discrete NVIDIA GPU
-        IntelRaplMonitor(),   # Intel CPU
-        PsutilMonitor(),      # Fallback estimation
+        NvidiaSmiMonitor(),  # Discrete NVIDIA GPU
+        IntelRaplMonitor(),  # Intel CPU
+        PsutilMonitor(),  # Fallback estimation
     ]
 
     for monitor in monitors:

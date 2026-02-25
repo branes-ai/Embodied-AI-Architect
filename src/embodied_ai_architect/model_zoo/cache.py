@@ -264,9 +264,7 @@ class ModelCache:
                 removed = True
         else:
             # Remove all formats
-            keys_to_remove = [
-                k for k in self._entries if k.startswith(f"{provider}/{model_id}/")
-            ]
+            keys_to_remove = [k for k in self._entries if k.startswith(f"{provider}/{model_id}/")]
             for key in keys_to_remove:
                 entry = self._entries[key]
                 path = Path(entry.path)
@@ -333,9 +331,7 @@ class ModelCache:
         count = len(entries)
 
         if provider is not None:
-            self._entries = {
-                k: v for k, v in self._entries.items() if v.provider != provider
-            }
+            self._entries = {k: v for k, v in self._entries.items() if v.provider != provider}
         else:
             self._entries = {}
 

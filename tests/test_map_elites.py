@@ -71,7 +71,7 @@ class TestMAPElites:
         me = MAPElites(design_space, evaluator, executor, cfg)
 
         callback_calls = []
-        result = me.run(callback=lambda i, e, c: callback_calls.append((i, e, c)))
+        me.run(callback=lambda i, e, c: callback_calls.append((i, e, c)))
 
         # Should be called: once for initial + once per iteration
         assert len(callback_calls) >= 4  # 1 init + 3 iterations

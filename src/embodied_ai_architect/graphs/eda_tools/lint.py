@@ -126,7 +126,9 @@ class RTLLintTool:
 
         if not module_name:
             errors.append("No module definition found")
-        if rtl_source.count("module") != rtl_source.count("endmodule"):
+        n_module = len(re.findall(r"\bmodule\b", rtl_source))
+        n_endmodule = len(re.findall(r"\bendmodule\b", rtl_source))
+        if n_module != n_endmodule:
             errors.append("Mismatched module/endmodule")
 
         return LintResult(
@@ -146,8 +148,6 @@ class RTLLintTool:
         ports = [{"direction": p[0], "name": p[1]} for p in re.findall(port_pattern, rtl)]
 
         param_pattern = r"parameter\s+(\w+)\s*=\s*([^,;]+)"
-        params = [
-            {"name": p[0], "value": p[1].strip()} for p in re.findall(param_pattern, rtl)
-        ]
+        params = [{"name": p[0], "value": p[1].strip()} for p in re.findall(param_pattern, rtl)]
 
         return module_name, ports, params

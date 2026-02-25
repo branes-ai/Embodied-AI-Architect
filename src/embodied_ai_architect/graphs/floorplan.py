@@ -16,12 +16,10 @@ Usage:
 from __future__ import annotations
 
 import math
-from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
-from embodied_ai_architect.graphs.technology import estimate_sram_area_mm2, get_technology
-
+from embodied_ai_architect.graphs.technology import estimate_sram_area_mm2
 
 # ---------------------------------------------------------------------------
 # Area estimation constants
@@ -274,14 +272,10 @@ def estimate_floorplan(
     issues = []
 
     # 1. Compute tile dimensions
-    compute_dims = estimate_compute_tile_dimensions(
-        config.compute_tile, process_nm
-    )
+    compute_dims = estimate_compute_tile_dimensions(config.compute_tile, process_nm)
 
     # 2. Memory tile dimensions
-    memory_dims = estimate_memory_tile_dimensions(
-        config.memory_tile, process_nm
-    )
+    memory_dims = estimate_memory_tile_dimensions(config.memory_tile, process_nm)
 
     # 3. Pitch matching
     if memory_dims.width_mm > 0 and memory_dims.height_mm > 0:
@@ -343,9 +337,7 @@ def estimate_floorplan(
 
     # Reticle limit check (~33mm edge)
     if die_edge > 33.0:
-        issues.append(
-            f"Die edge {die_edge:.1f}mm exceeds reticle limit (~33mm)."
-        )
+        issues.append(f"Die edge {die_edge:.1f}mm exceeds reticle limit (~33mm).")
 
     feasible = pitch_matched and area_ok and die_edge <= 33.0
 

@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List
 from ..base import BaseAgent, AgentResult
-from .models import HardwareProfile, HardwareRecommendation, OperationType
+from .models import HardwareProfile, HardwareRecommendation
 from .knowledge_base import get_default_hardware_profiles, get_hardware_by_name
 
 
@@ -61,7 +61,7 @@ class HardwareProfileAgent(BaseAgent):
                 return AgentResult(
                     success=False,
                     data={},
-                    error="No model_analysis provided. Run ModelAnalyzerAgent first."
+                    error="No model_analysis provided. Run ModelAnalyzerAgent first.",
                 )
 
             # Extract model characteristics
@@ -99,26 +99,28 @@ class HardwareProfileAgent(BaseAgent):
                     model_memory_mb=model_memory_mb,
                     operation_types=operation_types,
                     target_latency_ms=max_latency_ms,
-                    max_power_watts=max_power_watts
+                    max_power_watts=max_power_watts,
                 )
 
                 # Generate reasons and warnings
                 reasons, warnings = self._generate_reasoning(
-                    hw, model_memory_mb, model_params, operation_types,
-                    max_latency_ms, max_power_watts
+                    hw,
+                    model_memory_mb,
+                    model_params,
+                    operation_types,
+                    max_latency_ms,
+                    max_power_watts,
                 )
 
                 # Estimate performance
-                estimated_perf = self._estimate_performance(
-                    hw, model_params, model_memory_mb
-                )
+                estimated_perf = self._estimate_performance(hw, model_params, model_memory_mb)
 
                 recommendation = HardwareRecommendation(
                     hardware=hw,
                     score=score,
                     reasons=reasons,
                     warnings=warnings,
-                    estimated_performance=estimated_perf
+                    estimated_performance=estimated_perf,
                 )
                 recommendations.append(recommendation)
 
@@ -151,24 +153,17 @@ class HardwareProfileAgent(BaseAgent):
                     }
                     for i, rec in enumerate(top_recommendations)
                 ],
-                "total_evaluated": len(recommendations)
+                "total_evaluated": len(recommendations),
             }
 
             return AgentResult(
                 success=True,
                 data=result_data,
-                metadata={
-                    "agent": self.name,
-                    "profiles_evaluated": len(recommendations)
-                }
+                metadata={"agent": self.name, "profiles_evaluated": len(recommendations)},
             )
 
         except Exception as e:
-            return AgentResult(
-                success=False,
-                data={},
-                error=f"Hardware profiling failed: {str(e)}"
-            )
+            return AgentResult(success=False, data={}, error=f"Hardware profiling failed: {str(e)}")
 
     def _infer_operation_types(self, layer_types: Dict[str, int]) -> List[str]:
         """Infer operation types from layer types.
@@ -204,7 +199,7 @@ class HardwareProfileAgent(BaseAgent):
         model_params: int,
         operation_types: List[str],
         max_latency_ms: float | None,
-        max_power_watts: float | None
+        max_power_watts: float | None,
     ) -> tuple[List[str], List[str]]:
         """Generate human-readable reasons and warnings for a recommendation.
 
@@ -225,20 +220,28 @@ class HardwareProfileAgent(BaseAgent):
         # Memory fit
         memory_gb_needed = model_memory_mb / 1024
         if hw.capabilities.memory_gb >= memory_gb_needed * 2:
-            reasons.append(f"Ample memory: {hw.capabilities.memory_gb}GB (needs ~{memory_gb_needed:.1f}GB)")
+            reasons.append(
+                f"Ample memory: {hw.capabilities.memory_gb}GB (needs ~{memory_gb_needed:.1f}GB)"
+            )
         elif hw.capabilities.memory_gb >= memory_gb_needed:
             reasons.append(f"Sufficient memory: {hw.capabilities.memory_gb}GB")
         else:
-            warnings.append(f"Insufficient memory: {hw.capabilities.memory_gb}GB < {memory_gb_needed:.1f}GB needed")
+            warnings.append(
+                f"Insufficient memory: {hw.capabilities.memory_gb}GB < {memory_gb_needed:.1f}GB needed"
+            )
 
         # Power budget
         if max_power_watts:
             if hw.capabilities.tdp_watts <= max_power_watts * 0.8:
-                reasons.append(f"Low power: {hw.capabilities.tdp_watts}W (budget: {max_power_watts}W)")
+                reasons.append(
+                    f"Low power: {hw.capabilities.tdp_watts}W (budget: {max_power_watts}W)"
+                )
             elif hw.capabilities.tdp_watts <= max_power_watts:
                 reasons.append(f"Within power budget: {hw.capabilities.tdp_watts}W")
             else:
-                warnings.append(f"Exceeds power budget: {hw.capabilities.tdp_watts}W > {max_power_watts}W")
+                warnings.append(
+                    f"Exceeds power budget: {hw.capabilities.tdp_watts}W > {max_power_watts}W"
+                )
 
         # Operation matching
         matching_ops = [op for op in operation_types if op in [o.value for o in hw.optimized_for]]
@@ -263,10 +266,7 @@ class HardwareProfileAgent(BaseAgent):
         return reasons, warnings
 
     def _estimate_performance(
-        self,
-        hw: HardwareProfile,
-        model_params: int,
-        model_memory_mb: float
+        self, hw: HardwareProfile, model_params: int, model_memory_mb: float
     ) -> Dict[str, Any]:
         """Estimate performance metrics.
 

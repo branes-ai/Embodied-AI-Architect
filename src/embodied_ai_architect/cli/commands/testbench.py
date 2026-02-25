@@ -74,7 +74,6 @@ def validate(
     """
     from embodied_ai_architect.testbench import (
         MetricType,
-        ModelValidator,
         record_validation,
     )
 

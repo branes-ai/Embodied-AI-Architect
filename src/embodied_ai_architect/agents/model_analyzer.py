@@ -35,11 +35,7 @@ class ModelAnalyzerAgent(BaseAgent):
             input_shape = input_data.get("input_shape")
 
             if model is None:
-                return AgentResult(
-                    success=False,
-                    data={},
-                    error="No model provided in input_data"
-                )
+                return AgentResult(success=False, data={}, error="No model provided in input_data")
 
             # Load model if it's a path string
             if isinstance(model, str):
@@ -49,24 +45,16 @@ class ModelAnalyzerAgent(BaseAgent):
                 return AgentResult(
                     success=False,
                     data={},
-                    error="Model must be a PyTorch nn.Module or path to model file"
+                    error="Model must be a PyTorch nn.Module or path to model file",
                 )
 
             # Analyze model
             analysis = self._analyze_model(model, input_shape)
 
-            return AgentResult(
-                success=True,
-                data=analysis,
-                metadata={"agent": self.name}
-            )
+            return AgentResult(success=True, data=analysis, metadata={"agent": self.name})
 
         except Exception as e:
-            return AgentResult(
-                success=False,
-                data={},
-                error=f"Error analyzing model: {str(e)}"
-            )
+            return AgentResult(success=False, data={}, error=f"Error analyzing model: {str(e)}")
 
     def _analyze_model(self, model: nn.Module, input_shape: tuple | None = None) -> Dict[str, Any]:
         """Internal method to analyze a PyTorch model.
@@ -90,11 +78,13 @@ class ModelAnalyzerAgent(BaseAgent):
             module_type = type(module).__name__
             if module_type != type(model).__name__:  # Skip the model itself
                 layer_types[module_type] = layer_types.get(module_type, 0) + 1
-                layer_list.append({
-                    "name": name if name else "root",
-                    "type": module_type,
-                    "params": sum(p.numel() for p in module.parameters())
-                })
+                layer_list.append(
+                    {
+                        "name": name if name else "root",
+                        "type": module_type,
+                        "params": sum(p.numel() for p in module.parameters()),
+                    }
+                )
 
         analysis = {
             "model_type": type(model).__name__,
@@ -103,7 +93,7 @@ class ModelAnalyzerAgent(BaseAgent):
             "non_trainable_parameters": total_params - trainable_params,
             "layer_type_counts": layer_types,
             "layer_details": layer_list[:20],  # Limit to first 20 layers for brevity
-            "total_layers": len(layer_list)
+            "total_layers": len(layer_list),
         }
 
         # If input shape provided, estimate memory and FLOPs

@@ -4,12 +4,10 @@ Loads architectures from embodied-schemas and executes them with timing.
 """
 
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any
 import time
 import statistics
 
-import numpy as np
 
 from embodied_schemas import SoftwareArchitecture, Registry
 
@@ -62,7 +60,9 @@ class PipelineTiming:
 
     @property
     def std_total_ms(self) -> float:
-        return statistics.stdev(self.total_latencies_ms) if len(self.total_latencies_ms) > 1 else 0.0
+        return (
+            statistics.stdev(self.total_latencies_ms) if len(self.total_latencies_ms) > 1 else 0.0
+        )
 
     @property
     def throughput_fps(self) -> float:
@@ -119,13 +119,21 @@ class ArchitectureBenchmarkResult:
                     for op_id, t in self.timing.operator_timings.items()
                 },
             },
-            "power": {
-                "mean_w": self.mean_power_w,
-                "peak_w": self.peak_power_w,
-            } if self.mean_power_w else None,
-            "memory": {
-                "peak_mb": self.peak_memory_mb,
-            } if self.peak_memory_mb else None,
+            "power": (
+                {
+                    "mean_w": self.mean_power_w,
+                    "peak_w": self.peak_power_w,
+                }
+                if self.mean_power_w
+                else None
+            ),
+            "memory": (
+                {
+                    "peak_mb": self.peak_memory_mb,
+                }
+                if self.peak_memory_mb
+                else None
+            ),
             "config": {
                 "iterations": self.iterations,
                 "warmup_iterations": self.warmup_iterations,
@@ -155,7 +163,9 @@ class ArchitectureRunner:
         self.architecture = architecture
         self.hardware_id = hardware_id
         self.operators: dict[str, Operator] = {}
-        self.dataflow: dict[str, list[tuple[str, str, str]]] = {}  # source -> [(target, src_port, tgt_port)]
+        self.dataflow: dict[str, list[tuple[str, str, str]]] = (
+            {}
+        )  # source -> [(target, src_port, tgt_port)]
         self._is_loaded = False
 
     @classmethod
@@ -229,7 +239,9 @@ class ArchitectureRunner:
                     execution_target=op_inst.execution_target or "cpu",
                 )
                 self.operators[op_inst.id] = operator
-                print(f"  Loaded: {op_inst.id} ({op_inst.operator_id}) -> {op_inst.execution_target or 'cpu'}")
+                print(
+                    f"  Loaded: {op_inst.id} ({op_inst.operator_id}) -> {op_inst.execution_target or 'cpu'}"
+                )
             except Exception as e:
                 print(f"  FAILED: {op_inst.id} ({op_inst.operator_id}): {e}")
                 raise
@@ -373,6 +385,7 @@ class ArchitectureRunner:
         sw_fingerprint = None
         try:
             from ...operators.hardware_detect import detect_hardware
+
             hw_info = detect_hardware()
             hw_fingerprint = hw_info.get("hardware_fingerprint")
             sw_fingerprint = hw_info.get("software_fingerprint")
@@ -417,7 +430,9 @@ class ArchitectureRunner:
         print(f"  {'-'*20} {'-'*8} {'-'*10} {'-'*10} {'-'*10}")
 
         for op_id, t in result.timing.operator_timings.items():
-            print(f"  {op_id:<20} {t.execution_target:<8} {t.mean_ms:>8.2f}ms {t.std_ms:>8.2f}ms {t.p95_ms:>8.2f}ms")
+            print(
+                f"  {op_id:<20} {t.execution_target:<8} {t.mean_ms:>8.2f}ms {t.std_ms:>8.2f}ms {t.p95_ms:>8.2f}ms"
+            )
 
         if result.mean_power_w:
             print()
@@ -431,17 +446,23 @@ class ArchitectureRunner:
         if self.architecture.end_to_end_latency_ms:
             meets = result.timing.mean_total_ms <= self.architecture.end_to_end_latency_ms
             status = "✓" if meets else "✗"
-            print(f"  {status} Latency: {result.timing.mean_total_ms:.1f}ms (target: {self.architecture.end_to_end_latency_ms}ms)")
+            print(
+                f"  {status} Latency: {result.timing.mean_total_ms:.1f}ms (target: {self.architecture.end_to_end_latency_ms}ms)"
+            )
 
         if self.architecture.min_throughput_fps:
             meets = result.timing.throughput_fps >= self.architecture.min_throughput_fps
             status = "✓" if meets else "✗"
-            print(f"  {status} Throughput: {result.timing.throughput_fps:.1f}fps (target: {self.architecture.min_throughput_fps}fps)")
+            print(
+                f"  {status} Throughput: {result.timing.throughput_fps:.1f}fps (target: {self.architecture.min_throughput_fps}fps)"
+            )
 
         if self.architecture.power_budget_w and result.mean_power_w:
             meets = result.mean_power_w <= self.architecture.power_budget_w
             status = "✓" if meets else "✗"
-            print(f"  {status} Power: {result.mean_power_w:.1f}W (budget: {self.architecture.power_budget_w}W)")
+            print(
+                f"  {status} Power: {result.mean_power_w:.1f}W (budget: {self.architecture.power_budget_w}W)"
+            )
 
         print("=" * 60)
 

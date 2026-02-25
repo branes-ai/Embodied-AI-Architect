@@ -201,7 +201,9 @@ class ModelValidator:
             logits = np.array(predictions)
             pred_classes = np.argmax(logits, axis=1) if logits.ndim > 1 else logits
 
-        labels = np.array([gt.get("label", gt) if isinstance(gt, dict) else gt for gt in ground_truths])
+        labels = np.array(
+            [gt.get("label", gt) if isinstance(gt, dict) else gt for gt in ground_truths]
+        )
 
         # Top-1 accuracy
         top1 = compute_accuracy(pred_classes, labels)
@@ -236,7 +238,9 @@ class ModelValidator:
 
         # Stack predictions and ground truths
         pred_masks = np.array([p.get("mask", p) if isinstance(p, dict) else p for p in predictions])
-        gt_masks = np.array([gt.get("mask", gt) if isinstance(gt, dict) else gt for gt in ground_truths])
+        gt_masks = np.array(
+            [gt.get("mask", gt) if isinstance(gt, dict) else gt for gt in ground_truths]
+        )
 
         # Determine number of classes
         num_classes = max(pred_masks.max(), gt_masks.max()) + 1
@@ -357,10 +361,12 @@ def _load_dataset(dataset_path: Path, task: str) -> list[dict]:
                 annotations = json.load(f)
 
             for ann in annotations.get("samples", []):
-                samples.append({
-                    "input": ann.get("input"),
-                    "ground_truth": ann.get("ground_truth"),
-                })
+                samples.append(
+                    {
+                        "input": ann.get("input"),
+                        "ground_truth": ann.get("ground_truth"),
+                    }
+                )
 
         return samples
 

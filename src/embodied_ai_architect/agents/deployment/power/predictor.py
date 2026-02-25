@@ -288,7 +288,7 @@ class PowerPredictor:
         # Compute operations based on precision
         precision_multiplier = self._get_precision_multiplier(precision)
         effective_ops = model_characteristics.total_macs * 2  # MAC = 2 ops
-        effective_tops = effective_ops / 1e12 * precision_multiplier
+        effective_ops / 1e12 * precision_multiplier
 
         # Estimate utilization based on compute intensity
         compute_intensity = self._compute_intensity(model_characteristics)
@@ -297,7 +297,7 @@ class PowerPredictor:
         # Power estimation using power law model
         # P = P_idle + (P_peak - P_idle) * utilization^exponent
         dynamic_power = (spec.peak_watts - spec.idle_watts) * (
-            estimated_utilization ** spec.power_exponent
+            estimated_utilization**spec.power_exponent
         )
         mean_power = spec.idle_watts + dynamic_power
 
@@ -406,8 +406,7 @@ class PowerPredictor:
 
         # Check for calibration data
         calibration_count = sum(
-            1 for k, v in self._calibration_data.items()
-            if v["hardware"] == hardware.value
+            1 for k, v in self._calibration_data.items() if v["hardware"] == hardware.value
         )
         if calibration_count > 0:
             base_confidence += min(0.3, calibration_count * 0.1)

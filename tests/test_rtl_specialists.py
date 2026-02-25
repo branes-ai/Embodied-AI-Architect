@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 
 from embodied_ai_architect.graphs.rtl_specialists import rtl_generator, rtl_ppa_assessor
 from embodied_ai_architect.graphs.soc_state import create_initial_soc_state, DesignConstraints

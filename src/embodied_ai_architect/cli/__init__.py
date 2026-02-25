@@ -44,8 +44,7 @@ def cli(ctx, verbose, json, quiet):
     if not quiet and not json and ctx.invoked_subcommand:
         console.print(
             Panel.fit(
-                "[bold cyan]Branes Embodied AI Platform[/bold cyan]\n"
-                f"Version {__version__}",
+                "[bold cyan]Branes Embodied AI Platform[/bold cyan]\n" f"Version {__version__}",
                 border_style="cyan",
             )
         )

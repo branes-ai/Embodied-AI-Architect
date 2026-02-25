@@ -5,7 +5,6 @@ from the unified model zoo.
 """
 
 import json
-from pathlib import Path
 
 import click
 from rich.console import Console
@@ -55,7 +54,6 @@ def search(ctx, task, max_params, min_accuracy, provider, benchmarked, query):
     """
     json_output = ctx.obj.get("json", False)
 
-    from embodied_ai_architect.model_zoo import discover
     from embodied_ai_architect.model_zoo.providers.base import ModelQuery
 
     model_query = ModelQuery(
@@ -112,7 +110,7 @@ def search(ctx, task, max_params, min_accuracy, provider, benchmarked, query):
             )
 
         console.print(table)
-        console.print(f"\n[dim]Download with:[/dim] branes zoo download <model-id>")
+        console.print("\n[dim]Download with:[/dim] branes zoo download <model-id>")
 
 
 @zoo.command()
@@ -428,4 +426,6 @@ def clear(ctx, provider, yes):
             )
         )
     else:
-        console.print(f"[green]✓[/green] Cleared {count} models ({total_size / (1024 * 1024):.1f} MB)")
+        console.print(
+            f"[green]✓[/green] Cleared {count} models ({total_size / (1024 * 1024):.1f} MB)"
+        )

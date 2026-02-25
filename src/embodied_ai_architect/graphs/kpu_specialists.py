@@ -13,7 +13,6 @@ Usage:
 
 from __future__ import annotations
 
-import copy
 import logging
 from typing import Any
 
@@ -140,9 +139,7 @@ def bandwidth_validator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]
 
     verdict = "PASS" if result.balanced else "FAIL"
 
-    link_summary = ", ".join(
-        f"{l.name}: {l.utilization:.0%}" for l in result.links
-    )
+    link_summary = ", ".join(f"{link.name}: {link.utilization:.0%}" for link in result.links)
 
     return {
         "summary": (
@@ -204,13 +201,13 @@ def kpu_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         elif ratio_h < 0.85:
             # Memory tile too tall — add block movers
             config.memory_tile.num_block_movers += 1
-            changes.append(
-                f"Added block mover (now {config.memory_tile.num_block_movers})"
-            )
+            changes.append(f"Added block mover (now {config.memory_tile.num_block_movers})")
 
     # --- Fix die area ---
-    if fp and not fp.get("feasible", True) and fp.get("total_area_mm2", 0) > fp.get(
-        "max_die_area_mm2", 100.0
+    if (
+        fp
+        and not fp.get("feasible", True)
+        and fp.get("total_area_mm2", 0) > fp.get("max_die_area_mm2", 100.0)
     ):
         if config.array_rows > 2:
             config.array_rows -= 1
@@ -219,12 +216,8 @@ def kpu_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
             config.array_cols -= 1
             changes.append(f"Reduced array_cols to {config.array_cols} (area)")
         # Also shrink SRAM
-        config.compute_tile.l2_size_bytes = max(
-            64 * 1024, config.compute_tile.l2_size_bytes // 2
-        )
-        changes.append(
-            f"Halved L2 to {config.compute_tile.l2_size_bytes // 1024}KB (area)"
-        )
+        config.compute_tile.l2_size_bytes = max(64 * 1024, config.compute_tile.l2_size_bytes // 2)
+        changes.append(f"Halved L2 to {config.compute_tile.l2_size_bytes // 1024}KB (area)")
 
     # --- Fix bandwidth ---
     if bw and not bw.get("balanced", True):
@@ -233,9 +226,7 @@ def kpu_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         if "dram" in bottleneck:
             if config.dram.technology == "LPDDR4X":
                 config.dram.num_controllers += 1
-                changes.append(
-                    f"Added DRAM controller (now {config.dram.num_controllers})"
-                )
+                changes.append(f"Added DRAM controller (now {config.dram.num_controllers})")
             elif config.dram.technology != "HBM2E":
                 config.dram.technology = "LPDDR5"
                 config.dram.bandwidth_per_channel_gbps = 12.8
@@ -243,21 +234,15 @@ def kpu_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
 
         elif "l3" in bottleneck or "noc" in bottleneck:
             config.noc.link_width_bits = min(512, config.noc.link_width_bits * 2)
-            changes.append(
-                f"Widened NoC links to {config.noc.link_width_bits} bits"
-            )
+            changes.append(f"Widened NoC links to {config.noc.link_width_bits} bits")
 
         elif "l2" in bottleneck:
             config.compute_tile.l2_num_banks += 2
-            changes.append(
-                f"Added L2 banks (now {config.compute_tile.l2_num_banks})"
-            )
+            changes.append(f"Added L2 banks (now {config.compute_tile.l2_num_banks})")
 
         elif "l1" in bottleneck:
             config.compute_tile.l1_num_banks += 2
-            changes.append(
-                f"Added L1 banks (now {config.compute_tile.l1_num_banks})"
-            )
+            changes.append(f"Added L1 banks (now {config.compute_tile.l1_num_banks})")
 
     config_dict = config.model_dump()
 

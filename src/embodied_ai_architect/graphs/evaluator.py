@@ -13,7 +13,7 @@ Usage:
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from embodied_ai_architect.graphs.evaluation import (
     DimensionScore,
@@ -174,17 +174,17 @@ class AgenticEvaluator:
         task_graph = final_state.get("task_graph", {})
         nodes = task_graph.get("nodes", {})
         failures = sum(1 for n in nodes.values() if n.get("status") == "failed")
-        completed = sum(1 for n in nodes.values() if n.get("status") == "completed")
+        sum(1 for n in nodes.values() if n.get("status") == "completed")
         # A recovery is a task that completed after a previous failure in the same agent
         failed_agents = {n.get("agent") for n in nodes.values() if n.get("status") == "failed"}
-        completed_agents = {n.get("agent") for n in nodes.values() if n.get("status") == "completed"}
+        completed_agents = {
+            n.get("agent") for n in nodes.values() if n.get("status") == "completed"
+        }
         recoveries = len(failed_agents & completed_agents)
 
         # Count human interventions from audit log
         audit_log = final_state.get("audit_log", [])
-        human_interventions = sum(
-            1 for entry in audit_log if entry.get("human_approved", False)
-        )
+        human_interventions = sum(1 for entry in audit_log if entry.get("human_approved", False))
 
         # Cost tracking
         cost_tokens = sum(entry.get("cost_tokens", 0) for entry in audit_log)

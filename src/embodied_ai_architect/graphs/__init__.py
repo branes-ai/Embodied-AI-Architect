@@ -392,22 +392,28 @@ __all__ = [
     "map_workloads_to_accelerators",
 ]
 
+
 # Lazy imports for langgraph-dependent modules
 def __getattr__(name):
     """Lazy import for langgraph-dependent modules."""
     if name == "PipelineRunner":
         from embodied_ai_architect.graphs.runner import PipelineRunner
+
         return PipelineRunner
     elif name == "build_perception_graph":
         from embodied_ai_architect.graphs.pipelines.perception import build_perception_graph
+
         return build_perception_graph
     elif name == "build_autonomy_graph":
         from embodied_ai_architect.graphs.pipelines.autonomy import build_autonomy_graph
+
         return build_autonomy_graph
     elif name == "build_soc_design_graph":
         from embodied_ai_architect.graphs.soc_graph import build_soc_design_graph
+
         return build_soc_design_graph
     elif name == "SoCDesignRunner":
         from embodied_ai_architect.graphs.soc_runner import SoCDesignRunner
+
         return SoCDesignRunner
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

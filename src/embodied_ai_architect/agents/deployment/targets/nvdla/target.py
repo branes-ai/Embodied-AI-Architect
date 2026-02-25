@@ -10,7 +10,6 @@ Key differences from other targets:
 3. Full system simulation with Linux kernel
 """
 
-import subprocess
 import time
 from pathlib import Path
 from typing import Any
@@ -31,7 +30,6 @@ from .spec import (
     NVDLAConfig,
     NVDLALoadable,
     NVDLAPrecision,
-    NVDLAVariant,
     NVDLACompilerInterface,
     NVDLARuntimeInterface,
     NVDLAExecutionResult,
@@ -129,10 +127,7 @@ class NVDLATarget(DeploymentTarget):
             NVDLAPrecision.INT8: "int8",
         }
 
-        supported = [
-            precision_map[p]
-            for p in self.config.supported_precisions
-        ]
+        supported = [precision_map[p] for p in self.config.supported_precisions]
 
         # Check for real VP installation
         vp_available = self._check_vp_installation()
@@ -177,9 +172,7 @@ class NVDLATarget(DeploymentTarget):
         3. Return deployment artifact
         """
         if not self.is_available():
-            raise RuntimeError(
-                "NVDLA target not available. Install ONNX: pip install onnx"
-            )
+            raise RuntimeError("NVDLA target not available. Install ONNX: pip install onnx")
 
         # Map precision
         nvdla_precision = self._map_precision(precision)
@@ -318,9 +311,7 @@ class NVDLATarget(DeploymentTarget):
         power_metrics = None
         power_passed = True
         if config.power_validation is not None:
-            power_metrics, power_passed = self._validate_power(
-                loadable, config.power_validation
-            )
+            power_metrics, power_passed = self._validate_power(loadable, config.power_validation)
 
         return ValidationResult(
             passed=accuracy_passed and power_passed and not errors,
@@ -365,13 +356,10 @@ class NVDLATarget(DeploymentTarget):
         try:
             import onnxruntime as ort
 
-            return ort.InferenceSession(
-                str(model_path), providers=["CPUExecutionProvider"]
-            )
+            return ort.InferenceSession(str(model_path), providers=["CPUExecutionProvider"])
         except ImportError:
             raise ImportError(
-                "onnxruntime required for validation. "
-                "Install with: pip install onnxruntime"
+                "onnxruntime required for validation. " "Install with: pip install onnxruntime"
             )
 
     def _create_test_loader(self, config: ValidationConfig, input_shape: tuple[int, ...]):
@@ -406,8 +394,7 @@ class NVDLATarget(DeploymentTarget):
         # Estimate power based on NVDLA variant
         utilization = 0.7
         measured_watts = (
-            self.config.tdp_watts * 0.1  # idle
-            + self.config.tdp_watts * 0.9 * utilization
+            self.config.tdp_watts * 0.1 + self.config.tdp_watts * 0.9 * utilization  # idle
         )
 
         within_budget = None
@@ -612,9 +599,7 @@ class StubNVDLARuntime(NVDLARuntimeInterface):
             else:
                 # Generate dummy outputs
                 outputs = {}
-                for name, shape in zip(
-                    self._loadable.output_names, self._loadable.output_shapes
-                ):
+                for name, shape in zip(self._loadable.output_names, self._loadable.output_shapes):
                     outputs[name] = np.zeros(shape, dtype=np.float32)
 
             elapsed_us = (time.perf_counter() - start_time) * 1e6
@@ -651,9 +636,7 @@ class StubNVDLARuntime(NVDLARuntimeInterface):
         precision_str = self._loadable.precision.value
         return [
             (name, shape, precision_str)
-            for name, shape in zip(
-                self._loadable.input_names, self._loadable.input_shapes
-            )
+            for name, shape in zip(self._loadable.input_names, self._loadable.input_shapes)
         ]
 
     def get_output_specs(self) -> list[tuple[str, tuple[int, ...], str]]:
@@ -664,9 +647,7 @@ class StubNVDLARuntime(NVDLARuntimeInterface):
         precision_str = self._loadable.precision.value
         return [
             (name, shape, precision_str)
-            for name, shape in zip(
-                self._loadable.output_names, self._loadable.output_shapes
-            )
+            for name, shape in zip(self._loadable.output_names, self._loadable.output_shapes)
         ]
 
     def unload(self) -> None:

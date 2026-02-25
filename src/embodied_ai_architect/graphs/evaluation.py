@@ -14,7 +14,7 @@ Usage:
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -171,7 +171,9 @@ class Scorecard(BaseModel):
 
     def summary(self) -> str:
         """Format a human-readable summary of the scorecard."""
-        lines = [f"Scorecard: {self.demo_name} — {'PASS' if self.passed else 'FAIL'} ({self.composite_score:.2f})"]
+        lines = [
+            f"Scorecard: {self.demo_name} — {'PASS' if self.passed else 'FAIL'} ({self.composite_score:.2f})"
+        ]
         for d in self.dimensions:
             bar = "#" * int(d.score * 10) + "." * (10 - int(d.score * 10))
             lines.append(f"  {d.dimension:25s} [{bar}] {d.score:.2f} (w={d.weight:.2f})")

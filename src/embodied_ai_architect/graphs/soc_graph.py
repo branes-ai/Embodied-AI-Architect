@@ -26,15 +26,11 @@ from typing import Any, Callable, Optional
 
 from embodied_ai_architect.graphs.dispatcher import Dispatcher
 from embodied_ai_architect.graphs.governance import GovernanceGuard
-from embodied_ai_architect.graphs.memory import WorkingMemoryStore
 from embodied_ai_architect.graphs.optimizer import design_optimizer
 from embodied_ai_architect.graphs.planner import PlannerNode
 from embodied_ai_architect.graphs.soc_state import (
     DesignStatus,
     SoCDesignState,
-    get_constraints,
-    get_ppa_metrics,
-    get_task_graph,
     record_decision,
 )
 from embodied_ai_architect.graphs.task_graph import TaskGraph, TaskNode
@@ -88,15 +84,23 @@ def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[SoCDesignState], di
             result = dispatcher.run(state)
             return {
                 "ppa_metrics": result.get("ppa_metrics", {}),
-                "workload_profile": result.get("workload_profile", state.get("workload_profile", {})),
-                "hardware_candidates": result.get("hardware_candidates", state.get("hardware_candidates", [])),
-                "selected_architecture": result.get("selected_architecture", state.get("selected_architecture", {})),
+                "workload_profile": result.get(
+                    "workload_profile", state.get("workload_profile", {})
+                ),
+                "hardware_candidates": result.get(
+                    "hardware_candidates", state.get("hardware_candidates", [])
+                ),
+                "selected_architecture": result.get(
+                    "selected_architecture", state.get("selected_architecture", {})
+                ),
                 "ip_blocks": result.get("ip_blocks", state.get("ip_blocks", [])),
                 "memory_map": result.get("memory_map", state.get("memory_map", {})),
                 "interconnect": result.get("interconnect", state.get("interconnect", {})),
                 "task_graph": result.get("task_graph", state.get("task_graph")),
                 "history": result.get("history", state.get("history", [])),
-                "design_rationale": result.get("design_rationale", state.get("design_rationale", [])),
+                "design_rationale": result.get(
+                    "design_rationale", state.get("design_rationale", [])
+                ),
                 "working_memory": result.get("working_memory", state.get("working_memory", {})),
                 "status": DesignStatus.OPTIMIZING.value,
             }
@@ -127,17 +131,19 @@ def _make_evaluate_node(
 
         # Record optimization history snapshot
         opt_history = list(state.get("optimization_history", []))
-        opt_history.append({
-            "iteration": iteration,
-            "timestamp": datetime.now().isoformat(),
-            "ppa_snapshot": {
-                "power_watts": ppa.get("power_watts"),
-                "latency_ms": ppa.get("latency_ms"),
-                "area_mm2": ppa.get("area_mm2"),
-                "cost_usd": ppa.get("cost_usd"),
-            },
-            "verdicts": dict(verdicts),
-        })
+        opt_history.append(
+            {
+                "iteration": iteration,
+                "timestamp": datetime.now().isoformat(),
+                "ppa_snapshot": {
+                    "power_watts": ppa.get("power_watts"),
+                    "latency_ms": ppa.get("latency_ms"),
+                    "area_mm2": ppa.get("area_mm2"),
+                    "cost_usd": ppa.get("cost_usd"),
+                },
+                "verdicts": dict(verdicts),
+            }
+        )
 
         all_pass = all(v == "PASS" for v in verdicts.values()) if verdicts else False
 
@@ -251,9 +257,7 @@ def _make_report_node(
             report["rtl_summary"] = {
                 "modules_generated": len(state.get("rtl_modules", {})),
                 "total_cells": sum(
-                    r.get("area_cells", 0)
-                    for r in rtl_synth.values()
-                    if r.get("success")
+                    r.get("area_cells", 0) for r in rtl_synth.values() if r.get("success")
                 ),
             }
 
@@ -305,9 +309,7 @@ def _save_experience_episode(state: SoCDesignState, report: dict, cache: Any) ->
         floorplan_area_mm2=fp.get("total_area_mm2"),
         bandwidth_balanced=bw.get("balanced"),
         rtl_modules_generated=len(state.get("rtl_modules", {})),
-        rtl_total_cells=sum(
-            r.get("area_cells", 0) for r in rtl_synth.values() if r.get("success")
-        ),
+        rtl_total_cells=sum(r.get("area_cells", 0) for r in rtl_synth.values() if r.get("success")),
     )
     cache.save(episode)
 

@@ -12,7 +12,6 @@ from typing import Any, Optional
 
 from .base import ModelProvider, ModelFormat, ModelQuery, ModelArtifact
 
-
 # Curated Timm model catalog focused on edge-efficient and popular models
 # Full library has 700+ models - this is a curated selection
 TIMM_MODELS = {
@@ -685,9 +684,7 @@ class TimmProvider(ModelProvider):
             import torch
             import timm
         except ImportError:
-            raise ImportError(
-                "timm not installed. Install with: pip install timm"
-            )
+            raise ImportError("timm not installed. Install with: pip install timm")
 
         print(f"[Timm] Loading {model_id} with pretrained weights...")
         try:
@@ -712,16 +709,16 @@ class TimmProvider(ModelProvider):
 
         # Export to target format
         if format == ModelFormat.PYTORCH:
-            print(f"[Timm] Saving PyTorch weights...")
+            print("[Timm] Saving PyTorch weights...")
             torch.save(model.state_dict(), model_path)
 
         elif format == ModelFormat.TORCHSCRIPT:
-            print(f"[Timm] Tracing to TorchScript...")
+            print("[Timm] Tracing to TorchScript...")
             traced = torch.jit.trace(model, dummy_input)
             traced.save(str(model_path))
 
         elif format == ModelFormat.ONNX:
-            print(f"[Timm] Exporting to ONNX...")
+            print("[Timm] Exporting to ONNX...")
             torch.onnx.export(
                 model,
                 dummy_input,
@@ -748,6 +745,7 @@ class TimmProvider(ModelProvider):
             # Try to get info from timm directly
             try:
                 import timm
+
                 if model_id in timm.list_models():
                     return {
                         "id": model_id,
@@ -777,6 +775,7 @@ class TimmProvider(ModelProvider):
         """
         try:
             import timm
+
             return timm.list_models()
         except ImportError:
             raise ImportError("timm not installed. Install with: pip install timm")

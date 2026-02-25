@@ -76,11 +76,13 @@ class WorkingMemoryStore(BaseModel):
             iteration: Optimization iteration number.
         """
         mem = self.get_agent_memory(agent_name)
-        mem.things_tried.append({
-            "description": description,
-            "outcome": outcome,
-            "iteration": iteration,
-        })
+        mem.things_tried.append(
+            {
+                "description": description,
+                "outcome": outcome,
+                "iteration": iteration,
+            }
+        )
 
     def record_decision(self, agent_name: str, decision: str) -> None:
         """Record a decision made by an agent."""

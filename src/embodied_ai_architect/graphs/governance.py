@@ -249,7 +249,9 @@ class CostTracker:
         Returns:
             Multi-line string summarizing costs.
         """
-        lines = [f"Cost Report — Total: {self._total_tokens:,} tokens (${self.estimated_cost_usd():.4f})"]
+        lines = [
+            f"Cost Report — Total: {self._total_tokens:,} tokens (${self.estimated_cost_usd():.4f})"
+        ]
         if self._cost_by_agent:
             lines.append("  By agent:")
             for agent, tokens in sorted(self._cost_by_agent.items(), key=lambda x: -x[1]):

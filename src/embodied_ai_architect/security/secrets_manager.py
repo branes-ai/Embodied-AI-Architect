@@ -10,11 +10,13 @@ from typing import List, Dict, Any
 
 class SecretError(Exception):
     """Base exception for secret-related errors."""
+
     pass
 
 
 class SecretNotFoundError(SecretError):
     """Raised when a required secret is not found."""
+
     pass
 
 
@@ -85,11 +87,7 @@ class EnvironmentSecretsProvider(SecretsProvider):
             List of secret keys (without prefix, lowercased)
         """
         prefix_len = len(self.prefix)
-        return [
-            k[prefix_len:].lower()
-            for k in os.environ
-            if k.startswith(self.prefix)
-        ]
+        return [k[prefix_len:].lower() for k in os.environ if k.startswith(self.prefix)]
 
 
 class FileSecretsProvider(SecretsProvider):
@@ -124,12 +122,10 @@ class FileSecretsProvider(SecretsProvider):
             return
 
         # Check ownership (Unix only)
-        if hasattr(os, 'getuid'):
+        if hasattr(os, "getuid"):
             stat = self.secrets_dir.stat()
             if stat.st_uid != os.getuid():
-                raise SecretError(
-                    f"Secrets directory {self.secrets_dir} not owned by current user"
-                )
+                raise SecretError(f"Secrets directory {self.secrets_dir} not owned by current user")
 
             # Check permissions - others should have no access
             mode = oct(stat.st_mode)[-3:]
@@ -161,7 +157,7 @@ class FileSecretsProvider(SecretsProvider):
             return None
 
         # Security check: file permissions (Unix only)
-        if hasattr(os, 'getuid'):
+        if hasattr(os, "getuid"):
             stat = file_path.stat()
             mode = oct(stat.st_mode)[-3:]
 
@@ -216,21 +212,13 @@ class SecretsManager:
         """
         if providers is None:
             # Default: try environment first, then files
-            providers = [
-                EnvironmentSecretsProvider(),
-                FileSecretsProvider("config/credentials")
-            ]
+            providers = [EnvironmentSecretsProvider(), FileSecretsProvider("config/credentials")]
 
         self.providers = providers
         self._audit_log: List[Dict[str, Any]] = []
         self._secret_cache: Dict[str, str] = {}
 
-    def get_secret(
-        self,
-        key: str,
-        required: bool = True,
-        default: str | None = None
-    ) -> str | None:
+    def get_secret(self, key: str, required: bool = True, default: str | None = None) -> str | None:
         """Get a secret from any provider.
 
         Providers are tried in order until secret is found.
@@ -259,13 +247,15 @@ class SecretsManager:
                     self._secret_cache[key] = value
 
                     # Audit log
-                    self._audit_log.append({
-                        "timestamp": datetime.now().isoformat(),
-                        "action": "secret_accessed",
-                        "key": key,
-                        "provider": provider.__class__.__name__,
-                        "success": True
-                    })
+                    self._audit_log.append(
+                        {
+                            "timestamp": datetime.now().isoformat(),
+                            "action": "secret_accessed",
+                            "key": key,
+                            "provider": provider.__class__.__name__,
+                            "success": True,
+                        }
+                    )
 
                     return value
             except SecretError:
@@ -329,7 +319,7 @@ class SecretsManager:
         config_str = json.dumps(config)
 
         # Find all ${...} patterns
-        pattern = r'\$\{(secret|env):([^}]+)\}'
+        pattern = r"\$\{(secret|env):([^}]+)\}"
 
         def replace_reference(match):
             ref_type = match.group(1)

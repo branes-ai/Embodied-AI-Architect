@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 
 from embodied_ai_architect.registry.model_registry import ModelMetadata, _slugify
-from embodied_ai_architect.registry.exceptions import ModelLoadError, AnalysisError
+from embodied_ai_architect.registry.exceptions import ModelLoadError
 
 
 class ModelAnalyzer:
@@ -134,9 +134,7 @@ class ModelAnalyzer:
             # If weights_only fails, it might be a full model
             return "pytorch"
 
-    def _load_model(
-        self, path: Path, format_type: str
-    ) -> Union[nn.Module, dict, Any]:
+    def _load_model(self, path: Path, format_type: str) -> Union[nn.Module, dict, Any]:
         """
         Safely load model in detected format.
 
@@ -150,6 +148,7 @@ class ModelAnalyzer:
             elif format_type == "onnx":
                 try:
                     import onnx
+
                     return onnx.load(str(path))
                 except ImportError:
                     raise ModelLoadError(
@@ -315,7 +314,6 @@ class ModelAnalyzer:
         tags: Optional[list[str]] = None,
     ) -> ModelMetadata:
         """Analyze an ONNX model."""
-        import onnx
         from onnx import numpy_helper
 
         # Count parameters
@@ -336,15 +334,13 @@ class ModelAnalyzer:
             inp = onnx_model.graph.input[0]
             if inp.type.tensor_type.shape.dim:
                 input_shape = [
-                    d.dim_value if d.dim_value > 0 else -1
-                    for d in inp.type.tensor_type.shape.dim
+                    d.dim_value if d.dim_value > 0 else -1 for d in inp.type.tensor_type.shape.dim
                 ]
         if onnx_model.graph.output:
             out = onnx_model.graph.output[0]
             if out.type.tensor_type.shape.dim:
                 output_shape = [
-                    d.dim_value if d.dim_value > 0 else -1
-                    for d in out.type.tensor_type.shape.dim
+                    d.dim_value if d.dim_value > 0 else -1 for d in out.type.tensor_type.shape.dim
                 ]
 
         # Estimate memory
@@ -392,11 +388,13 @@ class ModelAnalyzer:
         if type(model).__name__ in counts:
             counts[type(model).__name__] -= 1
         # Filter out empty counts and sort by count
-        return dict(sorted(
-            ((k, v) for k, v in counts.items() if v > 0),
-            key=lambda x: x[1],
-            reverse=True,
-        ))
+        return dict(
+            sorted(
+                ((k, v) for k, v in counts.items() if v > 0),
+                key=lambda x: x[1],
+                reverse=True,
+            )
+        )
 
     def _detect_architecture(
         self, model: nn.Module, layer_counts: dict[str, int]
@@ -464,9 +462,7 @@ class ModelAnalyzer:
 
         return ("unknown", "unknown")
 
-    def _estimate_flops(
-        self, model: nn.Module, input_shape: tuple[int, ...]
-    ) -> Optional[int]:
+    def _estimate_flops(self, model: nn.Module, input_shape: tuple[int, ...]) -> Optional[int]:
         """
         Estimate FLOPs for the model.
 
@@ -476,6 +472,7 @@ class ModelAnalyzer:
             # Try using thop if available
             try:
                 from thop import profile
+
                 dummy_input = torch.randn(*input_shape)
                 flops, _ = profile(model, inputs=(dummy_input,), verbose=False)
                 return int(flops)

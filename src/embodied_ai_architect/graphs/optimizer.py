@@ -177,7 +177,9 @@ def design_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         outcome=f"Applied {selected['description']} at iteration {iteration}",
         iteration=iteration,
     )
-    store.record_decision("design_optimizer", f"Applied {selected['name']}: {selected['description']}")
+    store.record_decision(
+        "design_optimizer", f"Applied {selected['name']}: {selected['description']}"
+    )
     state_updates["working_memory"] = store.model_dump()
 
     return {
@@ -218,9 +220,7 @@ def _apply_strategy(strategy: dict[str, Any], state: SoCDesignState) -> dict[str
         # Scale sub-workloads
         for w in workload.get("workloads", []):
             if "estimated_gflops" in w:
-                w["estimated_gflops"] = round(
-                    w["estimated_gflops"] * (1 - power_factor), 2
-                )
+                w["estimated_gflops"] = round(w["estimated_gflops"] * (1 - power_factor), 2)
 
         # Record optimization applied
         optimizations = workload.get("optimizations_applied", [])

@@ -19,6 +19,7 @@ def _get_architectures():
     """Load architectures from registry."""
     try:
         from embodied_schemas import Registry
+
         registry = Registry.load()
         return registry.architectures
     except ImportError:
@@ -28,6 +29,7 @@ def _get_architectures():
 def _get_architecture_runner():
     """Get ArchitectureRunner class."""
     from embodied_ai_architect.benchmark import ArchitectureRunner, get_power_monitor
+
     return ArchitectureRunner, get_power_monitor
 
 
@@ -126,7 +128,7 @@ def run(ctx, model_path, backend, input_shape, iterations, warmup):
         if json_output:
             click.echo(json.dumps(result.data, indent=2))
         else:
-            console.print(f"\n[bold green]✓[/bold green] Benchmark complete\n")
+            console.print("\n[bold green]✓[/bold green] Benchmark complete\n")
 
             # Get benchmark data for the backend
             benchmarks = result.data.get("benchmarks", {})
@@ -231,8 +233,7 @@ def arch(ctx, architecture_id, variant, iterations, warmup, power, output):
         if architecture_id not in architectures:
             available = list(architectures.keys())
             raise ValueError(
-                f"Architecture not found: {architecture_id}\n"
-                f"Available: {available}"
+                f"Architecture not found: {architecture_id}\n" f"Available: {available}"
             )
 
         arch_def = architectures[architecture_id]
@@ -368,9 +369,7 @@ def _create_sample_inputs(arch_def) -> dict:
                 "image": np.random.randint(0, 255, (480, 640, 3), dtype=np.uint8)
             }
         elif "depth" in op_id:
-            inputs[first_op.id] = {
-                "depth_map": np.random.rand(480, 640).astype(np.float32)
-            }
+            inputs[first_op.id] = {"depth_map": np.random.rand(480, 640).astype(np.float32)}
         else:
             # Generic empty input
             inputs[first_op.id] = {}
