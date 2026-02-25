@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "docs-site/**"
+      - "docs/**"
+      - "*.md"
+
+jobs:
+  test:
+    name: Test (release gate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install CPU-only PyTorch
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install package with dev dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest tests/ -v --tb=short -x --ignore=tests/agents/
+
+  release:
+    name: Release
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write  # For OIDC PyPI publishing (future)
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install python-semantic-release build
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Semantic release version
+        id: version
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          semantic-release version
+          echo "released=$(git diff HEAD~1 --name-only | grep -c pyproject.toml || true)" >> $GITHUB_OUTPUT
+
+      - name: Build package
+        if: steps.version.outputs.released != '0'
+        run: python -m build
+
+      - name: Semantic release publish
+        if: steps.version.outputs.released != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: semantic-release publish
+
+      # PyPI publishing via API token
+      # To migrate to OIDC trusted publishers:
+      #   1. Remove PYPI_API_TOKEN secret
+      #   2. Configure trusted publisher at pypi.org/manage/project/.../settings/publishing/
+      #   3. Uncomment the pypa/gh-action-pypi-publish block below and remove the twine block
+      - name: Publish to PyPI
+        if: steps.version.outputs.released != '0'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          pip install twine
+          twine upload dist/*
+
+      # OIDC trusted publisher (uncomment when ready):
+      # - name: Publish to PyPI (OIDC)
+      #   if: steps.version.outputs.released != '0'
+      #   uses: pypa/gh-action-pypi-publish@release/v1

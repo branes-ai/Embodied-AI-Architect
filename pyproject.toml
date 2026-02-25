@@ -28,6 +28,7 @@ dev = [
     "pytest-cov>=4.0.0",
     "black>=23.0.0",
     "ruff>=0.1.0",
+    "build>=1.0.0",
 ]
 remote = [
     "paramiko>=3.0.0",  # SSH connections
@@ -91,11 +92,26 @@ where = ["src"]
 
 [tool.black]
 line-length = 100
-target-version = ['py39']
+target-version = ['py311']
 
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = "py311"
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+build_command = "python -m build"
+commit_message = "chore(release): {version}"
+tag_format = "v{version}"
+
+[tool.semantic_release.changelog]
+changelog_file = false
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = ["feat", "fix", "docs", "chore", "refactor", "test", "ci", "perf", "style"]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf", "refactor"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
