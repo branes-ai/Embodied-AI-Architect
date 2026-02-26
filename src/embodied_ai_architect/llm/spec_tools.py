@@ -5,8 +5,24 @@ and validate system specifications.
 """
 
 import json
+import os
 import traceback
 from typing import Any, Callable
+
+
+def _error_response(message: str, error: Exception) -> str:
+    """Build a structured JSON error response.
+
+    Tracebacks are only included when DEBUG=1 to avoid leaking internals.
+    """
+    result: dict[str, Any] = {
+        "success": False,
+        "error": str(error),
+        "message": message,
+    }
+    if os.getenv("DEBUG") == "1":
+        result["trace"] = traceback.format_exc()
+    return json.dumps(result, indent=2)
 
 
 def get_spec_tool_definitions() -> list[dict[str, Any]]:
@@ -177,7 +193,7 @@ def create_spec_tool_executors() -> dict[str, Callable]:
                 return json.dumps({"specs": [], "message": "No specs found. Create one first."})
             return json.dumps({"specs": specs}, indent=2, default=str)
         except Exception as e:
-            return f"Error listing specs: {str(e)}\n{traceback.format_exc()}"
+            return _error_response("Error listing specs", e)
 
     def create_spec(
         name: str,
@@ -196,7 +212,7 @@ def create_spec_tool_executors() -> dict[str, Callable]:
                 result["_message"] += f" from template '{template}'"
             return json.dumps(result, indent=2, default=str)
         except Exception as e:
-            return f"Error creating spec: {str(e)}\n{traceback.format_exc()}"
+            return _error_response("Error creating spec", e)
 
     def read_spec(name: str, path: str | None = None) -> str:
         """Read a spec or a specific field."""
@@ -217,7 +233,7 @@ def create_spec_tool_executors() -> dict[str, Callable]:
                     spec.model_dump(exclude_none=True, mode="json"), indent=2, default=str
                 )
         except Exception as e:
-            return f"Error reading spec: {str(e)}\n{traceback.format_exc()}"
+            return _error_response("Error reading spec", e)
 
     def modify_spec(name: str, path: str, value: Any, reason: str) -> str:
         """Modify a spec field."""
@@ -238,7 +254,7 @@ def create_spec_tool_executors() -> dict[str, Callable]:
                 default=str,
             )
         except Exception as e:
-            return f"Error modifying spec: {str(e)}\n{traceback.format_exc()}"
+            return _error_response("Error modifying spec", e)
 
     def validate_spec(name: str) -> str:
         """Validate a spec."""
@@ -259,7 +275,7 @@ def create_spec_tool_executors() -> dict[str, Callable]:
                 default=str,
             )
         except Exception as e:
-            return f"Error validating spec: {str(e)}\n{traceback.format_exc()}"
+            return _error_response("Error validating spec", e)
 
     def spec_field_history(name: str, path: str) -> str:
         """Get field provenance."""
@@ -279,7 +295,7 @@ def create_spec_tool_executors() -> dict[str, Callable]:
                 default=str,
             )
         except Exception as e:
-            return f"Error getting field history: {str(e)}\n{traceback.format_exc()}"
+            return _error_response("Error getting field history", e)
 
     return {
         "list_specs": list_specs,
