@@ -66,6 +66,24 @@ except ImportError:
         return {}
 
 
+# Import spec management tools
+try:
+    from .spec_tools import (
+        get_spec_tool_definitions,
+        create_spec_tool_executors,
+    )
+
+    HAS_SPEC_TOOLS = True
+except ImportError:
+    HAS_SPEC_TOOLS = False
+
+    def get_spec_tool_definitions():
+        return []
+
+    def create_spec_tool_executors():
+        return {}
+
+
 # Import optimization tools (optional, requires numpy)
 try:
     from .optimization_tools import (
@@ -302,6 +320,10 @@ def get_tool_definitions() -> list[dict[str, Any]]:
     if HAS_CODEBASE_TOOLS:
         base_tools.extend(get_codebase_tool_definitions())
 
+    # Add spec management tools if available
+    if HAS_SPEC_TOOLS:
+        base_tools.extend(get_spec_tool_definitions())
+
     # Add optimization tools if available
     if HAS_MOO:
         base_tools.extend(get_optimization_tool_definitions())
@@ -522,6 +544,10 @@ def create_tool_executors() -> dict[str, Callable]:
     # Add codebase analysis executors if available
     if HAS_CODEBASE_TOOLS:
         executors.update(create_codebase_tool_executors())
+
+    # Add spec management executors if available
+    if HAS_SPEC_TOOLS:
+        executors.update(create_spec_tool_executors())
 
     # Add optimization executors if available
     if HAS_MOO:
