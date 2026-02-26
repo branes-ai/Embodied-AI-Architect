@@ -549,9 +549,7 @@ def _set_nested(data: dict, parts: list[str], value: Any, spec: SystemSpec) -> N
         if not isinstance(data[key], dict):
             from .exceptions import InvalidPathError
 
-            raise InvalidPathError(
-                "/" + "/".join(parts), f"'{key}' is not a traversable object"
-            )
+            raise InvalidPathError("/" + "/".join(parts), f"'{key}' is not a traversable object")
         _set_nested(data[key], parts[1:], value, spec)
 
 

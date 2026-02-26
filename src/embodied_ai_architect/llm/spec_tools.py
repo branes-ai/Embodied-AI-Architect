@@ -248,9 +248,7 @@ def create_spec_tool_executors() -> dict[str, Callable]:
             store = SpecStore()
             issues = store.validate(name)
             if not issues:
-                return json.dumps(
-                    {"status": "ok", "issues": [], "message": "No issues found."}
-                )
+                return json.dumps({"status": "ok", "issues": [], "message": "No issues found."})
             return json.dumps(
                 {
                     "status": "issues_found",
@@ -271,9 +269,7 @@ def create_spec_tool_executors() -> dict[str, Callable]:
             store = SpecStore()
             events = store.why(name, path)
             if not events:
-                return json.dumps(
-                    {"path": path, "events": [], "message": f"No history for {path}"}
-                )
+                return json.dumps({"path": path, "events": [], "message": f"No history for {path}"})
             return json.dumps(
                 {
                     "path": path,

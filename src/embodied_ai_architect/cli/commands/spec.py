@@ -169,9 +169,7 @@ def spec_show(ctx, name: str, version: str | None):
             spec_obj = store.get(name)
 
         if json_output:
-            click.echo(
-                json.dumps(spec_obj.model_dump(exclude_none=True, mode="json"), indent=2)
-            )
+            click.echo(json.dumps(spec_obj.model_dump(exclude_none=True, mode="json"), indent=2))
         else:
             _display_spec_tree(spec_obj)
 
@@ -215,9 +213,7 @@ def spec_set(ctx, name: str, path: str, value: str, message: str | None, author:
         spec_obj = store.set_field(name, path, parsed_value, author=author, reason=message)
 
         if json_output:
-            click.echo(
-                json.dumps(spec_obj.model_dump(exclude_none=True, mode="json"), indent=2)
-            )
+            click.echo(json.dumps(spec_obj.model_dump(exclude_none=True, mode="json"), indent=2))
         else:
             console.print(f"[green]Set[/green] {path} = {parsed_value}")
             if message:
@@ -496,9 +492,7 @@ def spec_import(ctx, name: str, file_path: str, author: str):
         spec_obj = store.import_spec(name, data, author=author, reason=f"Imported from {path.name}")
 
         if json_output:
-            click.echo(
-                json.dumps(spec_obj.model_dump(exclude_none=True, mode="json"), indent=2)
-            )
+            click.echo(json.dumps(spec_obj.model_dump(exclude_none=True, mode="json"), indent=2))
         else:
             console.print(f"[green]Imported[/green] {name} from {path.name}")
 

@@ -79,9 +79,7 @@ def _check_power_vs_compute(spec: SystemSpec, issues: list[ValidationIssue]) -> 
                 ValidationIssue(
                     severity=Severity.ERROR,
                     path="/compute/max_tdp_watts, /power/power_budget_watts",
-                    message=(
-                        f"Compute TDP ({tdp}W) exceeds total power budget ({total_budget}W)"
-                    ),
+                    message=(f"Compute TDP ({tdp}W) exceeds total power budget ({total_budget}W)"),
                     suggestion="Choose a lower-TDP compute platform or increase power budget",
                 )
             )
@@ -106,8 +104,7 @@ def _check_perception_latency(spec: SystemSpec, issues: list[ValidationIssue]) -
                             "Pipeline will drop frames or lag."
                         ),
                         suggestion=(
-                            f"Reduce max_latency_ms to <= {frame_time:.1f} "
-                            f"or lower min_fps"
+                            f"Reduce max_latency_ms to <= {frame_time:.1f} " f"or lower min_fps"
                         ),
                     )
                 )
@@ -137,8 +134,7 @@ def _check_platform_implications(spec: SystemSpec, issues: list[ValidationIssue]
                     severity=Severity.WARNING,
                     path="/actuators/payload_kg",
                     message=(
-                        f"Drone payload ({spec.actuators.payload_kg}kg) "
-                        "is very high for a drone"
+                        f"Drone payload ({spec.actuators.payload_kg}kg) " "is very high for a drone"
                     ),
                     suggestion="Typical drone payloads are 0.1-5kg",
                 )
@@ -264,9 +260,7 @@ def _check_autonomy_sensors(spec: SystemSpec, issues: list[ValidationIssue]) -> 
     if spec.autonomy.navigation == "slam":
         has_depth = False
         if spec.perception and spec.perception.camera_types:
-            has_depth = any(
-                t in spec.perception.camera_types for t in ["stereo", "depth", "rgbd"]
-            )
+            has_depth = any(t in spec.perception.camera_types for t in ["stereo", "depth", "rgbd"])
         has_lidar = spec.sensors and "lidar" in (spec.sensors.modalities or [])
         if not has_depth and not has_lidar:
             issues.append(
@@ -274,8 +268,7 @@ def _check_autonomy_sensors(spec: SystemSpec, issues: list[ValidationIssue]) -> 
                     severity=Severity.WARNING,
                     path="/autonomy/navigation",
                     message=(
-                        "SLAM navigation requires depth sensing "
-                        "(stereo/depth camera or LiDAR)"
+                        "SLAM navigation requires depth sensing " "(stereo/depth camera or LiDAR)"
                     ),
                     suggestion=(
                         "Add a depth camera to /perception/camera_types "

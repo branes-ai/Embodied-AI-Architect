@@ -33,7 +33,9 @@ class SpecEvent(BaseModel):
     """A single mutation event in the spec's history."""
 
     op: EventOp = Field(description="Type of operation")
-    path: Optional[str] = Field(default=None, description="JSON pointer path (e.g., /perception/min_fps)")
+    path: Optional[str] = Field(
+        default=None, description="JSON pointer path (e.g., /perception/min_fps)"
+    )
     value: Any = Field(default=None, description="New value for set ops, full spec for snapshots")
     author: str = Field(description="Who made the change (user, agent name, template)")
     reason: Optional[str] = Field(default=None, description="Why the change was made")

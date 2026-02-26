@@ -28,7 +28,6 @@ from embodied_ai_architect.specs.diff import ChangeType, diff_specs
 from embodied_ai_architect.specs.validation import Severity, validate_spec
 from embodied_ai_architect.specs.templates import get_template, get_templates
 
-
 # ── Model Serialization ───────────────────────────────────────────────────
 
 
@@ -241,7 +240,10 @@ class TestEventLog:
         assert log.next_sequence() == 0
 
         event = make_event(
-            op=EventOp.CREATE, spec_name="test", sequence=0, author="user",
+            op=EventOp.CREATE,
+            spec_name="test",
+            sequence=0,
+            author="user",
             value=SystemSpec(name="test").model_dump(mode="json"),
         )
         log.append(event)
@@ -252,21 +254,38 @@ class TestEventLog:
 
         # Create
         spec = SystemSpec(name="test")
-        log.append(make_event(
-            op=EventOp.CREATE, spec_name="test", sequence=0, author="user",
-            value=spec.model_dump(mode="json"),
-        ))
+        log.append(
+            make_event(
+                op=EventOp.CREATE,
+                spec_name="test",
+                sequence=0,
+                author="user",
+                value=spec.model_dump(mode="json"),
+            )
+        )
 
         # Set
-        log.append(make_event(
-            op=EventOp.SET, spec_name="test", sequence=1, author="user",
-            path="/perception/min_fps", value=30,
-        ))
+        log.append(
+            make_event(
+                op=EventOp.SET,
+                spec_name="test",
+                sequence=1,
+                author="user",
+                path="/perception/min_fps",
+                value=30,
+            )
+        )
 
-        log.append(make_event(
-            op=EventOp.SET, spec_name="test", sequence=2, author="agent",
-            path="/perception/min_fps", value=60,
-        ))
+        log.append(
+            make_event(
+                op=EventOp.SET,
+                spec_name="test",
+                sequence=2,
+                author="agent",
+                path="/perception/min_fps",
+                value=60,
+            )
+        )
 
         result = log.replay("test")
         assert result.perception.min_fps == 60
@@ -276,29 +295,51 @@ class TestEventLog:
 
         # Create initial
         spec = SystemSpec(name="test")
-        log.append(make_event(
-            op=EventOp.CREATE, spec_name="test", sequence=0, author="user",
-            value=spec.model_dump(mode="json"),
-        ))
+        log.append(
+            make_event(
+                op=EventOp.CREATE,
+                spec_name="test",
+                sequence=0,
+                author="user",
+                value=spec.model_dump(mode="json"),
+            )
+        )
 
         # Set a field
-        log.append(make_event(
-            op=EventOp.SET, spec_name="test", sequence=1, author="user",
-            path="/perception/min_fps", value=30,
-        ))
+        log.append(
+            make_event(
+                op=EventOp.SET,
+                spec_name="test",
+                sequence=1,
+                author="user",
+                path="/perception/min_fps",
+                value=30,
+            )
+        )
 
         # Snapshot
         snap_spec = SystemSpec(name="test", perception=PerceptionSpec(min_fps=30.0))
-        log.append(make_event(
-            op=EventOp.SNAPSHOT, spec_name="test", sequence=2, author="user",
-            value=snap_spec.model_dump(mode="json"),
-        ))
+        log.append(
+            make_event(
+                op=EventOp.SNAPSHOT,
+                spec_name="test",
+                sequence=2,
+                author="user",
+                value=snap_spec.model_dump(mode="json"),
+            )
+        )
 
         # More changes after snapshot
-        log.append(make_event(
-            op=EventOp.SET, spec_name="test", sequence=3, author="user",
-            path="/compute/soc", value="Jetson Orin NX",
-        ))
+        log.append(
+            make_event(
+                op=EventOp.SET,
+                spec_name="test",
+                sequence=3,
+                author="user",
+                path="/compute/soc",
+                value="Jetson Orin NX",
+            )
+        )
 
         result = log.replay("test")
         assert result.perception.min_fps == 30.0
@@ -307,22 +348,45 @@ class TestEventLog:
     def test_field_history(self, tmp_path):
         log = EventLog(tmp_path / "events.jsonl")
 
-        log.append(make_event(
-            op=EventOp.CREATE, spec_name="test", sequence=0, author="user",
-            value=SystemSpec(name="test").model_dump(mode="json"),
-        ))
-        log.append(make_event(
-            op=EventOp.SET, spec_name="test", sequence=1, author="user",
-            path="/perception/min_fps", value=30,
-        ))
-        log.append(make_event(
-            op=EventOp.SET, spec_name="test", sequence=2, author="agent",
-            path="/perception/min_fps", value=60,
-        ))
-        log.append(make_event(
-            op=EventOp.SET, spec_name="test", sequence=3, author="user",
-            path="/compute/soc", value="Jetson Orin NX",
-        ))
+        log.append(
+            make_event(
+                op=EventOp.CREATE,
+                spec_name="test",
+                sequence=0,
+                author="user",
+                value=SystemSpec(name="test").model_dump(mode="json"),
+            )
+        )
+        log.append(
+            make_event(
+                op=EventOp.SET,
+                spec_name="test",
+                sequence=1,
+                author="user",
+                path="/perception/min_fps",
+                value=30,
+            )
+        )
+        log.append(
+            make_event(
+                op=EventOp.SET,
+                spec_name="test",
+                sequence=2,
+                author="agent",
+                path="/perception/min_fps",
+                value=60,
+            )
+        )
+        log.append(
+            make_event(
+                op=EventOp.SET,
+                spec_name="test",
+                sequence=3,
+                author="user",
+                path="/compute/soc",
+                value="Jetson Orin NX",
+            )
+        )
 
         history = log.field_history("/perception/min_fps")
         assert len(history) == 2

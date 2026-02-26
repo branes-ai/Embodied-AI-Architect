@@ -56,9 +56,7 @@ def _diff_dicts(old: dict, new: dict, prefix: str, changes: list[SpecChange]) ->
                 SpecChange(change_type=ChangeType.REMOVED, path=path, old_value=old[key])
             )
         elif not in_old and in_new:
-            changes.append(
-                SpecChange(change_type=ChangeType.ADDED, path=path, new_value=new[key])
-            )
+            changes.append(SpecChange(change_type=ChangeType.ADDED, path=path, new_value=new[key]))
         else:
             old_val = old[key]
             new_val = new[key]
