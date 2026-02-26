@@ -186,13 +186,12 @@ class SpecStore:
             version = manifest["tags"][version]
 
         # Find version by hash prefix
-        for entry in manifest["versions"]:
-            if entry["hash"].startswith(version):
-                blob_path = self._blob_path(name, entry["hash"])
-                if blob_path.exists():
-                    with open(blob_path) as f:
-                        data = json.load(f)
-                    return SystemSpec.model_validate(data)
+        matched_hash = self._resolve_version_prefix(name, version, manifest)
+        blob_path = self._blob_path(name, matched_hash)
+        if blob_path.exists():
+            with open(blob_path) as f:
+                data = json.load(f)
+            return SystemSpec.model_validate(data)
 
         raise VersionNotFoundError(name, version)
 
@@ -375,14 +374,7 @@ class SpecStore:
             version = manifest["versions"][-1]["hash"]
         else:
             # Verify version exists
-            found = False
-            for entry in manifest["versions"]:
-                if entry["hash"].startswith(version):
-                    version = entry["hash"]
-                    found = True
-                    break
-            if not found:
-                raise VersionNotFoundError(name, version)
+            version = self._resolve_version_prefix(name, version, manifest)
 
         manifest.setdefault("tags", {})[tag_name] = version
         self._save_manifest(name, manifest)
@@ -586,6 +578,23 @@ class SpecStore:
         """Save the version manifest."""
         with open(self._manifest_path(name), "w") as f:
             json.dump(manifest, f, indent=2)
+
+    def _resolve_version_prefix(self, name: str, prefix: str, manifest: dict[str, Any]) -> str:
+        """Resolve a hash prefix to a single full hash.
+
+        Raises:
+            VersionNotFoundError: If no version matches the prefix.
+            ValueError: If multiple versions match (ambiguous prefix).
+        """
+        matches = [e["hash"] for e in manifest["versions"] if e["hash"].startswith(prefix)]
+        if len(matches) == 0:
+            raise VersionNotFoundError(name, prefix)
+        if len(matches) > 1:
+            raise ValueError(
+                f"Ambiguous version prefix '{prefix}' for spec '{name}' — "
+                f"matches {len(matches)} versions: {', '.join(matches)}"
+            )
+        return matches[0]
 
     def _blob_path(self, name: str, blob_hash: str) -> Path:
         """Get the path for a content-addressed blob."""

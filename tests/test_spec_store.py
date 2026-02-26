@@ -153,6 +153,19 @@ class TestVersioning:
         with pytest.raises(VersionNotFoundError):
             store.get_version("test", "nonexistent_hash")
 
+    def test_get_version_ambiguous_prefix_raises(self, store):
+        """Ambiguous hash prefix should raise ValueError, not silently pick first."""
+        store.create("test")
+        manifest = {
+            "versions": [
+                {"hash": "aabbcc1111"},
+                {"hash": "aabbcc2222"},
+            ],
+            "tags": {},
+        }
+        with pytest.raises(ValueError, match="Ambiguous version prefix"):
+            store._resolve_version_prefix("test", "aabbcc", manifest)
+
 
 class TestTagging:
     def test_tag_latest(self, store):
