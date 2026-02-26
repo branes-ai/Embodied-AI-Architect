@@ -270,6 +270,23 @@ class TestExportImport:
         loaded = store.get("copy")
         assert loaded.name == "copy"
 
+    def test_import_overwrite_updates_index(self, store):
+        """Importing over an existing spec should update index metadata."""
+        store.create("test", description="original desc")
+        index_before = store._load_index()
+        assert index_before["specs"]["test"]["description"] == "original desc"
+
+        # Overwrite with different data
+        data = {"description": "updated desc", "platform_type": "drone", "tags": ["imported"]}
+        store.import_spec("test", data, author="ci", reason="overwrite test")
+
+        index_after = store._load_index()
+        entry = index_after["specs"]["test"]
+        assert entry["description"] == "updated desc"
+        assert entry["platform_type"] == "drone"
+        assert entry["tags"] == ["imported"]
+        assert "updated_at" in entry
+
     def test_export_yaml(self, store):
         pytest.importorskip("yaml")
         store.create("test", template="edge-camera")

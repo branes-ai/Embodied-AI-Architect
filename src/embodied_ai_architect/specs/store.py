@@ -523,11 +523,13 @@ class SpecStore:
                 "created_at": event.timestamp,
                 "author": author,
                 "template": None,
-                "description": spec.description,
-                "platform_type": spec.platform_type.value if spec.platform_type else None,
-                "tags": spec.tags,
             }
-            self._save_index(index)
+        entry = index["specs"][name]
+        entry["description"] = spec.description
+        entry["platform_type"] = spec.platform_type.value if spec.platform_type else None
+        entry["tags"] = spec.tags
+        entry["updated_at"] = event.timestamp
+        self._save_index(index)
 
         return spec
 
