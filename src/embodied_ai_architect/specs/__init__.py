@@ -22,6 +22,8 @@ Example usage:
     issues = store.validate("my-drone")
 """
 
+from typing import Any
+
 from .events import EventLog, EventOp, SpecEvent, make_event
 from .exceptions import (
     InvalidPathError,
@@ -88,7 +90,7 @@ __all__ = [
 
 
 # Lazy imports for optional components
-def __getattr__(name: str):
+def __getattr__(name: str) -> Any:
     if name == "SpecStore":
         from .store import SpecStore
 
