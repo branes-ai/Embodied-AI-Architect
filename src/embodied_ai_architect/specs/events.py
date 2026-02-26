@@ -7,6 +7,7 @@ are inserted periodically for bounded replay time.
 
 from __future__ import annotations
 
+import fcntl
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
@@ -66,9 +67,28 @@ class EventLog:
         return self._path
 
     def append(self, event: SpecEvent) -> None:
-        """Append an event to the log."""
-        with open(self._path, "a") as f:
-            f.write(event.model_dump_json() + "\n")
+        """Append an event to the log with an exclusive file lock.
+
+        Acquires an exclusive lock, reads the current last sequence number,
+        assigns the correct sequence to the event, and writes in a single
+        locked operation to prevent duplicate sequences under concurrent writers.
+        """
+        with open(self._path, "a+") as f:
+            fcntl.lockf(f, fcntl.LOCK_EX)
+            try:
+                # Read last sequence while holding the lock
+                f.seek(0)
+                last_seq = -1
+                for raw in f:
+                    raw = raw.strip()
+                    if raw:
+                        last_seq = SpecEvent.model_validate_json(raw).sequence
+                event = event.model_copy(update={"sequence": last_seq + 1})
+                f.seek(0, 2)  # seek to end
+                f.write(event.model_dump_json() + "\n")
+                f.flush()
+            finally:
+                fcntl.lockf(f, fcntl.LOCK_UN)
 
     def read_all(self) -> list[SpecEvent]:
         """Read all events from the log."""
@@ -76,14 +96,22 @@ class EventLog:
             return []
         events = []
         with open(self._path) as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    events.append(SpecEvent.model_validate_json(line))
+            fcntl.lockf(f, fcntl.LOCK_SH)
+            try:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        events.append(SpecEvent.model_validate_json(line))
+            finally:
+                fcntl.lockf(f, fcntl.LOCK_UN)
         return events
 
     def next_sequence(self) -> int:
-        """Return the next sequence number."""
+        """Return the next sequence number.
+
+        Uses a shared lock to read consistently. Note: prefer calling append()
+        directly — it assigns the sequence atomically under an exclusive lock.
+        """
         events = self.read_all()
         if not events:
             return 0
