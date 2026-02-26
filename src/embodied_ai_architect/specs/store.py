@@ -287,6 +287,10 @@ class SpecStore:
         )
         log.append(event)
 
+        # Auto-snapshot if needed
+        if log.should_snapshot():
+            self._auto_snapshot(name, new_spec, author)
+
         return new_spec
 
     # ── Versioning ─────────────────────────────────────────────────────
