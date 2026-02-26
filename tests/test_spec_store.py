@@ -5,7 +5,7 @@ import json
 import pytest
 
 from embodied_ai_architect.specs.store import SpecStore
-from embodied_ai_architect.specs.models import SystemSpec, PlatformType
+from embodied_ai_architect.specs.models import PlatformType
 from embodied_ai_architect.specs.exceptions import (
     SpecAlreadyExistsError,
     SpecNotFoundError,

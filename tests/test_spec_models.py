@@ -8,8 +8,6 @@ from embodied_ai_architect.specs.models import (
     AutonomySpec,
     CommsSpec,
     ComputeSpec,
-    CoolingType,
-    EnvironmentalRating,
     PerceptionSpec,
     PlatformType,
     PowerSpec,

@@ -25,7 +25,7 @@ from .exceptions import (
     SpecNotFoundError,
     VersionNotFoundError,
 )
-from .models import SystemSpec, delete_at_path, get_at_path, set_at_path
+from .models import SystemSpec, delete_at_path, set_at_path
 
 
 class SpecStore:
