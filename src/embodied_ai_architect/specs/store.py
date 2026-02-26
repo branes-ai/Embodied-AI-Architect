@@ -63,7 +63,25 @@ class SpecStore:
             json.dump(index, f, indent=2)
 
     def _spec_dir(self, name: str) -> Path:
+        self._validate_name(name)
         return self._root / name
+
+    @staticmethod
+    def _validate_name(name: str) -> None:
+        """Reject spec names that could escape the store root."""
+        if not name or not name.strip():
+            raise ValueError("Spec name must not be empty")
+        if ".." in name.split("/") or ".." in name.split("\\"):
+            raise ValueError(f"Invalid spec name (path traversal): {name!r}")
+        from pathlib import PurePosixPath
+
+        parts = PurePosixPath(name).parts
+        if any(p in (".", "..") for p in parts):
+            raise ValueError(f"Invalid spec name (relative path): {name!r}")
+        if PurePosixPath(name).is_absolute() or name.startswith("/") or name.startswith("\\"):
+            raise ValueError(f"Invalid spec name (absolute path): {name!r}")
+        if "/" in name or "\\" in name:
+            raise ValueError(f"Invalid spec name (contains path separator): {name!r}")
 
     def _event_log(self, name: str) -> EventLog:
         return EventLog(self._spec_dir(name) / "events.jsonl")

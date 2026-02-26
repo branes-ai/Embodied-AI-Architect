@@ -290,3 +290,28 @@ class TestResolve:
         assert flat["platform_type"] == "drone"
         assert flat["perception.min_fps"] == 30.0
         assert flat["compute.soc"] == "Jetson Orin NX"
+
+
+class TestNameValidation:
+    """Ensure spec names are sanitized to prevent path traversal."""
+
+    def test_reject_path_traversal(self, store):
+        with pytest.raises(ValueError, match="path traversal"):
+            store.create("../../etc/passwd")
+
+    def test_reject_absolute_path(self, store):
+        with pytest.raises(ValueError, match="absolute path"):
+            store.create("/tmp/evil")
+
+    def test_reject_empty_name(self, store):
+        with pytest.raises(ValueError, match="empty"):
+            store.create("")
+
+    def test_reject_slash_in_name(self, store):
+        with pytest.raises(ValueError, match="path separator"):
+            store.create("foo/bar")
+
+    def test_valid_names_work(self, store):
+        store.create("my-drone-01")
+        store.create("drone_v2")
+        assert len(store.list_specs()) == 2
