@@ -10,22 +10,57 @@
 ## Roadmap Overview
 
 ```
-Mar–Apr 2026     May–Jul 2026      Aug–Nov 2026       Dec 2026–Mar 2027
-┌──────────┐    ┌──────────┐      ┌──────────┐       ┌──────────────┐
-│ 0.7      │    │ 0.8      │      │ 0.9      │       │ 1.0          │
-│ Prod CLI │───→│ Opt Loop │──┐──→│ Co-Sim   │──────→│ Customer     │
-└──────────┘    └──────────┘  │   └──────────┘       │ Ready        │
-                              │                       └──────────────┘
-                              │                              │
-                     (parallel if ≥2 eng)          Apr–Jun 2027   Jul–Aug 2027
-                                                   ┌──────────┐  ┌──────────┐
-                                                   │ 1.1      │  │ 1.2      │
-                                                   │ Enterprise│→ │ Sim2Real │
-                                                   └──────────┘  └──────────┘
+Feb 2026        Mar–Apr 2026     May–Jul 2026      Aug–Nov 2026       Dec 2026–Mar 2027
+┌──────────┐   ┌──────────┐    ┌──────────┐      ┌──────────┐       ┌──────────────┐
+│ 0.6      │   │ 0.7      │    │ 0.8      │      │ 0.9      │       │ 1.0          │
+│ Specs ◄──│──→│ Prod CLI │───→│ Opt Loop │──┐──→│ Co-Sim   │──────→│ Customer     │
+└──────────┘   └──────────┘    └──────────┘  │   └──────────┘       │ Ready        │
+                                              │                      └──────────────┘
+                                              │                              │
+                                     (parallel if ≥2 eng)          Apr–Jun 2027   Jul–Aug 2027
+                                                                   ┌──────────┐  ┌──────────┐
+                                                                   │ 1.1      │  │ 1.2      │
+                                                                   │ Enterprise│→ │ Sim2Real │
+                                                                   └──────────┘  └──────────┘
 ```
 
 **Critical path:** 0.7 → 0.8 → 1.0 (optimization loop is the core differentiator)
 **Parallel path:** 0.9 (co-simulation) can proceed alongside 0.8 with a second engineer
+
+---
+
+## Release 0.6 — "Spec-of-Specs" (Current — Feb 2026)
+
+**Business Value:** Structured, versioned requirements capture. Users define what they want to build before the AI architect designs it. Every field change is tracked with provenance (who, when, why), enabling auditable design history from day one.
+
+### Features Delivered
+
+| # | Feature | Inventory Ref | Status | Description |
+|---|---------|--------------|--------|-------------|
+| 1 | System Spec model (8 subsystems) | 10.1–10.5 | DONE | Perception, Compute, Power, Sensor, Actuator, Comms, Autonomy, Safety — all Optional for incremental definition |
+| 2 | Event-sourced store with content-addressed versioning | 10.6–10.19 | DONE | Append-only JSONL log, SHA256 blob storage, thread-safe locking, auto-snapshot after 50 events |
+| 3 | 14 CLI subcommands (`branes spec *`) | 10.22 | DONE | new, list, show, set, delete, commit, history, diff, tag, export, import, why, validate, resolve |
+| 4 | 6 LLM tools for chat agent | 10.23 | DONE | list/create/read/modify/validate/field_history — agent can reason about and modify specs |
+| 5 | 6 predefined templates | 10.20 | DONE | drone-perception, quadruped-nav, industrial-inspection, amr-warehouse, edge-camera, biped-humanoid |
+| 6 | 7 cross-subsystem validation checks | 10.21 | DONE | Power vs compute, perception latency, platform implications, safety redundancy, mission duration, comms bandwidth, autonomy sensors |
+| 7 | 82 tests (44 model + 38 store) | 10.25 | DONE | Full coverage of models, events, store, diff, templates, validation |
+| 8 | Design document + tutorial | 10.26, 10.27 | PARTIAL | Design doc complete; tutorial started but needs completion |
+
+### Also in 0.6 (carried from prior releases)
+
+| Feature | Inventory Ref | Description |
+|---------|--------------|-------------|
+| Multi-objective optimization engine | 7.1–7.15 | MAP-Elites + Bayesian BO + NSGA-III, MCP server, CLI integration |
+| Codebase analysis pipeline | 9.24–9.26 | Static scanner, LLM 4-pass analyzer, workload profile converter |
+| Documentation site | 9.5–9.7 | Astro Starlight with tutorials, catalog pages, MCP reference |
+| CI/CD pipeline | 9.1–9.3 | Black + Ruff lint, pytest, semantic-release, docs deployment |
+| 7 discoverable demos | 6.16 | SoC designer, DSE Pareto, SoC optimizer, KPU RTL, HITL safety, experience cache, full campaign |
+
+### Known Gaps (carried forward to 0.7+)
+
+- Spec → pipeline bridge: SystemSpec doesn't yet drive the design pipeline (10.28, 10.30)
+- Spec tutorial incomplete (10.27)
+- Cross-spec comparison not implemented (10.29)
 
 ---
 
@@ -359,16 +394,6 @@ This roadmap supersedes [roadmap.md](roadmap.md) (the original 12-month R&D plan
 | No customer-ready milestone | Release 1.0 (Month 10-12) | Added — explicit first-customer gate |
 | No enterprise milestone | Release 1.1 (Month 13-15) | Added — safety certification unlocks regulated industries |
 
-### Release 0.6 (Current — In Progress)
-
-Release 0.6 is the current release. Key features delivered:
-
-- **Spec-of-Specs system** (Domain 10): Event-sourced requirements management with 8 subsystem models, 14 CLI commands, 6 LLM tools, 6 templates, 7 validation checks, content-addressed versioning, and 82 tests. See [spec-of-specs-design.md](spec-of-specs-design.md).
-- **Multi-objective optimization engine**: MAP-Elites + Bayesian BO + NSGA-III with MCP server
-- **Documentation site**: Astro Starlight with tutorials and reference docs
-
-The spec system is standalone — it doesn't yet drive the design pipeline (Release 0.7 bridges this gap).
-
 ### What's Preserved
 
 All original Phase 1–3 acceptance criteria are preserved in the feature inventory and mapped to releases:
@@ -382,6 +407,7 @@ All original Phase 1–3 acceptance criteria are preserved in the feature invent
 
 | Quarter | Release | Business Milestone |
 |---------|---------|-------------------|
+| Q1 2026 | 0.6 | Structured requirements capture: specs with versioning, validation, and provenance |
 | Q2 2026 | 0.7 | Early adopter program: 3-5 users running benchmarks on remote hardware |
 | Q3 2026 | 0.8 | Technical differentiator demo: AI architect iterates and improves designs autonomously |
 | Q4 2026 | 0.9 | Validation credibility: show ±15% prediction accuracy against physical hardware |
