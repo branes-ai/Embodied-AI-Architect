@@ -77,10 +77,10 @@ try:
 except ImportError:
     HAS_SPEC_TOOLS = False
 
-    def get_spec_tool_definitions():
+    def get_spec_tool_definitions() -> list[dict[str, Any]]:
         return []
 
-    def create_spec_tool_executors():
+    def create_spec_tool_executors() -> dict[str, Callable]:
         return {}
 
 
