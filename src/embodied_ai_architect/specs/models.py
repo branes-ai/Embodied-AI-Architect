@@ -20,7 +20,14 @@ try:
 except ImportError:
     HAS_SCHEMAS = False
     ConstraintCriticality = None
-    SuccessCriterion = None
+
+    class SuccessCriterion(BaseModel):
+        """Fallback when embodied-schemas is not installed."""
+
+        metric: str = Field(description="Metric name: latency_ms, power_watts, recall, etc.")
+        target: float = Field(description="Target value")
+        operator: str = Field(description="Comparison operator: lt, lte, gt, gte, eq")
+        criticality: str = Field(default="hard", description="How critical this criterion is")
 
 
 # ── Enums ──────────────────────────────────────────────────────────────────
@@ -403,9 +410,9 @@ class SystemSpec(BaseModel):
         default=None,
         description="Safety subsystem requirements",
     )
-    constraints: list[dict[str, Any]] = Field(
+    constraints: list[SuccessCriterion] = Field(
         default_factory=list,
-        description="Cross-cutting success criteria (SuccessCriterion dicts)",
+        description="Cross-cutting success criteria",
     )
     custom: dict[str, Any] = Field(
         default_factory=dict,
