@@ -1,4 +1,7 @@
-"""Embodied AI Architect - Design environment for Embodied AI systems."""
+"""Embodied AI Architect - Design environment for Embodied AI systems.
+
+Hardware/Software Codesign Space Exploration and Optimization Environment.
+"""
 
 from importlib.metadata import version, PackageNotFoundError
 
