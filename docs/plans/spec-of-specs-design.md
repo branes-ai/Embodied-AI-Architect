@@ -13,7 +13,7 @@ This plan implements a **hierarchical spec system** with:
 
 ## New Files
 
-```
+```text
 src/embodied_ai_architect/
   specs/                        # NEW package
     __init__.py                 # Public API exports
@@ -41,7 +41,7 @@ src/embodied_ai_architect/
 
 Follow the pattern from `requirements/models.py`: Pydantic BaseModel, Optional fields with Field descriptors, str Enums.
 
-```
+```text
 SystemSpec (root)
 ├── name: str, description: Optional[str], platform_type: Optional[str]
 ├── perception: Optional[PerceptionSpec]    # cameras, detection, tracking, accuracy, latency, fps
@@ -79,7 +79,7 @@ class SpecEvent(BaseModel):
 
 ### Storage Layout (`specs/store.py`)
 
-```
+```text
 .branes/specs/                     # project-level (default)
   specs.json                       # index: {name -> metadata}
   <spec-name>/
@@ -150,7 +150,7 @@ Returns `list[ValidationIssue]` with severity, path, message, suggestion.
 
 ## Implementation Order
 
-```
+```text
 Phase 1: models.py, events.py, exceptions.py, __init__.py
     │     (Pydantic models + event log + path utilities)
     │

@@ -31,7 +31,7 @@ event log, and content-addressed snapshots.
 
 A `SystemSpec` organizes requirements into 8 subsystems:
 
-```
+```text
 SystemSpec (root)
 ├── name, description, platform_type, tags
 ├── perception    — cameras, detection, tracking, accuracy, latency, FPS
@@ -53,7 +53,7 @@ incrementally — or start from a template with sensible defaults.
 
 Every mutation is recorded as an event:
 
-```
+```text
 seq=0  CREATE   author=template  reason="Created from template 'drone-perception'"
 seq=1  SET      /perception/min_fps = 60   author=user   reason="need 60fps for tracking"
 seq=2  SET      /compute/soc = "Orin NX"   author=agent  reason="fits 15W TDP budget"
@@ -349,7 +349,7 @@ branes spec diff warehouse-inspector v1.0 v2.0
 ```
 
 Output:
-```
+```text
 ~ /compute/max_tdp_watts: 15.0 → 20.0
 ~ /power/battery_wh: 99.0 → 150.0
 ~ /power/compute_power_watts: 15.0 → 20.0
@@ -365,7 +365,7 @@ branes spec why warehouse-inspector /power/battery_wh
 ```
 
 Output:
-```
+```text
   Seq  Op   Value  Author  Reason                                    Timestamp
     8  set  150    user    upgraded to 150Wh pack to support 45min    2026-02-26...
 ```
@@ -392,7 +392,7 @@ branes spec resolve warehouse-inspector > warehouse-inspector-flat.json
 The spec system is also available through the interactive chat (`branes chat`).
 The AI architect agent can create, read, modify, and validate specs directly:
 
-```
+```text
 You: Create a spec for an outdoor quadruped robot that needs to navigate rough terrain
 
 Agent: I'll create a spec starting from the quadruped-nav template and customize it
