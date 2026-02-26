@@ -156,9 +156,17 @@ class EventLog:
         return spec
 
     def field_history(self, path: str) -> list[SpecEvent]:
-        """Get all events that touched a specific path."""
+        """Get all events that touched a specific path.
+
+        Includes SET/DELETE events matching the path, plus IMPORT events
+        which replace the entire spec (and therefore affect every field).
+        """
         events = self.read_all()
-        return [e for e in events if e.path == path and e.op in (EventOp.SET, EventOp.DELETE)]
+        return [
+            e
+            for e in events
+            if (e.path == path and e.op in (EventOp.SET, EventOp.DELETE)) or e.op == EventOp.IMPORT
+        ]
 
     def events_since_last_snapshot(self) -> int:
         """Count events since the last snapshot."""
