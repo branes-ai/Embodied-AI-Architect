@@ -549,3 +549,24 @@ class TestValidation:
         issues = validate_spec(spec)
         warnings = [i for i in issues if i.severity == Severity.WARNING]
         assert any("slam" in w.message.lower() for w in warnings)
+
+    def test_slam_case_insensitive(self):
+        """SLAM/Stereo/LiDAR should match regardless of case."""
+        spec_warn = SystemSpec(
+            name="test",
+            autonomy=AutonomySpec(navigation="SLAM"),
+            perception=PerceptionSpec(camera_types=["Monocular"]),
+        )
+        issues = validate_spec(spec_warn)
+        warnings = [i for i in issues if i.severity == Severity.WARNING]
+        assert any("slam" in w.message.lower() for w in warnings)
+
+        # "Stereo" (mixed case) should satisfy the depth requirement
+        spec_ok = SystemSpec(
+            name="test",
+            autonomy=AutonomySpec(navigation="SLAM"),
+            perception=PerceptionSpec(camera_types=["Stereo"]),
+        )
+        issues = validate_spec(spec_ok)
+        warnings = [i for i in issues if i.severity == Severity.WARNING]
+        assert not any("slam" in w.message.lower() for w in warnings)

@@ -257,11 +257,15 @@ def _check_autonomy_sensors(spec: SystemSpec, issues: list[ValidationIssue]) -> 
     if not spec.autonomy:
         return
 
-    if spec.autonomy.navigation == "slam":
+    nav = (spec.autonomy.navigation or "").lower()
+
+    if nav == "slam":
         has_depth = False
-        if spec.perception and spec.perception.camera_types:
-            has_depth = any(t in spec.perception.camera_types for t in ["stereo", "depth", "rgbd"])
-        has_lidar = spec.sensors and "lidar" in (spec.sensors.modalities or [])
+        if spec.perception:
+            camera_types = spec.perception.camera_types or []
+            has_depth = any(t.lower() in ("stereo", "depth", "rgbd") for t in camera_types)
+        modalities = (spec.sensors.modalities or []) if spec.sensors else []
+        has_lidar = any(m.lower() == "lidar" for m in modalities)
         if not has_depth and not has_lidar:
             issues.append(
                 ValidationIssue(
@@ -277,8 +281,9 @@ def _check_autonomy_sensors(spec: SystemSpec, issues: list[ValidationIssue]) -> 
                 )
             )
 
-    if spec.autonomy.navigation == "vio":
-        has_imu = spec.sensors and "imu" in (spec.sensors.modalities or [])
+    if nav == "vio":
+        modalities = (spec.sensors.modalities or []) if spec.sensors else []
+        has_imu = any(m.lower() == "imu" for m in modalities)
         if not has_imu:
             issues.append(
                 ValidationIssue(
