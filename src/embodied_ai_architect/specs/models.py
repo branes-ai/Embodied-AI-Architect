@@ -10,7 +10,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 # Import SuccessCriterion from embodied-schemas if available
 try:
@@ -89,10 +89,19 @@ class EnvironmentalRating(str, Enum):
     MIL_STD = "mil_std"
 
 
+# ── Base Model ─────────────────────────────────────────────────────────────
+
+
+class SpecBaseModel(BaseModel):
+    """Base for all spec models. Rejects unknown fields to catch typos."""
+
+    model_config = ConfigDict(extra="forbid")
+
+
 # ── Subsystem Specs ────────────────────────────────────────────────────────
 
 
-class PerceptionSpec(BaseModel):
+class PerceptionSpec(SpecBaseModel):
     """Perception subsystem requirements."""
 
     cameras: Optional[int] = Field(
@@ -138,7 +147,7 @@ class PerceptionSpec(BaseModel):
     )
 
 
-class ComputeSpec(BaseModel):
+class ComputeSpec(SpecBaseModel):
     """Compute subsystem requirements."""
 
     soc: Optional[str] = Field(
@@ -179,7 +188,7 @@ class ComputeSpec(BaseModel):
     )
 
 
-class PowerSpec(BaseModel):
+class PowerSpec(SpecBaseModel):
     """Power subsystem requirements."""
 
     battery_wh: Optional[float] = Field(
@@ -213,7 +222,7 @@ class PowerSpec(BaseModel):
     )
 
 
-class SensorSpec(BaseModel):
+class SensorSpec(SpecBaseModel):
     """Sensor subsystem requirements (beyond perception cameras)."""
 
     modalities: list[str] = Field(
@@ -241,7 +250,7 @@ class SensorSpec(BaseModel):
     )
 
 
-class ActuatorSpec(BaseModel):
+class ActuatorSpec(SpecBaseModel):
     """Actuator subsystem requirements."""
 
     dof: Optional[int] = Field(
@@ -270,7 +279,7 @@ class ActuatorSpec(BaseModel):
     )
 
 
-class CommsSpec(BaseModel):
+class CommsSpec(SpecBaseModel):
     """Communications subsystem requirements."""
 
     protocols: list[str] = Field(
@@ -298,7 +307,7 @@ class CommsSpec(BaseModel):
     )
 
 
-class AutonomySpec(BaseModel):
+class AutonomySpec(SpecBaseModel):
     """Autonomy subsystem requirements."""
 
     level: Optional[AutonomyLevel] = Field(
@@ -328,7 +337,7 @@ class AutonomySpec(BaseModel):
     )
 
 
-class SafetySpec(BaseModel):
+class SafetySpec(SpecBaseModel):
     """Safety subsystem requirements."""
 
     level: Optional[SafetyLevel] = Field(
@@ -361,7 +370,7 @@ class SafetySpec(BaseModel):
 # ── Root Spec ──────────────────────────────────────────────────────────────
 
 
-class SystemSpec(BaseModel):
+class SystemSpec(SpecBaseModel):
     """Root specification for an embodied AI system.
 
     All subsystem fields are Optional — users build up specs incrementally.
@@ -538,11 +547,17 @@ def set_at_path(spec: SystemSpec, path: str, value: Any) -> SystemSpec:
 
     Auto-creates intermediate subsystem models if they don't exist.
     Handles type coercion for enums and numeric fields.
+    Raises InvalidPathError if the path targets an unknown field.
     """
+    from .exceptions import InvalidPathError
+
     parts = parse_path(path)
     data = spec.model_dump()
     _set_nested(data, parts, value, spec)
-    return SystemSpec.model_validate(data)
+    try:
+        return SystemSpec.model_validate(data)
+    except ValidationError as e:
+        raise InvalidPathError(path, f"validation failed: {e.errors()[0]['msg']}") from e
 
 
 def _set_nested(data: dict, parts: list[str], value: Any, spec: SystemSpec) -> None:
@@ -583,10 +598,15 @@ def _coerce_value(key: str, value: Any, context: dict) -> Any:
 
 def delete_at_path(spec: SystemSpec, path: str) -> SystemSpec:
     """Delete a value from a spec at the given path, returning a new SystemSpec."""
+    from .exceptions import InvalidPathError
+
     parts = parse_path(path)
     data = spec.model_dump()
     _delete_nested(data, parts)
-    return SystemSpec.model_validate(data)
+    try:
+        return SystemSpec.model_validate(data)
+    except ValidationError as e:
+        raise InvalidPathError(path, f"validation failed: {e.errors()[0]['msg']}") from e
 
 
 def _delete_nested(data: dict, parts: list[str]) -> None:

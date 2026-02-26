@@ -193,6 +193,24 @@ class TestPathUtilities:
         new_spec = set_at_path(spec, "/description", "A test system")
         assert new_spec.description == "A test system"
 
+    def test_set_at_path_typo_subsystem_field(self):
+        """Typo'd field name in a subsystem should raise InvalidPathError."""
+        spec = SystemSpec(name="test")
+        with pytest.raises(InvalidPathError, match="validation failed"):
+            set_at_path(spec, "/perception/min_fpss", 60)
+
+    def test_set_at_path_typo_top_level_field(self):
+        """Typo'd top-level field should raise InvalidPathError."""
+        spec = SystemSpec(name="test")
+        with pytest.raises(InvalidPathError, match="validation failed"):
+            set_at_path(spec, "/descriptin", "typo")
+
+    def test_set_at_path_typo_subsystem_name(self):
+        """Typo'd subsystem name should raise InvalidPathError."""
+        spec = SystemSpec(name="test")
+        with pytest.raises(InvalidPathError, match="validation failed"):
+            set_at_path(spec, "/percption/min_fps", 60)
+
 
 # ── Events ─────────────────────────────────────────────────────────────────
 
