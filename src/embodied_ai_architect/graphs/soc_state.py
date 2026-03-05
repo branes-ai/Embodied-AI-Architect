@@ -114,6 +114,14 @@ class DesignConstraints(BaseModel):
         default=None, description="Safety standard (e.g. 'IEC 62304 Class C')"
     )
 
+    # SWaP-C (system-level)
+    max_weight_grams: Optional[float] = Field(
+        default=None, description="Maximum system weight in grams"
+    )
+    max_volume_cm3: Optional[float] = Field(
+        default=None, description="Maximum system volume in cm³"
+    )
+
     # Custom
     custom: dict[str, Any] = Field(
         default_factory=dict,
@@ -139,6 +147,13 @@ class PPAMetrics(BaseModel):
     )
     memory_mb: Optional[float] = None
     energy_per_inference_mj: Optional[float] = None
+
+    # SWaP-C system-level metrics
+    weight_grams: Optional[float] = Field(default=None, description="Total system weight in grams")
+    volume_cm3: Optional[float] = Field(default=None, description="Total system volume in cm³")
+    thermal_margin_c: Optional[float] = Field(
+        default=None, description="Thermal margin (max_junction - actual junction) in C"
+    )
 
     # Per-constraint verdicts (PASS/FAIL/PARTIAL)
     verdicts: dict[str, str] = Field(
@@ -233,6 +248,8 @@ class SoCDesignState(TypedDict, total=False):
     pareto_points: list[dict]  # Explored design space points
     pareto_results: dict  # Pareto front analysis results
     moo_results: dict  # Multi-objective optimization results (rich data)
+    swap_assessment: dict  # SWaP-C optimization results (6-objective)
+    system_bom: dict  # Hierarchical system BOM data
     safety_analysis: dict  # Safety-critical detection results
     prior_experience: dict  # Experience retrieval results
     cost_tracking: dict  # CostTracker serialized state
@@ -323,6 +340,8 @@ def create_initial_soc_state(
         pareto_points=[],
         pareto_results={},
         moo_results={},
+        swap_assessment={},
+        system_bom={},
         safety_analysis={},
         prior_experience={},
         cost_tracking={},

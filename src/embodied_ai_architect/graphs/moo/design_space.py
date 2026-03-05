@@ -295,3 +295,113 @@ def create_soc_design_space(
         directions=directions,
         constraint_bounds=constraint_bounds,
     )
+
+
+def create_swap_design_space(
+    constraints: dict[str, Any] | None = None,
+) -> DesignSpace:
+    """Factory: create a 6-objective SWaP-C design space.
+
+    Extends the SoC design space with package_type and cooling_type variables,
+    and adds weight_grams and volume_cm3 objectives.
+
+    Variables: 7 SoC variables + package_type (categorical) + cooling_type (categorical)
+    Objectives: power_watts, latency_ms, area_mm2, cost_usd, weight_grams, volume_cm3
+    Directions: all MINIMIZE
+
+    Args:
+        constraints: Optional dict with constraint bounds including
+            max_weight_grams and max_volume_cm3.
+
+    Returns:
+        DesignSpace configured for 6-objective SWaP-C exploration.
+    """
+    from embodied_ai_architect.graphs.technology import TECHNOLOGY_NODES
+
+    process_nodes = sorted([int(k.replace("nm", "")) for k in TECHNOLOGY_NODES.keys()])
+
+    variables = [
+        DesignVariable(
+            name="process_nm",
+            var_type=VarType.CATEGORICAL,
+            choices=process_nodes,
+        ),
+        DesignVariable(
+            name="clock_mhz",
+            var_type=VarType.CONTINUOUS,
+            lower=100.0,
+            upper=3000.0,
+        ),
+        DesignVariable(
+            name="array_rows",
+            var_type=VarType.INTEGER,
+            lower=2,
+            upper=64,
+        ),
+        DesignVariable(
+            name="array_cols",
+            var_type=VarType.INTEGER,
+            lower=2,
+            upper=64,
+        ),
+        DesignVariable(
+            name="sram_kb",
+            var_type=VarType.INTEGER,
+            lower=32,
+            upper=2048,
+        ),
+        DesignVariable(
+            name="num_compute_tiles",
+            var_type=VarType.INTEGER,
+            lower=1,
+            upper=16,
+        ),
+        DesignVariable(
+            name="noc_link_width_bits",
+            var_type=VarType.CATEGORICAL,
+            choices=[64, 128, 256, 512],
+        ),
+        # SWaP-C specific variables
+        DesignVariable(
+            name="package_type",
+            var_type=VarType.CATEGORICAL,
+            choices=["QFN", "BGA", "FCBGA", "WLCSP"],
+        ),
+        DesignVariable(
+            name="cooling_type",
+            var_type=VarType.CATEGORICAL,
+            choices=["passive", "active_fan", "liquid"],
+        ),
+    ]
+
+    objectives = [
+        "power_watts",
+        "latency_ms",
+        "area_mm2",
+        "cost_usd",
+        "weight_grams",
+        "volume_cm3",
+    ]
+    directions = [ObjectiveDirection.MINIMIZE] * 6
+
+    constraint_bounds: dict[str, tuple[float, float]] = {}
+    if constraints:
+        if constraints.get("max_power_watts"):
+            constraint_bounds["power_watts"] = (0.0, constraints["max_power_watts"])
+        if constraints.get("max_latency_ms"):
+            constraint_bounds["latency_ms"] = (0.0, constraints["max_latency_ms"])
+        if constraints.get("max_area_mm2"):
+            constraint_bounds["area_mm2"] = (0.0, constraints["max_area_mm2"])
+        if constraints.get("max_cost_usd"):
+            constraint_bounds["cost_usd"] = (0.0, constraints["max_cost_usd"])
+        if constraints.get("max_weight_grams"):
+            constraint_bounds["weight_grams"] = (0.0, constraints["max_weight_grams"])
+        if constraints.get("max_volume_cm3"):
+            constraint_bounds["volume_cm3"] = (0.0, constraints["max_volume_cm3"])
+
+    return DesignSpace(
+        variables=variables,
+        objectives=objectives,
+        directions=directions,
+        constraint_bounds=constraint_bounds,
+    )

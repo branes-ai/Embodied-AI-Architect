@@ -199,6 +199,130 @@ def design_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     }
 
 
+# ---------------------------------------------------------------------------
+# Generic N-objective Pareto utilities
+# ---------------------------------------------------------------------------
+
+
+class GenericParetoPoint(BaseModel):
+    """A design point in an N-dimensional objective space."""
+
+    name: str = ""
+    objectives: dict[str, float] = Field(default_factory=dict)
+    dominated: bool = False
+    knee_point: bool = False
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+def compute_pareto_front_generic(
+    candidates: list[dict[str, Any]],
+    objective_names: list[str],
+    directions: list[str] | None = None,
+) -> list[GenericParetoPoint]:
+    """Compute non-dominated Pareto front for N arbitrary objectives.
+
+    Args:
+        candidates: List of dicts with at least 'name' and 'objectives' keys.
+            'objectives' should be a dict mapping objective_name -> value.
+            Alternatively, objective values can be top-level keys.
+        objective_names: Names of objectives to consider.
+        directions: Per-objective direction ("minimize" or "maximize").
+            Defaults to all minimize.
+
+    Returns:
+        All candidates as GenericParetoPoint with dominated flag set.
+    """
+    if directions is None:
+        directions = ["minimize"] * len(objective_names)
+
+    # Extract objective vectors with sign flip for maximize
+    points: list[GenericParetoPoint] = []
+    vectors: list[list[float]] = []
+
+    for c in candidates:
+        objs = c.get("objectives", c)
+        vals: list[float] = []
+        for i, name in enumerate(objective_names):
+            val = float(objs.get(name, float("inf")))
+            # Flip sign for maximize objectives so we can use minimize-only domination
+            if directions[i] == "maximize":
+                val = -val
+            vals.append(val)
+        vectors.append(vals)
+        points.append(
+            GenericParetoPoint(
+                name=c.get("name", ""),
+                objectives={name: float(objs.get(name, 0.0)) for name in objective_names},
+                metadata={k: v for k, v in c.items() if k not in ("name", "objectives")},
+            )
+        )
+
+    # Non-dominated sorting: O(n^2)
+    n = len(vectors)
+    n_obj = len(objective_names)
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                continue
+            vi, vj = vectors[i], vectors[j]
+            all_leq = all(vj[k] <= vi[k] for k in range(n_obj))
+            any_lt = any(vj[k] < vi[k] for k in range(n_obj))
+            if all_leq and any_lt:
+                points[i].dominated = True
+                break
+
+    return points
+
+
+def identify_knee_point_generic(
+    front: list[GenericParetoPoint],
+    objective_names: list[str],
+) -> GenericParetoPoint | None:
+    """Identify the knee point of a generic Pareto front.
+
+    The knee point is the non-dominated point with minimum normalized
+    Euclidean distance to the utopia point (minimum of each objective).
+
+    Args:
+        front: List of GenericParetoPoints.
+        objective_names: Objective names to use for distance calculation.
+
+    Returns:
+        The knee point, or None if no non-dominated points exist.
+    """
+    non_dominated = [p for p in front if not p.dominated]
+    if not non_dominated:
+        return None
+
+    # Compute per-objective min/range for normalization
+    obj_min: dict[str, float] = {}
+    obj_range: dict[str, float] = {}
+    for name in objective_names:
+        values = [p.objectives.get(name, 0.0) for p in non_dominated]
+        mn = min(values)
+        mx = max(values)
+        obj_min[name] = mn
+        obj_range[name] = (mx - mn) if mx > mn else 1.0
+
+    best_dist = float("inf")
+    best_point: GenericParetoPoint | None = None
+
+    for p in non_dominated:
+        dist_sq = 0.0
+        for name in objective_names:
+            norm = (p.objectives.get(name, 0.0) - obj_min[name]) / obj_range[name]
+            dist_sq += norm * norm
+        dist = math.sqrt(dist_sq)
+        if dist < best_dist:
+            best_dist = dist
+            best_point = p
+
+    if best_point is not None:
+        best_point.knee_point = True
+
+    return best_point
+
+
 def _enrich_candidates_with_latency(
     candidates: list[dict[str, Any]], state: SoCDesignState
 ) -> list[dict[str, Any]]:

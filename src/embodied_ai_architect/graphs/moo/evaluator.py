@@ -203,3 +203,164 @@ class DesignEvaluator:
         For parallel evaluation, use executor.LocalThreadExecutor.
         """
         return [self.evaluate(p) for p in param_list]
+
+
+class SWaPCEvaluator:
+    """6-objective evaluator adding system weight and volume to PPA.
+
+    Delegates die-level PPA to DesignEvaluator, then wraps the result with
+    system-level BOM estimation (package, PCB, heatsink, enclosure) and
+    thermal feasibility checking.
+
+    Thread-safe: evaluate() is a pure function with no shared mutable state.
+    """
+
+    def __init__(
+        self,
+        design_space: DesignSpace,
+        base_state: dict[str, Any] | None = None,
+        constraint_bounds: dict[str, tuple[float, float]] | None = None,
+        thermal_config: dict[str, float] | None = None,
+    ):
+        self.design_space = design_space
+        self.base_state = base_state or {}
+        self.constraint_bounds = constraint_bounds or design_space.constraint_bounds
+        self._ppa_evaluator = DesignEvaluator(
+            design_space=design_space,
+            base_state=base_state,
+            constraint_bounds=constraint_bounds,
+        )
+        thermal = thermal_config or {}
+        self._ambient_temp_c = thermal.get("ambient_temp_c", 40.0)
+        self._max_junction_temp_c = thermal.get("max_junction_temp_c", 125.0)
+        self._derating = thermal.get("derating", 1.0)
+
+    def evaluate(self, params: dict[str, Any]) -> EvaluationResult:
+        """Evaluate a single design point with 6 objectives.
+
+        First 4 objectives (power, latency, area, cost) come from the
+        underlying DesignEvaluator. Weight and volume come from system
+        BOM estimation. Thermal feasibility is checked and can mark
+        a design infeasible.
+
+        Args:
+            params: Design parameter dict including package_type and cooling_type.
+
+        Returns:
+            EvaluationResult with 6 objectives and thermal metadata.
+        """
+        from embodied_ai_architect.graphs.physical_estimators import (
+            compute_thermal_feasibility,
+            estimate_system_bom,
+        )
+
+        # 1. Get PPA from base evaluator
+        ppa_result = self._ppa_evaluator.evaluate(params)
+
+        if not ppa_result.feasible and ppa_result.objectives.get("power_watts", 0) >= 1e5:
+            # Base evaluation failed catastrophically — propagate with penalty
+            penalty = {
+                **ppa_result.objectives,
+                "weight_grams": 1e6,
+                "volume_cm3": 1e6,
+            }
+            return EvaluationResult(
+                design_params=params,
+                objectives=penalty,
+                constraints_satisfied={},
+                feasible=False,
+                metadata=ppa_result.metadata,
+            )
+
+        try:
+            # 2. Extract SWaP-C parameters
+            package_type = str(params.get("package_type", "BGA"))
+            cooling_type = str(params.get("cooling_type", "passive"))
+            area_mm2 = ppa_result.objectives["area_mm2"]
+            power_w = ppa_result.objectives["power_watts"]
+            process_nm = int(params.get("process_nm", 28))
+
+            volume = self.base_state.get("constraints", {}).get("target_volume", 10_000)
+
+            # 3. Build system BOM
+            bom = estimate_system_bom(
+                soc_area_mm2=area_mm2,
+                soc_power_watts=power_w,
+                process_nm=process_nm,
+                package_type=package_type,
+                cooling_type=cooling_type,
+                volume=volume,
+            )
+
+            # 4. Thermal feasibility
+            thermal = compute_thermal_feasibility(
+                bom,
+                tdp_watts=power_w,
+                ambient_temp_c=self._ambient_temp_c,
+                max_junction_temp_c=self._max_junction_temp_c,
+            )
+
+            # 5. Assemble 6 objectives
+            weight_g = bom.total_weight_grams()
+            volume_cm3 = bom.total_volume_cm3()
+
+            objectives = {
+                **ppa_result.objectives,
+                "weight_grams": round(weight_g, 2),
+                "volume_cm3": round(volume_cm3, 2),
+            }
+
+            # 6. Check all constraints
+            constraints_satisfied = dict(ppa_result.constraints_satisfied)
+            feasible = ppa_result.feasible
+
+            # Thermal feasibility
+            if not thermal["feasible"]:
+                feasible = False
+                constraints_satisfied["thermal"] = False
+            else:
+                constraints_satisfied["thermal"] = True
+
+            # Weight/volume constraint bounds
+            for name in ("weight_grams", "volume_cm3"):
+                if name in self.constraint_bounds:
+                    lo, hi = self.constraint_bounds[name]
+                    val = objectives[name]
+                    sat = lo <= val <= hi
+                    constraints_satisfied[name] = sat
+                    if not sat:
+                        feasible = False
+
+            metadata = {
+                **ppa_result.metadata,
+                "thermal": thermal,
+                "package_type": package_type,
+                "cooling_type": cooling_type,
+                "bom_summary": bom.summary_table(),
+            }
+
+            return EvaluationResult(
+                design_params=params,
+                objectives=objectives,
+                constraints_satisfied=constraints_satisfied,
+                feasible=feasible,
+                metadata=metadata,
+            )
+
+        except Exception as e:
+            logger.warning("SWaP-C evaluation failed for params %s: %s", params, e)
+            return EvaluationResult(
+                design_params=params,
+                objectives={
+                    **ppa_result.objectives,
+                    "weight_grams": 1e6,
+                    "volume_cm3": 1e6,
+                },
+                constraints_satisfied={},
+                feasible=False,
+                metadata={"error": str(e)},
+            )
+
+    def evaluate_batch(self, param_list: list[dict[str, Any]]) -> list[EvaluationResult]:
+        """Evaluate a batch of design points sequentially."""
+        return [self.evaluate(p) for p in param_list]
