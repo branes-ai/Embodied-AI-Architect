@@ -200,7 +200,8 @@ Without these, the engine falls back to MAP-Elites only, which still provides a 
 
 ## Next Steps
 
-- [CLI reference](/reference/cli/) for all `optimize` command options
+- [SWaP-C Analysis](/features/swap-analysis/) to extend optimization with weight, volume, and thermal objectives
+- [CLI reference](/reference/cli/) for all `optimize` and `swap` command options
 - [MCP tools reference](/reference/mcp-tools/) for programmatic access via Claude
 - [Hardware catalog](/catalog/hardware/) for available hardware targets
 - [Constraint checking](/features/constraint-checking/) for pass/fail verification

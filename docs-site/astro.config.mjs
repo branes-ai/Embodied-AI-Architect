@@ -70,6 +70,7 @@ export default defineConfig({
 						{ label: 'Constraint Checking', slug: 'features/constraint-checking' },
 						{ label: 'Codebase Analysis', slug: 'features/codebase-analysis' },
 						{ label: 'Design Optimization', slug: 'features/design-optimization' },
+						{ label: 'SWaP-C Analysis', slug: 'features/swap-analysis' },
 						{ label: 'Deployment', slug: 'features/deployment' },
 					],
 				},

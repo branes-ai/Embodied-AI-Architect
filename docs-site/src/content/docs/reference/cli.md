@@ -182,6 +182,132 @@ embodied-ai optimize explain --points 0,3
 |--------|-------------|
 | `--points, -p TEXT` | Two point indices, comma-separated (required) |
 
+### swap
+
+System-level SWaP-C (Size, Weight, Power, Cost) analysis.
+
+```bash
+branes swap [estimate|bom|check|explore|show-front|compare|explain] [OPTIONS]
+```
+
+#### swap estimate
+
+Quick single-point SWaP-C estimation.
+
+```bash
+branes swap estimate --area 50 --power 5 --process 28
+```
+
+| Option | Description |
+|--------|-------------|
+| `--area, -a FLOAT` | Die area in mm² (required) |
+| `--power, -p FLOAT` | SoC TDP in watts (required) |
+| `--process INT` | Process node in nm (default: 28) |
+| `--package TEXT` | Package type: QFN, BGA, FCBGA, WLCSP (default: BGA) |
+| `--cooling TEXT` | Cooling type: passive, active_fan, liquid (default: passive) |
+| `--enclosure TEXT` | Enclosure material: aluminum, abs_plastic, magnesium (default: aluminum) |
+| `--volume INT` | Production volume (default: 10000) |
+| `--layers INT` | PCB layer count (default: 4) |
+| `--connectors INT` | Board connectors (default: 0) |
+| `--ambient-temp FLOAT` | Ambient temperature in °C (default: 40.0) |
+| `--json-output` | Output JSON |
+
+#### swap bom
+
+Detailed BOM breakdown with per-component weight, volume, and cost.
+
+```bash
+branes swap bom --area 50 --power 5 --process 28 --package FCBGA
+```
+
+Options: same as `swap estimate`.
+
+#### swap check
+
+Scorecard against SWaP-C budgets. Returns exit code 1 on FAIL.
+
+```bash
+branes swap check --area 50 --power 5 --process 28 \
+    --max-weight 500 --max-volume 200 --max-cost 1000
+```
+
+Options: all `swap estimate` options plus:
+
+| Option | Description |
+|--------|-------------|
+| `--max-weight FLOAT` | Weight budget in grams |
+| `--max-volume FLOAT` | Volume budget in cm³ |
+| `--max-power FLOAT` | Power budget in watts |
+| `--max-cost FLOAT` | Cost budget in USD |
+| `--max-latency FLOAT` | Latency budget in ms |
+| `--from-spec TEXT` | Read budgets from a named spec |
+| `--json-output` | Output JSON |
+
+#### swap explore
+
+6-objective design space exploration with SWaP-C (power, latency, area, cost, weight, volume).
+
+```bash
+branes swap explore --goal "drone SoC" --power 10 --weight 500 --fast
+```
+
+| Option | Description |
+|--------|-------------|
+| `--goal, -g TEXT` | Design goal description (required) |
+| `--power, -p FLOAT` | Max power in watts |
+| `--latency, -l FLOAT` | Max latency in ms |
+| `--cost, -c FLOAT` | Max cost in USD |
+| `--area, -a FLOAT` | Max area in mm² |
+| `--weight, -w FLOAT` | Max weight in grams |
+| `--volume FLOAT` | Max volume in cm³ |
+| `--fast` | Reduced evaluations (MAP-Elites only) |
+| `--layers TEXT` | Optimizer layer: auto, map_elites, bayesian, nsga3 |
+| `--workers INT` | Thread pool size (default: 8) |
+| `--from-spec TEXT` | Read constraints from a spec |
+| `--json-output` | Output raw JSON |
+
+#### swap show-front
+
+Display Pareto front from the last `swap explore` run.
+
+```bash
+branes swap show-front --top 5
+```
+
+| Option | Description |
+|--------|-------------|
+| `--top INT` | Number of designs to show (default: 10) |
+
+#### swap compare
+
+Side-by-side comparison of two packaging/cooling configurations.
+
+```bash
+branes swap compare --area 50 --power 5 --process 28 \
+    --left "QFN,passive,abs_plastic" --right "FCBGA,active_fan,aluminum"
+```
+
+| Option | Description |
+|--------|-------------|
+| `--area, -a FLOAT` | Die area in mm² (required) |
+| `--power, -p FLOAT` | SoC TDP in watts (required) |
+| `--process INT` | Process node in nm (default: 28) |
+| `--left TEXT` | Left config: package,cooling,enclosure (required) |
+| `--right TEXT` | Right config: package,cooling,enclosure (required) |
+| `--json-output` | Output JSON |
+
+#### swap explain
+
+Explain the tradeoff between two designs from the last `swap explore` run.
+
+```bash
+branes swap explain --points 0,3
+```
+
+| Option | Description |
+|--------|-------------|
+| `--points, -p TEXT` | Two point indices, comma-separated (required) |
+
 ### report
 
 View and manage analysis reports.
