@@ -450,3 +450,436 @@ def test_explain_invalid_format(runner):
         assert "Invalid points format" in result.output
     finally:
         os.unlink(result_path)
+
+
+# ---------------------------------------------------------------------------
+# score
+# ---------------------------------------------------------------------------
+
+
+def test_score_basic(runner):
+    result = runner.invoke(
+        cli,
+        ["--quiet", "swap", "score", "--area", "50", "--power", "5", "--profile", "drone"],
+    )
+    assert result.exit_code == 0
+    assert "Score" in result.output or "/100" in result.output
+
+
+def test_score_json(runner):
+    result = runner.invoke(
+        cli,
+        [
+            "--quiet",
+            "swap",
+            "score",
+            "--area",
+            "50",
+            "--power",
+            "5",
+            "--profile",
+            "drone",
+            "--json-output",
+        ],
+    )
+    assert result.exit_code == 0
+    data = json.loads(result.output)
+    assert "composite_score" in data
+    assert "per_objective_scores" in data
+
+
+# ---------------------------------------------------------------------------
+# rank
+# ---------------------------------------------------------------------------
+
+
+def test_rank_no_result(runner, monkeypatch):
+    monkeypatch.setattr("embodied_ai_architect.cli.commands.swap._load_swap_result", lambda: None)
+    result = runner.invoke(cli, ["--quiet", "swap", "rank", "--profile", "drone"])
+    assert result.exit_code == 0
+    assert "No SWaP-C results" in result.output
+
+
+def test_rank_with_result(runner):
+    import os
+    import tempfile
+
+    fake_result = {
+        "pareto_front": [
+            {
+                "objectives": {
+                    "power_watts": 3.5,
+                    "latency_ms": 10.0,
+                    "area_mm2": 25.0,
+                    "cost_usd": 12.0,
+                    "weight_grams": 80.0,
+                    "volume_cm3": 40.0,
+                },
+                "design_params": {"process_nm": 28, "package_type": "BGA"},
+            },
+            {
+                "objectives": {
+                    "power_watts": 5.0,
+                    "latency_ms": 8.0,
+                    "area_mm2": 35.0,
+                    "cost_usd": 18.0,
+                    "weight_grams": 120.0,
+                    "volume_cm3": 60.0,
+                },
+                "design_params": {"process_nm": 14, "package_type": "FCBGA"},
+            },
+        ],
+        "knee_point": None,
+    }
+    result_path = os.path.join(tempfile.gettempdir(), "branes_swap_result.json")
+    with open(result_path, "w") as f:
+        json.dump(fake_result, f)
+
+    try:
+        result = runner.invoke(
+            cli, ["--quiet", "swap", "rank", "--profile", "drone", "--method", "topsis"]
+        )
+        assert result.exit_code == 0
+        assert "Rank" in result.output or "Score" in result.output
+    finally:
+        os.unlink(result_path)
+
+
+def test_rank_json(runner):
+    import os
+    import tempfile
+
+    fake_result = {
+        "pareto_front": [
+            {
+                "objectives": {
+                    "power_watts": 3.5,
+                    "latency_ms": 10.0,
+                    "area_mm2": 25.0,
+                    "cost_usd": 12.0,
+                    "weight_grams": 80.0,
+                    "volume_cm3": 40.0,
+                },
+                "design_params": {},
+            },
+        ],
+        "knee_point": None,
+    }
+    result_path = os.path.join(tempfile.gettempdir(), "branes_swap_result.json")
+    with open(result_path, "w") as f:
+        json.dump(fake_result, f)
+
+    try:
+        result = runner.invoke(
+            cli, ["--quiet", "swap", "rank", "--profile", "drone", "--json-output"]
+        )
+        assert result.exit_code == 0
+        data = json.loads(result.output)
+        assert "rankings" in data
+    finally:
+        os.unlink(result_path)
+
+
+# ---------------------------------------------------------------------------
+# sensitivity
+# ---------------------------------------------------------------------------
+
+
+def test_sensitivity_tornado_basic(runner):
+    result = runner.invoke(
+        cli,
+        [
+            "--quiet",
+            "swap",
+            "sensitivity",
+            "--area",
+            "50",
+            "--power",
+            "5",
+            "--process",
+            "28",
+            "--mode",
+            "tornado",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Tornado" in result.output or "Swing" in result.output
+
+
+def test_sensitivity_taguchi_basic(runner):
+    result = runner.invoke(
+        cli,
+        [
+            "--quiet",
+            "swap",
+            "sensitivity",
+            "--area",
+            "50",
+            "--power",
+            "5",
+            "--process",
+            "28",
+            "--mode",
+            "taguchi",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Top factors" in result.output or "Taguchi" in result.output
+
+
+def test_sensitivity_json(runner):
+    result = runner.invoke(
+        cli,
+        [
+            "--quiet",
+            "swap",
+            "sensitivity",
+            "--area",
+            "50",
+            "--power",
+            "5",
+            "--mode",
+            "tornado",
+            "--json-output",
+        ],
+    )
+    assert result.exit_code == 0
+    data = json.loads(result.output)
+    assert "bars" in data
+
+
+# ---------------------------------------------------------------------------
+# sweep
+# ---------------------------------------------------------------------------
+
+
+def test_sweep_basic(runner):
+    result = runner.invoke(
+        cli,
+        [
+            "--quiet",
+            "swap",
+            "sweep",
+            "--area",
+            "50",
+            "--power",
+            "5",
+            "--process",
+            "28",
+            "--param",
+            "area",
+            "--from",
+            "20",
+            "--to",
+            "100",
+            "--steps",
+            "5",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Sweep" in result.output or "area" in result.output
+
+
+def test_sweep_json(runner):
+    result = runner.invoke(
+        cli,
+        [
+            "--quiet",
+            "swap",
+            "sweep",
+            "--area",
+            "50",
+            "--power",
+            "5",
+            "--param",
+            "power",
+            "--from",
+            "1",
+            "--to",
+            "20",
+            "--steps",
+            "3",
+            "--json-output",
+        ],
+    )
+    assert result.exit_code == 0
+    data = json.loads(result.output)
+    assert "sweep_values" in data
+    assert "objective_traces" in data
+
+
+def test_sweep_unknown_param(runner):
+    result = runner.invoke(
+        cli,
+        [
+            "--quiet",
+            "swap",
+            "sweep",
+            "--area",
+            "50",
+            "--power",
+            "5",
+            "--param",
+            "nonexistent",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Unknown parameter" in result.output
+
+
+# ---------------------------------------------------------------------------
+# budget
+# ---------------------------------------------------------------------------
+
+
+def test_budget_basic(runner):
+    result = runner.invoke(
+        cli,
+        [
+            "--quiet",
+            "swap",
+            "budget",
+            "--area",
+            "50",
+            "--power",
+            "5",
+            "--process",
+            "28",
+            "--max-weight",
+            "200",
+            "--samples",
+            "50",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "Feasibility" in result.output or "P(OK)" in result.output
+
+
+def test_budget_json(runner):
+    result = runner.invoke(
+        cli,
+        [
+            "--quiet",
+            "swap",
+            "budget",
+            "--area",
+            "50",
+            "--power",
+            "5",
+            "--max-weight",
+            "200",
+            "--max-cost",
+            "1000",
+            "--samples",
+            "50",
+            "--json-output",
+        ],
+    )
+    assert result.exit_code == 0
+    data = json.loads(result.output)
+    assert "feasibility_prob" in data
+    assert "traffic_light" in data
+    assert "overall_feasibility" in data
+
+
+def test_budget_no_budgets(runner):
+    result = runner.invoke(
+        cli,
+        ["--quiet", "swap", "budget", "--area", "50", "--power", "5", "--samples", "50"],
+    )
+    assert result.exit_code == 0
+    assert "No budgets" in result.output
+
+
+# ---------------------------------------------------------------------------
+# show-front with --cluster and --profile
+# ---------------------------------------------------------------------------
+
+
+def test_show_front_with_cluster(runner):
+    import os
+    import tempfile
+
+    fake_result = {
+        "pareto_front": [
+            {
+                "objectives": {
+                    "power_watts": 3.5,
+                    "latency_ms": 10.0,
+                    "area_mm2": 25.0,
+                    "cost_usd": 12.0,
+                    "weight_grams": 80.0,
+                    "volume_cm3": 40.0,
+                },
+                "design_params": {
+                    "process_nm": 28,
+                    "package_type": "BGA",
+                    "cooling_type": "passive",
+                },
+            },
+            {
+                "objectives": {
+                    "power_watts": 5.0,
+                    "latency_ms": 8.0,
+                    "area_mm2": 35.0,
+                    "cost_usd": 18.0,
+                    "weight_grams": 120.0,
+                    "volume_cm3": 60.0,
+                },
+                "design_params": {
+                    "process_nm": 14,
+                    "package_type": "FCBGA",
+                    "cooling_type": "active_fan",
+                },
+            },
+        ],
+        "knee_point": None,
+    }
+    result_path = os.path.join(tempfile.gettempdir(), "branes_swap_result.json")
+    with open(result_path, "w") as f:
+        json.dump(fake_result, f)
+
+    try:
+        result = runner.invoke(cli, ["--quiet", "swap", "show-front", "--cluster"])
+        assert result.exit_code == 0
+        # Rich may truncate column header "Family" to "Fam…" in narrow terminals
+        assert "Fam" in result.output
+    finally:
+        os.unlink(result_path)
+
+
+def test_show_front_with_profile(runner):
+    import os
+    import tempfile
+
+    fake_result = {
+        "pareto_front": [
+            {
+                "objectives": {
+                    "power_watts": 3.5,
+                    "latency_ms": 10.0,
+                    "area_mm2": 25.0,
+                    "cost_usd": 12.0,
+                    "weight_grams": 80.0,
+                    "volume_cm3": 40.0,
+                },
+                "design_params": {
+                    "process_nm": 28,
+                    "package_type": "BGA",
+                    "cooling_type": "passive",
+                },
+            },
+        ],
+        "knee_point": None,
+    }
+    result_path = os.path.join(tempfile.gettempdir(), "branes_swap_result.json")
+    with open(result_path, "w") as f:
+        json.dump(fake_result, f)
+
+    try:
+        result = runner.invoke(cli, ["--quiet", "swap", "show-front", "--profile", "drone"])
+        assert result.exit_code == 0
+        # Rich may truncate column header "Score" to "Sco…" in narrow terminals
+        assert "Sco" in result.output
+    finally:
+        os.unlink(result_path)

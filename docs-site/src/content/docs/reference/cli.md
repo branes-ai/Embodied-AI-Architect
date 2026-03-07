@@ -187,7 +187,7 @@ embodied-ai optimize explain --points 0,3
 System-level SWaP-C (Size, Weight, Power, Cost) analysis.
 
 ```bash
-branes swap [estimate|bom|check|explore|show-front|compare|explain] [OPTIONS]
+branes swap [estimate|bom|check|explore|show-front|score|rank|sensitivity|sweep|budget|compare|explain] [OPTIONS]
 ```
 
 #### swap estimate
@@ -272,11 +272,106 @@ Display Pareto front from the last `swap explore` run.
 
 ```bash
 branes swap show-front --top 5
+branes swap show-front --cluster --profile drone --top 10
 ```
 
 | Option | Description |
 |--------|-------------|
 | `--top INT` | Number of designs to show (default: 10) |
+| `--cluster` | Add a "Family" column with k-means cluster labels |
+| `--profile TEXT` | Add a "Score" column with TOPSIS closeness for a mission profile |
+
+#### swap score
+
+Compute a weighted Figure of Merit (0–100) for a single design point.
+
+```bash
+branes swap score --area 50 --power 5 --process 28 --profile drone
+```
+
+Options: all `swap estimate` options plus:
+
+| Option | Description |
+|--------|-------------|
+| `--profile TEXT` | Mission profile: drone, rack, wearable, vehicle (default: drone) |
+| `--json-output` | Output JSON |
+
+#### swap rank
+
+Rank Pareto-front designs from the last `swap explore` by mission profile.
+
+```bash
+branes swap rank --profile drone --method topsis --top 5
+```
+
+| Option | Description |
+|--------|-------------|
+| `--profile TEXT` | Mission profile (default: drone) |
+| `--method TEXT` | Ranking method: topsis, fom (default: topsis) |
+| `--top INT` | Number of designs to show (default: 10) |
+| `--json-output` | Output JSON |
+
+#### swap sensitivity
+
+Tornado diagrams or Taguchi L18 screening for parameter sensitivity.
+
+```bash
+branes swap sensitivity --area 50 --power 5 --process 28 --mode tornado
+branes swap sensitivity --area 50 --power 5 --process 28 --mode taguchi
+```
+
+Options: all `swap estimate` options plus:
+
+| Option | Description |
+|--------|-------------|
+| `--mode TEXT` | Analysis mode: tornado, taguchi (default: tornado) |
+| `--objective TEXT` | Focus on a single objective (default: all) |
+| `--json-output` | Output JSON |
+
+#### swap sweep
+
+Parametric sweep of one design variable across all 6 objectives.
+
+```bash
+branes swap sweep --area 50 --power 5 --process 28 \
+    --param process_nm --from 28 --to 5 --steps 5
+```
+
+Options: all `swap estimate` options plus:
+
+| Option | Description |
+|--------|-------------|
+| `--param TEXT` | Variable to sweep (required) |
+| `--from FLOAT` | Start value |
+| `--to FLOAT` | End value |
+| `--steps INT` | Number of steps (default: 10) |
+| `--json-output` | Output JSON |
+
+For categorical parameters (`package_type`, `cooling_type`), `--from` and `--to` are ignored; all choices are swept automatically.
+
+#### swap budget
+
+Monte Carlo probabilistic budget feasibility analysis.
+
+```bash
+branes swap budget --area 50 --power 5 --process 28 \
+    --max-weight 200 --max-cost 1000 --samples 1000
+```
+
+Options: all `swap estimate` options plus:
+
+| Option | Description |
+|--------|-------------|
+| `--max-weight FLOAT` | Weight budget in grams |
+| `--max-volume FLOAT` | Volume budget in cm³ |
+| `--max-power FLOAT` | Power budget in watts |
+| `--max-cost FLOAT` | Cost budget in USD |
+| `--samples INT` | Number of Monte Carlo samples (default: 1000) |
+| `--from-spec TEXT` | Read budgets from a named spec |
+| `--profile TEXT` | Load budgets from a mission profile |
+| `--json-output` | Output JSON |
+
+Traffic-light output: green (≥90% feasible), yellow (50–90%), red (<50%).
 
 #### swap compare
 

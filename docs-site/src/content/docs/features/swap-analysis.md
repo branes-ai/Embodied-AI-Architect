@@ -57,21 +57,118 @@ T_junction = T_ambient + TDP × (θ_jc + θ_sa)
 
 Where θ_jc comes from the package type and θ_sa from the cooling solution. If T_junction exceeds the maximum (typically 125°C), the design is thermally infeasible.
 
+## Five Optimization Methodologies
+
+Raw SWaP-C numbers tell you *what*. The five optimization methodologies tell you *what to do about it*. Each methodology builds on the physical estimators to answer a specific design question:
+
+| Step | Methodology | Question | Command |
+|------|-------------|----------|---------|
+| **Score** | Weighted FoM | How good is this design for my mission? | `branes swap score` |
+| **Understand** | Sensitivity | Which parameters matter most? | `branes swap sensitivity` |
+| **Explore** | Pareto + TOPSIS | What are my best options? | `branes swap rank` |
+| **Compare** | Delta & Sweep | What happens if I change one thing? | `branes swap sweep` |
+| **Commit** | Monte Carlo | Will this design meet my budgets? | `branes swap budget` |
+
+### Mission Profiles
+
+Mission profiles define what "good" means for a deployment context. Each profile assigns weights to the six SWaP-C objectives:
+
+| Profile | Top Priorities | Use Case |
+|---------|---------------|----------|
+| `drone` | Weight 0.35, Power 0.25 | Payload + battery life dominate |
+| `rack` | Cost 0.30, Power 0.30 | TCO + cooling capacity |
+| `wearable` | Weight 0.25, Volume 0.25, Power 0.25 | Every physical dimension tight |
+| `vehicle` | Cost 0.35, Latency 0.30 | Unit economics + real-time response |
+
+Custom profiles can be derived from pairwise comparison matrices using the built-in AHP (Analytic Hierarchy Process) helper.
+
+### Scoring (M1)
+
+Score a design against a mission profile to get a composite Figure of Merit (0–100):
+
+```bash
+branes swap score --area 50 --power 5 --process 28 --profile drone
+```
+
+Each objective is normalized against ideal (best possible) and anti-ideal (worst possible) bounds, then weighted by the mission profile. A score of 78 means the design captures 78% of the theoretically achievable performance for that mission.
+
+### Sensitivity Analysis (M2)
+
+Understand which design parameters have the biggest impact:
+
+```bash
+# Tornado diagram — one-at-a-time perturbation
+branes swap sensitivity --area 50 --power 5 --process 28 --mode tornado
+
+# Taguchi L18 screening — orthogonal array, 18 evaluations
+branes swap sensitivity --area 50 --power 5 --process 28 --mode taguchi
+```
+
+**Tornado** shows the swing (high − low) for each variable on each objective, sorted by impact. **Taguchi** computes main effects and signal-to-noise ratios to rank the top factors driving design quality.
+
+### Pareto Ranking (M3)
+
+After an `explore` run, rank the Pareto-front designs by mission profile using TOPSIS (Technique for Order of Preference by Similarity to Ideal Solution):
+
+```bash
+branes swap rank --profile drone --method topsis --top 5
+```
+
+The enhanced `show-front` command adds clustering and scoring columns:
+
+```bash
+branes swap show-front --cluster --profile drone --top 10
+```
+
+Clustering groups similar designs into families (e.g., "low-power passively cooled"), while the profile score shows each design's TOPSIS closeness to the mission ideal.
+
+### Parametric Sweep (M4)
+
+Sweep one variable while holding others fixed to see how objectives respond:
+
+```bash
+branes swap sweep --area 50 --power 5 --process 28 \
+    --param process_nm --from 28 --to 5 --steps 5
+```
+
+The output table shows all six objectives at each step, making it easy to spot diminishing returns or constraint violations.
+
+### Monte Carlo Budget Feasibility (M5)
+
+Before committing to a design, run Monte Carlo simulation to assess the probability of meeting budgets under manufacturing uncertainty:
+
+```bash
+branes swap budget --area 50 --power 5 --process 28 \
+    --max-weight 200 --max-cost 1000 --samples 1000
+```
+
+Each sample perturbs continuous BOM inputs (area ±5%, power ±15%, thermal ±10%) and checks all budgets. The output shows P10/P50/P90 percentiles and a traffic-light indicator:
+
+- **Green** (≥90% feasible): Commit with confidence
+- **Yellow** (50–90%): Design margins are tight — consider de-risking
+- **Red** (<50%): High probability of budget violation — redesign needed
+
 ## The `branes swap` Commands
 
-Seven commands covering four workflow stages:
+Twelve commands covering the full workflow:
 
 ```
-Questions:     branes swap estimate    →  What does this design weigh?
-               branes swap bom        →  Where does the weight come from?
+Questions:     branes swap estimate      →  What does this design weigh?
+               branes swap bom          →  Where does the weight come from?
 
-Assertions:    branes swap check      →  Does it pass my budgets?
+Assertions:    branes swap check        →  Does it pass my budgets?
 
-Tests:         branes swap explore    →  Find the 6-objective Pareto front
-               branes swap show-front →  View results
+Optimization:  branes swap explore      →  Find the 6-objective Pareto front
+               branes swap show-front   →  View results (with clustering/scoring)
 
-Comparisons:   branes swap compare    →  QFN vs FCBGA side-by-side
-               branes swap explain    →  Why is design #0 better than #3?
+Methodologies: branes swap score        →  Weighted FoM for a mission profile
+               branes swap rank         →  TOPSIS/FoM ranking of Pareto designs
+               branes swap sensitivity  →  Tornado + Taguchi screening
+               branes swap sweep        →  Single-variable parametric sweep
+               branes swap budget       →  Monte Carlo budget feasibility
+
+Comparisons:   branes swap compare      →  QFN vs FCBGA side-by-side
+               branes swap explain      →  Why is design #0 better than #3?
 ```
 
 ### Quick Estimate
@@ -217,6 +314,7 @@ print(f"Overall: {scorecard.overall_verdict}")
 ## Next Steps
 
 - [SWaP-C Tutorial](/tutorials/swap-analysis/) — Hands-on walkthrough with NUC and Jetson examples
+- [Optimization Workflow Tutorial](/tutorials/swap-optimization-workflow/) — End-to-end Score → Commit workflow
 - [Design Optimization](/features/design-optimization/) — The underlying MOO engine
 - [CLI Reference](/reference/cli/) — All `swap` command options
 - [Hardware Catalog](/catalog/hardware/) — Available hardware targets

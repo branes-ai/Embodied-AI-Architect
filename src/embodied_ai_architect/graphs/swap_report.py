@@ -66,6 +66,12 @@ class SWaPCScorecard(BaseModel):
     )
     pareto_position: str = Field(default="unknown", description="non-dominated / dominated / knee")
     overall_verdict: str = Field(default="PASS", description="PASS / FAIL / MARGINAL")
+    fom_score: float | None = Field(
+        default=None, description="Weighted FoM composite score (0-100)"
+    )
+    fom_per_objective: dict[str, float] = Field(
+        default_factory=dict, description="Per-objective FoM scores"
+    )
 
 
 # ---------------------------------------------------------------------------
