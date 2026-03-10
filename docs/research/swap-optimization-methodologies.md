@@ -1011,30 +1011,30 @@ need for go/no-go decisions.
 ### Methodology Summary: The Five-Layer Workflow
 
 ```
-                    ┌─────────────────────────────┐
-                    │  1. Scorecard + FoM          │  "How good is this design?"
+                    ┌───────────────────────────────┐
+                    │  1. Scorecard + FoM           │  "How good is this design?"
                     │     Single-number scoring     │  Quick assessment, comparison
-                    └──────────────┬──────────────┘
-                                   │
-                    ┌──────────────▼──────────────┐
+                    └────────────────┬──────────────┘
+                                     │
+                    ┌────────────────▼──────────────┐
                     │  2. Sensitivity Explorer      │  "What parameters matter?"
                     │     Tornado + Taguchi + RSM   │  Focus engineering effort
-                    └──────────────┬──────────────┘
-                                   │
-                    ┌──────────────▼──────────────┐
+                    └────────────────┬──────────────┘
+                                     │
+                    ┌────────────────▼──────────────┐
                     │  3. Pareto Explorer           │  "What are my options?"
                     │     MOO + Clustering + TOPSIS │  Map the tradeoff surface
-                    └──────────────┬──────────────┘
-                                   │
-                    ┌──────────────▼──────────────┐
+                    └────────────────┬──────────────┘
+                                     │
+                    ┌────────────────▼──────────────┐
                     │  4. Configuration Comparator  │  "Why is B better than A?"
                     │     Delta attribution + sweep │  Understand specific tradeoffs
-                    └──────────────┬──────────────┘
-                                   │
-                    ┌──────────────▼──────────────┐
+                    └────────────────┬──────────────┘
+                                     │
+                    ┌────────────────▼──────────────┐
                     │  5. Budget + Margins          │  "Will it fit? How sure am I?"
                     │     Monte Carlo + allocation  │  Risk management, go/no-go
-                    └─────────────────────────────┘
+                    └───────────────────────────────┘
 ```
 
 Each methodology builds on the previous: **Score → Understand → Explore → Compare → Commit**.
