@@ -7,17 +7,12 @@ Detects potential collisions between:
 - Multiple tracked objects (for scene understanding)
 """
 
-import sys
-from pathlib import Path
 from typing import List, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 import numpy as np
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from reasoning.trajectory_predictor import PredictedTrajectory
+from .trajectory_predictor import PredictedTrajectory
 
 
 class RiskLevel(Enum):

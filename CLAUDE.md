@@ -4,10 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Embodied AI Architect is a design environment for creating, evaluating, optimizing and deploying autonomous agents. It provides:
+Embodied AI Architect is a design environment for creating, evaluating, optimizing and deploying embodied AI hw/sw
+to imbue a device or system with intelligence and/or autonomy. 
+
+It provides:
+- Application architecture analysis and characterization
+- Transformational analysis, sensor data acquisition, signal conditioning, signal processing, DNN inference, state estimation, actuation
+- DNN and Linear Algebra Computational Graph extraction, analysis, characterization and estimation
 - Model analysis and benchmarking across different hardware targets
 - Hardware profiling with recommendations for edge/cloud deployment
-- Pre-silicon Hardware targets to leapfrog COTS designs and enable new use-cases
+- Pre-silicon Knowledge Processing Unit SoC hardware targets to leapfrog COTS designs and enable new use-cases
+- Multi-objective optimization (MAP-Elites, Bayesian, NSGA-III)
+- SWaP-C (Size, Weight, Power, Cost) analysis and optimization
+- SoC design pipeline with RTL generation and EDA tool integration
 - Multi-hardware benchmark execution (local CPU, remote SSH, Kubernetes)
 - Report generation for model-to-hardware fit analysis
 
@@ -15,39 +24,83 @@ Embodied AI Architect is a design environment for creating, evaluating, optimizi
 
 ```bash
 # Install in development mode
-pip install -e ".[dev]"
+.venv/bin/pip install -e ".[dev]"
 
 # Install with optional dependencies
-pip install -e ".[dev,remote,kubernetes]"
+.venv/bin/pip install -e ".[dev,remote,kubernetes]"
 
 # Install with interactive chat support
-pip install -e ".[chat]"
+.venv/bin/pip install -e ".[chat]"
 
 # Run tests
-pytest tests/
+.venv/bin/pytest tests/
 
 # Run single test
-pytest tests/test_file.py::test_function -v
+.venv/bin/pytest tests/test_file.py::test_function -v
 
 # Linting and formatting
-black src/ tests/ --line-length 100
-ruff check src/ tests/
+.venv/bin/black src/ tests/ --line-length 100
+.venv/bin/ruff check src/ tests/
+
+# Pre-push quality gate (mandatory)
+.venv/bin/black --check src/ tests/ --line-length 100
+.venv/bin/ruff check src/ tests/
+.venv/bin/pytest tests/ -q
 
 # Run CLI
-embodied-ai --help
-embodied-ai workflow run model.pt
-embodied-ai analyze model.pt
-embodied-ai benchmark model.pt --backend local
+.venv/bin/branes --help
+.venv/bin/branes workflow run model.pt
+.venv/bin/branes analyze model.pt
+.venv/bin/branes benchmark model.pt --backend local
 
 # Codebase analysis (scan requires no API key)
-embodied-ai codebase scan /path/to/project
-embodied-ai codebase analyze /path/to/project
-embodied-ai codebase assess /path/to/project --hardware jetson_orin --power-budget 15
+.venv/bin/branes codebase scan /path/to/project
+.venv/bin/branes codebase analyze /path/to/project
+.venv/bin/branes codebase assess /path/to/project --hardware jetson_orin --power-budget 15
+
+# SWaP-C analysis
+.venv/bin/branes swap estimate --area 50 --power 5 --process 28
+.venv/bin/branes swap score --area 50 --power 5 --process 28 --profile drone
+.venv/bin/branes swap sensitivity --area 50 --power 5 --process 28 --mode tornado
 
 # Start interactive chat session (requires ANTHROPIC_API_KEY)
 export ANTHROPIC_API_KEY=your-key-here
-embodied-ai chat
+.venv/bin/branes chat
 ```
+
+## CLI Commands
+
+The `branes` CLI has 20 command groups, organized by function:
+
+**Analysis & Benchmarking:**
+- `analyze` - Analyze model architecture and complexity
+- `benchmark` - Run performance benchmarks
+- `codebase` - Analyze application codebases for hardware assessment
+- `testbench` - Model validation and drift monitoring
+
+**Optimization & Design:**
+- `optimize` - Multi-objective design space optimization
+- `design` - Design perception pipelines from requirements
+- `swap` - System-level SWaP-C analysis (score, rank, sensitivity, sweep, budget)
+- `spec` - Manage system specifications with versioning and provenance
+
+**Deployment:**
+- `deploy` - Deploy models to edge/embedded targets
+- `pipeline` - Run operator pipelines with LangGraph orchestration
+- `workflow` - Run complete workflows for model evaluation
+
+**Model Management:**
+- `model` - Manage model registry
+- `zoo` - Manage models from the Model Zoo
+
+**Environment & Config:**
+- `chat` - Interactive AI architect session (Claude Code-style)
+- `config` - Manage configuration settings
+- `report` - View and manage reports
+- `backends` - Manage benchmark backends
+- `secrets` - Manage secrets and credentials
+- `demo` - Discover and run platform demos
+- `mcp` - Graphs estimator CLI client (hardware, analyze, latency, energy, memory, compare, specs)
 
 ## Architecture
 
@@ -69,21 +122,21 @@ embodied-ai chat
 - `RemoteSSHBackend`: Execute on remote machines via SSH (requires `paramiko`)
 - `KubernetesBackend`: Distributed benchmarking on K8s (requires `kubernetes`)
 
+**Deployment Targets** (`agents/deployment/targets/`):
+- `JetsonTarget` - NVIDIA Jetson (Orin AGX/NX/Nano) with TensorRT
+- `CoralTarget` - Google Coral Edge TPU (USB Accelerator, Dev Board)
+- `OpenVINOTarget` - Intel OpenVINO with NNCF quantization
+- `StillwaterKPUTarget` - Stillwater KPU custom accelerator
+- `NVDLATarget` - NVIDIA Deep Learning Accelerator (licensable IP)
+- Power monitoring (`power/monitor.py`) and prediction (`power/predictor.py`)
+
 **Codebase Analysis** (`codebase/`): Full application analysis pipeline:
 - `scanner.py` - Static file scanner (languages, build system, ML models, deps)
 - `analyzer.py` - LLM multi-pass code analyzer (4 passes: build→entry→kernels→synthesis)
 - `converter.py` - Maps `CodebaseAnalysisResult` → `workload_profile` for PPA pipeline
 - `models.py` - Pydantic models (`ComputeKernel`, `ScanResult`, `CodebaseAnalysisResult`)
 
-**CLI** (`cli/`): Click-based CLI with subcommands:
-- `chat` - Interactive AI architect session (Claude Code-style)
-- `workflow` - Run full analysis pipeline
-- `analyze` - Model structure analysis only
-- `benchmark` - Performance benchmarking
-- `codebase` - Full application codebase analysis (`scan`, `analyze`, `assess`)
-- `report` - View/manage reports
-- `backends` - Manage benchmark backends
-- `secrets` - Manage credentials
+**CLI** (`cli/`): Click-based CLI with 19 command groups (see CLI Commands above)
 
 **LLM Integration** (`llm/`): Interactive agent system:
 - `LLMClient` - Claude API wrapper with tool use support
@@ -91,21 +144,84 @@ embodied-ai chat
 - `tools.py` - Tool definitions wrapping existing agents
 - `codebase_tools.py` - Tools for codebase scan/analyze/assess in chat
 
+**Specs System** (`specs/`): Hierarchical system specifications with versioning:
+- `branes spec create` / `show` / `list` / `diff` / `validate`
+- YAML-based specs with provenance tracking
+
+### Graphs Subsystem (`src/embodied_ai_architect/graphs/`)
+
+The largest subsystem (60+ files) — the computational core for SoC design,
+optimization, and physical analysis.
+
+**SoC Design Pipeline:**
+- `soc_state.py`, `soc_runner.py`, `soc_graph.py` - SoC topology and state machine
+- `specialists.py` - Architecture, power, thermal, timing specialists
+- `ip_blocks.py` - IP block specifications and integration
+- `planner.py`, `dispatcher.py`, `runner.py` - Design orchestration
+
+**Multi-Objective Optimization** (`moo/`): 3-layer pipeline:
+- Layer 1: `map_elites.py` - MAP-Elites quality-diversity search (5K-10K evals)
+- Layer 2: `bayesian_opt.py` - Bayesian BO with qNEHVI (sample-efficient, ≤4 objectives)
+- Layer 3: `nsga3.py` - NSGA-III many-objective optimization (>4 objectives)
+- `engine.py` - Orchestrates the 3-layer pipeline
+- `design_space.py` - Design space definition and sampling
+- `evaluator.py`, `k8s_evaluator.py` - Local and distributed evaluation
+- `executor.py` - Execution orchestration
+- `specialist.py` - Optimization specialists
+
+**SWaP-C Analysis:**
+- `physical_estimators.py` - Physical dimension, thermal, cost estimators
+- `bom.py` - Bill of Materials estimation
+- `swap_report.py` - SWaP-C report generation
+- `swap_profiles.py` - Profile definitions and templates (drone, UGV, etc.)
+- `swap_analysis.py` - SWaP-C analysis engine
+
+**KPU Design:**
+- `kpu_loop.py` - KPU design iteration loop
+- `kpu_config.py` - Stillwater KPU configuration
+- `kpu_specialists.py` - KPU architecture specialists
+
+**RTL Generation:**
+- `rtl_loop.py` - RTL design iteration loop
+- `rtl_specialists.py` - RTL design specialists (routing, timing)
+- `rtl_templates/` - RTL template library
+
+**EDA Tools** (`eda_tools/`):
+- `synthesis.py` - Logic synthesis
+- `simulation.py` - RTL simulation
+- `lint.py` - Design linting
+- `toolchain.py` - EDA toolchain integration
+
+**Supporting Modules:**
+- `memory.py` - Memory subsystem modeling
+- `bandwidth.py` - Bandwidth analysis
+- `technology.py` - Process technology models
+- `manufacturing.py` - Manufacturing process/yield modeling
+- `floorplan.py` - Physical floorplanning
+- `pareto.py` - Pareto frontier analysis
+- `optimizer.py` - Optimization orchestration
+- `governance.py` - Design review workflows
+- `gold_standards.py` - Golden reference designs
+- `safety.py` - Safety constraint validation
+- `scoring.py` - Design scoring metrics
+
 ### Prototypes (`prototypes/`)
 
 **drone_perception/**: Real-time perception pipeline for drones
-- Sensors: monocular, stereo (RealSense, OAK-D), wide-angle, LiDAR
-- Detection: YOLOv8 wrapper
-- Tracking: ByteTrack with Kalman filtering
-- Reasoning: trajectory prediction, collision detection, spatial analysis, behavior classification
-- Scene graph: 3D state management with object persistence
+- `app/` - Deployable perception application (`main.py`)
+- `lib/` - Pipeline library: sensors, detection, tracking, scene_graph, reasoning, visualization
+- `examples/` - Basic usage (simple_detection, full_pipeline)
+- `demos/` - Advanced sensor demos (stereo, wide-angle, LiDAR, reasoning)
+- `scripts/` - Dev utilities (calibration, depth maps, comparison)
+- `tests/` - Test runners and validation
 
 ```bash
 # Run drone perception pipeline
 cd prototypes/drone_perception
-pip install -r requirements.txt
-python examples/full_pipeline.py --video 0  # webcam
-python examples/reasoning_pipeline.py --camera 0 --model s
+.venv/bin/pip install -r requirements.txt
+python app/main.py --sensor mono --video 0             # deployable app
+python examples/full_pipeline.py --video 0             # example
+python demos/reasoning_pipeline.py --camera 0 --model s  # demo
 ```
 
 **multi_rate_framework/**: Multi-rate control system using Zenoh pub/sub
@@ -114,7 +230,7 @@ python examples/reasoning_pipeline.py --camera 0 --model s
 
 ```bash
 cd prototypes/multi_rate_framework
-pip install eclipse-zenoh
+.venv/bin/pip install eclipse-zenoh
 python example_multirate.py
 ```
 
@@ -150,18 +266,39 @@ from embodied_schemas.constraints import LatencyTier, get_latency_tier
 ```
 
 ### graphs (`../graphs`)
-Analysis tools, roofline models, hardware simulation. Owns:
-- `ops_per_clock` - Roofline model parameters
-- Calibration data - Measured performance
-- Hardware mappers - Architecture-specific execution models
+Sibling analysis library — roofline models, hardware simulation, calibration.
+- `estimation/` - Roofline, energy, memory analysis (`unified_analyzer.py`)
+- `hardware/` - Hardware models for datacenter, edge, automotive, mobile, accelerators
+- `hardware/mappers/` - Architecture-specific execution models (CPU, GPU, DSP, KPU, TPU)
+- `calibration/` - Measured performance data (e.g., Jetson Orin profiles by power mode)
+- `benchmarks/` - Micro-benchmarks (GEMM, Conv2D, attention, TensorRT)
+- `research/` - Dataflow analysis, systolic array design, tiling optimization
+- `subgraphs/` - Kernel patterns (attention, conv2d_stack, MLP, ResNet block)
 
 ### Data Split
 - **Datasheet specs** (vendor-published facts) → `embodied-schemas`
 - **Analysis-specific data** (roofline params, calibration) → `graphs`
 
+## Commit Convention
+
+Conventional commits required: `type(scope): description`
+
+Types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `ci`, `perf`, `style`, `build`
+
+Examples:
+```
+feat(swap): add thermal feasibility scoring
+fix(moo): correct NSGA-III crowding distance
+docs: update CLI command reference
+chore(release): 0.8.0 [skip ci]
+```
+
+Enforced by PR template and semantic-release.
+
 ## Code Style
 
 - Line length: 100 characters
-- Python target: 3.9+
+- Python target: 3.11+
 - Use type hints
 - Format with Black, lint with Ruff
+- Always use `.venv/bin/` prefix for tool commands

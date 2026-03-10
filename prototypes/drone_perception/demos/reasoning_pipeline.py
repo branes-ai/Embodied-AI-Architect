@@ -25,14 +25,14 @@ import numpy as np
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from sensors import MonocularCamera
-from detection import YOLODetector
-from tracking import ByteTracker
-from scene_graph import SceneGraphManager
-from common import project_2d_to_3d
+from lib.sensors import MonocularCamera
+from lib.detection import YOLODetector
+from lib.tracking import ByteTracker
+from lib.scene_graph import SceneGraphManager
+from lib.common import project_2d_to_3d
 
 # Reasoning modules
-from reasoning import (
+from lib.reasoning import (
     TrajectoryPredictor,
     CollisionDetector,
     SpatialAnalyzer,

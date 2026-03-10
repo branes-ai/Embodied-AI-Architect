@@ -1,17 +1,13 @@
 """Monocular camera sensor (video file or webcam)."""
 
-import sys
-from pathlib import Path
 import time
 from typing import Optional
 
 import cv2
 import numpy as np
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from common import Frame, CameraParams
-from sensors.base import BaseSensor
+from ..common import Frame, CameraParams
+from .base import BaseSensor
 
 
 class MonocularCamera(BaseSensor):

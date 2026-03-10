@@ -1,15 +1,11 @@
 """Stereo camera sensor (RealSense D435, OAK-D, etc.)."""
 
-import sys
-from pathlib import Path
 import time
 from typing import Optional
 import numpy as np
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from common import Frame, CameraParams
-from sensors.base import BaseSensor
+from ..common import Frame, CameraParams
+from .base import BaseSensor
 
 
 class StereoCamera(BaseSensor):

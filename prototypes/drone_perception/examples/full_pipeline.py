@@ -17,11 +17,11 @@ import cv2
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from sensors import MonocularCamera, StereoCamera, StereoRecordedCamera
-from detection import YOLODetector
-from tracking import ByteTracker
-from scene_graph import SceneGraphManager
-from visualization import LiveViewer3D
+from lib.sensors import MonocularCamera, StereoCamera, StereoRecordedCamera
+from lib.detection import YOLODetector
+from lib.tracking import ByteTracker
+from lib.scene_graph import SceneGraphManager
+from lib.visualization import LiveViewer3D
 
 
 def main():

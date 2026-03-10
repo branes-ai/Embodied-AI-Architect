@@ -8,17 +8,12 @@ Analyzes spatial relationships between objects:
 - Scene structure understanding
 """
 
-import sys
-from pathlib import Path
 from typing import List, Optional, Tuple, Set
 from dataclasses import dataclass
 from enum import Enum
 import numpy as np
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from scene_graph import SceneGraphNode
+from ..scene_graph import SceneGraphNode
 
 
 class RelativePosition(Enum):

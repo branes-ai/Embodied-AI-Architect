@@ -9,17 +9,12 @@ Classifies behaviors such as:
 - Stopping/starting
 """
 
-import sys
-from pathlib import Path
 from typing import List, Optional
 from dataclasses import dataclass
 from enum import Enum
 import numpy as np
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from scene_graph import SceneGraphNode
+from ..scene_graph import SceneGraphNode
 
 
 class BehaviorType(Enum):

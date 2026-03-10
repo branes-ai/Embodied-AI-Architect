@@ -25,12 +25,12 @@ import numpy as np
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from sensors import LiDARCameraSensor
-from detection import YOLODetector
-from tracking import ByteTracker
-from scene_graph import SceneGraphManager
-from visualization import LiveViewer3D
-from common import project_2d_to_3d, CameraParams
+from lib.sensors import LiDARCameraSensor
+from lib.detection import YOLODetector
+from lib.tracking import ByteTracker
+from lib.scene_graph import SceneGraphManager
+from lib.visualization import LiveViewer3D
+from lib.common import project_2d_to_3d, CameraParams
 
 
 def get_depth_at_bbox(bbox, depth_map, method='median'):

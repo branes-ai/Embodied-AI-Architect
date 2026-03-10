@@ -1,16 +1,12 @@
 """Real-time 3D visualization of tracked objects."""
 
-import sys
-from pathlib import Path
 from typing import List
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from common import TrackedObject
+from ..common import TrackedObject
 
 
 class LiveViewer3D:

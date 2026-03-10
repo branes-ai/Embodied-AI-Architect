@@ -5,8 +5,8 @@
 # Set UTF-8 encoding to handle Unicode characters in Python output
 export PYTHONIOENCODING=utf-8
 
-# Ensure we're in the correct directory
-cd "$(dirname "$0")"
+# Ensure we're in the drone_perception root directory
+cd "$(dirname "$0")/.."
 
 # Common parameters
 MODEL="s"

@@ -24,8 +24,8 @@ from typing import List, Tuple, Optional
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from sensors import StereoCamera
-from common import project_2d_to_3d
+from lib.sensors import StereoCamera
+from lib.common import project_2d_to_3d
 
 
 class DepthAccuracyTest:

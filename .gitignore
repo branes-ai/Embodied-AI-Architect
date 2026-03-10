@@ -15,6 +15,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+!prototypes/drone_perception/lib/
 lib64/
 parts/
 sdist/

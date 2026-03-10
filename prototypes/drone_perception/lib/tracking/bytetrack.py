@@ -1,16 +1,12 @@
 """ByteTrack: Simple, fast multi-object tracking using IOU + Kalman filter."""
 
-import sys
-from pathlib import Path
 from typing import List
 from collections import deque
 
 import numpy as np
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from common import Detection, Track, BBox
-from tracking.kalman_filter import KalmanBoxFilter
+from ..common import Detection, Track, BBox
+from .kalman_filter import KalmanBoxFilter
 
 
 class TrackState:

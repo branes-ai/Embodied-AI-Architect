@@ -13,14 +13,27 @@ cd prototypes/drone_perception
 pip install -r requirements.txt
 ```
 
-### Run Full Pipeline (✅ Working!)
+### Run the Application
 
 ```bash
-# Basic usage with webcam (monocular)
-python examples/full_pipeline.py --video 0
+# Deployable pipeline (headless by default)
+python app/main.py --sensor mono --video 0
+python app/main.py --sensor mono --video traffic.mp4 --output json
+python app/main.py --sensor stereo --reasoning --display
+```
 
-# Or with a video file
-python examples/full_pipeline.py --video your_video.mp4
+### Run Examples & Demos
+
+```bash
+# Examples (basic usage patterns)
+python examples/full_pipeline.py --video 0
+python examples/simple_detection.py --video your_video.mp4
+
+# Demos (advanced sensor showcases)
+python demos/stereo_pipeline.py --backend realsense --model s
+python demos/reasoning_pipeline.py --camera 0 --model s --prediction-horizon 3.0
+python demos/wide_angle_pipeline.py --camera 0
+python demos/lidar_camera_pipeline.py --camera 0
 
 # Advanced: GPU + specific classes + save output
 python examples/full_pipeline.py \
@@ -29,18 +42,6 @@ python examples/full_pipeline.py \
     --model s \
     --classes 0 2 7 \
     --save-video output.mp4
-
-# Stereo mode with RealSense D435 (Phase 2)
-python examples/full_pipeline.py --stereo --stereo-backend realsense
-
-# Stereo mode with OAK-D
-python examples/full_pipeline.py --stereo --stereo-backend oakd
-
-# Dedicated stereo pipeline example
-python examples/stereo_pipeline.py --backend realsense --model s
-
-# 3D Reasoning Pipeline (Phase 3) - Trajectory prediction, collision detection, behavior analysis
-python examples/reasoning_pipeline.py --camera 0 --model s --prediction-horizon 3.0
 ```
 
 **See [QUICKSTART.md](QUICKSTART.md) for detailed instructions!**
@@ -110,34 +111,50 @@ Camera → Detection → Tracking → Scene Graph → Reasoning → Visualizatio
 
 ```
 drone_perception/
-├── sensors/                    # Camera abstractions
-│   ├── base.py                # BaseSensor interface
-│   ├── monocular.py           # Video/webcam
-│   ├── stereo.py              # RealSense/OAK-D
-│   ├── wide_angle.py          # Fisheye/wide-angle cameras
-│   └── lidar.py               # LiDAR fusion
-├── detection/                  # Object detection
-│   └── yolo.py                # YOLOv8 wrapper
-├── tracking/                   # Object tracking
-│   ├── bytetrack.py           # ByteTrack implementation
-│   └── kalman_filter.py       # Kalman box filter
-├── scene_graph/                # World state management
-│   └── manager.py             # 3D scene graph with Kalman filtering
-├── reasoning/                  # 3D reasoning & planning (Phase 3)
-│   ├── trajectory_predictor.py   # Future path prediction
-│   ├── collision_detector.py     # Risk assessment & avoidance
-│   ├── spatial_analyzer.py       # Relative positioning & proximity
-│   └── behavior_classifier.py    # Motion pattern classification
-├── visualization/              # Rendering
-│   ├── live_view.py           # Real-time 3D plot
-│   └── replay.py              # Playback from HDF5
-├── examples/                   # Usage examples
-│   ├── full_pipeline.py       # Complete monocular/stereo pipeline
-│   ├── stereo_pipeline.py     # Dedicated stereo example
-│   └── reasoning_pipeline.py  # 3D reasoning demo (Phase 3)
+├── app/                        # APPLICATION — deployable pipeline
+│   └── main.py                # Configurable drone perception app
+├── examples/                   # EXAMPLES — basic usage patterns
+│   ├── simple_detection.py    # Minimal: camera → YOLO → display
+│   └── full_pipeline.py       # Standard: camera → detect → track → 3D
+├── demos/                      # DEMOS — advanced sensor showcases
+│   ├── stereo_pipeline.py     # Stereo camera (RealSense/OAK-D)
+│   ├── wide_angle_pipeline.py # Fisheye camera + DAC depth
+│   ├── lidar_camera_pipeline.py # LiDAR + camera fusion
+│   └── reasoning_pipeline.py  # 3D reasoning (trajectory, collision, behavior)
+├── scripts/                    # UTILITIES — dev tools, data prep
+│   ├── calibrate_lidar_camera.py
+│   ├── compare_mono_vs_stereo.py
+│   ├── download_test_videos.py
+│   └── generate_depth_maps.py
+├── tests/                      # TESTS — test runners & validation
+│   ├── run_test_suite.py
+│   ├── validate_stereo_accuracy.py
+│   ├── run_stereo_test_suite.sh
+│   └── run_toll_booth_test.sh
+├── lib/                        # LIBRARY — pipeline layers (importable)
+│   ├── common.py              # Shared data models (Frame, Detection, Track, etc.)
+│   ├── sensors/               # Acquisition layer
+│   │   ├── monocular.py       # Video/webcam
+│   │   ├── stereo.py          # RealSense/OAK-D
+│   │   ├── wide_angle.py      # Fisheye cameras + DAC
+│   │   └── lidar.py           # LiDAR fusion
+│   ├── detection/             # Detection layer
+│   │   └── yolo.py            # YOLOv8 wrapper
+│   ├── tracking/              # Tracking layer
+│   │   ├── bytetrack.py       # ByteTrack implementation
+│   │   └── kalman_filter.py   # Kalman box filter
+│   ├── scene_graph/           # 3D state layer
+│   │   └── manager.py         # Scene graph with Kalman filtering
+│   ├── reasoning/             # Reasoning layer
+│   │   ├── trajectory_predictor.py
+│   │   ├── collision_detector.py
+│   │   ├── spatial_analyzer.py
+│   │   └── behavior_classifier.py
+│   └── visualization/         # Output layer
+│       └── live_view.py       # Real-time 3D plot
 ├── docs/                       # Documentation
-│   └── phase3_reasoning.md    # Phase 3 guide
-└── CHANGELOG.md               # Version history
+├── test_data/                  # Test videos and annotations
+└── requirements.txt
 ```
 
 **Note:** Development session logs are maintained in `../../docs/sessions/`

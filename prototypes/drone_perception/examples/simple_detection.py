@@ -8,8 +8,8 @@ import cv2
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from sensors import MonocularCamera
-from detection import YOLODetector
+from lib.sensors import MonocularCamera
+from lib.detection import YOLODetector
 
 
 def main():

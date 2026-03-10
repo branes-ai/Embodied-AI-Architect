@@ -2,6 +2,6 @@
 
 from .manager import SceneGraphManager
 # Alias TrackedObject as SceneGraphNode for reasoning modules
-from common import TrackedObject as SceneGraphNode
+from ..common import TrackedObject as SceneGraphNode
 
 __all__ = ['SceneGraphManager', 'SceneGraphNode']

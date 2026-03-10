@@ -8,16 +8,11 @@ Predicts future positions and paths based on:
 - Optional: Learning-based prediction (future work)
 """
 
-import sys
-from pathlib import Path
 from typing import List, Optional, Tuple
 from dataclasses import dataclass
 import numpy as np
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from scene_graph import SceneGraphNode
+from ..scene_graph import SceneGraphNode
 
 
 @dataclass

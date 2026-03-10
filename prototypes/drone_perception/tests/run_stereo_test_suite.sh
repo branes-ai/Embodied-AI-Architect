@@ -6,8 +6,8 @@
 # Set UTF-8 encoding to handle Unicode characters in Python output
 export PYTHONIOENCODING=utf-8
 
-# Ensure we're in the correct directory
-cd "$(dirname "$0")"
+# Ensure we're in the drone_perception root directory
+cd "$(dirname "$0")/.."
 
 # Common parameters
 MODEL="s"
@@ -55,7 +55,7 @@ echo ""
 
 # Test 1: Tiny video (stereo)
 echo "[1/3] Processing tiny video (stereo mode)..."
-python examples/stereo_pipeline.py \
+python demos/stereo_pipeline.py \
     --backend recorded \
     --rgb-video "${VIDEO_DIR}/247589_tiny.mp4" \
     --depth-video "${VIDEO_DIR}/247589_tiny_depth.mp4" \
@@ -69,7 +69,7 @@ echo "  ✓ Completed. Log: ${VIDEO_DIR}/247589_tiny_stereo.log"
 
 # Test 2: Small video (stereo)
 echo "[2/3] Processing small video (stereo mode)..."
-python examples/stereo_pipeline.py \
+python demos/stereo_pipeline.py \
     --backend recorded \
     --rgb-video "${VIDEO_DIR}/247589_small.mp4" \
     --depth-video "${VIDEO_DIR}/247589_small_depth.mp4" \
@@ -83,7 +83,7 @@ echo "  ✓ Completed. Log: ${VIDEO_DIR}/247589_small_stereo.log"
 
 # Test 3: Medium video (stereo)
 echo "[3/3] Processing medium video (stereo mode)..."
-python examples/stereo_pipeline.py \
+python demos/stereo_pipeline.py \
     --backend recorded \
     --rgb-video "${VIDEO_DIR}/247589_medium.mp4" \
     --depth-video "${VIDEO_DIR}/247589_medium_depth.mp4" \
