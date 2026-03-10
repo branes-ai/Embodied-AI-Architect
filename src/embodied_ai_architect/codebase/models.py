@@ -17,6 +17,7 @@ class SourceFile(BaseModel):
     language: str  # "cpp", "rust", "python", "header", "config", "build", "unknown"
     lines: int = 0
     role: str = "library"  # "entry_point", "library", "config", "build", "test"
+    entry_type: str | None = None  # "application", "example", "test", or None
 
 
 class ComputeKernel(BaseModel):
@@ -64,6 +65,8 @@ class ScanResult(BaseModel):
     build_system: str = "unknown"  # "cmake", "cargo", "pip/poetry", "make", "unknown"
     dependencies: list[str] = Field(default_factory=list)
     total_lines: int = 0
+    recommended_entry_point: dict | None = None
+    # {"path": "...", "confidence": "high"|"medium"|"low", "alternatives": [...]}
 
 
 class CodebaseAnalysisResult(BaseModel):

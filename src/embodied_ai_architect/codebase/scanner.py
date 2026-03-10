@@ -150,6 +150,9 @@ class CodebaseScanner:
 
             # Classify role
             role = self._classify_role(item, rel_path, lang)
+            entry_type = None
+            if role == "entry_point":
+                entry_type = self._classify_entry_type(item, rel_path, lang)
 
             source_files.append(
                 SourceFile(
@@ -157,12 +160,15 @@ class CodebaseScanner:
                     language=lang,
                     lines=line_count,
                     role=role,
+                    entry_type=entry_type,
                 )
             )
 
         # Sort: entry points first, then by line count descending
         role_priority = {"entry_point": 0, "library": 1, "test": 2, "config": 3, "build": 4}
         source_files.sort(key=lambda f: (role_priority.get(f.role, 5), -f.lines))
+
+        recommendation = self._recommend_application(source_files)
 
         return ScanResult(
             project_name=project_name,
@@ -173,6 +179,7 @@ class CodebaseScanner:
             build_system=build_system,
             dependencies=dependencies,
             total_lines=total_lines,
+            recommended_entry_point=recommendation,
         )
 
     def _walk(self, root: Path):
@@ -221,6 +228,90 @@ class CodebaseScanner:
                 return "library"
 
         return "library"
+
+    def _classify_entry_type(self, path: Path, rel_path: str, language: str) -> str:
+        """Sub-classify an entry point as application, example, or test.
+
+        Uses path-based heuristics first (strongest signal), then filename
+        patterns. Default is "application" for entry points that don't match
+        example or test patterns.
+        """
+        rel_lower = rel_path.lower()
+        name_lower = path.stem.lower()
+
+        # Path-based heuristics (strongest signal)
+        example_dirs = ("examples/", "example/", "demos/", "demo/", "samples/")
+        test_dirs = ("tests/", "test/", "benchmarks/", "bench/")
+        utility_dirs = ("scripts/", "tools/", "utils/", "utilities/")
+
+        for prefix in example_dirs:
+            if rel_lower.startswith(prefix) or f"/{prefix}" in rel_lower:
+                return "example"
+        for prefix in test_dirs:
+            if rel_lower.startswith(prefix) or f"/{prefix}" in rel_lower:
+                return "test"
+        for prefix in utility_dirs:
+            if rel_lower.startswith(prefix) or f"/{prefix}" in rel_lower:
+                return "example"
+
+        # Filename-based heuristics
+        example_prefixes = ("example_", "demo_", "sample_")
+        example_suffixes = ("_example", "_demo", "_sample")
+        if any(name_lower.startswith(p) for p in example_prefixes):
+            return "example"
+        if any(name_lower.endswith(s) for s in example_suffixes):
+            return "example"
+
+        test_prefixes = ("test_",)
+        test_suffixes = ("_test",)
+        if any(name_lower.startswith(p) for p in test_prefixes):
+            return "test"
+        if any(name_lower.endswith(s) for s in test_suffixes):
+            return "test"
+
+        app_names = ("run", "main", "app", "__main__")
+        if name_lower in app_names:
+            return "application"
+
+        # Default: entry points not matching example/test are application candidates
+        return "application"
+
+    def _recommend_application(self, source_files: list[SourceFile]) -> dict | None:
+        """Pick the best application entry point from classified files.
+
+        Returns a dict with path, confidence, and alternatives, or None if
+        no entry points were found.
+        """
+        app_entries = [
+            sf for sf in source_files if sf.role == "entry_point" and sf.entry_type == "application"
+        ]
+
+        if not app_entries:
+            # Fall back to any entry point as a starting suggestion
+            all_entries = [sf for sf in source_files if sf.role == "entry_point"]
+            if not all_entries:
+                return None
+            best = max(all_entries, key=lambda sf: sf.lines)
+            return {
+                "path": best.path,
+                "confidence": "low",
+                "alternatives": [sf.path for sf in all_entries if sf.path != best.path],
+            }
+
+        if len(app_entries) == 1:
+            return {
+                "path": app_entries[0].path,
+                "confidence": "high",
+                "alternatives": [],
+            }
+
+        # Multiple application candidates — rank by line count (larger = more likely main)
+        app_entries.sort(key=lambda sf: sf.lines, reverse=True)
+        return {
+            "path": app_entries[0].path,
+            "confidence": "medium",
+            "alternatives": [sf.path for sf in app_entries[1:]],
+        }
 
     def _file_contains_any(self, path: Path, markers: list[str]) -> bool:
         """Check if a file contains any of the given marker strings."""

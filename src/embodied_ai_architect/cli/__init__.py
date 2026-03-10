@@ -72,6 +72,7 @@ def main():
     from embodied_ai_architect.cli.commands import optimize
     from embodied_ai_architect.cli.commands import spec
     from embodied_ai_architect.cli.commands import swap
+    from embodied_ai_architect.cli.commands import mcp as mcp_cmd
 
     # Register command groups
     cli.add_command(workflow.workflow)
@@ -93,6 +94,7 @@ def main():
     cli.add_command(optimize.optimize)
     cli.add_command(spec.spec)
     cli.add_command(swap.swap)
+    cli.add_command(mcp_cmd.mcp)
 
     # Run CLI
     cli(obj={})

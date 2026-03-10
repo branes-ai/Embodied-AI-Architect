@@ -224,12 +224,13 @@ def _display_scan_result(result) -> None:
         table.add_column("Language")
         table.add_column("Lines", justify="right")
         table.add_column("Role")
+        table.add_column("Entry Type", style="yellow")
 
         for sf in result.source_files[:20]:
-            table.add_row(sf.path, sf.language, str(sf.lines), sf.role)
+            table.add_row(sf.path, sf.language, str(sf.lines), sf.role, sf.entry_type or "")
 
         if len(result.source_files) > 20:
-            table.add_row(f"... +{len(result.source_files) - 20} more", "", "", "")
+            table.add_row(f"... +{len(result.source_files) - 20} more", "", "", "", "")
 
         console.print(table)
 
@@ -245,6 +246,37 @@ def _display_scan_result(result) -> None:
         console.print(f"\n[bold]Dependencies:[/bold] {', '.join(result.dependencies[:15])}")
         if len(result.dependencies) > 15:
             console.print(f"  ... +{len(result.dependencies) - 15} more")
+
+    # Recommended entry point
+    rec = result.recommended_entry_point
+    if rec:
+        confidence = rec.get("confidence", "low")
+        path = rec.get("path", "")
+        alternatives = rec.get("alternatives", [])
+
+        console.print()
+        if confidence == "medium" and alternatives:
+            console.print(
+                f"[bold]Recommended application entry point:[/bold]\n"
+                f"  → {path}  (confidence: {confidence}, "
+                f"{len(alternatives) + 1} candidates)\n"
+                f"  Alternatives: {', '.join(alternatives)}"
+            )
+        else:
+            console.print(
+                f"[bold]Recommended application entry point:[/bold]\n"
+                f"  → {path}  (confidence: {confidence})"
+            )
+
+        # Use relative path if under cwd, otherwise absolute
+        try:
+            project_path = str(Path(result.project_path).relative_to(Path.cwd()))
+        except ValueError:
+            project_path = result.project_path
+        console.print(
+            f"\n[bold]Next step[/bold] — run LLM-powered analysis on this entry point:\n\n"
+            f"  branes codebase analyze {project_path}\n"
+        )
 
 
 def _display_analysis_result(analysis) -> None:
