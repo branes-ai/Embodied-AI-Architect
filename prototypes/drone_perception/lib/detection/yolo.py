@@ -1,10 +1,28 @@
 """YOLOv8 object detector."""
 
+import os
+import sys
+from contextlib import contextmanager
 from typing import List
 
 import numpy as np
 
 from ..common import Detection, BBox
+
+
+@contextmanager
+def _suppress_stderr():
+    """Redirect stderr to /dev/null to suppress C++ NNPACK warnings."""
+    stderr_fd = sys.stderr.fileno()
+    saved_fd = os.dup(stderr_fd)
+    devnull = os.open(os.devnull, os.O_WRONLY)
+    os.dup2(devnull, stderr_fd)
+    try:
+        yield
+    finally:
+        os.dup2(saved_fd, stderr_fd)
+        os.close(devnull)
+        os.close(saved_fd)
 
 
 class YOLODetector:
@@ -57,7 +75,8 @@ class YOLODetector:
         # Warmup
         print(f"[YOLODetector] Warming up on {device}...")
         dummy = np.zeros((640, 640, 3), dtype=np.uint8)
-        _ = self.model(dummy, device=device, verbose=False)
+        with _suppress_stderr():
+            _ = self.model(dummy, device=device, verbose=False)
 
         # COCO class names (YOLOv8 default)
         self.class_names = self.model.names
@@ -79,14 +98,15 @@ class YOLODetector:
             List of Detection objects
         """
         # Run inference
-        results = self.model(
-            image,
-            conf=self.conf_threshold,
-            iou=self.iou_threshold,
-            device=self.device,
-            verbose=False,
-            classes=self.filter_classes
-        )
+        with _suppress_stderr():
+            results = self.model(
+                image,
+                conf=self.conf_threshold,
+                iou=self.iou_threshold,
+                device=self.device,
+                verbose=False,
+                classes=self.filter_classes
+            )
 
         # Parse results
         detections = []
@@ -125,14 +145,15 @@ class YOLODetector:
             List of detection lists (one per image)
         """
         # Run batch inference
-        results = self.model(
-            images,
-            conf=self.conf_threshold,
-            iou=self.iou_threshold,
-            device=self.device,
-            verbose=False,
-            classes=self.filter_classes
-        )
+        with _suppress_stderr():
+            results = self.model(
+                images,
+                conf=self.conf_threshold,
+                iou=self.iou_threshold,
+                device=self.device,
+                verbose=False,
+                classes=self.filter_classes
+            )
 
         # Parse results
         all_detections = []
