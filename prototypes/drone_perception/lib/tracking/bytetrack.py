@@ -55,9 +55,9 @@ class STrack:
         cls._count += 1
         return cls._count
 
-    def predict(self):
+    def predict(self, dt: float = None):
         """Predict next position."""
-        self.kalman.predict()
+        self.kalman.predict(dt=dt)
         self.age += 1
         self.time_since_update += 1
 
@@ -117,9 +117,10 @@ class ByteTracker:
     def __init__(
         self,
         high_thresh: float = 0.5,
-        low_thresh: float = 0.1,
-        match_thresh: float = 0.8,
-        max_time_lost: int = 30
+        low_thresh: float = 0.2,
+        match_thresh: float = 0.3,
+        max_time_lost: int = 30,
+        n_init: int = 3
     ):
         """
         Initialize ByteTracker.
@@ -129,13 +130,16 @@ class ByteTracker:
             low_thresh: Low confidence threshold for second association
             match_thresh: IOU threshold for matching
             max_time_lost: Maximum frames to keep lost tracks
+            n_init: Consecutive detections required to confirm a track
         """
         self.high_thresh = high_thresh
         self.low_thresh = low_thresh
         self.match_thresh = match_thresh
         self.max_time_lost = max_time_lost
+        self.n_init = n_init
 
         self.tracked_tracks: List[STrack] = []
+        self.tentative_tracks: List[STrack] = []
         self.lost_tracks: List[STrack] = []
         self.removed_tracks: List[STrack] = []
 
@@ -155,13 +159,18 @@ class ByteTracker:
 
         # Split detections by confidence
         high_dets = [d for d in detections if d.confidence >= self.high_thresh]
-        low_dets = [d for d in detections if self.low_thresh <= d.confidence < self.high_thresh]
+        low_dets = [
+            d for d in detections
+            if self.low_thresh <= d.confidence < self.high_thresh
+        ]
 
-        # Predict current locations
+        # Predict current locations for all track pools
         for track in self.tracked_tracks:
             track.predict()
+        for track in self.tentative_tracks:
+            track.predict()
 
-        # First association: high-confidence detections with tracked tracks
+        # ── First association: high-confidence detections with tracked tracks ──
         matched_tracks, unmatched_tracks, unmatched_dets = self._associate(
             self.tracked_tracks, high_dets
         )
@@ -170,8 +179,31 @@ class ByteTracker:
         for track_idx, det_idx in matched_tracks:
             self.tracked_tracks[track_idx].update(high_dets[det_idx])
 
-        # Second association: unmatched high-conf dets + low-conf dets with lost tracks
-        unmatched_high_dets = [high_dets[i] for i in unmatched_dets]
+        # ── Tentative track association: unmatched high dets with tentative tracks ──
+        remaining_high = [high_dets[i] for i in unmatched_dets]
+        matched_tent, unmatched_tent, unmatched_remaining = self._associate(
+            self.tentative_tracks, remaining_high
+        )
+
+        # Update matched tentative tracks; promote if enough hits
+        promoted_indices = set()
+        for track_idx, det_idx in matched_tent:
+            tent_track = self.tentative_tracks[track_idx]
+            tent_track.update(remaining_high[det_idx])
+            if tent_track.hits >= self.n_init:
+                tent_track.state = TrackState.Tracked
+                self.tracked_tracks.append(tent_track)
+                promoted_indices.add(track_idx)
+
+        # Remove promoted and unmatched tentative tracks (no grace period)
+        remove_tent = promoted_indices | set(unmatched_tent)
+        for idx in sorted(remove_tent, reverse=True):
+            del self.tentative_tracks[idx]
+
+        # Update remaining unmatched high detections after tentative consumed some
+        unmatched_high_dets = [remaining_high[i] for i in unmatched_remaining]
+
+        # ── Second association: remaining dets + low dets with lost tracks ──
         all_unmatched_dets = unmatched_high_dets + low_dets
 
         matched_lost, unmatched_lost, unmatched_dets2 = self._associate(
@@ -198,13 +230,13 @@ class ByteTracker:
         for track_idx in sorted(unmatched_tracks, reverse=True):
             del self.tracked_tracks[track_idx]
 
-        # Initialize new tracks from remaining unmatched high-conf detections
+        # ── Initialize new tentative tracks from remaining high-conf detections ──
         for det_idx in unmatched_dets2:
             det = all_unmatched_dets[det_idx]
             if det.confidence >= self.high_thresh:
                 new_track = STrack(det)
-                new_track.state = TrackState.Tracked
-                self.tracked_tracks.append(new_track)
+                # Stays TrackState.New — must accumulate n_init hits to be confirmed
+                self.tentative_tracks.append(new_track)
 
         # Remove tracks that have been lost too long
         self.lost_tracks = [
@@ -212,7 +244,7 @@ class ByteTracker:
             if t.time_since_update <= self.max_time_lost
         ]
 
-        # Return all active tracks
+        # Return only confirmed tracks
         return [t.to_track() for t in self.tracked_tracks]
 
     def _associate(
@@ -236,12 +268,11 @@ class ByteTracker:
             for j, det in enumerate(detections):
                 iou_matrix[i, j] = track_bbox.iou(det.bbox)
 
-        # Greedy matching (could use Hungarian algorithm for better results)
+        # Greedy matching (highest IOU first)
         matched = []
         unmatched_tracks = list(range(len(tracks)))
         unmatched_dets = list(range(len(detections)))
 
-        # Match highest IOU first
         while len(unmatched_tracks) > 0 and len(unmatched_dets) > 0:
             # Find best match
             max_iou = 0
@@ -268,6 +299,7 @@ class ByteTracker:
     def reset(self):
         """Reset tracker."""
         self.tracked_tracks = []
+        self.tentative_tracks = []
         self.lost_tracks = []
         self.removed_tracks = []
         self.frame_id = 0

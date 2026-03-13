@@ -25,51 +25,63 @@ class KalmanBoxFilter:
         # State dimension: 8 (position + velocity)
         # Measurement dimension: 4 (position only)
         self.ndim = 4
-        self.dt = 1.0  # Time step (1 frame)
 
         # State: [cx, cy, s, r, vx, vy, vs, vr]
         self.mean = np.zeros(8)
         self.mean[:4] = self._bbox_to_z(bbox_xywh)
 
-        # Covariance matrix
+        # Covariance matrix — trust initial measurement, high uncertainty for velocity
         self.covariance = np.eye(8)
         self.covariance[4:, 4:] *= 1000.0  # High uncertainty for velocities
-        self.covariance[:4, :4] *= 10.0  # Moderate uncertainty for position
-
-        # Motion model (constant velocity)
-        self.motion_mat = np.eye(8)
-        for i in range(4):
-            self.motion_mat[i, i + 4] = self.dt
+        self.covariance[:4, :4] *= 1.0  # Trust initial position measurement
 
         # Measurement function (H matrix)
         self.update_mat = np.eye(4, 8)
 
-        # Process noise
-        self.std_weight_position = 1.0 / 20
-        self.std_weight_velocity = 1.0 / 160
+        # Process noise weights — tuned for drone footage (more erratic motion than
+        # ground-level pedestrian tracking)
+        self.std_weight_position = 1.0 / 10
+        self.std_weight_velocity = 1.0 / 40
 
-    def predict(self):
-        """Predict next state."""
+    def predict(self, dt: float = None):
+        """
+        Predict next state.
+
+        Args:
+            dt: Time step in seconds. Defaults to 1/30 (~30fps).
+        """
+        if dt is None:
+            dt = 1.0 / 30.0
+
+        # Build motion model for this time step
+        motion_mat = np.eye(8)
+        for i in range(4):
+            motion_mat[i, i + 4] = dt
+
+        # Scale process noise by dt (larger steps → more uncertainty)
+        dt_scale = dt * 30.0  # Normalize so dt=1/30 gives scale=1.0
+
         # Generate process noise covariance Q
+        scale = max(self.mean[2], 1.0)  # Use bbox area as scale, floor at 1.0
         std_pos = [
-            self.std_weight_position * self.mean[2],  # std for cx
-            self.std_weight_position * self.mean[2],  # std for cy
-            self.std_weight_position * self.mean[2],  # std for s
-            self.std_weight_position * self.mean[2],  # std for r
+            self.std_weight_position * scale * dt_scale,
+            self.std_weight_position * scale * dt_scale,
+            self.std_weight_position * scale * dt_scale,
+            self.std_weight_position * scale * dt_scale,
         ]
         std_vel = [
-            self.std_weight_velocity * self.mean[2],  # std for vx
-            self.std_weight_velocity * self.mean[2],  # std for vy
-            self.std_weight_velocity * self.mean[2],  # std for vs
-            self.std_weight_velocity * self.mean[2],  # std for vr
+            self.std_weight_velocity * scale * dt_scale,
+            self.std_weight_velocity * scale * dt_scale,
+            self.std_weight_velocity * scale * dt_scale,
+            self.std_weight_velocity * scale * dt_scale,
         ]
 
         motion_cov = np.diag(np.square(np.r_[std_pos, std_vel]))
 
         # Predict
-        self.mean = np.dot(self.motion_mat, self.mean)
+        self.mean = np.dot(motion_mat, self.mean)
         self.covariance = np.linalg.multi_dot((
-            self.motion_mat, self.covariance, self.motion_mat.T
+            motion_mat, self.covariance, motion_mat.T
         )) + motion_cov
 
     def update(self, bbox_xywh: np.ndarray):
@@ -82,11 +94,12 @@ class KalmanBoxFilter:
         measurement = self._bbox_to_z(bbox_xywh)
 
         # Measurement noise covariance R
+        scale = max(self.mean[2], 1.0)
         std = [
-            self.std_weight_position * self.mean[2],
-            self.std_weight_position * self.mean[2],
-            self.std_weight_position * self.mean[2],
-            self.std_weight_position * self.mean[2],
+            self.std_weight_position * scale,
+            self.std_weight_position * scale,
+            self.std_weight_position * scale,
+            self.std_weight_position * scale,
         ]
         innovation_cov = np.diag(np.square(std))
 

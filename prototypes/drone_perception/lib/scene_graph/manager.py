@@ -79,7 +79,8 @@ class SceneGraphManager:
     - Prune stale objects
     """
 
-    # Default object heights for depth estimation (monocular mode)
+    # Default object heights (meters) for monocular depth estimation.
+    # Covers all classes in DRONE_CLASSES from yolo.py.
     OBJECT_HEIGHTS = {
         'person': 1.7,
         'car': 1.5,
@@ -87,7 +88,10 @@ class SceneGraphManager:
         'bus': 3.0,
         'bicycle': 1.5,
         'motorcycle': 1.2,
-        'default': 1.5,
+        'bird': 0.3,
+        'cat': 0.3,
+        'dog': 0.5,
+        'default': 1.0,
     }
 
     def __init__(self, ttl_seconds: float = 5.0):
@@ -132,6 +136,9 @@ class SceneGraphManager:
                     object_height,
                     frame.camera_params
                 )
+
+            # Clamp to reasonable range (0.5m – 200m)
+            depth = max(0.5, min(depth, 200.0))
 
             # Project to 3D
             cx, cy = track.bbox.center

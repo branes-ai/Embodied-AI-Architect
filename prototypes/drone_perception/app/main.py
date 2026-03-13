@@ -74,16 +74,22 @@ def build_sensor(args):
 
 def build_pipeline(args):
     """Build detection, tracking, and scene graph components."""
+    # Class filtering: --all-classes → [], --classes → custom, else → drone defaults (None)
+    if args.all_classes:
+        classes = []
+    else:
+        classes = args.classes  # None → YOLODetector uses DRONE_CLASSES
+
     detector = YOLODetector(
         model_size=args.model,
         conf_threshold=args.conf,
         device=args.device,
-        classes=args.classes,
+        classes=classes,
     )
     tracker = ByteTracker(
-        high_thresh=args.conf,
-        low_thresh=0.1,
-        match_thresh=0.7,
+        high_thresh=0.5,
+        low_thresh=0.2,
+        match_thresh=0.3,
     )
     scene = SceneGraphManager(ttl_seconds=3.0)
     return detector, tracker, scene
@@ -249,15 +255,22 @@ examples:
     parser.add_argument(
         "--model",
         choices=["n", "s", "m", "l", "x"],
-        default="n",
-        help="YOLO model size (default: n)",
+        default="s",
+        help="YOLO model size (default: s)",
     )
-    parser.add_argument("--conf", type=float, default=0.3, help="Detection confidence threshold")
+    parser.add_argument(
+        "--conf", type=float, default=0.4, help="Detection confidence threshold"
+    )
     parser.add_argument(
         "--device", choices=["cpu", "cuda"], default="cpu", help="Inference device"
     )
     parser.add_argument(
         "--classes", type=int, nargs="+", default=None, help="Class IDs to detect"
+    )
+    parser.add_argument(
+        "--all-classes",
+        action="store_true",
+        help="Detect all 80 COCO classes (default: drone-relevant subset)",
     )
 
     # Reasoning

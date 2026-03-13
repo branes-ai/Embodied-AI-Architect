@@ -172,9 +172,9 @@ def main():
 
     print("[3/5] Initializing tracker...")
     tracker = ByteTracker(
-        high_thresh=args.conf,
-        low_thresh=0.1,
-        match_thresh=0.7
+        high_thresh=0.5,
+        low_thresh=0.2,
+        match_thresh=0.3
     )
 
     print("[4/5] Creating scene graph...")

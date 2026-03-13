@@ -3,11 +3,27 @@
 import os
 import sys
 from contextlib import contextmanager
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 
 from ..common import Detection, BBox
+
+# COCO class IDs relevant to drone perception
+DRONE_CLASSES = [
+    0,   # person
+    1,   # bicycle
+    2,   # car
+    3,   # motorcycle
+    5,   # bus
+    7,   # truck
+    14,  # bird
+    15,  # cat
+    16,  # dog
+]
+
+# Minimum bbox area in pixels^2 — reject detections smaller than this
+MIN_BBOX_AREA = 100
 
 
 @contextmanager
@@ -31,18 +47,18 @@ class YOLODetector:
 
     Supports different model sizes:
     - yolov8n (nano): Fastest, least accurate
-    - yolov8s (small): Good balance
+    - yolov8s (small): Good balance for drone use
     - yolov8m (medium): Better accuracy
     - yolov8l/x (large/xlarge): Best accuracy, slowest
     """
 
     def __init__(
         self,
-        model_size: str = 'n',
-        conf_threshold: float = 0.25,
+        model_size: str = 's',
+        conf_threshold: float = 0.4,
         iou_threshold: float = 0.45,
         device: str = 'cpu',
-        classes: List[int] = None
+        classes: Optional[List[int]] = None
     ):
         """
         Initialize YOLO detector.
@@ -52,7 +68,8 @@ class YOLODetector:
             conf_threshold: Confidence threshold for detections
             iou_threshold: IOU threshold for NMS
             device: 'cpu' or 'cuda'
-            classes: List of class IDs to detect (None = all classes)
+            classes: Class IDs to detect. None = drone-relevant subset.
+                     Pass [] to detect all 80 COCO classes.
         """
         try:
             from ultralytics import YOLO
@@ -65,7 +82,14 @@ class YOLODetector:
         self.conf_threshold = conf_threshold
         self.iou_threshold = iou_threshold
         self.device = device
-        self.filter_classes = classes
+
+        # Class filtering: None → drone defaults, [] → all classes, list → custom
+        if classes is not None and len(classes) == 0:
+            self.filter_classes = None  # ultralytics convention: None = all
+        elif classes is not None:
+            self.filter_classes = classes
+        else:
+            self.filter_classes = DRONE_CLASSES
 
         # Load model
         model_name = f'yolov8{model_size}.pt'
@@ -81,10 +105,11 @@ class YOLODetector:
         # COCO class names (YOLOv8 default)
         self.class_names = self.model.names
 
-        print(f"[YOLODetector] Ready! Detecting {len(self.class_names)} classes")
         if self.filter_classes:
             filtered_names = [self.class_names[i] for i in self.filter_classes]
-            print(f"  Filtered to: {filtered_names}")
+            print(f"[YOLODetector] Ready! Detecting: {filtered_names}")
+        else:
+            print(f"[YOLODetector] Ready! Detecting all {len(self.class_names)} classes")
 
     def detect(self, image: np.ndarray, frame_id: int = 0) -> List[Detection]:
         """
@@ -117,6 +142,10 @@ class YOLODetector:
                 # Get bbox in xyxy format
                 x1, y1, x2, y2 = boxes.xyxy[i].cpu().numpy()
                 bbox = BBox.from_xyxy(x1, y1, x2, y2)
+
+                # Skip tiny detections (noise)
+                if bbox.area < MIN_BBOX_AREA:
+                    continue
 
                 # Get class and confidence
                 class_id = int(boxes.cls[i])
@@ -164,6 +193,9 @@ class YOLODetector:
             for i in range(len(boxes)):
                 x1, y1, x2, y2 = boxes.xyxy[i].cpu().numpy()
                 bbox = BBox.from_xyxy(x1, y1, x2, y2)
+
+                if bbox.area < MIN_BBOX_AREA:
+                    continue
 
                 class_id = int(boxes.cls[i])
                 confidence = float(boxes.conf[i])
