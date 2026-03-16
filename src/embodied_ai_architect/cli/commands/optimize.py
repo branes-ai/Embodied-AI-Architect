@@ -273,6 +273,96 @@ def explain(points):
         console.print(ptable)
 
 
+@optimize.command()
+@click.argument("description")
+@click.option("--max-iterations", "-n", type=int, default=3, help="Max reasoning iterations")
+@click.option("--use-llm", is_flag=True, help="Use Claude for reasoning (requires API key)")
+@click.option("--json-output", "json_out", is_flag=True, help="Output raw JSON")
+def mission(description, max_iterations, use_llm, json_out):
+    """End-to-end: NL mission → optimized design.
+
+    Runs the full agentic optimization loop: decompose → formulate →
+    optimize → evaluate → reason → (iterate | recommend).
+
+    Example:
+        branes optimize mission "Drone perception at 5 m/s within 10W"
+    """
+    from embodied_ai_architect.graphs.optimization_loop import run_optimization_loop
+
+    if not json_out:
+        console.print("\n[bold cyan]Agentic Optimization Loop[/bold cyan]")
+        console.print(f"Mission: {description}")
+        console.print(f"Max iterations: {max_iterations}")
+        console.print(f"LLM reasoning: {'enabled' if use_llm else 'heuristic'}")
+        console.print()
+
+    with console.status("[bold green]Running optimization loop..."):
+        result = run_optimization_loop(
+            mission_description=description,
+            max_iterations=max_iterations,
+            llm_available=use_llm,
+        )
+
+    if json_out:
+        # Filter to serializable fields
+        output = {
+            "mission": result.get("mission_description", ""),
+            "platform": result.get("platform", ""),
+            "mission_type": result.get("mission_type", ""),
+            "iterations": result.get("iteration", 0) + 1,
+            "total_evaluations": result.get("total_evaluations", 0),
+            "hypervolume": result.get("hypervolume", 0),
+            "recommendation": result.get("recommendation", {}),
+            "convergence_history": result.get("convergence_history", []),
+            "pareto_front_size": len(result.get("pareto_front", [])),
+            "research_citations": result.get("research_citations", []),
+        }
+        click.echo(json.dumps(output, indent=2, default=str))
+        return
+
+    # Display report
+    report = result.get("final_report", "")
+    if report:
+        console.print(report)
+    else:
+        console.print("[yellow]No report generated.[/yellow]")
+
+    # Show convergence history
+    conv = result.get("convergence_history", [])
+    if conv:
+        console.print()
+        table = Table(title="Convergence History")
+        table.add_column("Iteration", style="dim")
+        table.add_column("Hypervolume", style="cyan")
+        table.add_column("Pareto Size", style="green")
+        table.add_column("Evaluations", style="yellow")
+        for entry in conv:
+            table.add_row(
+                str(entry.get("iteration", 0)),
+                f"{entry.get('hypervolume', 0):.4f}",
+                str(entry.get("pareto_size", 0)),
+                str(entry.get("total_evals", 0)),
+            )
+        console.print(table)
+
+    # Show errors if any
+    errors = result.get("errors", [])
+    if errors:
+        console.print("\n[red]Errors:[/red]")
+        for err in errors:
+            console.print(f"  - {err}")
+
+    # Save the pareto front for other subcommands
+    if result.get("pareto_front"):
+        _save_result(
+            {
+                "pareto_front": result["pareto_front"],
+                "hypervolume": result.get("hypervolume", 0),
+                "knee_point": result.get("knee_point"),
+            }
+        )
+
+
 def _save_result(result: dict) -> None:
     """Save result to a temp file for other subcommands."""
     import tempfile
