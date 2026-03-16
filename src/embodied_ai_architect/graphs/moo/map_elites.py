@@ -211,19 +211,33 @@ class MAPElites:
     def _fitness(self, result: EvaluationResult) -> float:
         """Compute aggregate fitness (lower is better).
 
-        Uses sum of normalized objectives for minimization problems.
+        Uses sum of normalized objectives. MAXIMIZE objectives are negated
+        so that lower fitness is always better.
         """
+        from embodied_ai_architect.graphs.moo.design_space import ObjectiveDirection
+
         total = 0.0
-        for obj_name in self.ds.objectives:
+        for i, obj_name in enumerate(self.ds.objectives):
             val = result.objectives.get(obj_name, 1e6)
             # Normalize by observed range
             lo = self._feature_mins.get(obj_name, 0.0)
             hi = self._feature_maxs.get(obj_name, 1.0)
             rng = hi - lo
             if rng > 1e-10:
-                total += (val - lo) / rng
+                normalized = (val - lo) / rng
             else:
-                total += val
+                normalized = val
+
+            # Negate MAXIMIZE objectives so lower fitness = better
+            direction = (
+                self.ds.directions[i]
+                if i < len(self.ds.directions)
+                else ObjectiveDirection.MINIMIZE
+            )
+            if direction == ObjectiveDirection.MAXIMIZE:
+                total -= normalized
+            else:
+                total += normalized
         return total
 
     def _try_place(self, result: EvaluationResult) -> bool:

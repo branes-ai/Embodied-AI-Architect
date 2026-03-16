@@ -29,7 +29,8 @@ def get_optimization_tool_definitions() -> list[dict[str, Any]]:
                 "Explore the SoC design space using multi-objective optimization. "
                 "Runs MAP-Elites for fast design space illumination, optionally followed "
                 "by Bayesian optimization for refined Pareto front. Returns Pareto-optimal "
-                "design points with power, latency, area, and cost tradeoffs."
+                "design points with power, latency, area, cost, and optionally accuracy "
+                "and capability-per-watt tradeoffs."
             ),
             "input_schema": {
                 "type": "object",
@@ -49,6 +50,31 @@ def get_optimization_tool_definitions() -> list[dict[str, Any]]:
                     "max_cost_usd": {
                         "type": "number",
                         "description": "Cost budget in USD (optional)",
+                    },
+                    "include_accuracy": {
+                        "type": "boolean",
+                        "description": (
+                            "Include accuracy and capability-per-watt as optimization "
+                            "objectives. Uses model accuracy lookup tables (default: false)"
+                        ),
+                    },
+                    "workload_type": {
+                        "type": "string",
+                        "enum": [
+                            "detection",
+                            "classification",
+                            "segmentation",
+                        ],
+                        "description": "Workload type for accuracy estimation (default: detection)",
+                    },
+                    "min_accuracy_percent": {
+                        "type": "number",
+                        "description": "Minimum acceptable accuracy constraint (0-100 scale, optional)",
+                    },
+                    "quantization_dtype": {
+                        "type": "string",
+                        "enum": ["fp32", "fp16", "bf16", "int8", "int4", "mixed_int8_fp16"],
+                        "description": "Quantization data type for accuracy estimation (default: fp32)",
                     },
                     "fast_mode": {
                         "type": "boolean",
@@ -113,14 +139,23 @@ def get_optimization_tool_definitions() -> list[dict[str, Any]]:
             "description": (
                 "Suggest the best design point based on the exploration results "
                 "and user priorities. Returns the knee point or the design that "
-                "best balances all objectives."
+                "best balances all objectives. Supports capability-per-watt and "
+                "accuracy priorities when accuracy-aware exploration was used."
             ),
             "input_schema": {
                 "type": "object",
                 "properties": {
                     "priority": {
                         "type": "string",
-                        "enum": ["balanced", "low_power", "low_latency", "low_cost", "small_area"],
+                        "enum": [
+                            "balanced",
+                            "low_power",
+                            "low_latency",
+                            "low_cost",
+                            "small_area",
+                            "max_accuracy",
+                            "max_capability_per_watt",
+                        ],
                         "description": "Optimization priority (default: balanced)",
                     },
                 },
@@ -142,6 +177,10 @@ def create_optimization_tool_executors() -> dict[str, Callable]:
         max_power_watts: float | None = None,
         max_latency_ms: float | None = None,
         max_cost_usd: float | None = None,
+        include_accuracy: bool = False,
+        workload_type: str = "detection",
+        min_accuracy_percent: float | None = None,
+        quantization_dtype: str = "fp32",
         fast_mode: bool = True,
     ) -> str:
         """Execute design space exploration."""
@@ -162,6 +201,12 @@ def create_optimization_tool_executors() -> dict[str, Callable]:
                 constraints["max_latency_ms"] = max_latency_ms
             if max_cost_usd is not None:
                 constraints["max_cost_usd"] = max_cost_usd
+            if include_accuracy:
+                constraints["include_accuracy"] = True
+                constraints["workload_type"] = workload_type
+                constraints["quantization_dtype"] = quantization_dtype
+            if min_accuracy_percent is not None:
+                constraints["min_accuracy_percent"] = min_accuracy_percent
 
             ds = create_soc_design_space(constraints)
             evaluator = DesignEvaluator(
@@ -299,6 +344,22 @@ def create_optimization_tool_executors() -> dict[str, Callable]:
             design = min(front, key=lambda d: d.get("objectives", {}).get("cost_usd", 1e6))
         elif priority == "small_area":
             design = min(front, key=lambda d: d.get("objectives", {}).get("area_mm2", 1e6))
+        elif priority == "max_accuracy":
+            design = max(
+                front,
+                key=lambda d: d.get("objectives", {}).get(
+                    "accuracy_percent",
+                    d.get("metadata", {}).get("accuracy_percent", 0.0),
+                ),
+            )
+        elif priority == "max_capability_per_watt":
+            design = max(
+                front,
+                key=lambda d: d.get("objectives", {}).get(
+                    "capability_per_watt",
+                    d.get("metadata", {}).get("capability_per_watt", 0.0),
+                ),
+            )
         else:
             design = front[0]
 

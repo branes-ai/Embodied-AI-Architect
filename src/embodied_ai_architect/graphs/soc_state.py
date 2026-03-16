@@ -114,6 +114,20 @@ class DesignConstraints(BaseModel):
         default=None, description="Safety standard (e.g. 'IEC 62304 Class C')"
     )
 
+    # Accuracy / capability
+    min_accuracy_percent: Optional[float] = Field(
+        default=None,
+        description="Minimum acceptable accuracy (mAP, top-1, mIoU) on 0-100 scale",
+    )
+    workload_type: Optional[str] = Field(
+        default=None,
+        description="Workload type for accuracy lookup (detection, classification, segmentation)",
+    )
+    quantization_dtype: Optional[str] = Field(
+        default=None,
+        description="Quantization data type (fp32, fp16, int8, int4, mixed_int8_fp16)",
+    )
+
     # SWaP-C (system-level)
     max_weight_grams: Optional[float] = Field(
         default=None, description="Maximum system weight in grams"
@@ -153,6 +167,32 @@ class PPAMetrics(BaseModel):
     volume_cm3: Optional[float] = Field(default=None, description="Total system volume in cm³")
     thermal_margin_c: Optional[float] = Field(
         default=None, description="Thermal margin (max_junction - actual junction) in C"
+    )
+
+    # Capability metrics (Phase 1: accuracy loop)
+    accuracy_percent: Optional[float] = Field(
+        default=None,
+        description="Task-specific accuracy (mAP, top-1, mIoU) on 0-100 scale",
+    )
+    capability_score: Optional[float] = Field(
+        default=None,
+        description="Normalized mission success rate [0, 1]",
+    )
+    capability_per_watt: Optional[float] = Field(
+        default=None,
+        description="capability_score / power_watts — intelligence per watt",
+    )
+    gops_per_watt: Optional[float] = Field(
+        default=None,
+        description="peak_gops / power_watts — hardware efficiency",
+    )
+    model_family: Optional[str] = Field(
+        default=None,
+        description="Best-fit model family for the workload (e.g. 'yolov8')",
+    )
+    model_variant: Optional[str] = Field(
+        default=None,
+        description="Best-fit model variant (e.g. 's')",
     )
 
     # Per-constraint verdicts (PASS/FAIL/PARTIAL)

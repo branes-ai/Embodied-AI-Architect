@@ -278,6 +278,14 @@ def create_soc_design_space(
         ObjectiveDirection.MINIMIZE,
     ]
 
+    # Add capability objectives if accuracy-aware optimization is requested
+    include_accuracy = constraints.get("include_accuracy", False) if constraints else False
+    if include_accuracy:
+        objectives.append("accuracy_percent")
+        directions.append(ObjectiveDirection.MAXIMIZE)
+        objectives.append("capability_per_watt")
+        directions.append(ObjectiveDirection.MAXIMIZE)
+
     constraint_bounds: dict[str, tuple[float, float]] = {}
     if constraints:
         if constraints.get("max_power_watts"):
@@ -288,6 +296,11 @@ def create_soc_design_space(
             constraint_bounds["area_mm2"] = (0.0, constraints["max_area_mm2"])
         if constraints.get("max_cost_usd"):
             constraint_bounds["cost_usd"] = (0.0, constraints["max_cost_usd"])
+        if constraints.get("min_accuracy_percent"):
+            constraint_bounds["accuracy_percent"] = (
+                constraints["min_accuracy_percent"],
+                100.0,
+            )
 
     return DesignSpace(
         variables=variables,
@@ -384,6 +397,14 @@ def create_swap_design_space(
     ]
     directions = [ObjectiveDirection.MINIMIZE] * 6
 
+    # Add capability objectives if accuracy-aware optimization is requested
+    include_accuracy = constraints.get("include_accuracy", False) if constraints else False
+    if include_accuracy:
+        objectives.append("accuracy_percent")
+        directions.append(ObjectiveDirection.MAXIMIZE)
+        objectives.append("capability_per_watt")
+        directions.append(ObjectiveDirection.MAXIMIZE)
+
     constraint_bounds: dict[str, tuple[float, float]] = {}
     if constraints:
         if constraints.get("max_power_watts"):
@@ -398,6 +419,11 @@ def create_swap_design_space(
             constraint_bounds["weight_grams"] = (0.0, constraints["max_weight_grams"])
         if constraints.get("max_volume_cm3"):
             constraint_bounds["volume_cm3"] = (0.0, constraints["max_volume_cm3"])
+        if constraints.get("min_accuracy_percent"):
+            constraint_bounds["accuracy_percent"] = (
+                constraints["min_accuracy_percent"],
+                100.0,
+            )
 
     return DesignSpace(
         variables=variables,

@@ -385,20 +385,37 @@ class OptimizationEngine:
         )
 
     def _compute_pareto_front(self, points: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        """Compute non-dominated front from a list of design points."""
+        """Compute non-dominated front from a list of design points.
+
+        Handles mixed MINIMIZE/MAXIMIZE objectives correctly by normalizing
+        all objectives to a "lower is better" convention before dominance check.
+        """
+        from embodied_ai_architect.graphs.moo.design_space import ObjectiveDirection
+
         if not points:
             return []
 
-        # Extract objective vectors
         obj_names = self.ds.objectives
         n = len(points)
+
+        # Build sign vector: +1 for MINIMIZE, -1 for MAXIMIZE
+        signs = []
+        for i, name in enumerate(obj_names):
+            direction = (
+                self.ds.directions[i]
+                if i < len(self.ds.directions)
+                else ObjectiveDirection.MINIMIZE
+            )
+            signs.append(1.0 if direction == ObjectiveDirection.MINIMIZE else -1.0)
+
+        # Normalize to "lower is better" convention
         vectors = []
         for p in points:
             objs = p.get("objectives", {})
-            vec = [objs.get(name, 1e6) for name in obj_names]
+            vec = [signs[k] * objs.get(name, 1e6) for k, name in enumerate(obj_names)]
             vectors.append(vec)
 
-        # Non-dominated sorting
+        # Non-dominated sorting (all objectives now in MINIMIZE convention)
         dominated = [False] * n
         for i in range(n):
             if dominated[i]:
@@ -406,7 +423,6 @@ class OptimizationEngine:
             for j in range(n):
                 if i == j or dominated[j]:
                     continue
-                # Check if j dominates i
                 vi, vj = vectors[i], vectors[j]
                 all_leq = all(vj[k] <= vi[k] for k in range(len(obj_names)))
                 any_lt = any(vj[k] < vi[k] for k in range(len(obj_names)))

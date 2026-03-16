@@ -1,8 +1,8 @@
 """Thread-safe design evaluator wrapping existing PPA specialists.
 
 Converts design parameters into SoC compositions and evaluates power,
-latency, area, and cost using the physics-based models from ip_blocks.py,
-manufacturing.py, and technology.py.
+latency, area, cost, and accuracy using the physics-based models from
+ip_blocks.py, manufacturing.py, technology.py, and accuracy_tables.py.
 
 Usage:
     from embodied_ai_architect.graphs.moo.evaluator import DesignEvaluator
@@ -57,6 +57,16 @@ class DesignEvaluator:
             "total_estimated_gflops", workload.get("estimated_gflops", 5.0)
         )
         self._target_volume = self.base_state.get("constraints", {}).get("target_volume", 10_000)
+
+        # Cache accuracy-related config from constraints
+        constraints = self.base_state.get("constraints", {})
+        self._workload_type = constraints.get("workload_type", "detection")
+        self._quantization_dtype = constraints.get("quantization_dtype", "fp32")
+
+        # Pre-compute baseline accuracy from workload profile or accuracy tables
+        self._baseline_accuracy = workload.get("model_accuracy")
+        self._model_family = workload.get("model_family")
+        self._model_variant = workload.get("model_variant")
 
     def evaluate(self, params: dict[str, Any]) -> EvaluationResult:
         """Evaluate a single design point. Thread-safe, pure function.
@@ -152,12 +162,28 @@ class DesignEvaluator:
             mfg = estimate_manufacturing_cost(area_mm2, process_nm, volume)
             cost_usd = mfg.total_unit_cost_usd
 
+            # Compute accuracy and capability metrics
+            accuracy_info = self._compute_accuracy(params, peak_gops)
+            accuracy_pct = accuracy_info["accuracy"]
+            # Capability score: normalize accuracy to [0, 1]
+            capability_score = accuracy_pct / 100.0
+            # Intelligence per watt
+            capability_per_watt = capability_score / power_w if power_w > 0 else 0.0
+            # Hardware efficiency
+            gops_per_watt = peak_gops / power_w if power_w > 0 else 0.0
+
             objectives = {
                 "power_watts": round(power_w, 3),
                 "latency_ms": round(latency_ms, 3),
                 "area_mm2": round(area_mm2, 3),
                 "cost_usd": round(cost_usd, 2),
             }
+
+            # Add accuracy objective if the design space includes it
+            if "accuracy_percent" in [o for o in self.design_space.objectives]:
+                objectives["accuracy_percent"] = round(accuracy_pct, 2)
+            if "capability_per_watt" in [o for o in self.design_space.objectives]:
+                objectives["capability_per_watt"] = round(capability_per_watt, 4)
 
             # Check feasibility
             constraints_satisfied = {}
@@ -178,24 +204,85 @@ class DesignEvaluator:
                     "peak_gops": round(peak_gops, 2),
                     "yield_percent": mfg.yield_percent,
                     "dies_per_wafer": mfg.dies_per_wafer,
+                    "accuracy_percent": round(accuracy_pct, 2),
+                    "capability_score": round(capability_score, 4),
+                    "capability_per_watt": round(capability_per_watt, 4),
+                    "gops_per_watt": round(gops_per_watt, 2),
+                    "model_family": accuracy_info.get("model_family", "unknown"),
+                    "model_variant": accuracy_info.get("model_variant", "unknown"),
+                    "quantization_dtype": accuracy_info.get("dtype", "fp32"),
                 },
             )
 
         except Exception as e:
             logger.warning("Evaluation failed for params %s: %s", params, e)
             # Return infeasible result with penalty values
+            penalty = {
+                "power_watts": 1e6,
+                "latency_ms": 1e6,
+                "area_mm2": 1e6,
+                "cost_usd": 1e6,
+            }
+            if "accuracy_percent" in self.design_space.objectives:
+                penalty["accuracy_percent"] = 0.0
+            if "capability_per_watt" in self.design_space.objectives:
+                penalty["capability_per_watt"] = 0.0
             return EvaluationResult(
                 design_params=params,
-                objectives={
-                    "power_watts": 1e6,
-                    "latency_ms": 1e6,
-                    "area_mm2": 1e6,
-                    "cost_usd": 1e6,
-                },
+                objectives=penalty,
                 constraints_satisfied={},
                 feasible=False,
                 metadata={"error": str(e)},
             )
+
+    def _compute_accuracy(self, params: dict[str, Any], peak_gops: float) -> dict[str, Any]:
+        """Compute accuracy metrics for a design point.
+
+        Uses the accuracy lookup tables to estimate what accuracy is achievable
+        given the hardware's compute budget and the workload type.
+
+        Args:
+            params: Design parameters (may include quantization_dtype).
+            peak_gops: Peak hardware throughput in GOPS.
+
+        Returns:
+            Dict with accuracy, model_family, model_variant, dtype.
+        """
+        from embodied_ai_architect.graphs.moo.accuracy_tables import (
+            lookup_accuracy_for_workload,
+        )
+
+        # Allow per-design-point dtype override (for future NAS variables)
+        dtype = params.get("quantization_dtype", self._quantization_dtype)
+
+        # If workload profile specifies explicit model, use it
+        if self._baseline_accuracy is not None and self._model_family:
+            from embodied_ai_architect.graphs.moo.accuracy_tables import (
+                estimate_effective_accuracy,
+            )
+
+            pruning_ratio = float(params.get("pruning_ratio", 0.0))
+            effective = estimate_effective_accuracy(
+                self._model_family,
+                self._model_variant or "",
+                dtype,
+                pruning_ratio,
+            )
+            return {
+                "accuracy": effective if effective is not None else self._baseline_accuracy,
+                "model_family": self._model_family,
+                "model_variant": self._model_variant or "",
+                "dtype": dtype,
+            }
+
+        # Otherwise, estimate from workload GFLOPS budget
+        # Convert peak_gops to GFLOPS the model can use (at 30% utilization)
+        available_gflops = peak_gops * 0.3
+        return lookup_accuracy_for_workload(
+            workload_type=self._workload_type,
+            estimated_gflops=available_gflops,
+            dtype=dtype,
+        )
 
     def evaluate_batch(self, param_list: list[dict[str, Any]]) -> list[EvaluationResult]:
         """Evaluate a batch of design points sequentially.
@@ -264,6 +351,10 @@ class SWaPCEvaluator:
                 "weight_grams": 1e6,
                 "volume_cm3": 1e6,
             }
+            if "accuracy_percent" in self.design_space.objectives:
+                penalty.setdefault("accuracy_percent", 0.0)
+            if "capability_per_watt" in self.design_space.objectives:
+                penalty.setdefault("capability_per_watt", 0.0)
             return EvaluationResult(
                 design_params=params,
                 objectives=penalty,
