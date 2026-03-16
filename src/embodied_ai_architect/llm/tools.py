@@ -102,6 +102,24 @@ except ImportError:
         return {}
 
 
+# Import decomposition tools (mission decomposer + research library)
+try:
+    from .decomposition_tools import (
+        get_decomposition_tool_definitions,
+        create_decomposition_tool_executors,
+    )
+
+    HAS_DECOMPOSITION = True
+except ImportError:
+    HAS_DECOMPOSITION = False
+
+    def get_decomposition_tool_definitions() -> list[dict[str, Any]]:
+        return []
+
+    def create_decomposition_tool_executors() -> dict[str, Callable]:
+        return {}
+
+
 def get_tool_definitions() -> list[dict[str, Any]]:
     """Get tool definitions in Anthropic's tool format.
 
@@ -328,6 +346,10 @@ def get_tool_definitions() -> list[dict[str, Any]]:
     if HAS_MOO:
         base_tools.extend(get_optimization_tool_definitions())
 
+    # Add decomposition tools if available
+    if HAS_DECOMPOSITION:
+        base_tools.extend(get_decomposition_tool_definitions())
+
     return base_tools
 
 
@@ -552,5 +574,9 @@ def create_tool_executors() -> dict[str, Callable]:
     # Add optimization executors if available
     if HAS_MOO:
         executors.update(create_optimization_tool_executors())
+
+    # Add decomposition executors if available
+    if HAS_DECOMPOSITION:
+        executors.update(create_decomposition_tool_executors())
 
     return executors
