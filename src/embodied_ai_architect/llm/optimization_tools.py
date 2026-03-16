@@ -24,6 +24,76 @@ def get_optimization_tool_definitions() -> list[dict[str, Any]]:
     """Get tool definitions for optimization in Anthropic format."""
     return [
         {
+            "name": "explore_joint_design_space",
+            "description": (
+                "Explore the JOINT design space across pipeline structure, model "
+                "architecture (NAS), compiler configuration, AND hardware simultaneously. "
+                "Searches over 17+ variables including detector family, tracker type, "
+                "model variant, quantization, pruning, runtime, tile size, and SoC "
+                "parameters. Returns Pareto-optimal designs trading off capability/watt, "
+                "power, latency, area, and cost. Use this for mission-driven optimization "
+                "where the full system stack matters."
+            ),
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "goal": {
+                        "type": "string",
+                        "description": (
+                            "Design goal (e.g., 'drone perception SoC with real-time "
+                            "detection optimizing capability per watt')"
+                        ),
+                    },
+                    "max_power_watts": {
+                        "type": "number",
+                        "description": "Power budget in watts (optional)",
+                    },
+                    "max_latency_ms": {
+                        "type": "number",
+                        "description": "Latency target in ms (optional)",
+                    },
+                    "max_cost_usd": {
+                        "type": "number",
+                        "description": "Cost budget in USD (optional)",
+                    },
+                    "min_accuracy_percent": {
+                        "type": "number",
+                        "description": "Minimum accuracy constraint (0-100, optional)",
+                    },
+                    "workload_type": {
+                        "type": "string",
+                        "enum": ["detection", "classification", "segmentation"],
+                        "description": "Primary workload type (default: detection)",
+                    },
+                    "detector_families": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": (
+                            "Detector families to search over "
+                            "(default: ['yolov8', 'yolov5', 'efficientdet', 'ssd_mobilenet'])"
+                        ),
+                    },
+                    "include_pipeline": {
+                        "type": "boolean",
+                        "description": "Include pipeline variables (default: true)",
+                    },
+                    "include_nas": {
+                        "type": "boolean",
+                        "description": "Include NAS variables (default: true)",
+                    },
+                    "include_compiler": {
+                        "type": "boolean",
+                        "description": "Include compiler config variables (default: true)",
+                    },
+                    "fast_mode": {
+                        "type": "boolean",
+                        "description": "Reduced evaluation budget for quick results (default: true)",
+                    },
+                },
+                "required": ["goal"],
+            },
+        },
+        {
             "name": "explore_design_space",
             "description": (
                 "Explore the SoC design space using multi-objective optimization. "
@@ -373,8 +443,100 @@ def create_optimization_tool_executors() -> dict[str, Callable]:
             default=str,
         )
 
+    def explore_joint_design_space(
+        goal: str,
+        max_power_watts: float | None = None,
+        max_latency_ms: float | None = None,
+        max_cost_usd: float | None = None,
+        min_accuracy_percent: float | None = None,
+        workload_type: str = "detection",
+        detector_families: list[str] | None = None,
+        include_pipeline: bool = True,
+        include_nas: bool = True,
+        include_compiler: bool = True,
+        fast_mode: bool = True,
+    ) -> str:
+        """Execute joint design space exploration across pipeline × model × compiler × HW."""
+        global _last_result
+        try:
+            from embodied_ai_architect.graphs.moo.joint_design_space import (
+                create_joint_design_space,
+                JointEvaluator,
+            )
+            from embodied_ai_architect.graphs.moo.engine import (
+                OptimizationConfig,
+                OptimizationEngine,
+            )
+            from embodied_ai_architect.graphs.moo.map_elites import MAPElitesConfig
+
+            constraints: dict[str, Any] = {
+                "include_accuracy": True,
+                "workload_type": workload_type,
+            }
+            if max_power_watts is not None:
+                constraints["max_power_watts"] = max_power_watts
+            if max_latency_ms is not None:
+                constraints["max_latency_ms"] = max_latency_ms
+            if max_cost_usd is not None:
+                constraints["max_cost_usd"] = max_cost_usd
+            if min_accuracy_percent is not None:
+                constraints["min_accuracy_percent"] = min_accuracy_percent
+            if detector_families:
+                constraints["detector_families"] = detector_families
+
+            ds = create_joint_design_space(
+                constraints=constraints,
+                include_pipeline=include_pipeline,
+                include_nas=include_nas,
+                include_compiler=include_compiler,
+            )
+            evaluator = JointEvaluator(
+                design_space=ds,
+                base_state={"constraints": constraints},
+                constraint_bounds=ds.constraint_bounds,
+            )
+
+            if fast_mode:
+                me_config = MAPElitesConfig(
+                    n_iterations=15,
+                    batch_size=32,
+                    initial_population=128,
+                )
+                config = OptimizationConfig(
+                    layers="map_elites",
+                    map_elites=me_config,
+                    max_workers=4,
+                )
+            else:
+                config = OptimizationConfig(layers="auto")
+
+            engine = OptimizationEngine(ds, evaluator, config)
+            try:
+                result = engine.run()
+            finally:
+                engine.shutdown()
+
+            _last_result = result.model_dump()
+
+            front = result.pareto_front[:5]
+            output = {
+                "design_space": "joint (pipeline × model × compiler × hardware)",
+                "total_variables": ds.n_var,
+                "total_evaluations": result.total_evaluations,
+                "pareto_front_size": len(result.pareto_front),
+                "hypervolume": result.hypervolume,
+                "layers_used": result.layers_used,
+                "top_designs": front,
+                "knee_point": result.knee_point,
+            }
+            return json.dumps(output, indent=2, default=str)
+
+        except Exception as e:
+            return f"Error: {e}\n{traceback.format_exc()}"
+
     return {
         "explore_design_space": explore_design_space,
+        "explore_joint_design_space": explore_joint_design_space,
         "get_pareto_front": get_pareto_front,
         "get_design_sensitivity": get_design_sensitivity,
         "explain_design_tradeoff": explain_design_tradeoff,
