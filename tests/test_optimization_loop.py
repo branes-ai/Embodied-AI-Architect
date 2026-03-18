@@ -241,23 +241,32 @@ class TestEndToEnd:
         assert "Hardware" in report
         assert "Pipeline" in report
         assert "Compiler" in report
-        assert "Capability/watt" in report or "capability_per_watt" in report.lower()
+        assert "Cap/watt" in report or "capability_per_watt" in report.lower()
 
-    def test_report_contains_comparison_table(self):
-        """Report should include a multi-design comparison table."""
+    def test_report_contains_narrative_sections(self):
+        """Report should include educational narrative sections."""
         result = run_optimization_loop(
             mission_description="Drone perception at 5 m/s",
             max_iterations=1,
             llm_available=False,
         )
         report = result.get("final_report", "")
-        assert "Design Comparison" in report
+        # Executive summary
+        assert "Executive Summary" in report
+        # Tradeoff analysis
+        assert "Key Tradeoffs" in report
+        # Design archetypes with labels
+        assert "Design Alternatives" in report
         assert "★" in report
-        # Table should have structured rows for key attributes
-        assert "Process" in report
-        assert "Detector" in report
-        assert "Runtime" in report
-        assert "Cap/watt" in report
+        # Per-design commentary
+        assert "Design Analysis" in report
+        assert "Pareto-optimal" in report
+        # Recommendation section
+        assert "Recommendation" in report
+        assert "Next steps" in report
+        # Glossary
+        assert "Glossary" in report
+        assert "Pareto front" in report
 
 
 # ---------------------------------------------------------------------------

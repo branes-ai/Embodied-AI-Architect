@@ -511,310 +511,463 @@ def _build_recommendation(
     analysis: str,
     citations: list[str],
 ) -> dict:
-    """Build the final recommendation output with a 5-design comparison table."""
+    """Build a narrative optimization report with tradeoff analysis."""
     pareto = state.get("pareto_front", [])
+    mission = state.get("mission_description", "")
+    platform = state.get("platform", "edge")
 
-    # --- Select 5 designs: 2 above knee, knee, 2 below (sorted by cap/watt) ---
-    showcase = _select_showcase_designs(pareto, selected)
+    # --- Classify Pareto designs into archetypes ---
+    archetypes = _classify_archetypes(pareto, selected)
 
-    report_lines = [
-        f"# Optimization Report: {state.get('mission_description', '')}",
-        "",
-        f"## Mission: {state.get('mission_type', 'perception')} on {state.get('platform', 'edge')}",
-        f"- Sub-capabilities: {len(state.get('sub_capabilities', []))}",
-        f"- Total evaluations: {state.get('total_evaluations', 0)}",
-        f"- Iterations: {state.get('iteration', 0) + 1}",
-        f"- Pareto front size: {len(pareto)}",
-        "",
-    ]
+    lines: list[str] = []
 
-    # --- Comparison table: 5 designs side-by-side ---
-    report_lines.append("## Design Comparison (Pareto Front)")
-    report_lines.append("")
-    report_lines.extend(_format_comparison_table(showcase, selected))
-    report_lines.append("")
+    # === 1. Executive Summary ===
+    lines.extend(_build_executive_summary(state, archetypes, selected))
 
-    # --- Recommended design detail ---
-    objs = selected.get("objectives", {})
-    meta = selected.get("metadata", {})
-    params = selected.get("design_params", {})
+    # === 2. Key Tradeoffs ===
+    lines.extend(_build_tradeoff_analysis(archetypes, mission, platform))
 
-    report_lines.extend(
+    # === 3. Design Alternatives (comparison table with archetype labels) ===
+    lines.append("## Design Alternatives")
+    lines.append("")
+    lines.extend(_format_comparison_table(archetypes))
+    lines.append("")
+
+    # === 4. Per-design commentary ===
+    lines.extend(_build_design_commentary(archetypes, mission))
+
+    # === 5. Recommendation ===
+    lines.extend(_build_recommendation_detail(selected, state))
+
+    # === 6. Methodology ===
+    lines.extend(
         [
-            "## Recommended Design (★)",
             "",
-            "### Hardware",
-            f"- Process: {params.get('process_nm', '?')}nm",
-            f"- Clock: {params.get('clock_mhz', 0):.0f} MHz",
-            f"- Systolic array: {params.get('array_rows', '?')}×{params.get('array_cols', '?')}",
-            f"- SRAM: {params.get('sram_kb', '?')} KB",
-            f"- Compute tiles: {params.get('num_compute_tiles', '?')}",
-            "",
-            "### Perception Pipeline",
-            f"- Detector: {meta.get('model_family', '?')}/{meta.get('model_variant', '?')}",
-            f"- Tracker: {meta.get('tracker_type', '?')}",
-            f"- State estimator: {meta.get('state_estimator', '?')}",
-            "",
-            "### Compiler & Runtime",
-            f"- Runtime: {meta.get('runtime', '?')}",
-            f"- Quantization: {meta.get('quantization_dtype', '?')}",
-            f"- Pruning ratio: {meta.get('pruning_ratio', 0):.0%}",
-            f"- Graph fusion: {'yes' if meta.get('graph_fusion') else 'no'}",
-            f"- HW utilization: {meta.get('effective_utilization', 0):.0%}",
-            "",
-            "### Achieved Objectives",
-            f"- Power: {objs.get('power_watts', 0):.2f} W",
-            f"- Latency: {objs.get('latency_ms', 0):.2f} ms",
-            f"- Area: {objs.get('area_mm2', 0):.2f} mm²",
-            f"- Cost: ${objs.get('cost_usd', 0):.2f}",
-            f"- Accuracy: {objs.get('accuracy_percent', meta.get('accuracy_percent', 0)):.1f}%",
-            f"- Capability/watt: {objs.get('capability_per_watt', meta.get('capability_per_watt', 0)):.4f}",
-            "",
-            "## Analysis",
-            analysis or state.get("analysis", ""),
+            "## Methodology",
+            f"- Explored {state.get('total_evaluations', 0)} design configurations "
+            f"across {state.get('iteration', 0) + 1} iteration(s)",
+            f"- Pareto front: {len(pareto)} non-dominated designs "
+            "(no design is strictly better in all objectives)",
+            f"- Optimization used MAP-Elites quality-diversity search "
+            f"over a {state.get('num_variables', 17)}-variable joint design space",
+            "- All designs satisfy the reticle limit " "(max die edge 26mm, max area 676 mm²)",
             "",
         ]
     )
 
+    # === 7. Citations ===
     if citations:
-        report_lines.append("## Research Citations")
+        lines.append("## Research References")
         for c in citations:
-            report_lines.append(f"- {c}")
-        report_lines.append("")
+            lines.append(f"- {c}")
+        lines.append("")
 
+    # === 8. Convergence ===
     if state.get("convergence_history"):
-        report_lines.append("## Convergence History")
+        lines.append("## Convergence History")
         for entry in state["convergence_history"]:
-            report_lines.append(
+            lines.append(
                 f"- Iteration {entry['iteration']}: "
-                f"HV={entry['hypervolume']:.4f}, "
-                f"Pareto={entry['pareto_size']}, "
-                f"evals={entry['total_evals']}"
+                f"hypervolume={entry['hypervolume']:.1f}, "
+                f"Pareto size={entry['pareto_size']}, "
+                f"evaluations={entry['total_evals']}"
             )
+        lines.append("")
+
+    # === 9. Glossary ===
+    lines.extend(_build_glossary())
 
     return {
         "should_iterate": False,
         "recommendation": selected,
         "research_citations": citations,
-        "final_report": "\n".join(report_lines),
+        "final_report": "\n".join(lines),
     }
 
 
-def _select_showcase_designs(
-    pareto: list[dict], selected: dict, n_above: int = 2, n_below: int = 2
-) -> list[tuple[str, dict]]:
-    """Pick designs from the Pareto front centered on the selected (knee) design.
+# ---------------------------------------------------------------------------
+# Archetype classification
+# ---------------------------------------------------------------------------
 
-    Returns a list of (label, design) tuples sorted by capability/watt descending.
-    The selected design is labelled "★", others are numbered.
+# Archetype definitions: (key, label, description, sort_key, reverse)
+_ARCHETYPE_DEFS = [
+    ("best_efficiency", "Best Efficiency", "Highest intelligence per watt"),
+    ("most_accurate", "Most Accurate", "Highest detection accuracy"),
+    ("lowest_power", "Lowest Power", "Minimum power consumption"),
+    ("lowest_cost", "Lowest Cost", "Cheapest to manufacture"),
+    ("balanced", "Balanced (★)", "Best tradeoff across all objectives"),
+]
+
+
+def _classify_archetypes(pareto: list[dict], selected: dict) -> list[tuple[str, str, str, dict]]:
+    """Classify Pareto front designs into named archetypes.
+
+    Returns list of (key, label, description, design) tuples.
     """
     if not pareto:
-        return [("★", selected)]
+        return [("balanced", "Balanced (★)", "Best tradeoff", selected)]
 
-    def _cap_watt(p: dict) -> float:
-        o = p.get("objectives", {})
-        return o.get("capability_per_watt", p.get("metadata", {}).get("capability_per_watt", 0))
+    def _obj(p: dict, name: str, default: float = 0.0) -> float:
+        return p.get("objectives", {}).get(name, p.get("metadata", {}).get(name, default))
 
-    # Sort Pareto front by capability/watt descending (best first)
-    ranked = sorted(pareto, key=_cap_watt, reverse=True)
+    best_eff = max(pareto, key=lambda p: _obj(p, "capability_per_watt"))
+    most_acc = max(pareto, key=lambda p: _obj(p, "accuracy_percent"))
+    low_power = min(pareto, key=lambda p: _obj(p, "power_watts", 1e6))
+    low_cost = min(pareto, key=lambda p: _obj(p, "cost_usd", 1e6))
 
-    # Find index of the selected design in the ranked list
-    sel_idx = 0
-    for i, p in enumerate(ranked):
-        if p is selected or p.get("design_params") == selected.get("design_params"):
-            sel_idx = i
-            break
+    # Deduplicate: if two archetypes pick the same design, keep the first
+    seen_params: set[str] = set()
+    result: list[tuple[str, str, str, dict]] = []
 
-    # Window: n_above designs above the knee, n_below below
-    start = max(0, sel_idx - n_above)
-    end = min(len(ranked), sel_idx + n_below + 1)
+    candidates = [
+        ("best_efficiency", "Best Efficiency", "Highest intelligence per watt", best_eff),
+        ("most_accurate", "Most Accurate", "Highest detection accuracy", most_acc),
+        ("lowest_power", "Lowest Power", "Minimum power consumption", low_power),
+        ("lowest_cost", "Lowest Cost", "Cheapest to manufacture", low_cost),
+    ]
 
-    # Adjust window if near edges
-    if end - start < n_above + n_below + 1:
-        if start == 0:
-            end = min(len(ranked), n_above + n_below + 1)
-        elif end == len(ranked):
-            start = max(0, len(ranked) - n_above - n_below - 1)
+    for key, label, desc, design in candidates:
+        sig = str(sorted(design.get("design_params", {}).items()))
+        if sig not in seen_params:
+            seen_params.add(sig)
+            result.append((key, label, desc, design))
 
-    showcase = []
-    design_num = 1
-    for i in range(start, end):
-        p = ranked[i]
-        is_selected = p is selected or p.get("design_params") == selected.get("design_params")
-        label = "★" if is_selected else str(design_num)
-        if not is_selected:
-            design_num += 1
-        showcase.append((label, p))
+    # Always include the selected/balanced design
+    sel_sig = str(sorted(selected.get("design_params", {}).items()))
+    if sel_sig not in seen_params:
+        result.append(("balanced", "Balanced (★)", "Best tradeoff across all objectives", selected))
+    else:
+        # Mark the existing entry as the selected one
+        for i, (key, label, desc, d) in enumerate(result):
+            dsig = str(sorted(d.get("design_params", {}).items()))
+            if dsig == sel_sig:
+                result[i] = (key, label + " (★)", desc, d)
+                break
 
-    # If selected wasn't in pareto (shouldn't happen), prepend it
-    if not any(label == "★" for label, _ in showcase):
-        showcase.insert(len(showcase) // 2, ("★", selected))
-
-    return showcase
+    return result
 
 
-def _format_comparison_table(showcase: list[tuple[str, dict]], selected: dict) -> list[str]:
-    """Format the 5-design comparison as a markdown table."""
+# ---------------------------------------------------------------------------
+# Executive summary
+# ---------------------------------------------------------------------------
+
+
+def _build_executive_summary(
+    state: dict, archetypes: list[tuple[str, str, str, dict]], selected: dict
+) -> list[str]:
+    """One-paragraph summary of results."""
+    mission = state.get("mission_description", "")
+    platform = state.get("platform", "edge")
+    n_evals = state.get("total_evaluations", 0)
+    n_pareto = len(state.get("pareto_front", []))
+
+    sel_objs = selected.get("objectives", {})
+    sel_meta = selected.get("metadata", {})
+    sel_params = selected.get("design_params", {})
+
+    power = sel_objs.get("power_watts", 0)
+    latency = sel_objs.get("latency_ms", 0)
+    acc = sel_objs.get("accuracy_percent", sel_meta.get("accuracy_percent", 0))
+    capw = sel_objs.get("capability_per_watt", sel_meta.get("capability_per_watt", 0))
+    process = sel_params.get("process_nm", "?")
+
+    # Find the range across archetypes
+    powers = [d.get("objectives", {}).get("power_watts", 0) for _, _, _, d in archetypes]
+    accs = [
+        d.get("objectives", {}).get(
+            "accuracy_percent", d.get("metadata", {}).get("accuracy_percent", 0)
+        )
+        for _, _, _, d in archetypes
+    ]
+
+    lines = [
+        f"# Design Exploration: {mission}",
+        "",
+        "## Executive Summary",
+        "",
+        f"We explored {n_evals} hardware/software configurations for "
+        f"**{mission}** on a {platform} platform, producing {n_pareto} "
+        f"Pareto-optimal designs where no single design dominates all others.",
+        "",
+        f"The design space reveals a fundamental tension: across the Pareto "
+        f"front, power ranges from {min(powers):.1f}W to {max(powers):.1f}W "
+        f"while accuracy ranges from {min(accs):.0f}% to {max(accs):.0f}%. "
+        f"Higher accuracy demands larger models and more compute, which "
+        f"directly increases power and cost.",
+        "",
+        f"The recommended balanced design uses a **{process}nm** process at "
+        f"**{power:.1f}W**, achieving **{acc:.0f}% accuracy** with a "
+        f"capability-per-watt of **{capw:.4f}** and **{latency:.1f}ms** "
+        f"inference latency.",
+        "",
+    ]
+    return lines
+
+
+# ---------------------------------------------------------------------------
+# Tradeoff analysis
+# ---------------------------------------------------------------------------
+
+
+def _build_tradeoff_analysis(
+    archetypes: list[tuple[str, str, str, dict]], mission: str, platform: str
+) -> list[str]:
+    """Explain the key tradeoffs that shape the Pareto front."""
+    lines = [
+        "## Key Tradeoffs",
+        "",
+    ]
+
+    # --- Process node vs cost ---
+    processes = set()
+    for _, _, _, d in archetypes:
+        processes.add(int(d.get("design_params", {}).get("process_nm", 28)))
+    if len(processes) > 1:
+        sorted_p = sorted(processes)
+        lines.extend(
+            [
+                f"**Process node ({sorted_p[0]}nm–{sorted_p[-1]}nm):** "
+                f"Advanced nodes (smaller nm) pack more transistors per mm², enabling "
+                f"higher compute density and lower power per operation. However, "
+                f"manufacturing cost scales super-linearly — a 2nm wafer costs ~$22K "
+                f"vs ~$4K for 28nm. For cost-sensitive {platform} applications, "
+                f"mature nodes (16–28nm) often deliver better value.",
+                "",
+            ]
+        )
+
+    # --- Model size vs accuracy vs latency ---
+    lines.extend(
+        [
+            "**Model size vs accuracy:** Larger detector models (e.g., YOLOv8-l/x) "
+            "achieve higher mAP but require proportionally more compute (GFLOPS). "
+            "On power-constrained hardware, this means either higher power draw "
+            "or longer inference latency. Smaller models (YOLOv8-n/s, MobileNet) "
+            "trade accuracy for real-time capability.",
+            "",
+        ]
+    )
+
+    # --- Quantization tradeoff ---
+    dtypes = set()
+    for _, _, _, d in archetypes:
+        dtypes.add(d.get("metadata", {}).get("quantization_dtype", "fp16"))
+    if len(dtypes) > 1:
+        lines.extend(
+            [
+                f"**Quantization ({', '.join(sorted(dtypes))}):** "
+                "Reducing numerical precision (FP32 → FP16 → INT8 → INT4) "
+                "cuts memory bandwidth and compute requirements roughly in "
+                "proportion. INT8 typically loses 1–3% mAP vs FP32; INT4 can "
+                "lose 5–15%. The right choice depends on whether the mission "
+                "tolerates that accuracy reduction for the power savings.",
+                "",
+            ]
+        )
+
+    # --- Runtime/compiler ---
+    runtimes = set()
+    for _, _, _, d in archetypes:
+        runtimes.add(d.get("metadata", {}).get("runtime", "pytorch"))
+    if len(runtimes) > 1:
+        lines.extend(
+            [
+                f"**Compiler runtime ({', '.join(sorted(runtimes))}):** "
+                "The runtime determines how efficiently the model maps to hardware. "
+                "TensorRT and TVM perform graph-level optimizations (operator fusion, "
+                "memory planning) that can improve hardware utilization by 30–60% "
+                "vs unoptimized PyTorch. OpenVINO targets Intel hardware specifically. "
+                "Higher utilization means the same hardware delivers more useful "
+                "compute per watt.",
+                "",
+            ]
+        )
+
+    # --- Pruning ---
+    pruning_ratios = [d.get("metadata", {}).get("pruning_ratio", 0) for _, _, _, d in archetypes]
+    if max(pruning_ratios) > 0.2:
+        lines.extend(
+            [
+                f"**Pruning ({min(pruning_ratios):.0%}–{max(pruning_ratios):.0%}):** "
+                "Structured pruning removes redundant weights, reducing effective "
+                "GFLOPS and memory footprint. Moderate pruning (10–30%) typically "
+                "preserves accuracy well. Aggressive pruning (>50%) can significantly "
+                "degrade accuracy — the optimizer explores this boundary to find "
+                "where the accuracy loss becomes unacceptable for the mission.",
+                "",
+            ]
+        )
+
+    return lines
+
+
+# ---------------------------------------------------------------------------
+# Comparison table with archetype labels
+# ---------------------------------------------------------------------------
+
+
+def _format_comparison_table(archetypes: list[tuple[str, str, str, dict]]) -> list[str]:
+    """Format archetype designs as a comparison table."""
     lines: list[str] = []
 
-    # Column headers
-    headers = ["Attribute"] + [label for label, _ in showcase]
+    headers = [""] + [label for _, label, _, _ in archetypes]
     sep = ["-" * max(len(h), 3) for h in headers]
 
     def _row(name: str, values: list[str]) -> str:
-        cells = [name] + values
-        return "| " + " | ".join(cells) + " |"
+        return "| " + " | ".join([name] + values) + " |"
 
     lines.append("| " + " | ".join(headers) + " |")
     lines.append("| " + " | ".join(sep) + " |")
 
-    # --- Hardware ---
+    # Hardware
     lines.append(
         _row(
             "**Hardware**",
-            [""] * len(showcase),
+            [""] * len(archetypes),
         )
     )
     lines.append(
         _row(
             "Process",
-            [f"{d.get('design_params', {}).get('process_nm', '?')}nm" for _, d in showcase],
+            [f"{d.get('design_params', {}).get('process_nm', '?')}nm" for _, _, _, d in archetypes],
         )
     )
     lines.append(
         _row(
             "Clock",
-            [f"{d.get('design_params', {}).get('clock_mhz', 0):.0f} MHz" for _, d in showcase],
-        )
-    )
-    lines.append(
-        _row(
-            "Array",
             [
-                f"{d.get('design_params', {}).get('array_rows', '?')}"
-                f"×{d.get('design_params', {}).get('array_cols', '?')}"
-                for _, d in showcase
+                f"{d.get('design_params', {}).get('clock_mhz', 0):.0f} MHz"
+                for _, _, _, d in archetypes
             ],
         )
     )
     lines.append(
         _row(
-            "SRAM",
-            [f"{d.get('design_params', {}).get('sram_kb', '?')} KB" for _, d in showcase],
+            "Systolic array",
+            [
+                f"{d.get('design_params', {}).get('array_rows', '?')}"
+                f"×{d.get('design_params', {}).get('array_cols', '?')}"
+                for _, _, _, d in archetypes
+            ],
         )
     )
     lines.append(
         _row(
-            "Tiles",
-            [f"{d.get('design_params', {}).get('num_compute_tiles', '?')}" for _, d in showcase],
+            "On-chip SRAM",
+            [f"{d.get('design_params', {}).get('sram_kb', '?')} KB" for _, _, _, d in archetypes],
+        )
+    )
+    lines.append(
+        _row(
+            "Compute tiles",
+            [
+                f"{d.get('design_params', {}).get('num_compute_tiles', '?')}"
+                for _, _, _, d in archetypes
+            ],
         )
     )
 
-    # --- Pipeline ---
-    lines.append(
-        _row(
-            "**Pipeline**",
-            [""] * len(showcase),
-        )
-    )
+    # Pipeline
+    lines.append(_row("**Pipeline**", [""] * len(archetypes)))
     lines.append(
         _row(
             "Detector",
             [
                 f"{d.get('metadata', {}).get('model_family', '?')}"
                 f"/{d.get('metadata', {}).get('model_variant', '?')}"
-                for _, d in showcase
+                for _, _, _, d in archetypes
             ],
         )
     )
     lines.append(
         _row(
             "Tracker",
-            [f"{d.get('metadata', {}).get('tracker_type', '?')}" for _, d in showcase],
+            [f"{d.get('metadata', {}).get('tracker_type', 'none')}" for _, _, _, d in archetypes],
         )
     )
     lines.append(
         _row(
-            "State est.",
-            [f"{d.get('metadata', {}).get('state_estimator', '?')}" for _, d in showcase],
+            "State estimator",
+            [
+                f"{d.get('metadata', {}).get('state_estimator', 'none')}"
+                for _, _, _, d in archetypes
+            ],
         )
     )
 
-    # --- Compiler ---
+    # Compiler
+    lines.append(_row("**Compiler**", [""] * len(archetypes)))
     lines.append(
         _row(
-            "**Compiler**",
-            [""] * len(showcase),
-        )
-    )
-    lines.append(
-        _row(
-            "Runtime",
-            [f"{d.get('metadata', {}).get('runtime', '?')}" for _, d in showcase],
+            "Runtime", [f"{d.get('metadata', {}).get('runtime', '?')}" for _, _, _, d in archetypes]
         )
     )
     lines.append(
         _row(
             "Quantization",
-            [f"{d.get('metadata', {}).get('quantization_dtype', '?')}" for _, d in showcase],
+            [
+                f"{d.get('metadata', {}).get('quantization_dtype', '?')}"
+                for _, _, _, d in archetypes
+            ],
         )
     )
     lines.append(
         _row(
             "Pruning",
-            [f"{d.get('metadata', {}).get('pruning_ratio', 0):.0%}" for _, d in showcase],
+            [f"{d.get('metadata', {}).get('pruning_ratio', 0):.0%}" for _, _, _, d in archetypes],
         )
     )
     lines.append(
         _row(
             "Graph fusion",
-            ["yes" if d.get("metadata", {}).get("graph_fusion") else "no" for _, d in showcase],
+            [
+                "yes" if d.get("metadata", {}).get("graph_fusion") else "no"
+                for _, _, _, d in archetypes
+            ],
         )
     )
     lines.append(
         _row(
-            "Utilization",
-            [f"{d.get('metadata', {}).get('effective_utilization', 0):.0%}" for _, d in showcase],
+            "HW utilization",
+            [
+                f"{d.get('metadata', {}).get('effective_utilization', 0):.0%}"
+                for _, _, _, d in archetypes
+            ],
         )
     )
 
-    # --- Objectives ---
-    lines.append(
-        _row(
-            "**Objectives**",
-            [""] * len(showcase),
-        )
-    )
+    # Objectives
+    lines.append(_row("**Results**", [""] * len(archetypes)))
     lines.append(
         _row(
             "Power",
-            [f"{d.get('objectives', {}).get('power_watts', 0):.2f} W" for _, d in showcase],
+            [f"{d.get('objectives', {}).get('power_watts', 0):.2f} W" for _, _, _, d in archetypes],
         )
     )
     lines.append(
         _row(
             "Latency",
-            [f"{d.get('objectives', {}).get('latency_ms', 0):.2f} ms" for _, d in showcase],
+            [f"{d.get('objectives', {}).get('latency_ms', 0):.1f} ms" for _, _, _, d in archetypes],
         )
     )
     lines.append(
         _row(
-            "Area",
-            [f"{d.get('objectives', {}).get('area_mm2', 0):.2f} mm²" for _, d in showcase],
+            "Die area",
+            [f"{d.get('objectives', {}).get('area_mm2', 0):.0f} mm²" for _, _, _, d in archetypes],
         )
     )
     lines.append(
         _row(
-            "Cost",
-            [f"${d.get('objectives', {}).get('cost_usd', 0):.2f}" for _, d in showcase],
+            "Unit cost",
+            [f"${d.get('objectives', {}).get('cost_usd', 0):,.0f}" for _, _, _, d in archetypes],
         )
     )
     lines.append(
         _row(
-            "Accuracy",
+            "Accuracy (mAP)",
             [
                 f"{d.get('objectives', {}).get('accuracy_percent', d.get('metadata', {}).get('accuracy_percent', 0)):.1f}%"
-                for _, d in showcase
+                for _, _, _, d in archetypes
             ],
         )
     )
@@ -823,12 +976,270 @@ def _format_comparison_table(showcase: list[tuple[str, dict]], selected: dict) -
             "**Cap/watt**",
             [
                 f"**{d.get('objectives', {}).get('capability_per_watt', d.get('metadata', {}).get('capability_per_watt', 0)):.4f}**"
-                for _, d in showcase
+                for _, _, _, d in archetypes
             ],
         )
     )
 
     return lines
+
+
+# ---------------------------------------------------------------------------
+# Per-design commentary
+# ---------------------------------------------------------------------------
+
+
+def _build_design_commentary(
+    archetypes: list[tuple[str, str, str, dict]], mission: str
+) -> list[str]:
+    """Generate per-design commentary with physical sanity observations."""
+    lines = ["## Design Analysis", ""]
+
+    for key, label, desc, design in archetypes:
+        params = design.get("design_params", {})
+        meta = design.get("metadata", {})
+        objs = design.get("objectives", {})
+
+        process = int(params.get("process_nm", 28))
+        clock = float(params.get("clock_mhz", 0))
+        rows = int(params.get("array_rows", 8))
+        cols = int(params.get("array_cols", 8))
+        sram = int(params.get("sram_kb", 0))
+        tiles = int(params.get("num_compute_tiles", 1))
+        power = objs.get("power_watts", 0)
+        cost = objs.get("cost_usd", 0)
+        acc = objs.get("accuracy_percent", meta.get("accuracy_percent", 0))
+        capw = objs.get("capability_per_watt", meta.get("capability_per_watt", 0))
+        runtime = meta.get("runtime", "?")
+        quant = meta.get("quantization_dtype", "fp16")
+        pruning = meta.get("pruning_ratio", 0)
+        detector = f"{meta.get('model_family', '?')}/{meta.get('model_variant', '?')}"
+        tracker = meta.get("tracker_type", "none")
+        utilization = meta.get("effective_utilization", 0)
+
+        lines.append(f"### {label}")
+        lines.append(f"*{desc}*")
+        lines.append("")
+
+        # Core description
+        array_macs = rows * cols * tiles
+        lines.append(
+            f"A {process}nm design with {rows}×{cols} systolic array "
+            f"({array_macs} MACs across {tiles} tile{'s' if tiles > 1 else ''}), "
+            f"clocked at {clock:.0f} MHz with {sram} KB on-chip SRAM. "
+            f"Runs {detector} via {runtime} "
+            f"({'with' if meta.get('graph_fusion') else 'without'} graph fusion) "
+            f"at {quant} precision."
+        )
+        lines.append("")
+
+        # Why this design is on the Pareto front
+        lines.append(
+            "**Why it's Pareto-optimal:** ",
+        )
+        if key == "best_efficiency":
+            lines[-1] += (
+                f"Achieves the highest capability-per-watt ({capw:.4f}) by "
+                f"balancing accuracy ({acc:.0f}%) against power ({power:.1f}W). "
+            )
+        elif key == "most_accurate":
+            lines[-1] += (
+                f"Reaches the highest accuracy ({acc:.0f}%) at the cost of "
+                f"higher power ({power:.1f}W) and cost (${cost:,.0f}). "
+            )
+        elif key == "lowest_power":
+            lines[-1] += (
+                f"Minimizes power to {power:.1f}W, but at reduced accuracy "
+                f"({acc:.0f}%). Good for battery-powered {mission.split()[0]}s "
+                f"where runtime matters more than peak performance. "
+            )
+        elif key == "lowest_cost":
+            lines[-1] += (
+                f"Cheapest to manufacture (${cost:,.0f}/unit) using a mature "
+                f"process node. Suitable for high-volume production. "
+            )
+        else:
+            lines[-1] += (
+                f"Balances power ({power:.1f}W), accuracy ({acc:.0f}%), "
+                f"and cost (${cost:,.0f}). "
+            )
+
+        # Physical observations / warnings
+        observations: list[str] = []
+
+        # Clock vs process sanity
+        # Typical max clocks: 2nm~3GHz, 7nm~2GHz, 16nm~1.5GHz, 28nm~1GHz
+        _typical_max = {
+            2: 3000,
+            3: 2800,
+            5: 2500,
+            7: 2000,
+            10: 1800,
+            12: 1600,
+            14: 1500,
+            16: 1500,
+            22: 1200,
+            28: 1000,
+        }
+        typical_max = _typical_max.get(process, 800)
+        if clock < typical_max * 0.2:
+            observations.append(
+                f"Clock ({clock:.0f} MHz) is very low for {process}nm "
+                f"(typical range: {typical_max * 0.3:.0f}–{typical_max:.0f} MHz). "
+                f"This wastes the speed advantage of the process node — "
+                f"a mature node at higher clock may be more cost-effective."
+            )
+        elif clock > typical_max * 0.95:
+            observations.append(
+                f"Clock ({clock:.0f} MHz) is near the limit for {process}nm. "
+                f"Timing closure may be challenging; consider a faster process "
+                f"node or lower clock target."
+            )
+
+        # Array size vs SRAM bandwidth
+        total_macs = rows * cols * tiles
+        if total_macs > 256 and utilization < 0.4:
+            observations.append(
+                f"Large array ({rows}×{cols}×{tiles} = {total_macs} MACs) "
+                f"but only {utilization:.0%} utilization suggests the array "
+                f"is starved for data. Consider more SRAM, wider NoC, or "
+                f"smaller array."
+            )
+
+        # Aggressive quantization/pruning
+        if quant == "int4" and acc < 30:
+            observations.append(
+                f"INT4 quantization with {acc:.0f}% accuracy — this aggressive "
+                f"quantization likely degrades accuracy beyond acceptable limits "
+                f"for most perception tasks. Consider INT8 for better "
+                f"accuracy/efficiency tradeoff."
+            )
+        if pruning > 0.5 and acc < 30:
+            observations.append(
+                f"Pruning at {pruning:.0%} with only {acc:.0f}% accuracy — "
+                f"the model has been pruned beyond its effective capacity. "
+                f"Reduce pruning to <30% for meaningful accuracy."
+            )
+
+        # No tracker for drone perception
+        if tracker == "none" and "drone" in mission.lower():
+            observations.append(
+                "No object tracker selected. Drone perception typically "
+                "requires multi-frame tracking (ByteTrack, SORT, DeepSORT) "
+                "to maintain object identity across frames and handle "
+                "ego-motion. This design would need to add tracking "
+                "in post-processing."
+            )
+
+        # Cost vs process
+        if process <= 5 and cost > 10000:
+            observations.append(
+                f"At {process}nm, NRE costs dominate — mask sets alone cost "
+                f"$25M+ at this node. Unit cost of ${cost:,.0f} assumes "
+                f"moderate volume; this only makes sense for high-volume "
+                f"production or applications where performance justifies "
+                f"the premium."
+            )
+
+        if observations:
+            lines.append("")
+            lines.append("**Observations:**")
+            for obs in observations:
+                lines.append(f"- {obs}")
+
+        lines.append("")
+
+    return lines
+
+
+# ---------------------------------------------------------------------------
+# Recommendation detail
+# ---------------------------------------------------------------------------
+
+
+def _build_recommendation_detail(selected: dict, state: dict) -> list[str]:
+    """Build the recommended design section."""
+    objs = selected.get("objectives", {})
+    meta = selected.get("metadata", {})
+    mission = state.get("mission_description", "")
+
+    power = objs.get("power_watts", 0)
+    latency = objs.get("latency_ms", 0)
+    acc = objs.get("accuracy_percent", meta.get("accuracy_percent", 0))
+
+    lines = [
+        "## Recommendation",
+        "",
+        "Based on the exploration, the **balanced design** (★) is recommended "
+        "as the starting point. ",
+    ]
+
+    # Mission-specific guidance
+    if "10w" in mission.lower() or "10 w" in mission.lower():
+        if power <= 10:
+            lines[-1] += f"It meets the 10W power budget at {power:.1f}W."
+        else:
+            lines[-1] += (
+                f"**Warning:** at {power:.1f}W it exceeds the 10W budget. "
+                f"Consider the Lowest Power alternative."
+            )
+
+    lines.extend(
+        [
+            "",
+            "**Next steps:**",
+            f"- If accuracy ({acc:.0f}%) is insufficient, move toward the "
+            f"Most Accurate design (larger model, less pruning, higher precision)",
+            f"- If power ({power:.1f}W) must be reduced further, move toward the "
+            f"Lowest Power design (smaller model, more aggressive quantization)",
+            f"- If latency ({latency:.1f}ms) is critical, enable graph fusion "
+            f"and use TensorRT/TVM for higher utilization",
+            "- Run with `--max-iterations 5` for deeper exploration "
+            "(more evaluations, tighter convergence)",
+        ]
+    )
+
+    return lines
+
+
+# ---------------------------------------------------------------------------
+# Glossary
+# ---------------------------------------------------------------------------
+
+
+def _build_glossary() -> list[str]:
+    """Appendix: brief definitions of key terms."""
+    return [
+        "",
+        "## Glossary",
+        "",
+        "- **Capability/watt (cap/watt):** Intelligence per watt — "
+        "(accuracy / 100) / power. The primary optimization target: "
+        "how much useful perception you get per watt of power.",
+        "- **Pareto front:** The set of designs where no design is "
+        "strictly better than another in all objectives simultaneously. "
+        "Moving along the front always involves giving up something "
+        "to gain something else.",
+        "- **Systolic array:** A grid of multiply-accumulate (MAC) units "
+        "that data flows through in a pipeline. Larger arrays = more "
+        "parallel compute, but need proportionally more memory bandwidth "
+        "to stay fed.",
+        "- **Quantization:** Reducing the numerical precision of model weights "
+        "and activations (FP32 → FP16 → INT8 → INT4). Each step roughly "
+        "halves memory and bandwidth requirements but may reduce accuracy.",
+        "- **Graph fusion:** Compiler optimization that merges consecutive "
+        "operations (e.g., Conv + BatchNorm + ReLU) into a single kernel, "
+        "eliminating intermediate memory reads/writes.",
+        "- **mAP (mean Average Precision):** Standard accuracy metric for "
+        "object detection, measuring how well the model identifies and "
+        "localizes objects across confidence thresholds.",
+        "- **Pruning:** Removing redundant weights from a neural network. "
+        "Reduces compute and memory requirements at the cost of accuracy.",
+        "- **Reticle limit:** Maximum die size imposed by the lithographic "
+        "exposure field (~26×33mm). Dies larger than this cannot be "
+        "manufactured with standard single-exposure lithography.",
+        "",
+    ]
 
 
 def iterate_node(state: OptimizationLoopState) -> dict:
