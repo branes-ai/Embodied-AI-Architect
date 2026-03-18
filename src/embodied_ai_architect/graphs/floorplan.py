@@ -32,6 +32,14 @@ ALU_AREA_5NM = 0.0001  # ~100 um² for a single MAC at 5nm
 SYSTOLIC_MULT = 1.5  # Systolic cell overhead (control, pipeline regs)
 VECTOR_MULT = 2.0  # Vector unit per-lane overhead
 
+# Maximum die edge length dictated by lithographic reticle size.
+# Modern scanners (ASML TWINSCAN NXT/NXE) have a 26mm × 33mm exposure field.
+# The largest square die that fits is ~26mm × 26mm ≈ 676mm².
+# Rectangular dies can reach ~26mm × 33mm ≈ 858mm².
+# We use the conservative square limit as the default.
+RETICLE_MAX_EDGE_MM = 26.0
+RETICLE_MAX_AREA_MM2 = RETICLE_MAX_EDGE_MM**2  # ~676 mm²
+
 
 # ---------------------------------------------------------------------------
 # Models
@@ -335,11 +343,15 @@ def estimate_floorplan(
             "Consider: reduce array_rows/cols or SRAM sizes."
         )
 
-    # Reticle limit check (~33mm edge)
-    if die_edge > 33.0:
-        issues.append(f"Die edge {die_edge:.1f}mm exceeds reticle limit (~33mm).")
+    # Reticle limit check
+    if die_edge > RETICLE_MAX_EDGE_MM:
+        issues.append(
+            f"Die edge {die_edge:.1f}mm exceeds reticle limit "
+            f"({RETICLE_MAX_EDGE_MM}mm). Area {total_area:.0f} mm² > "
+            f"{RETICLE_MAX_AREA_MM2:.0f} mm² max."
+        )
 
-    feasible = pitch_matched and area_ok and die_edge <= 33.0
+    feasible = pitch_matched and area_ok and die_edge <= RETICLE_MAX_EDGE_MM
 
     return FloorplanEstimate(
         compute_tile=compute_dims,

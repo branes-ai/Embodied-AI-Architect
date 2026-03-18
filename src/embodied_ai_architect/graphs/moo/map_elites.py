@@ -241,12 +241,30 @@ class MAPElites:
         return total
 
     def _try_place(self, result: EvaluationResult) -> bool:
-        """Try to place a result in the grid. Returns True if placed."""
+        """Try to place a result in the grid. Returns True if placed.
+
+        Feasible designs always beat infeasible ones regardless of fitness.
+        Among designs with the same feasibility, lower fitness wins.
+        """
         cell_key = self._feature_to_cell(result)
         fitness = self._fitness(result)
 
         existing = self._grid.get(cell_key)
-        if existing is None or fitness < existing.fitness:
+        if existing is None:
+            self._grid[cell_key] = MAPElitesCell(result=result, fitness=fitness)
+            return True
+
+        # Feasible designs always replace infeasible ones
+        new_feasible = result.feasible
+        old_feasible = existing.result.feasible
+        if new_feasible and not old_feasible:
+            self._grid[cell_key] = MAPElitesCell(result=result, fitness=fitness)
+            return True
+        if not new_feasible and old_feasible:
+            return False
+
+        # Same feasibility: lower fitness wins
+        if fitness < existing.fitness:
             self._grid[cell_key] = MAPElitesCell(result=result, fitness=fitness)
             return True
         return False
@@ -320,6 +338,7 @@ class MAPElites:
             grid_cells[cell_key] = {
                 "design_params": cell.result.design_params,
                 "objectives": cell.result.objectives,
+                "metadata": cell.result.metadata,
                 "feasible": cell.result.feasible,
                 "fitness": cell.fitness,
             }
@@ -338,6 +357,7 @@ class MAPElites:
                 best_per_obj[obj_name] = {
                     "design_params": best.result.design_params,
                     "objectives": best.result.objectives,
+                    "metadata": best.result.metadata,
                     "value": best_val,
                 }
 
@@ -347,6 +367,7 @@ class MAPElites:
             {
                 "design_params": c.result.design_params,
                 "objectives": c.result.objectives,
+                "metadata": c.result.metadata,
                 "feasible": c.result.feasible,
             }
             for c in all_cells[:50]  # Top 50 for seeding BO

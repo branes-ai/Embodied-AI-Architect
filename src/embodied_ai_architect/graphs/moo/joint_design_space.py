@@ -533,6 +533,13 @@ class JointEvaluator:
             if not sat:
                 feasible = False
 
+        # Hard physical constraint: reticle limit
+        from embodied_ai_architect.graphs.floorplan import RETICLE_MAX_AREA_MM2
+
+        if raw_area > RETICLE_MAX_AREA_MM2:
+            feasible = False
+            constraints_satisfied["reticle_limit"] = False
+
         return EvaluationResult(
             design_params=params,
             objectives=objectives,

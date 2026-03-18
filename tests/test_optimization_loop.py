@@ -243,6 +243,22 @@ class TestEndToEnd:
         assert "Compiler" in report
         assert "Capability/watt" in report or "capability_per_watt" in report.lower()
 
+    def test_report_contains_comparison_table(self):
+        """Report should include a multi-design comparison table."""
+        result = run_optimization_loop(
+            mission_description="Drone perception at 5 m/s",
+            max_iterations=1,
+            llm_available=False,
+        )
+        report = result.get("final_report", "")
+        assert "Design Comparison" in report
+        assert "★" in report
+        # Table should have structured rows for key attributes
+        assert "Process" in report
+        assert "Detector" in report
+        assert "Runtime" in report
+        assert "Cap/watt" in report
+
 
 # ---------------------------------------------------------------------------
 # CLI test

@@ -511,10 +511,11 @@ def _build_recommendation(
     analysis: str,
     citations: list[str],
 ) -> dict:
-    """Build the final recommendation output."""
-    objs = selected.get("objectives", {})
-    meta = selected.get("metadata", {})
-    params = selected.get("design_params", {})
+    """Build the final recommendation output with a 5-design comparison table."""
+    pareto = state.get("pareto_front", [])
+
+    # --- Select 5 designs: 2 above knee, knee, 2 below (sorted by cap/watt) ---
+    showcase = _select_showcase_designs(pareto, selected)
 
     report_lines = [
         f"# Optimization Report: {state.get('mission_description', '')}",
@@ -523,41 +524,57 @@ def _build_recommendation(
         f"- Sub-capabilities: {len(state.get('sub_capabilities', []))}",
         f"- Total evaluations: {state.get('total_evaluations', 0)}",
         f"- Iterations: {state.get('iteration', 0) + 1}",
-        f"- Pareto front size: {len(state.get('pareto_front', []))}",
-        "",
-        "## Recommended Design",
-        "",
-        "### Hardware",
-        f"- Process: {params.get('process_nm', '?')}nm",
-        f"- Clock: {params.get('clock_mhz', 0)} MHz",
-        f"- Array: {params.get('array_rows', '?')}x{params.get('array_cols', '?')}",
-        f"- SRAM: {params.get('sram_kb', '?')} KB",
-        f"- Tiles: {params.get('num_compute_tiles', '?')}",
-        "",
-        "### Pipeline",
-        f"- Detector: {meta.get('model_family', '?')}/{meta.get('model_variant', '?')}",
-        f"- Tracker: {meta.get('tracker_type', '?')}",
-        f"- State estimator: {meta.get('state_estimator', '?')}",
-        "",
-        "### Compiler",
-        f"- Runtime: {meta.get('runtime', '?')}",
-        f"- Quantization: {meta.get('quantization_dtype', '?')}",
-        f"- Pruning: {meta.get('pruning_ratio', 0):.0%}",
-        f"- Graph fusion: {meta.get('graph_fusion', '?')}",
-        f"- Utilization: {meta.get('effective_utilization', 0):.0%}",
-        "",
-        "### Objectives",
-        f"- Power: {objs.get('power_watts', 0):.2f} W",
-        f"- Latency: {objs.get('latency_ms', 0):.2f} ms",
-        f"- Area: {objs.get('area_mm2', 0):.2f} mm2",
-        f"- Cost: ${objs.get('cost_usd', 0):.2f}",
-        f"- Accuracy: {objs.get('accuracy_percent', meta.get('accuracy_percent', 0)):.1f}%",
-        f"- Capability/watt: {objs.get('capability_per_watt', meta.get('capability_per_watt', 0)):.4f}",
-        "",
-        "## Analysis",
-        analysis or state.get("analysis", ""),
+        f"- Pareto front size: {len(pareto)}",
         "",
     ]
+
+    # --- Comparison table: 5 designs side-by-side ---
+    report_lines.append("## Design Comparison (Pareto Front)")
+    report_lines.append("")
+    report_lines.extend(_format_comparison_table(showcase, selected))
+    report_lines.append("")
+
+    # --- Recommended design detail ---
+    objs = selected.get("objectives", {})
+    meta = selected.get("metadata", {})
+    params = selected.get("design_params", {})
+
+    report_lines.extend(
+        [
+            "## Recommended Design (★)",
+            "",
+            "### Hardware",
+            f"- Process: {params.get('process_nm', '?')}nm",
+            f"- Clock: {params.get('clock_mhz', 0):.0f} MHz",
+            f"- Systolic array: {params.get('array_rows', '?')}×{params.get('array_cols', '?')}",
+            f"- SRAM: {params.get('sram_kb', '?')} KB",
+            f"- Compute tiles: {params.get('num_compute_tiles', '?')}",
+            "",
+            "### Perception Pipeline",
+            f"- Detector: {meta.get('model_family', '?')}/{meta.get('model_variant', '?')}",
+            f"- Tracker: {meta.get('tracker_type', '?')}",
+            f"- State estimator: {meta.get('state_estimator', '?')}",
+            "",
+            "### Compiler & Runtime",
+            f"- Runtime: {meta.get('runtime', '?')}",
+            f"- Quantization: {meta.get('quantization_dtype', '?')}",
+            f"- Pruning ratio: {meta.get('pruning_ratio', 0):.0%}",
+            f"- Graph fusion: {'yes' if meta.get('graph_fusion') else 'no'}",
+            f"- HW utilization: {meta.get('effective_utilization', 0):.0%}",
+            "",
+            "### Achieved Objectives",
+            f"- Power: {objs.get('power_watts', 0):.2f} W",
+            f"- Latency: {objs.get('latency_ms', 0):.2f} ms",
+            f"- Area: {objs.get('area_mm2', 0):.2f} mm²",
+            f"- Cost: ${objs.get('cost_usd', 0):.2f}",
+            f"- Accuracy: {objs.get('accuracy_percent', meta.get('accuracy_percent', 0)):.1f}%",
+            f"- Capability/watt: {objs.get('capability_per_watt', meta.get('capability_per_watt', 0)):.4f}",
+            "",
+            "## Analysis",
+            analysis or state.get("analysis", ""),
+            "",
+        ]
+    )
 
     if citations:
         report_lines.append("## Research Citations")
@@ -581,6 +598,237 @@ def _build_recommendation(
         "research_citations": citations,
         "final_report": "\n".join(report_lines),
     }
+
+
+def _select_showcase_designs(
+    pareto: list[dict], selected: dict, n_above: int = 2, n_below: int = 2
+) -> list[tuple[str, dict]]:
+    """Pick designs from the Pareto front centered on the selected (knee) design.
+
+    Returns a list of (label, design) tuples sorted by capability/watt descending.
+    The selected design is labelled "★", others are numbered.
+    """
+    if not pareto:
+        return [("★", selected)]
+
+    def _cap_watt(p: dict) -> float:
+        o = p.get("objectives", {})
+        return o.get("capability_per_watt", p.get("metadata", {}).get("capability_per_watt", 0))
+
+    # Sort Pareto front by capability/watt descending (best first)
+    ranked = sorted(pareto, key=_cap_watt, reverse=True)
+
+    # Find index of the selected design in the ranked list
+    sel_idx = 0
+    for i, p in enumerate(ranked):
+        if p is selected or p.get("design_params") == selected.get("design_params"):
+            sel_idx = i
+            break
+
+    # Window: n_above designs above the knee, n_below below
+    start = max(0, sel_idx - n_above)
+    end = min(len(ranked), sel_idx + n_below + 1)
+
+    # Adjust window if near edges
+    if end - start < n_above + n_below + 1:
+        if start == 0:
+            end = min(len(ranked), n_above + n_below + 1)
+        elif end == len(ranked):
+            start = max(0, len(ranked) - n_above - n_below - 1)
+
+    showcase = []
+    design_num = 1
+    for i in range(start, end):
+        p = ranked[i]
+        is_selected = p is selected or p.get("design_params") == selected.get("design_params")
+        label = "★" if is_selected else str(design_num)
+        if not is_selected:
+            design_num += 1
+        showcase.append((label, p))
+
+    # If selected wasn't in pareto (shouldn't happen), prepend it
+    if not any(label == "★" for label, _ in showcase):
+        showcase.insert(len(showcase) // 2, ("★", selected))
+
+    return showcase
+
+
+def _format_comparison_table(showcase: list[tuple[str, dict]], selected: dict) -> list[str]:
+    """Format the 5-design comparison as a markdown table."""
+    lines: list[str] = []
+
+    # Column headers
+    headers = ["Attribute"] + [label for label, _ in showcase]
+    sep = ["-" * max(len(h), 3) for h in headers]
+
+    def _row(name: str, values: list[str]) -> str:
+        cells = [name] + values
+        return "| " + " | ".join(cells) + " |"
+
+    lines.append("| " + " | ".join(headers) + " |")
+    lines.append("| " + " | ".join(sep) + " |")
+
+    # --- Hardware ---
+    lines.append(
+        _row(
+            "**Hardware**",
+            [""] * len(showcase),
+        )
+    )
+    lines.append(
+        _row(
+            "Process",
+            [f"{d.get('design_params', {}).get('process_nm', '?')}nm" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Clock",
+            [f"{d.get('design_params', {}).get('clock_mhz', 0):.0f} MHz" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Array",
+            [
+                f"{d.get('design_params', {}).get('array_rows', '?')}"
+                f"×{d.get('design_params', {}).get('array_cols', '?')}"
+                for _, d in showcase
+            ],
+        )
+    )
+    lines.append(
+        _row(
+            "SRAM",
+            [f"{d.get('design_params', {}).get('sram_kb', '?')} KB" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Tiles",
+            [f"{d.get('design_params', {}).get('num_compute_tiles', '?')}" for _, d in showcase],
+        )
+    )
+
+    # --- Pipeline ---
+    lines.append(
+        _row(
+            "**Pipeline**",
+            [""] * len(showcase),
+        )
+    )
+    lines.append(
+        _row(
+            "Detector",
+            [
+                f"{d.get('metadata', {}).get('model_family', '?')}"
+                f"/{d.get('metadata', {}).get('model_variant', '?')}"
+                for _, d in showcase
+            ],
+        )
+    )
+    lines.append(
+        _row(
+            "Tracker",
+            [f"{d.get('metadata', {}).get('tracker_type', '?')}" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "State est.",
+            [f"{d.get('metadata', {}).get('state_estimator', '?')}" for _, d in showcase],
+        )
+    )
+
+    # --- Compiler ---
+    lines.append(
+        _row(
+            "**Compiler**",
+            [""] * len(showcase),
+        )
+    )
+    lines.append(
+        _row(
+            "Runtime",
+            [f"{d.get('metadata', {}).get('runtime', '?')}" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Quantization",
+            [f"{d.get('metadata', {}).get('quantization_dtype', '?')}" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Pruning",
+            [f"{d.get('metadata', {}).get('pruning_ratio', 0):.0%}" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Graph fusion",
+            ["yes" if d.get("metadata", {}).get("graph_fusion") else "no" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Utilization",
+            [f"{d.get('metadata', {}).get('effective_utilization', 0):.0%}" for _, d in showcase],
+        )
+    )
+
+    # --- Objectives ---
+    lines.append(
+        _row(
+            "**Objectives**",
+            [""] * len(showcase),
+        )
+    )
+    lines.append(
+        _row(
+            "Power",
+            [f"{d.get('objectives', {}).get('power_watts', 0):.2f} W" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Latency",
+            [f"{d.get('objectives', {}).get('latency_ms', 0):.2f} ms" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Area",
+            [f"{d.get('objectives', {}).get('area_mm2', 0):.2f} mm²" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Cost",
+            [f"${d.get('objectives', {}).get('cost_usd', 0):.2f}" for _, d in showcase],
+        )
+    )
+    lines.append(
+        _row(
+            "Accuracy",
+            [
+                f"{d.get('objectives', {}).get('accuracy_percent', d.get('metadata', {}).get('accuracy_percent', 0)):.1f}%"
+                for _, d in showcase
+            ],
+        )
+    )
+    lines.append(
+        _row(
+            "**Cap/watt**",
+            [
+                f"**{d.get('objectives', {}).get('capability_per_watt', d.get('metadata', {}).get('capability_per_watt', 0)):.4f}**"
+                for _, d in showcase
+            ],
+        )
+    )
+
+    return lines
 
 
 def iterate_node(state: OptimizationLoopState) -> dict:
