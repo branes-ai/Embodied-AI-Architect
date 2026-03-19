@@ -159,17 +159,16 @@ class TestEvaluatorWithAccuracy:
         # Should use the explicit model accuracy (possibly adjusted for dtype)
         assert result.objectives["accuracy_percent"] == pytest.approx(44.9, abs=0.5)
 
-    def test_error_returns_zero_accuracy(self):
+    def test_invalid_params_returns_infeasible(self):
         ds = create_soc_design_space({"include_accuracy": True})
         evaluator = DesignEvaluator(
             design_space=ds,
             base_state={},
             constraint_bounds={},
         )
-        # Pass completely invalid params that cause evaluation to fail
+        # Invalid params produce absurd area — reticle limit marks infeasible
         result = evaluator.evaluate({"process_nm": -999, "clock_mhz": -1})
-        if not result.feasible:
-            assert result.objectives.get("accuracy_percent", 0.0) == 0.0
+        assert result.feasible is False
 
     def test_feasibility_includes_accuracy_constraint(self):
         ds = create_soc_design_space(
