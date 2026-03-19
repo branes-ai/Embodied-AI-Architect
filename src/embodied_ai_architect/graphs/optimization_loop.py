@@ -679,6 +679,12 @@ def _build_executive_summary(
         )
         for _, _, _, d in archetypes
     ]
+    capws = [
+        d.get("objectives", {}).get(
+            "capability_per_watt", d.get("metadata", {}).get("capability_per_watt", 0)
+        )
+        for _, _, _, d in archetypes
+    ]
 
     lines = [
         f"# Design Exploration: {mission}",
@@ -689,15 +695,26 @@ def _build_executive_summary(
         f"**{mission}** on a {platform} platform, producing {n_pareto} "
         f"Pareto-optimal designs where no single design dominates all others.",
         "",
-        f"The design space reveals a fundamental tension: across the Pareto "
-        f"front, power ranges from {min(powers):.1f}W to {max(powers):.1f}W "
-        f"while accuracy ranges from {min(accs):.0f}% to {max(accs):.0f}%. "
-        f"Higher accuracy demands larger models and more compute, which "
-        f"directly increases power and cost.",
+        "Throughout this report, the primary optimization metric is "
+        "**capability per watt** (cap/watt): the ratio of detection accuracy "
+        "to power consumption, computed as (accuracy / 100) / power_watts. "
+        'It answers the question *"how much useful perception do I get for '
+        'each watt of power?"* Higher is better — a design with 50% accuracy '
+        "at 5W scores 0.10, while 50% accuracy at 2.5W scores 0.20 "
+        "(twice as power-efficient for the same capability). "
+        f"Across the Pareto front explored here, cap/watt ranges from "
+        f"**{min(capws):.4f}** to **{max(capws):.4f}**.",
+        "",
+        f"The design space reveals a fundamental tension: power ranges from "
+        f"{min(powers):.1f}W to {max(powers):.1f}W while accuracy ranges "
+        f"from {min(accs):.0f}% to {max(accs):.0f}%. Higher accuracy demands "
+        f"larger models and more compute, which directly increases power and "
+        f"cost. The optimizer seeks designs that maximize the accuracy gained "
+        f"per watt spent.",
         "",
         f"The recommended balanced design uses a **{process}nm** process at "
-        f"**{power:.1f}W**, achieving **{acc:.0f}% accuracy** with a "
-        f"capability-per-watt of **{capw:.4f}** and **{latency:.1f}ms** "
+        f"**{power:.1f}W**, achieving **{acc:.0f}% accuracy** "
+        f"(cap/watt = **{capw:.4f}**) with **{latency:.1f}ms** "
         f"inference latency.",
         "",
     ]
