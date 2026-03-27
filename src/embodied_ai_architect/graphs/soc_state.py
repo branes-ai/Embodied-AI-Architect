@@ -305,6 +305,13 @@ class SoCDesignState(TypedDict, total=False):
     governance: dict  # GovernancePolicy serialized
     audit_log: list[dict]  # AuditEntry list
 
+    # === Human Review ===
+    review_snapshot: dict  # PlanReviewSnapshot serialized (for display)
+    review_input: dict  # PlanReviewInput serialized (human edits)
+    human_review_enabled: bool  # Toggle for review nodes
+    optimization_review_snapshot: dict  # OptimizationReviewSnapshot for display
+    optimization_steering: dict  # OptimizationSteeringInput from human
+
     # === Control ===
     next_action: str  # Graph routing signal (node name to execute next)
     status: str  # DesignStatus value
@@ -395,6 +402,12 @@ def create_initial_soc_state(
         optimization_history=[],
         governance=governance or {},
         audit_log=[],
+        # Human Review
+        review_snapshot={},
+        review_input={},
+        human_review_enabled=False,
+        optimization_review_snapshot={},
+        optimization_steering={},
         # Control
         next_action="planner",
         status=DesignStatus.PLANNING.value,

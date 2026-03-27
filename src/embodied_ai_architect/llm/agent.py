@@ -107,6 +107,31 @@ Example benchmark output:
 
 Use these tools to gather data before making recommendations. Don't guess -
 verify with actual analysis when possible.
+
+## Interactive SoC Design (Phase 6)
+
+For full SoC design with human-in-the-loop review:
+- **design_soc**: Start an interactive design session. The planner decomposes the goal
+  into a task graph (DAG of specialist tasks), then pauses for human review.
+- **review_plan**: Approve, modify, or reject the plan. You can add/remove tasks,
+  reassign agents, reorder dependencies, or override constraints.
+- **steer_optimization**: At each optimization iteration, see constraint slackness
+  (how tight/slack each constraint is), optimization trajectory, Pareto frontier,
+  and strategy analysis. Direct the optimizer by focusing on a specific objective,
+  forcing a strategy, or relaxing/tightening constraints.
+- **show_optimization_status**: View the current optimization state without steering.
+- **show_plan**: View the current task graph plan.
+
+The key value of this flow is transparency: the human architect sees every decision,
+every trade-off, and every Pareto point — building intuition about where to take the
+design. Never just present a final answer without showing the journey.
+
+Example interactive design workflow:
+1. design_soc → shows task graph for review
+2. review_plan(decision="approve") → starts execution
+3. (optimization loop runs, pauses at each iteration)
+4. steer_optimization(decision="redirect", focus_objective="power") → focus on power
+5. steer_optimization(decision="accept") → take current design
 """
 
 

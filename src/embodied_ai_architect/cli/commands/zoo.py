@@ -192,15 +192,24 @@ def download(ctx, model_id, format_, provider, force):
 @click.option("--cached", is_flag=True, help="List cached models only")
 @click.option("--provider", help="Filter by provider")
 @click.option("--format", "-f", "format_", help="Filter by format")
+@click.option("--task", "-t", help="Filter by task (detection, classification, segmentation, pose)")
+@click.option("--name", "-n", "name_filter", help="Filter by name (substring match)")
+@click.option("--min-params", type=int, help="Minimum parameters (e.g., 1000000)")
+@click.option("--max-params", type=int, help="Maximum parameters (e.g., 50000000)")
 @click.pass_context
-def list_models(ctx, cached, provider, format_):
+def list_models(ctx, cached, provider, format_, task, name_filter, min_params, max_params):
     """List available or cached models.
 
     \\b
     Examples:
-      branes zoo list              # List all available models
-      branes zoo list --cached     # List downloaded models
+      branes zoo list                          # List all available models
+      branes zoo list --cached                 # List downloaded models
       branes zoo list --provider ultralytics
+      branes zoo list -t detection             # Detection models only
+      branes zoo list -t classification        # Classification models only
+      branes zoo list -n yolo                  # Name contains "yolo"
+      branes zoo list --min-params 1000000 --max-params 10000000  # 1M-10M params
+      branes zoo list -t detection -n yolo --max-params 5000000   # Combined filters
     """
     json_output = ctx.obj.get("json", False)
 
@@ -212,6 +221,13 @@ def list_models(ctx, cached, provider, format_):
         cache = ModelCache()
         format_enum = ModelFormat(format_.lower()) if format_ else None
         entries = cache.list(provider=provider, format=format_enum)
+
+        # Apply client-side filters to cached entries
+        if task:
+            entries = [e for e in entries if task.lower() in e.model_id.lower()]
+        if name_filter:
+            name_lower = name_filter.lower()
+            entries = [e for e in entries if name_lower in e.model_id.lower()]
 
         if json_output:
             output = [
@@ -254,14 +270,28 @@ def list_models(ctx, cached, provider, format_):
             console.print(table)
             console.print(f"\n[dim]Total cache size: {total_size / (1024 * 1024):.1f} MB[/dim]")
     else:
-        # List available models
+        # List available models with filtering
         from embodied_ai_architect.model_zoo.discovery import ModelDiscoveryService
         from embodied_ai_architect.model_zoo.providers.base import ModelQuery
 
         service = ModelDiscoveryService()
-        query = ModelQuery(provider=provider) if provider else None
+        query = ModelQuery(
+            task=task,
+            provider=provider,
+            min_params=min_params,
+            max_params=max_params,
+            query=name_filter,
+        )
         providers = [provider] if provider else None
         candidates = service.discover(query, providers)
+
+        # Additional client-side name filter (query may do fuzzy matching,
+        # but --name should be a strict substring match)
+        if name_filter:
+            name_lower = name_filter.lower()
+            candidates = [
+                c for c in candidates if name_lower in c.id.lower() or name_lower in c.name.lower()
+            ]
 
         if json_output:
             output = [
@@ -277,7 +307,17 @@ def list_models(ctx, cached, provider, format_):
             click.echo(json.dumps({"models": output}, indent=2))
         else:
             if not candidates:
-                console.print("[yellow]No models available.[/yellow]")
+                filters = []
+                if task:
+                    filters.append(f"task={task}")
+                if name_filter:
+                    filters.append(f"name~{name_filter}")
+                if min_params:
+                    filters.append(f"min_params={min_params:,}")
+                if max_params:
+                    filters.append(f"max_params={max_params:,}")
+                filter_str = f" ({', '.join(filters)})" if filters else ""
+                console.print(f"[yellow]No models found{filter_str}.[/yellow]")
                 return
 
             table = Table(title=f"Available Models ({len(candidates)})")

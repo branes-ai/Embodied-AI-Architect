@@ -120,6 +120,24 @@ except ImportError:
         return {}
 
 
+# Import SoC design tools (interactive design with human review)
+try:
+    from .soc_design_tools import (
+        get_soc_design_tool_definitions,
+        create_soc_design_tool_executors,
+    )
+
+    HAS_SOC_DESIGN = True
+except ImportError:
+    HAS_SOC_DESIGN = False
+
+    def get_soc_design_tool_definitions() -> list[dict[str, Any]]:
+        return []
+
+    def create_soc_design_tool_executors() -> dict[str, Callable]:
+        return {}
+
+
 def get_tool_definitions() -> list[dict[str, Any]]:
     """Get tool definitions in Anthropic's tool format.
 
@@ -350,6 +368,10 @@ def get_tool_definitions() -> list[dict[str, Any]]:
     if HAS_DECOMPOSITION:
         base_tools.extend(get_decomposition_tool_definitions())
 
+    # Add SoC design tools if available
+    if HAS_SOC_DESIGN:
+        base_tools.extend(get_soc_design_tool_definitions())
+
     return base_tools
 
 
@@ -578,5 +600,9 @@ def create_tool_executors() -> dict[str, Callable]:
     # Add decomposition executors if available
     if HAS_DECOMPOSITION:
         executors.update(create_decomposition_tool_executors())
+
+    # Add SoC design executors if available
+    if HAS_SOC_DESIGN:
+        executors.update(create_soc_design_tool_executors())
 
     return executors

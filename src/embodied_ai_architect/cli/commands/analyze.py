@@ -34,6 +34,13 @@ def analyze(ctx, model_path, input_shape):
             console.print(f"\n[cyan]Analyzing model:[/cyan] {model_path}")
 
         model = torch.load(model_path, weights_only=False)
+
+        # Handle checkpoint dicts (e.g. ultralytics YOLO .pt files)
+        if isinstance(model, dict):
+            from embodied_ai_architect.agents.model_analyzer import _extract_model_from_checkpoint
+
+            model = _extract_model_from_checkpoint(model)
+
         model.eval()
 
         # Parse input shape if provided

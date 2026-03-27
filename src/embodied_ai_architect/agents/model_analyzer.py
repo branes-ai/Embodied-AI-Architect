@@ -39,7 +39,11 @@ class ModelAnalyzerAgent(BaseAgent):
 
             # Load model if it's a path string
             if isinstance(model, str):
-                model = torch.load(model)
+                model = torch.load(model, weights_only=False)
+
+            # Handle checkpoint dicts (e.g. ultralytics YOLO .pt files)
+            if isinstance(model, dict):
+                model = _extract_model_from_checkpoint(model)
 
             if not isinstance(model, nn.Module):
                 return AgentResult(
@@ -109,3 +113,34 @@ class ModelAnalyzerAgent(BaseAgent):
                 analysis["shape_inference_error"] = str(e)
 
         return analysis
+
+
+def _extract_model_from_checkpoint(checkpoint: dict) -> Any:
+    """Extract an nn.Module from a checkpoint dict.
+
+    Handles common checkpoint formats:
+    - Ultralytics YOLO: {"model": <nn.Module>, ...}
+    - Generic: {"model": <nn.Module>} or {"net": <nn.Module>}
+    - If no model found, returns the dict as-is (will fail validation upstream)
+    """
+    # Ultralytics format: model is stored under "model" key
+    for key in ("model", "net", "network"):
+        candidate = checkpoint.get(key)
+        if isinstance(candidate, nn.Module):
+            return candidate
+        # Some ultralytics versions wrap in another layer
+        if hasattr(candidate, "model") and isinstance(candidate.model, nn.Module):
+            return candidate.model
+        if hasattr(candidate, "float"):
+            # Ultralytics DetectionModel — call .float() to get usable module
+            try:
+                return candidate.float()
+            except Exception:
+                pass
+
+    # EMA model (ultralytics uses "ema" key)
+    ema = checkpoint.get("ema")
+    if isinstance(ema, nn.Module):
+        return ema
+
+    return checkpoint  # Let caller handle the error

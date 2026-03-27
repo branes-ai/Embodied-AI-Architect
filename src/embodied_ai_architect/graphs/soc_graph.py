@@ -4,8 +4,16 @@ Wraps the existing Dispatcher in a StateGraph that iterates until all PPA
 constraints are met or the iteration limit is reached.
 
 Two-level architecture:
-- Outer loop (this module): LangGraph StateGraph — planner → dispatch → evaluate → [optimize → loop | report → END]
+- Outer loop (this module): LangGraph StateGraph with optional human review:
+    planner → [plan_review] → dispatch → evaluate → [optimize → dispatch | report → END]
 - Inner loop (dispatcher.py): Dispatcher.run() walks the TaskGraph DAG of specialist agents
+
+When human_review=True, the graph includes a plan_review node between planner
+and dispatch that interrupts for human inspection and modification of the task graph.
+
+When optimization_review=True, the evaluate node is enhanced with an optimization
+transparency snapshot showing Pareto frontier, constraint slackness, trajectory,
+and strategy analysis — enabling human steering of the optimization loop.
 
 Usage:
     from embodied_ai_architect.graphs.soc_graph import build_soc_design_graph
@@ -14,8 +22,16 @@ Usage:
 
     dispatcher = create_default_dispatcher()
     planner = PlannerNode(static_plan=PLAN)
+
+    # Non-interactive (original behavior)
     graph = build_soc_design_graph(dispatcher=dispatcher, planner=planner)
     result = graph.invoke(initial_state)
+
+    # Interactive with human review
+    graph = build_soc_design_graph(
+        dispatcher=dispatcher, planner=planner,
+        human_review=True, optimization_review=True,
+    )
 """
 
 from __future__ import annotations
@@ -28,6 +44,8 @@ from embodied_ai_architect.graphs.dispatcher import Dispatcher
 from embodied_ai_architect.graphs.governance import GovernanceGuard
 from embodied_ai_architect.graphs.optimizer import design_optimizer
 from embodied_ai_architect.graphs.planner import PlannerNode
+from embodied_ai_architect.graphs.review import _make_plan_review_node
+from embodied_ai_architect.graphs.optimization_review import make_enhanced_evaluate_node
 from embodied_ai_architect.graphs.soc_state import (
     DesignStatus,
     SoCDesignState,
@@ -336,20 +354,21 @@ def build_soc_design_graph(
     experience_cache: Any = None,
     checkpointer: Any = None,
     interrupt_at_evaluate: bool = False,
+    human_review: bool = False,
+    optimization_review: bool = False,
+    available_agents: Optional[list[str]] = None,
 ) -> Any:
     """Build the LangGraph StateGraph for iterative SoC design.
 
-    Five nodes:
-    - planner: decomposes goal into task graph
-    - dispatch: runs Dispatcher.run() for the inner DAG
-    - evaluate: checks verdicts and governance limits
-    - optimize: applies optimization strategy
-    - report: generates final report
+    Base topology (5 nodes):
+        planner → dispatch → evaluate → [optimize → dispatch | report → END]
 
-    Routing:
-    - evaluate → optimize (FAIL + under limit)
-    - evaluate → report (PASS or over limit)
-    - optimize → dispatch (loop back for re-evaluation)
+    With human_review=True (6 nodes):
+        planner → plan_review → dispatch → evaluate → [optimize → dispatch | report → END]
+
+    With optimization_review=True, the evaluate node is enhanced with an
+    optimization transparency snapshot (constraint slackness, trajectory,
+    strategy analysis, Pareto frontier) stored in state for human inspection.
 
     Args:
         dispatcher: Pre-configured Dispatcher with registered agents.
@@ -359,26 +378,51 @@ def build_soc_design_graph(
         checkpointer: Optional LangGraph checkpointer for save/resume.
         interrupt_at_evaluate: If True, add interrupt_before on evaluate
             for HITL approval.
+        human_review: If True, add plan_review node between planner and
+            dispatch with interrupt_before for human inspection/editing.
+        optimization_review: If True, enhance evaluate node with rich
+            optimization transparency snapshot and steering support.
+        available_agents: Agent names for plan review validation. If None,
+            uses dispatcher.registered_agents.
 
     Returns:
         Compiled LangGraph StateGraph.
     """
     from langgraph.graph import END, StateGraph
 
+    if available_agents is None:
+        available_agents = dispatcher.registered_agents
+
     workflow = StateGraph(SoCDesignState)
 
     # Add nodes
     workflow.add_node("planner", _make_planner_node(planner))
     workflow.add_node("dispatch", _make_dispatch_node(dispatcher))
-    workflow.add_node("evaluate", _make_evaluate_node(governance))
     workflow.add_node("optimize", _make_optimize_node())
     workflow.add_node("report", _make_report_node(experience_cache))
+
+    # Evaluate node: enhanced or base
+    base_evaluate = _make_evaluate_node(governance)
+    if optimization_review:
+        evaluate_fn = make_enhanced_evaluate_node(base_evaluate)
+    else:
+        evaluate_fn = base_evaluate
+    workflow.add_node("evaluate", evaluate_fn)
+
+    # Optional plan review node
+    if human_review:
+        workflow.add_node("plan_review", _make_plan_review_node(available_agents))
 
     # Entry point
     workflow.set_entry_point("planner")
 
-    # Edges
-    workflow.add_edge("planner", "dispatch")
+    # Edges: planner → [plan_review →] dispatch
+    if human_review:
+        workflow.add_edge("planner", "plan_review")
+        workflow.add_edge("plan_review", "dispatch")
+    else:
+        workflow.add_edge("planner", "dispatch")
+
     workflow.add_edge("dispatch", "evaluate")
 
     # Conditional: evaluate → optimize or report
@@ -397,11 +441,17 @@ def build_soc_design_graph(
     # report → END
     workflow.add_edge("report", END)
 
-    # Compile
+    # Compile with interrupts
     compile_kwargs: dict[str, Any] = {}
     if checkpointer is not None:
         compile_kwargs["checkpointer"] = checkpointer
-    if interrupt_at_evaluate:
-        compile_kwargs["interrupt_before"] = ["evaluate"]
+
+    interrupt_nodes: list[str] = []
+    if human_review:
+        interrupt_nodes.append("plan_review")
+    if interrupt_at_evaluate or optimization_review:
+        interrupt_nodes.append("evaluate")
+    if interrupt_nodes:
+        compile_kwargs["interrupt_before"] = interrupt_nodes
 
     return workflow.compile(**compile_kwargs)
