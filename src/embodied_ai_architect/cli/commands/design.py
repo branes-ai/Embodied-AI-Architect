@@ -615,6 +615,142 @@ def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platfo
     console.print(render_plan_review_rich(snapshot))
 
 
+@design.command("qualify")
+@click.argument("goal")
+@click.option("--domain", "-d", help="Force a domain (drone, ugv, robot_arm)")
+@click.option(
+    "--auto",
+    is_flag=True,
+    help="Auto-answer with defaults where possible (non-interactive)",
+)
+@click.pass_context
+def design_qualify(ctx, goal, domain, auto):
+    """Qualify a design goal through structured Q&A.
+
+    Checks whether a goal is specific enough to produce meaningful design
+    results. If not, walks through domain-specific questions to refine it.
+
+    \\b
+    Examples:
+      branes design qualify "drone perception SoC"
+      branes design qualify "cobot for assembly" --domain robot_arm
+      branes design qualify "warehouse AMR" --auto
+    """
+    from embodied_ai_architect.qualification import GoalQualifier
+    from embodied_ai_architect.qualification.qualifier import render_qualification_result
+
+    qualifier = GoalQualifier()
+    result = qualifier.assess(goal, domain=domain)
+    console.print()
+    console.print(render_qualification_result(result))
+
+    if result.is_tangible:
+        _show_design_inputs(qualifier)
+        return
+
+    # Interactive Q&A loop
+    while not result.is_tangible and result.next_question:
+        q = result.next_question
+
+        if auto and q.default:
+            console.print(f"  [dim]Auto: {q.id} = {q.default}[/dim]")
+            result = qualifier.skip(q.id)
+            continue
+
+        if auto and not q.required:
+            console.print(f"  [dim]Auto: skipping optional '{q.id}'[/dim]")
+            result = qualifier.skip(q.id)
+            continue
+
+        # Interactive prompt
+        console.print()
+        if q.options:
+            console.print(f"[bold]{q.text}[/bold]")
+            if q.explanation:
+                console.print(f"[dim]{q.explanation}[/dim]")
+            console.print()
+            for i, opt in enumerate(q.options, 1):
+                desc = q.option_descriptions.get(opt, "")
+                if desc:
+                    console.print(f"  [cyan]{i}[/cyan]. {opt} — {desc}")
+                else:
+                    console.print(f"  [cyan]{i}[/cyan]. {opt}")
+            console.print()
+
+            if q.question_type.value == "multi_choice":
+                raw = console.input(
+                    "[bold]Select (comma-separated numbers, or 's' to skip): [/bold]"
+                )
+                raw = raw.strip()
+                if raw.lower() == "s":
+                    result = qualifier.skip(q.id)
+                else:
+                    indices = [int(x.strip()) - 1 for x in raw.split(",") if x.strip().isdigit()]
+                    selected = [q.options[i] for i in indices if 0 <= i < len(q.options)]
+                    if selected:
+                        result = qualifier.answer(q.id, selected)
+                    else:
+                        console.print("[yellow]No valid selection, skipping.[/yellow]")
+                        result = qualifier.skip(q.id)
+            else:
+                raw = console.input("[bold]Select (number, or 's' to skip): [/bold]")
+                raw = raw.strip()
+                if raw.lower() == "s":
+                    result = qualifier.skip(q.id)
+                elif raw.isdigit():
+                    idx = int(raw) - 1
+                    if 0 <= idx < len(q.options):
+                        result = qualifier.answer(q.id, q.options[idx])
+                    else:
+                        console.print("[yellow]Invalid selection, skipping.[/yellow]")
+                        result = qualifier.skip(q.id)
+                else:
+                    result = qualifier.skip(q.id)
+        else:
+            # Free text or numeric
+            raw = console.input(f"[bold]{q.text} [/bold]")
+            if raw.strip():
+                if q.question_type.value == "numeric":
+                    try:
+                        result = qualifier.answer(q.id, float(raw))
+                    except ValueError:
+                        console.print("[yellow]Invalid number, skipping.[/yellow]")
+                        result = qualifier.skip(q.id)
+                else:
+                    result = qualifier.answer(q.id, raw.strip())
+            else:
+                result = qualifier.skip(q.id)
+
+        # Show updated scorecard
+        console.print()
+        console.print(render_qualification_result(result))
+
+    if result.is_tangible:
+        _show_design_inputs(qualifier)
+    else:
+        console.print("[yellow]Goal could not be fully qualified.[/yellow]")
+        console.print(
+            "[dim]Missing: " + ", ".join(result.qualification.missing_dimensions) + "[/dim]"
+        )
+
+
+def _show_design_inputs(qualifier) -> None:
+    """Show the design inputs that would be passed to the planner."""
+    inputs = qualifier.to_design_inputs()
+    console.print()
+    console.print("[bold green]Goal qualified. Design inputs:[/bold green]")
+    console.print(f"  Goal:     {inputs['goal']}")
+    console.print(f"  Platform: {inputs['platform']}")
+    console.print(f"  Use case: {inputs['use_case']}")
+    if inputs.get("constraints"):
+        c = inputs["constraints"]
+        data = c.model_dump(exclude_none=True, exclude_defaults=True)
+        for k, v in data.items():
+            console.print(f"  {k}: {v}")
+    console.print()
+    console.print("[dim]Run the planner with: branes design plan <goal>[/dim]")
+
+
 def _show_available_usecases() -> None:
     """Show available use cases from embodied-schemas."""
     try:

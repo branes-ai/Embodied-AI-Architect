@@ -209,6 +209,46 @@ def get_soc_design_tool_definitions() -> list[dict[str, Any]]:
                 "required": [],
             },
         },
+        {
+            "name": "qualify_goal",
+            "description": (
+                "IMPORTANT: Call this BEFORE design_soc. Checks whether a design "
+                "goal is specific enough to produce meaningful results. Returns a "
+                "tangibility scorecard showing which dimensions are specified vs. "
+                "missing (platform, perception tasks, control output, power envelope, "
+                "environment). If the goal is underspecified, returns the next "
+                "question to ask the user. You MUST qualify the goal before calling "
+                "design_soc — design_soc will refuse underspecified goals."
+            ),
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "goal": {
+                        "type": "string",
+                        "description": "Natural language design goal to qualify",
+                    },
+                    "domain": {
+                        "type": "string",
+                        "enum": ["drone", "ugv", "robot_arm"],
+                        "description": "Platform domain (auto-detected if not specified)",
+                    },
+                    "question_id": {
+                        "type": "string",
+                        "description": (
+                            "Question being answered (from previous qualify_goal result). "
+                            "Omit on first call."
+                        ),
+                    },
+                    "answer": {
+                        "description": (
+                            "Answer to the question — string for single choice, "
+                            "array of strings for multi-choice, number for numeric"
+                        ),
+                    },
+                },
+                "required": ["goal"],
+            },
+        },
     ]
 
 
@@ -388,12 +428,58 @@ def create_soc_design_tool_executors() -> dict[str, Callable]:
         except Exception:
             return json.dumps(snapshot, indent=2, default=str)
 
+    def qualify_goal(
+        goal: str,
+        domain: str | None = None,
+        question_id: str | None = None,
+        answer: Any = None,
+    ) -> str:
+        """Qualify a design goal — check if it's specific enough."""
+        global _active_qualifier
+
+        try:
+            from embodied_ai_architect.qualification import GoalQualifier
+            from embodied_ai_architect.qualification.qualifier import render_qualification_result
+
+            # Initialize or reuse qualifier
+            if not hasattr(qualify_goal, "_qualifier") or question_id is None:
+                qualify_goal._qualifier = GoalQualifier()
+                result = qualify_goal._qualifier.assess(goal, domain=domain)
+            else:
+                # Continuing a session — answer a question
+                if answer is not None and question_id is not None:
+                    result = qualify_goal._qualifier.answer(question_id, answer)
+                else:
+                    result = qualify_goal._qualifier.assess(goal, domain=domain)
+
+            rendered = render_qualification_result(result)
+
+            if result.is_tangible:
+                inputs = qualify_goal._qualifier.to_design_inputs()
+                rendered += (
+                    "\n\nGOAL QUALIFIED. You can now call design_soc with:\n"
+                    f"  goal: {inputs['goal']}\n"
+                    f"  use_case: {inputs['use_case']}\n"
+                    f"  platform: {inputs['platform']}\n"
+                )
+                constraints = inputs.get("constraints")
+                if constraints:
+                    data = constraints.model_dump(exclude_none=True, exclude_defaults=True)
+                    for k, v in data.items():
+                        rendered += f"  {k}: {v}\n"
+
+            return rendered
+
+        except Exception as e:
+            return f"Error qualifying goal: {e}\n{traceback.format_exc()}"
+
     return {
         "design_soc": design_soc,
         "review_plan": review_plan,
         "steer_optimization": steer_optimization,
         "show_optimization_status": show_optimization_status,
         "show_plan": show_plan,
+        "qualify_goal": qualify_goal,
     }
 
 
