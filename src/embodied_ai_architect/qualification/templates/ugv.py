@@ -190,6 +190,13 @@ TEMPLATE = DomainTemplate(
             },
             required=True,
             min_selections=1,
+            allow_custom=True,
+            custom_prompt=(
+                "Describe the custom perception task. Include:\n"
+                "  - What sensors it needs\n"
+                "  - Latency budget in ms\n"
+                "  - Compute type (dnn_inference, lidar_processing, sensor_fusion, etc.)"
+            ),
             implications={
                 "obstacle_avoidance_2d": {
                     "perception.detection_classes": ["obstacle"],

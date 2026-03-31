@@ -1,6 +1,5 @@
 """Tests for goal qualification system."""
 
-
 from embodied_ai_architect.qualification import (
     GoalQualifier,
     get_domain_template,
@@ -237,6 +236,120 @@ class TestQualifier:
         # Next question should be drone-specific
         assert result.next_question is not None
         assert result.next_question.id == "drone_type"
+
+
+# ---------------------------------------------------------------------------
+# Custom answers
+# ---------------------------------------------------------------------------
+
+
+class TestCustomAnswers:
+    def test_custom_answer_basic(self):
+        from embodied_ai_architect.qualification.models import CustomAnswer
+
+        q = GoalQualifier()
+        q.assess("drone SoC", domain="drone")
+        q.answer("drone_type", "multirotor_delivery")
+
+        custom = CustomAnswer(
+            value="imu_odometry",
+            description="Dead-reckoning from IMU integration with EKF",
+            implications={
+                "sensors.modalities": ["imu"],
+                "sensors.imu_rate_hz": 400.0,
+                "perception.max_latency_ms": 5.0,
+                "custom.compute_type": "kalman_filter",
+            },
+        )
+        result = q.answer_custom("perception_tasks", custom)
+
+        assert "imu_odometry" in result.answers["perception_tasks"]
+        spec = result.accumulated_spec
+        assert spec["sensors"]["imu_rate_hz"] == 400.0
+        assert spec["custom"]["compute_type"] == "kalman_filter"
+        assert result.qualification.perception_tasks_enumerated
+
+    def test_custom_with_template_options(self):
+        from embodied_ai_architect.qualification.models import CustomAnswer
+
+        q = GoalQualifier()
+        q.assess("drone SoC", domain="drone")
+        q.answer("drone_type", "multirotor_delivery")
+
+        custom = CustomAnswer(
+            value="imu_odometry",
+            description="IMU-based dead reckoning",
+            implications={"sensors.imu_rate_hz": 400.0},
+        )
+        result = q.answer_custom(
+            "perception_tasks",
+            custom,
+            also_selected=["obstacle_avoidance"],
+        )
+
+        # Both template and custom answers present
+        assert "obstacle_avoidance" in result.answers["perception_tasks"]
+        assert "imu_odometry" in result.answers["perception_tasks"]
+        # Template implications applied
+        spec = result.accumulated_spec
+        assert spec["perception"]["max_latency_ms"] == 20.0  # from obstacle_avoidance
+        # Custom implications applied
+        assert spec["sensors"]["imu_rate_hz"] == 400.0
+
+    def test_custom_answers_recorded(self):
+        from embodied_ai_architect.qualification.models import CustomAnswer
+
+        q = GoalQualifier()
+        q.assess("drone SoC", domain="drone")
+        q.answer("drone_type", "multirotor_delivery")
+
+        custom = CustomAnswer(
+            value="radar_altimeter",
+            description="Radar-based altitude hold",
+            implications={"sensors.modalities": ["radar"]},
+        )
+        q.answer_custom("perception_tasks", custom)
+
+        spec = q.accumulated_spec
+        records = spec.get("_custom_answers", [])
+        assert len(records) == 1
+        assert records[0]["value"] == "radar_altimeter"
+        assert records[0]["question_id"] == "perception_tasks"
+
+    def test_multiple_custom_answers(self):
+        from embodied_ai_architect.qualification.models import CustomAnswer
+
+        q = GoalQualifier()
+        q.assess("drone SoC", domain="drone")
+        q.answer("drone_type", "multirotor_delivery")
+
+        customs = [
+            CustomAnswer(
+                value="imu_odometry",
+                description="IMU dead reckoning",
+                implications={"sensors.imu_rate_hz": 400.0},
+            ),
+            CustomAnswer(
+                value="optical_flow",
+                description="Downward-facing optical flow",
+                implications={
+                    "sensors.modalities": ["optical_flow_sensor"],
+                    "perception.min_fps": 60.0,
+                },
+            ),
+        ]
+        result = q.answer_custom("perception_tasks", customs)
+
+        assert len(result.answers["perception_tasks"]) == 2
+        spec = result.accumulated_spec
+        assert spec["sensors"]["imu_rate_hz"] == 400.0
+        assert "optical_flow_sensor" in spec["sensors"]["modalities"]
+
+    def test_allow_custom_flag_on_template(self):
+        t = get_domain_template("drone")
+        perception_q = t.get_question("perception_tasks")
+        assert perception_q.allow_custom is True
+        assert perception_q.custom_prompt != ""
 
 
 # ---------------------------------------------------------------------------

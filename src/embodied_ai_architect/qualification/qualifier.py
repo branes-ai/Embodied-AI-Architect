@@ -23,6 +23,7 @@ import logging
 from typing import Any, Optional
 
 from embodied_ai_architect.qualification.models import (
+    CustomAnswer,
     GoalQualification,
     Question,
     QualificationResult,
@@ -138,6 +139,85 @@ class GoalQualifier:
                             self._merge_implications(question.implications[v])
                 elif isinstance(value, str) and value in question.implications:
                     self._merge_implications(question.implications[value])
+
+        return self._build_result()
+
+    def answer_custom(
+        self,
+        question_id: str,
+        custom: CustomAnswer | list[CustomAnswer],
+        also_selected: list[str] | None = None,
+    ) -> QualificationResult:
+        """Record custom answer(s) not in the template options.
+
+        Custom answers carry their own implications, which are merged into
+        the spec alongside any template-option answers from also_selected.
+
+        This is the escape hatch when the template doesn't cover the user's
+        design space. The template is a starting point, not a straitjacket.
+
+        Args:
+            question_id: The question being answered.
+            custom: One or more CustomAnswer objects with value + implications.
+            also_selected: Template options also selected (for multi-choice).
+
+        Returns:
+            Updated QualificationResult.
+
+        Example:
+            custom = CustomAnswer(
+                value="imu_odometry",
+                description="Dead-reckoning from IMU with EKF",
+                implications={
+                    "sensors.modalities": ["imu"],
+                    "sensors.imu_rate_hz": 400.0,
+                    "perception.max_latency_ms": 5.0,
+                    "custom.compute_type": "kalman_filter",
+                },
+            )
+            result = qualifier.answer_custom("perception_tasks", custom,
+                                              also_selected=["obstacle_avoidance"])
+        """
+        customs = custom if isinstance(custom, list) else [custom]
+
+        # Collect all values (template + custom)
+        all_values = list(also_selected or [])
+        for c in customs:
+            all_values.append(c.value)
+
+        self._answers[question_id] = all_values
+
+        # Apply template implications for selected options
+        template = get_domain_template(self._domain)
+        if template and also_selected:
+            question = template.get_question(question_id)
+            if question and question.implications:
+                for opt in also_selected:
+                    if opt in question.implications:
+                        self._merge_implications(question.implications[opt])
+
+        # Apply custom implications
+        for c in customs:
+            if c.implications:
+                self._merge_implications(c.implications)
+            logger.info(
+                "Custom answer for '%s': %s — %s",
+                question_id,
+                c.value,
+                c.description,
+            )
+
+        # Record that custom options were used (for template evolution tracking)
+        custom_record = self._spec_fields.setdefault("_custom_answers", [])
+        for c in customs:
+            custom_record.append(
+                {
+                    "question_id": question_id,
+                    "value": c.value,
+                    "description": c.description,
+                    "implications": c.implications,
+                }
+            )
 
         return self._build_result()
 
@@ -280,14 +360,21 @@ class GoalQualifier:
         spec = self._spec_fields
 
         platform_ok = _get_nested(spec, "platform_type") is not None
-        perception_ok = (
+        # Perception is enumerated if we have a timing target AND either:
+        # - detection classes specified, or
+        # - tracking/resolution set, or
+        # - the user explicitly answered the perception question (including custom)
+        has_timing = (
             _get_nested(spec, "perception.max_latency_ms") is not None
             or _get_nested(spec, "perception.min_fps") is not None
-        ) and (
+        )
+        has_task_indicator = (
             bool(_get_nested(spec, "perception.detection_classes"))
             or _get_nested(spec, "perception.tracking") is not None
             or _get_nested(spec, "perception.resolution") is not None
+            or bool(self._answers.get("perception_tasks"))
         )
+        perception_ok = has_timing and has_task_indicator
         control_ok = (
             _get_nested(spec, "actuators.control_rate_hz") is not None
             or _get_nested(spec, "autonomy.decision_rate_hz") is not None

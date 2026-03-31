@@ -254,6 +254,14 @@ TEMPLATE = DomainTemplate(
             },
             required=True,
             min_selections=1,
+            allow_custom=True,
+            custom_prompt=(
+                "Describe the custom perception task. Include:\n"
+                "  - What sensors it needs (depth camera, force/torque, laser, etc.)\n"
+                "  - Latency budget in ms\n"
+                "  - Accuracy requirements\n"
+                "  - Whether it runs on the brain (central SoC) or peripheral (joint MCU)"
+            ),
             implications={
                 "object_detection": {
                     "perception.detection_classes": ["target_object"],

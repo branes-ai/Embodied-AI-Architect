@@ -21,6 +21,7 @@ Usage:
 """
 
 from .models import (
+    CustomAnswer,
     GoalQualification,
     QualificationResult,
     Question,
@@ -30,6 +31,7 @@ from .qualifier import GoalQualifier
 from .templates import get_domain_template, list_domains
 
 __all__ = [
+    "CustomAnswer",
     "GoalQualification",
     "GoalQualifier",
     "QualificationResult",

@@ -175,6 +175,15 @@ TEMPLATE = DomainTemplate(
             },
             required=True,
             min_selections=1,
+            allow_custom=True,
+            custom_prompt=(
+                "Describe the custom perception task. Include:\n"
+                "  - What sensors it needs (camera, stereo, lidar, imu, radar, etc.)\n"
+                "  - Latency budget in ms (how fast must results be available?)\n"
+                "  - Frame rate requirement in FPS\n"
+                "  - Compute type (dnn_inference, kalman_filter, point_cloud, etc.)\n"
+                "Example: 'IMU odometry — uses IMU at 400Hz, EKF fusion, <5ms latency'"
+            ),
             implications={
                 "obstacle_avoidance": {
                     "perception.detection_classes": ["obstacle"],

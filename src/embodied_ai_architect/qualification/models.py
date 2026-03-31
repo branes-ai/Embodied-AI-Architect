@@ -74,6 +74,47 @@ class Question(BaseModel):
         default="",
         description="Why this question matters — shown to the user as context",
     )
+    allow_custom: bool = Field(
+        default=False,
+        description="Whether the user can provide answers not in the options list",
+    )
+    custom_prompt: str = Field(
+        default="",
+        description=(
+            "Guidance shown when user adds a custom answer — explains what "
+            "additional information is needed (sensor modalities, latency "
+            "budget, compute requirements, etc.)"
+        ),
+    )
+
+
+class CustomAnswer(BaseModel):
+    """A user-provided answer not in the template options.
+
+    When the template doesn't cover the user's design space, they can
+    provide a custom answer with its implications. This is the extension
+    mechanism that keeps templates from being a straitjacket.
+
+    Usage:
+        custom = CustomAnswer(
+            value="imu_odometry",
+            description="Dead-reckoning from IMU integration with EKF",
+            implications={
+                "sensors.modalities": ["imu"],
+                "sensors.imu_rate_hz": 400.0,
+                "perception.max_latency_ms": 5.0,
+                "custom.compute_type": "kalman_filter",
+            },
+        )
+        result = qualifier.answer_custom("perception_tasks", custom)
+    """
+
+    value: str = Field(description="Short identifier for the custom answer")
+    description: str = Field(default="", description="Human-readable description")
+    implications: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Spec fields this answer implies (same format as template implications)",
+    )
 
 
 # ---------------------------------------------------------------------------

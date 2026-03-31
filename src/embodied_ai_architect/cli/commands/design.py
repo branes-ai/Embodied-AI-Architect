@@ -677,26 +677,57 @@ def design_qualify(ctx, goal, domain, auto):
                     console.print(f"  [cyan]{i}[/cyan]. {opt}")
             console.print()
 
-            if q.question_type.value == "multi_choice":
-                raw = console.input(
-                    "[bold]Select (comma-separated numbers, or 's' to skip): [/bold]"
+            # Show custom option hint if allowed
+            if q.allow_custom:
+                console.print(
+                    "  [cyan]c[/cyan]. [italic]Add custom answer (not listed above)[/italic]"
                 )
+                console.print()
+
+            if q.question_type.value == "multi_choice":
+                prompt_text = "Select (comma-separated numbers"
+                if q.allow_custom:
+                    prompt_text += ", 'c' to add custom"
+                prompt_text += ", or 's' to skip): "
+                raw = console.input(f"[bold]{prompt_text}[/bold]")
                 raw = raw.strip()
                 if raw.lower() == "s":
                     result = qualifier.skip(q.id)
                 else:
-                    indices = [int(x.strip()) - 1 for x in raw.split(",") if x.strip().isdigit()]
+                    # Parse selections — may include 'c' for custom
+                    parts = [p.strip() for p in raw.split(",")]
+                    indices = [int(p) - 1 for p in parts if p.isdigit()]
                     selected = [q.options[i] for i in indices if 0 <= i < len(q.options)]
-                    if selected:
+                    has_custom = any(p.lower() == "c" for p in parts)
+
+                    if has_custom and q.allow_custom:
+                        customs = _collect_custom_answers(q, console)
+                        from embodied_ai_architect.qualification.models import CustomAnswer
+
+                        result = qualifier.answer_custom(
+                            q.id,
+                            [CustomAnswer(**c) for c in customs],
+                            also_selected=selected or None,
+                        )
+                    elif selected:
                         result = qualifier.answer(q.id, selected)
                     else:
                         console.print("[yellow]No valid selection, skipping.[/yellow]")
                         result = qualifier.skip(q.id)
             else:
-                raw = console.input("[bold]Select (number, or 's' to skip): [/bold]")
+                prompt_text = "Select (number"
+                if q.allow_custom:
+                    prompt_text += ", 'c' for custom"
+                prompt_text += ", or 's' to skip): "
+                raw = console.input(f"[bold]{prompt_text}[/bold]")
                 raw = raw.strip()
                 if raw.lower() == "s":
                     result = qualifier.skip(q.id)
+                elif raw.lower() == "c" and q.allow_custom:
+                    customs = _collect_custom_answers(q, console)
+                    from embodied_ai_architect.qualification.models import CustomAnswer
+
+                    result = qualifier.answer_custom(q.id, [CustomAnswer(**c) for c in customs])
                 elif raw.isdigit():
                     idx = int(raw) - 1
                     if 0 <= idx < len(q.options):
@@ -732,6 +763,57 @@ def design_qualify(ctx, goal, domain, auto):
         console.print(
             "[dim]Missing: " + ", ".join(result.qualification.missing_dimensions) + "[/dim]"
         )
+
+
+def _collect_custom_answers(question, console) -> list[dict]:
+    """Interactively collect custom answer(s) from the user."""
+    customs = []
+    if question.custom_prompt:
+        console.print(f"\n[dim]{question.custom_prompt}[/dim]\n")
+
+    while True:
+        value = console.input("[bold]Custom answer name (short identifier): [/bold]").strip()
+        if not value:
+            break
+        description = console.input("[bold]Description: [/bold]").strip()
+
+        # Collect implications interactively
+        console.print("[dim]Enter implications as key=value pairs (empty line to finish):[/dim]")
+        console.print(
+            "[dim]  e.g., sensors.modalities=imu  or  perception.max_latency_ms=5.0[/dim]"
+        )
+        implications = {}
+        while True:
+            pair = console.input("  ").strip()
+            if not pair:
+                break
+            if "=" in pair:
+                k, v = pair.split("=", 1)
+                k = k.strip()
+                v = v.strip()
+                # Try to parse as number or list
+                try:
+                    v = float(v)
+                except ValueError:
+                    if "," in v:
+                        v = [x.strip() for x in v.split(",")]
+                    elif v.lower() in ("true", "false"):
+                        v = v.lower() == "true"
+                implications[k] = v
+
+        customs.append(
+            {
+                "value": value,
+                "description": description,
+                "implications": implications,
+            }
+        )
+
+        more = console.input("[bold]Add another custom answer? (y/n) [n]: [/bold]").strip()
+        if more.lower() != "y":
+            break
+
+    return customs
 
 
 def _show_design_inputs(qualifier) -> None:
