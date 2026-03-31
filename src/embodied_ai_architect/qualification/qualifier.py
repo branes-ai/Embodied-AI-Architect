@@ -292,7 +292,10 @@ class GoalQualifier:
     def _build_result(self) -> QualificationResult:
         """Build a QualificationResult from current state."""
         qualification = self._assess_tangibility()
-        next_q = self._find_next_question()
+        # Only offer the next question if the goal is not yet tangible.
+        # Once tangible, remaining questions are optional refinements —
+        # don't confuse the user by showing them after "ready for planning".
+        next_q = self._find_next_question() if not qualification.is_tangible else None
 
         template = get_domain_template(self._domain)
         total_questions = len(template.questions) if template else 0

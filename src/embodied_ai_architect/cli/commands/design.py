@@ -829,8 +829,27 @@ def _show_design_inputs(qualifier) -> None:
         data = c.model_dump(exclude_none=True, exclude_defaults=True)
         for k, v in data.items():
             console.print(f"  {k}: {v}")
+
+    # Build the exact command the user should run next
+    goal_escaped = inputs["goal"].replace('"', '\\"')
+    cmd_parts = [f'branes design plan "{goal_escaped}"']
+    if inputs.get("constraints"):
+        c = inputs["constraints"]
+        if c.max_power_watts is not None:
+            cmd_parts.append(f"--power {c.max_power_watts}")
+        if c.max_latency_ms is not None:
+            cmd_parts.append(f"--latency {c.max_latency_ms}")
+        if c.max_cost_usd is not None:
+            cmd_parts.append(f"--cost {c.max_cost_usd}")
+    if inputs.get("use_case"):
+        cmd_parts.append(f"--use-case {inputs['use_case']}")
+    if inputs.get("platform"):
+        cmd_parts.append(f"--platform {inputs['platform']}")
+
+    next_cmd = " \\\n    ".join(cmd_parts)
     console.print()
-    console.print("[dim]Run the planner with: branes design plan <goal>[/dim]")
+    console.print("[dim]Next step — run the planner:[/dim]")
+    console.print(f"  [cyan]{next_cmd}[/cyan]")
 
 
 def _show_available_usecases() -> None:
