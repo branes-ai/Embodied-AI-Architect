@@ -364,16 +364,31 @@ class TestRendering:
         rendered = render_qualification_result(result)
         assert "GOAL QUALIFICATION" in rendered
         assert "TANGIBILITY SCORECARD" in rendered
-        assert "MISSING" in rendered
+        assert "Still needed" in rendered
         assert "NEXT QUESTION" in rendered
 
-    def test_render_tangible(self):
+    def test_render_mid_survey(self):
+        """Mid-survey: some dimensions OK, but survey not complete."""
+        q = GoalQualifier()
+        q.assess("drone SoC", domain="drone")
+        q.answer("drone_type", "multirotor_delivery")
+        result = q.answer("perception_tasks", ["obstacle_avoidance"])
+        rendered = render_qualification_result(result)
+        # Should show progress, not declare tangible
+        assert "NEXT QUESTION" in rendered
+        assert "ready for planning" not in rendered
+
+    def test_render_tangible_after_full_survey(self):
+        """Tangible only after all questions answered."""
         q = GoalQualifier()
         q.assess("drone SoC", domain="drone")
         q.answer("drone_type", "multirotor_delivery")
         q.answer("perception_tasks", ["obstacle_avoidance"])
         q.answer("control_output", ["flight_controller"])
-        result = q.answer("operating_environment", "outdoor_urban")
+        q.answer("operating_environment", "outdoor_urban")
+        result = q.answer("regulatory", ["no_specific_regulation"])
         rendered = render_qualification_result(result)
         assert "TANGIBLE" in rendered
         assert "ready for planning" in rendered
+        # No next question — survey is complete
+        assert "NEXT QUESTION" not in rendered

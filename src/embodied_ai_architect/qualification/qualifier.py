@@ -292,10 +292,11 @@ class GoalQualifier:
     def _build_result(self) -> QualificationResult:
         """Build a QualificationResult from current state."""
         qualification = self._assess_tangibility()
-        # Only offer the next question if the goal is not yet tangible.
-        # Once tangible, remaining questions are optional refinements —
-        # don't confuse the user by showing them after "ready for planning".
-        next_q = self._find_next_question() if not qualification.is_tangible else None
+        # Always offer the next unanswered question. The survey runs to
+        # completion — every question gathers a requirement that matters.
+        # Tangibility is assessed after all questions are answered, not
+        # used to short-circuit the survey.
+        next_q = self._find_next_question()
 
         template = get_domain_template(self._domain)
         total_questions = len(template.questions) if template else 0
@@ -536,11 +537,19 @@ def render_qualification_result(result: QualificationResult) -> str:
         lines.append(f"  {mark:>7}  {name}")
     lines.append("")
 
-    if result.is_tangible:
+    survey_complete = result.next_question is None
+    if survey_complete and result.is_tangible:
         lines.append("  *** GOAL IS TANGIBLE — ready for planning ***")
+    elif survey_complete and not result.is_tangible:
+        missing = result.qualification.missing_dimensions
+        lines.append(f"  Survey complete but missing: {', '.join(missing)}")
+        lines.append("  Some requirements could not be determined from the answers given.")
     else:
         missing = result.qualification.missing_dimensions
-        lines.append(f"  Missing: {', '.join(missing)}")
+        if missing:
+            lines.append(f"  Still needed: {', '.join(missing)}")
+        else:
+            lines.append("  Core dimensions covered — completing remaining questions...")
     lines.append("")
 
     # Next question

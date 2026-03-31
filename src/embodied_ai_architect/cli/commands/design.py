@@ -644,12 +644,9 @@ def design_qualify(ctx, goal, domain, auto):
     console.print()
     console.print(render_qualification_result(result))
 
-    if result.is_tangible:
-        _show_design_inputs(qualifier)
-        return
-
-    # Interactive Q&A loop
-    while not result.is_tangible and result.next_question:
+    # Run the full survey — every question gathers a requirement that matters.
+    # Don't short-circuit on early tangibility; complete all questions first.
+    while result.next_question:
         q = result.next_question
 
         if auto and q.default:
