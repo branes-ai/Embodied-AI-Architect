@@ -614,6 +614,36 @@ def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platfo
     console.print()
     console.print(render_plan_review_rich(snapshot))
 
+    # Workflow guidance — what can the user do next?
+    console.print()
+    console.print("─" * 72)
+    console.print("  NEXT STEPS")
+    console.print("─" * 72)
+    console.print()
+    console.print("  The plan above shows the task graph the system will execute.")
+    console.print("  From here you can:")
+    console.print()
+    console.print("  [cyan]1. Execute this plan[/cyan]")
+    console.print("     Run the full pipeline (plan → dispatch → optimize → report)")
+    console.print(
+        f"     [dim]branes workflow run <model> --power {power or '?'} "
+        f"--latency {latency or '?'}[/dim]"
+    )
+    console.print()
+    console.print("  [cyan]2. Refine the goal[/cyan]")
+    console.print("     Go back to qualification to add/change requirements")
+    console.print(f'     [dim]branes design qualify "{goal}"[/dim]')
+    console.print()
+    console.print("  [cyan]3. Interactive design session[/cyan]")
+    console.print("     Review, edit, and steer execution in real-time via chat")
+    console.print("     [dim]branes chat[/dim]")
+    console.print('     then: "Design a drone SoC for fixed-wing survey with VIO at <3W, <20ms"')
+    console.print()
+    console.print("  [cyan]4. Run the demo[/cyan]")
+    console.print("     Execute the full interactive review flow programmatically")
+    console.print("     [dim]python examples/demo_interactive_review.py --modify[/dim]")
+    console.print()
+
 
 @design.command("qualify")
 @click.argument("goal")
@@ -845,8 +875,15 @@ def _show_design_inputs(qualifier) -> None:
 
     next_cmd = " \\\n    ".join(cmd_parts)
     console.print()
-    console.print("[dim]Next step — run the planner:[/dim]")
+    console.print("─" * 72)
+    console.print("  NEXT STEP")
+    console.print("─" * 72)
+    console.print()
+    console.print("  See what the planner would build from these requirements:")
     console.print(f"  [cyan]{next_cmd}[/cyan]")
+    console.print()
+    console.print("  [dim]The planner decomposes the goal into a task graph (DAG)")
+    console.print("  of specialist agents. You can then review, edit, and execute it.[/dim]")
 
 
 def _show_available_usecases() -> None:
