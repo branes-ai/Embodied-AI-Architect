@@ -482,6 +482,139 @@ def _save_pipeline(config: dict, path: Path) -> None:
         )
 
 
+@design.command("plan")
+@click.argument("goal")
+@click.option("--power", type=float, help="Max power budget in watts")
+@click.option("--latency", type=float, help="Max latency in ms")
+@click.option("--cost", type=float, help="Max BOM cost in USD")
+@click.option("--area", type=float, help="Max die area in mm²")
+@click.option("--process", type=int, help="Target process node in nm (e.g., 28, 16, 7)")
+@click.option("--use-case", default="", help="Application type (e.g., delivery_drone)")
+@click.option("--platform", default="", help="Platform type (e.g., drone, amr, quadruped)")
+@click.option("--static", is_flag=True, help="Use static demo plan instead of LLM")
+@click.pass_context
+def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platform, static):
+    """Show the task plan the LLM generates for a design goal.
+
+    Runs the planner to decompose a natural-language goal into a task graph
+    (DAG of specialist agents), then displays the plan for review. Does NOT
+    execute the plan — use this to see what the architect would do.
+
+    \\b
+    Examples:
+      branes design plan "Drone perception SoC: YOLO at 30fps, <5W, <\\$30"
+      branes design plan "Robot arm vision: <10ms latency" --power 15 --latency 10
+      branes design plan "Drone SoC" --static   # no API key needed
+    """
+    from embodied_ai_architect.graphs.soc_state import (
+        DesignConstraints,
+        create_initial_soc_state,
+    )
+    from embodied_ai_architect.graphs.planner import PlannerNode
+    from embodied_ai_architect.graphs.review import (
+        build_review_snapshot,
+        render_plan_review_rich,
+    )
+    from embodied_ai_architect.graphs.specialists import create_default_dispatcher
+
+    # Build constraints
+    constraint_kwargs = {}
+    if power is not None:
+        constraint_kwargs["max_power_watts"] = power
+    if latency is not None:
+        constraint_kwargs["max_latency_ms"] = latency
+    if cost is not None:
+        constraint_kwargs["max_cost_usd"] = cost
+    if area is not None:
+        constraint_kwargs["max_area_mm2"] = area
+    if process is not None:
+        constraint_kwargs["target_process_nm"] = process
+
+    constraints = DesignConstraints(**constraint_kwargs) if constraint_kwargs else None
+
+    state = create_initial_soc_state(
+        goal=goal,
+        constraints=constraints,
+        use_case=use_case,
+        platform=platform,
+    )
+
+    # Create planner
+    if static:
+        static_plan = [
+            {
+                "id": "t1",
+                "name": "Analyze workload",
+                "agent": "workload_analyzer",
+                "dependencies": [],
+            },
+            {
+                "id": "t2",
+                "name": "Enumerate feasible hardware",
+                "agent": "hw_explorer",
+                "dependencies": ["t1"],
+            },
+            {
+                "id": "t3",
+                "name": "Compose SoC architecture",
+                "agent": "architecture_composer",
+                "dependencies": ["t2"],
+            },
+            {
+                "id": "t4",
+                "name": "Assess PPA metrics",
+                "agent": "ppa_assessor",
+                "dependencies": ["t3"],
+            },
+            {"id": "t5", "name": "Review design", "agent": "critic", "dependencies": ["t4"]},
+            {
+                "id": "t6",
+                "name": "Generate report",
+                "agent": "report_generator",
+                "dependencies": ["t5"],
+            },
+        ]
+        planner = PlannerNode(static_plan=static_plan)
+        console.print("[dim]Using static demo plan (no LLM call)[/dim]")
+    else:
+        import os
+
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            console.print(
+                Panel(
+                    "[yellow]ANTHROPIC_API_KEY not set[/yellow]\n\n"
+                    "Set your API key for LLM planning:\n"
+                    "  [cyan]export ANTHROPIC_API_KEY=your-key-here[/cyan]\n\n"
+                    "Or use [cyan]--static[/cyan] for a demo plan without an API key.",
+                    title="API Key Required",
+                    border_style="yellow",
+                )
+            )
+            return
+
+        from embodied_ai_architect.llm.client import LLMClient
+
+        llm = LLMClient()
+        planner = PlannerNode(llm=llm)
+        console.print("[dim]Calling LLM to decompose goal into task graph...[/dim]")
+
+    try:
+        plan_updates = planner(state)
+    except Exception as e:
+        console.print(f"[red]Planning failed:[/red] {e}")
+        ctx.exit(1)
+        return
+
+    state = {**state, **plan_updates}
+
+    # Display the plan review
+    dispatcher = create_default_dispatcher()
+    available_agents = dispatcher.registered_agents
+    snapshot = build_review_snapshot(state, available_agents)
+    console.print()
+    console.print(render_plan_review_rich(snapshot))
+
+
 def _show_available_usecases() -> None:
     """Show available use cases from embodied-schemas."""
     try:

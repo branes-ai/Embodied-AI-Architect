@@ -248,9 +248,13 @@ def create_soc_design_tool_executors() -> dict[str, Callable]:
 
             constraints = DesignConstraints(**constraint_kwargs) if constraint_kwargs else None
 
+            # Create LLM client for dynamic planning
+            from embodied_ai_architect.llm.client import LLMClient
+
+            llm = LLMClient()
+
             runner = SoCDesignRunner(
-                static_plan=None,
-                llm=None,  # Will need LLM for dynamic planning
+                llm=llm,
                 human_review=True,
                 optimization_review=True,
             )
