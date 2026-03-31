@@ -552,25 +552,9 @@ def render_qualification_result(result: QualificationResult) -> str:
             lines.append("  Core dimensions covered — completing remaining questions...")
     lines.append("")
 
-    # Next question
-    if result.next_question:
-        q = result.next_question
-        lines.append("─" * 72)
-        lines.append("  NEXT QUESTION")
-        lines.append("─" * 72)
-        lines.append("")
-        lines.append(f"  {q.text}")
-        if q.explanation:
-            lines.append(f"  Why: {q.explanation}")
-        lines.append("")
-        if q.options:
-            for opt in q.options:
-                desc = q.option_descriptions.get(opt, "")
-                if desc:
-                    lines.append(f"    {opt:<30s} {desc}")
-                else:
-                    lines.append(f"    {opt}")
-        lines.append("")
+    # Note: next question details are NOT rendered here — the caller
+    # (CLI or chat) presents the question interactively with numbered
+    # options. Rendering it here would duplicate the display.
 
     # Warnings
     if result.warnings:
