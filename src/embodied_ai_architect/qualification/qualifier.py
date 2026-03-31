@@ -360,10 +360,13 @@ class GoalQualifier:
         spec = self._spec_fields
 
         platform_ok = _get_nested(spec, "platform_type") is not None
-        # Perception is enumerated if we have a timing target AND either:
-        # - detection classes specified, or
-        # - tracking/resolution set, or
-        # - the user explicitly answered the perception question (including custom)
+        # Perception is enumerated when the user has answered the perception
+        # question (explicitly naming tasks). Additionally check for spec
+        # evidence: timing targets or task indicators. The user's explicit
+        # answer is the strongest signal — if they said "visual_odometry",
+        # perception is enumerated even if the implication didn't set every
+        # field perfectly.
+        answered_perception = bool(self._answers.get("perception_tasks"))
         has_timing = (
             _get_nested(spec, "perception.max_latency_ms") is not None
             or _get_nested(spec, "perception.min_fps") is not None
@@ -372,9 +375,10 @@ class GoalQualifier:
             bool(_get_nested(spec, "perception.detection_classes"))
             or _get_nested(spec, "perception.tracking") is not None
             or _get_nested(spec, "perception.resolution") is not None
-            or bool(self._answers.get("perception_tasks"))
+            or _get_nested(spec, "perception.camera_types") is not None
+            or _get_nested(spec, "custom.compute_type") is not None
         )
-        perception_ok = has_timing and has_task_indicator
+        perception_ok = answered_perception and (has_timing or has_task_indicator)
         control_ok = (
             _get_nested(spec, "actuators.control_rate_hz") is not None
             or _get_nested(spec, "autonomy.decision_rate_hz") is not None

@@ -194,16 +194,40 @@ TEMPLATE = DomainTemplate(
                 "object_detection": {
                     "perception.tracking": False,
                     "perception.min_fps": 15.0,
+                    "perception.max_latency_ms": 66.0,
+                },
+                "landing_zone_detection": {
+                    "perception.detection_classes": ["landing_zone"],
+                    "perception.min_fps": 10.0,
+                    "perception.max_latency_ms": 100.0,
                 },
                 "visual_odometry": {
                     "perception.camera_types": ["stereo"],
+                    "perception.min_fps": 30.0,
+                    "perception.max_latency_ms": 20.0,
                     "sensors.modalities": ["imu", "barometer"],
                     "sensors.imu_rate_hz": 200.0,
+                    "custom.compute_type": "vio_pipeline",
                 },
                 "slam": {
                     "perception.camera_types": ["stereo"],
+                    "perception.min_fps": 15.0,
+                    "perception.max_latency_ms": 50.0,
                     "sensors.modalities": ["imu"],
                     "autonomy.navigation": "slam",
+                    "custom.compute_type": "slam_pipeline",
+                },
+                "terrain_mapping": {
+                    "perception.camera_types": ["stereo"],
+                    "perception.min_fps": 5.0,
+                    "perception.max_latency_ms": 200.0,
+                    "custom.compute_type": "mapping_pipeline",
+                },
+                "payload_inspection": {
+                    "perception.camera_types": ["monocular"],
+                    "perception.resolution": "1920x1080",
+                    "perception.min_fps": 10.0,
+                    "perception.max_latency_ms": 100.0,
                 },
                 "tracking": {
                     "perception.tracking": True,
