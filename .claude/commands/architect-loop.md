@@ -2,52 +2,87 @@ Run one iteration of the architect's bottleneck-hunting loop on the current desi
 
 This is the core expert skill: assess → rank bottlenecks → drill down → propose options.
 
+## How to get the state
+
+Load the most recent design session:
+
+```bash
+.venv/bin/branes session show --latest --json
+```
+
+This returns the full `SoCDesignState` JSON. The key fields you need:
+- `ppa_metrics` — current power, latency, area, cost with verdicts
+- `constraints` — target budgets
+- `optimization_review_snapshot` — constraint slackness, trajectory, strategy analysis
+- `optimization_history` — PPA snapshots across iterations
+- `workload_profile` — per-operator compute requirements
+- `selected_architecture` — hardware mapping
+- `design_rationale` — decision trail
+- `iteration` — which iteration we're on
+
+If no session exists, tell the user:
+```
+No active design session. Start one with:
+  branes design qualify "your design goal"
+  branes design plan "your qualified goal" --power X --latency Y
+```
+
 ## Steps
 
-1. **Assess current state**: Find the most recent design session state. Check:
-   - `examples/demo_interactive_review.py` output or any recent `branes design plan` results
-   - Look for PPA metrics, optimization history, and design rationale in the session
-   - If no session exists, tell the user to start one with `branes design qualify` or `branes design plan`
+1. **Assess current state**: From the session JSON, extract:
+   - All PPA metrics vs constraints (PASS/FAIL for each)
+   - Constraint slackness (margin %, trend direction)
+   - Current optimization iteration number
 
-2. **Rank bottlenecks across ALL metrics**: Identify the top 3 issues. For each:
-   - Name the bottleneck and locate it (system/subsystem/operator/kernel level)
-   - Quantify: how much does it contribute to the constraint violation?
-   - Show headroom: how close are we to the limit? (percentage margin)
-   - Show trend: across optimization iterations, is this getting better or worse?
-   - Classify the bound: compute-bound, memory-bound, thermally-limited, cost-dominated, bandwidth-limited
+2. **Rank the top 3 bottlenecks across ALL metrics**: Look at:
+   - Which constraints are FAIL? By how much?
+   - Which passing constraints have <10% headroom? (about to fail)
+   - Which operator/subsystem consumes the most of each resource?
+   - Is memory bandwidth saturated? (`workload_profile` has BW data)
+   - Is utilization unbalanced? (one IP block at 90%, another at 20%)
 
-   Metrics to check: power (W), latency (ms), area (mm²), cost ($), weight (g), volume (cm³), thermal margin (°C), memory bandwidth utilization (%), compute utilization (%), efficiency (GOPS/W, capability/W)
+   For each of the top 3:
+   - Name it and locate it (system/subsystem/operator/kernel level)
+   - Quantify the gap (actual vs target, % over budget)
+   - Show trend from `optimization_history` (improving, worsening, stable)
+   - Classify: compute-bound, memory-bound, thermally-limited, cost-dominated
 
-3. **Drill down on bottleneck #1**: Run the appropriate detailed analysis:
-   - If compute-bound: `.venv/bin/branes mcp analyze <model>` for kernel breakdown
-   - If memory-bound: check bandwidth_validator results for BW oversubscription
-   - If cost-dominated: `.venv/bin/branes swap estimate` for cost breakdown by component
-   - If thermally-limited: check thermal margin and power density
-   - If latency-tight: show per-operator latency waterfall
+3. **Drill down on bottleneck #1**: Run additional analysis:
+   - For compute: `.venv/bin/branes mcp analyze --model <model>` for kernel breakdown
+   - For cost: `.venv/bin/branes swap estimate --area X --power Y --process Z` for cost decomposition
+   - For power: check `ip_blocks` config for clock/voltage settings
+   - For latency: check per-operator latency from `workload_profile`
 
-4. **Propose 3-5 concrete options** for the #1 bottleneck:
-   - For each option: estimated impact on the bottleneck metric AND side effects on other metrics
-   - Flag any option that would make another currently-passing constraint fail
-   - Rank options by impact-to-risk ratio
+4. **Propose 3-5 concrete options** from the strategy catalog:
+   Read `optimization_review_snapshot.strategies` for what's available vs tried.
+   For each option: estimated impact on bottleneck AND side effects on other metrics.
+   Flag any option that would flip a passing constraint to FAIL.
 
-5. **Summarize as a situation report**:
+5. **Summarize as situation report**:
    ```
-   ARCHITECT LOOP — Iteration N
+   ARCHITECT LOOP — Iteration N/M
 
    TOP 3 BOTTLENECKS:
-     1. [name] at [level]: [metric] = [value] vs [target] ([margin]% headroom)
+     1. [name] at [level]: [metric] = [value] vs [target] ([margin]% headroom, [trend])
      2. ...
      3. ...
 
    DRILL-DOWN on #1:
-     [detailed analysis]
+     [detailed analysis from step 3]
 
    OPTIONS:
-     A. [action] — estimated [impact] on [metric], side effect: [effect]
+     A. [action] — est. [impact] on [metric], side effect: [effect]
      B. ...
 
-   RECOMMENDATION: [which option and why]
-   NEXT ACTION: [what the architect should do]
+   RECOMMENDATION: [which option and reasoning]
    ```
 
-Do NOT choose an option or execute changes — present the analysis and let the architect decide.
+Do NOT choose or execute — present the analysis and let the architect decide.
+
+## How to apply the architect's decision
+
+When the architect picks an option, the next step depends on whether we have an active interactive session:
+
+- If running interactively: use `steer_optimization` tool in `branes chat`
+- If using the pipeline: modify the state and re-run the dispatch step
+- For quick what-if: `.venv/bin/branes swap score --area X --power Y --process Z --profile drone`

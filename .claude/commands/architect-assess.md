@@ -2,43 +2,52 @@ Generate the multi-level metrics dashboard for the current design state.
 
 This is the "where am I" command — shows metrics at every level of abstraction so the architect can quickly identify what needs attention.
 
-## Steps
+## How to get the state
 
-1. **Find the current design state**: Look for the most recent session — either an active `SoCDesignRunner` state, recent `demo_interactive_review.py` output, or the result of a `branes design plan` run.
+Load the most recent design session from disk:
 
-2. **System-level overview**: Show all SWaP-C metrics with budget utilization bars:
+```bash
+.venv/bin/branes session show --latest --json
+```
+
+This returns the full `SoCDesignState` JSON with PPA metrics, optimization history, constraint slackness, task graph, and design rationale. If no sessions exist, tell the user to start one with `branes design qualify` or `branes design plan`.
+
+You can also list all sessions:
+```bash
+.venv/bin/branes session list
+```
+
+Or inspect a specific one:
+```bash
+.venv/bin/branes session show <session_id>
+```
+
+## What to present
+
+1. **System-level overview**: Show all SWaP-C metrics with budget utilization:
    ```
    Power:   [value]W / [budget]W  [████░░░░░░] [%]  [PASS/FAIL]
    Latency: [value]ms / [budget]ms ...
    Area:    [value]mm² / [budget]mm² ...
    Cost:    $[value] / $[budget] ...
-   Weight:  [value]g / [budget]g ...
-   Thermal: [value]°C / [max]°C ...
    ```
+   Read `ppa_metrics` and `constraints` from the session state.
 
-3. **Subsystem breakdown**: For each subsystem (perception, control, comms, storage):
-   - Power contribution (W and % of total)
-   - Latency contribution (ms and % of pipeline)
-   - Which operators belong to this subsystem
+2. **Constraint slackness**: Read `optimization_review_snapshot.constraint_slackness` for per-constraint margin analysis with trends.
 
-4. **Operator breakdown**: For each operator in the pipeline:
-   - GFLOPS, memory footprint, latency, power
-   - Which hardware block it's mapped to
-   - Utilization of that hardware block
-   - Bound classification (compute/memory/IO)
+3. **Operator breakdown**: Read `workload_profile` for per-operator GFLOPS, memory, latency, and hardware mapping.
 
-5. **Efficiency metrics**:
-   - Capability/Watt (mission success rate per watt)
-   - GOPS/Watt (raw compute efficiency)
-   - KPU/GPU/CPU utilization (% of peak)
-   - Memory BW utilization (% of available)
-   - Power headroom (watts remaining before limit)
-   - Latency headroom (ms remaining before deadline)
-   - Thermal headroom (°C below junction limit)
+4. **Efficiency metrics**: Compute from PPA data:
+   - Capability/Watt, GOPS/Watt
+   - KPU/GPU/CPU utilization
+   - Memory BW utilization
+   - Power/latency/thermal headroom
 
-6. **Highlight the top 3 concerns**: The three metrics closest to their limits or already exceeding them. Use clear indicators:
+5. **Highlight top 3 concerns**: The three metrics closest to their limits.
    - GREEN: >20% headroom
-   - YELLOW: 5-20% headroom (watch closely)
+   - YELLOW: 5-20% headroom
    - RED: <5% headroom or exceeded
 
-Present as a single cohesive dashboard, not separate tool outputs. The architect should be able to scan this in 30 seconds and know exactly where to focus.
+6. **Design journey**: Read `design_rationale` for the trail of decisions that got us here.
+
+Present as a single cohesive dashboard. The architect should scan it in 30 seconds.

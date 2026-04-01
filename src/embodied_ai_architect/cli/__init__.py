@@ -73,6 +73,7 @@ def main():
     from embodied_ai_architect.cli.commands import spec
     from embodied_ai_architect.cli.commands import swap
     from embodied_ai_architect.cli.commands import mcp as mcp_cmd
+    from embodied_ai_architect.cli.commands import session
 
     # Register command groups
     cli.add_command(workflow.workflow)
@@ -95,6 +96,7 @@ def main():
     cli.add_command(spec.spec)
     cli.add_command(swap.swap)
     cli.add_command(mcp_cmd.mcp)
+    cli.add_command(session.session)
 
     # Run CLI
     cli(obj={})

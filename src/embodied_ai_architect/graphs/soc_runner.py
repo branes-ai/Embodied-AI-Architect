@@ -39,6 +39,7 @@ from typing import Any, Optional
 
 from embodied_ai_architect.graphs.governance import GovernanceGuard, GovernancePolicy
 from embodied_ai_architect.graphs.planner import PlannerNode
+from embodied_ai_architect.graphs.session_store import SessionStore
 from embodied_ai_architect.graphs.soc_state import (
     DesignConstraints,
     SoCDesignState,
@@ -92,6 +93,7 @@ class SoCDesignRunner:
         self._state_history: list[dict[str, Any]] = []
         self._current_state: Optional[dict[str, Any]] = None
         self._config: dict[str, Any] = {}
+        self._session_store = SessionStore()
 
     def _build_graph(self) -> Any:
         """Build and compile the LangGraph StateGraph."""
@@ -175,6 +177,7 @@ class SoCDesignRunner:
         result = graph.invoke(state, config=config)
 
         self._state_history.append(dict(result))
+        self._session_store.save(result)
         logger.info("Session complete: %s", get_iteration_summary(result))
 
         return result
@@ -227,6 +230,7 @@ class SoCDesignRunner:
 
         result = graph.invoke(state, config=self._config)
         self._current_state = dict(result)
+        self._session_store.save(result)
 
         return self._classify_state(result)
 
@@ -260,6 +264,7 @@ class SoCDesignRunner:
 
         result = self._compiled_graph.invoke(state, config=self._config)
         self._current_state = dict(result)
+        self._session_store.save(result)
 
         status, _ = self._classify_state(result)
 
