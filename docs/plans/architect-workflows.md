@@ -154,21 +154,21 @@ Tasks:
 
 At every session, the architect sees a dashboard like:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │ SYSTEM OVERVIEW                                         │
 │                                                         │
-│ Power:   12.3W / 15.0W budget  [====████    ] 82%      │
-│ Latency: 45ms / 100ms budget   [===█        ] 45%      │
-│ Area:    78mm² / 100mm²        [======██    ] 78%      │
-│ Cost:    $38 / $50 target      [=====██     ] 76%      │
-│ Weight:  180g / 250g           [====█       ] 72%      │
-│ Thermal: 62°C / 85°C max      [=====██     ] 73%      │
+│ Power:   12.3W / 15.0W budget  [====████    ] 82%       │
+│ Latency: 45ms / 100ms budget   [===█        ] 45%       │
+│ Area:    78mm² / 100mm²        [======██    ] 78%       │
+│ Cost:    $38 / $50 target      [=====██     ] 76%       │
+│ Weight:  180g / 250g           [====█       ] 72%       │
+│ Thermal: 62°C / 85°C max       [=====██     ] 73%       │
 │                                                         │
 │ TOP 3 BOTTLENECKS:                                      │
-│   1. SAR processing: 6.0W (49% of compute power)       │
+│   1. SAR processing: 6.0W (49% of compute power)        │
 │   2. Fusion latency: 48ms (2ms headroom)                │
-│   3. Change detection SRAM: 32mm² (41% of die area)    │
+│   3. Change detection SRAM: 32mm² (41% of die area)     │
 │                                                         │
 │ EFFICIENCY:                                             │
 │   Capability/Watt: 0.42                                 │
@@ -180,27 +180,27 @@ At every session, the architect sees a dashboard like:
 
 Drilling into bottleneck #1:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │ SAR PROCESSING — Detailed Breakdown                     │
 │                                                         │
-│ Total: 6.0W | 50ms | compute-bound                     │
+│ Total: 6.0W | 50ms | compute-bound                      │
 │                                                         │
 │ Kernel          Power   Latency   Bound     Utilization │
 │ ──────────────  ──────  ────────  ────────  ─────────── │
-│ range_FFT       2.4W    18ms     memory    91% BW      │
-│ azimuth_FFT     1.8W    14ms     memory    87% BW      │
-│ matched_filter  1.2W    12ms     compute   72% ALU     │
-│ CFAR_detect     0.6W     6ms     compute   45% ALU     │
+│ range_FFT       2.4W     18ms     memory    91% BW      │
+│ azimuth_FFT     1.8W     14ms     memory    87% BW      │
+│ matched_filter  1.2W     12ms     compute   72% ALU     │
+│ CFAR_detect     0.6W      6ms     compute   45% ALU     │
 │                                                         │
 │ FFT kernels are memory-bandwidth-bound:                 │
-│   Required: 25.6 GB/s  |  Available: 19.2 GB/s         │
-│   → 1.33x oversubscribed                               │
+│   Required: 25.6 GB/s  |  Available: 19.2 GB/s          │
+│   → 1.33x oversubscribed                                │
 │                                                         │
 │ OPTIONS:                                                │
 │   A. Add SRAM bank (+4mm², -30% BW pressure)            │
-│   B. Burst-mode duty cycling (25% → avg 1.5W)          │
-│   C. Reduce range resolution (2x → -50% BW)            │
+│   B. Burst-mode duty cycling (25% → avg 1.5W)           │
+│   C. Reduce range resolution (2x → -50% BW)             │
 │   D. Dedicated SAR accelerator (+15mm², -60% power)     │
 └─────────────────────────────────────────────────────────┘
 ```

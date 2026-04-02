@@ -226,3 +226,4 @@ bin/test_api_key.sh
 !*.example
 !*_template.json
 !*_template.yaml
+branes-frontend/
