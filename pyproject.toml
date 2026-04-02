@@ -52,6 +52,10 @@ mcp = [
     "uvicorn>=0.25.0",
     "httpx>=0.25.0",
 ]
+api = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.25.0",
+]
 langgraph = [
     "langgraph>=0.2.0",                      # State machine framework
     "langchain-anthropic>=0.3.0",            # Claude integration for LangGraph
