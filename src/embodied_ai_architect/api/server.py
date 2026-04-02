@@ -14,24 +14,19 @@ Usage:
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from embodied_ai_architect.graphs.session_store import SessionStore
 
 logger = logging.getLogger(__name__)
 
-_store: Optional[SessionStore] = None
 
-
-def get_store() -> SessionStore:
-    """Get or create the global SessionStore."""
-    global _store
-    if _store is None:
-        _store = SessionStore()
-    return _store
+def _get_store(request: Request) -> SessionStore:
+    """Get the SessionStore from app state (no global mutable)."""
+    return request.app.state.session_store
 
 
 def create_app(
@@ -47,8 +42,6 @@ def create_app(
     Returns:
         Configured FastAPI app.
     """
-    global _store
-
     app = FastAPI(
         title="Branes Architect API",
         description="Design session data for the Branes Embodied AI Architect platform",
@@ -70,11 +63,11 @@ def create_app(
         allow_headers=["*"],
     )
 
-    # Session store
+    # Session store on app.state — no global mutable
     if session_dir:
-        _store = SessionStore(session_dir=session_dir)
+        app.state.session_store = SessionStore(session_dir=session_dir)
     else:
-        _store = SessionStore()
+        app.state.session_store = SessionStore()
 
     # Register routes
     app.include_router(_build_router())
@@ -89,9 +82,9 @@ def _build_router():
     router = APIRouter(prefix="/api")
 
     @router.get("/health")
-    async def health():
+    async def health(request: Request) -> dict[str, Any]:
         """Server health check."""
-        store = get_store()
+        store = _get_store(request)
         return {
             "status": "ok",
             "session_dir": str(store.session_dir),
@@ -99,24 +92,20 @@ def _build_router():
         }
 
     @router.get("/sessions")
-    async def list_sessions():
+    async def list_sessions(request: Request) -> list[dict[str, Any]]:
         """List all saved design sessions."""
-        store = get_store()
+        store = _get_store(request)
         return store.list_sessions()
 
     @router.get("/sessions/{session_id}")
-    async def get_session(session_id: str):
+    async def get_session(session_id: str, request: Request) -> dict[str, Any]:
         """Get full session state."""
-        store = get_store()
-        state = store.load(session_id)
-        if state is None:
-            raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
-        return state
+        return _load_or_404(session_id, request)
 
     @router.get("/sessions/{session_id}/pareto")
-    async def get_pareto(session_id: str):
+    async def get_pareto(session_id: str, request: Request) -> dict[str, Any]:
         """Get Pareto frontier data for visualization."""
-        state = _load_or_404(session_id)
+        state = _load_or_404(session_id, request)
         pareto_points = state.get("pareto_points", [])
         pareto_results = state.get("pareto_results", {})
 
@@ -133,9 +122,9 @@ def _build_router():
         }
 
     @router.get("/sessions/{session_id}/slackness")
-    async def get_slackness(session_id: str):
+    async def get_slackness(session_id: str, request: Request) -> list[dict[str, Any]]:
         """Get constraint slackness analysis."""
-        state = _load_or_404(session_id)
+        state = _load_or_404(session_id, request)
 
         # Try optimization review snapshot first (pre-computed)
         opt_snap = state.get("optimization_review_snapshot", {})
@@ -150,19 +139,20 @@ def _build_router():
 
             slackness = compute_constraint_slackness(state)
             return [cs.model_dump() for cs in slackness]
-        except Exception:
+        except (KeyError, TypeError, ValueError) as exc:
+            logger.warning("Failed to compute slackness for session %s: %s", session_id, exc)
             return []
 
     @router.get("/sessions/{session_id}/trajectory")
-    async def get_trajectory(session_id: str):
+    async def get_trajectory(session_id: str, request: Request) -> list[dict[str, Any]]:
         """Get optimization trajectory (PPA history across iterations)."""
-        state = _load_or_404(session_id)
+        state = _load_or_404(session_id, request)
         return state.get("optimization_history", [])
 
     @router.get("/sessions/{session_id}/taskgraph")
-    async def get_taskgraph(session_id: str):
+    async def get_taskgraph(session_id: str, request: Request) -> dict[str, Any]:
         """Get task graph structure for DAG visualization."""
-        state = _load_or_404(session_id)
+        state = _load_or_404(session_id, request)
         task_graph = state.get("task_graph", {"nodes": {}})
         nodes = task_graph.get("nodes", {})
 
@@ -174,7 +164,8 @@ def _build_router():
             graph = TaskGraph.from_dict(task_graph)
             execution_order = graph.execution_order()
             parallel_groups = compute_parallel_groups(graph)
-        except Exception:
+        except (KeyError, TypeError, ValueError) as exc:
+            logger.warning("Failed to compute task graph layout for %s: %s", session_id, exc)
             execution_order = list(nodes.keys())
             parallel_groups = []
 
@@ -194,9 +185,9 @@ def _build_router():
         }
 
     @router.get("/sessions/{session_id}/workload")
-    async def get_workload(session_id: str):
+    async def get_workload(session_id: str, request: Request) -> dict[str, Any]:
         """Get per-operator workload breakdown."""
-        state = _load_or_404(session_id)
+        state = _load_or_404(session_id, request)
         wp = state.get("workload_profile", {})
 
         operators = []
@@ -222,9 +213,9 @@ def _build_router():
     return router
 
 
-def _load_or_404(session_id: str) -> dict[str, Any]:
+def _load_or_404(session_id: str, request: Request) -> dict[str, Any]:
     """Load a session or raise 404."""
-    store = get_store()
+    store = _get_store(request)
     state = store.load(session_id)
     if state is None:
         raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
