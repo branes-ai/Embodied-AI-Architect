@@ -75,10 +75,13 @@ jobs:
       - name: Install CPU-only PyTorch
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
 
-      - name: Install package with optimization deps
-        run: pip install -e ".[dev,optimization]"
+      - name: Install package with optional deps
+        run: pip install -e ".[dev,optimization,api]"
 
       - name: Run MOO tests
         run: |
           pytest tests/test_moo_*.py tests/test_bayesian_*.py -v --tb=short \
             --ignore=tests/agents/ || true
+
+      - name: Run API server tests
+        run: pytest tests/test_api_server.py -v --tb=short
