@@ -13,11 +13,15 @@ Usage:
 
 from __future__ import annotations
 
+import asyncio
+import json
 import logging
-from typing import Any
+import re
+from typing import Any, AsyncGenerator
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import StreamingResponse
 
 from embodied_ai_architect.api.schemas import (
     ConstraintSlackness,
@@ -221,11 +225,169 @@ def _build_router():
             source=wp.get("source", ""),
         )
 
+    @router.get("/sessions/{session_id}/stream")
+    async def stream_session(session_id: str, request: Request) -> StreamingResponse:
+        """Stream live session updates via Server-Sent Events.
+
+        Watches the session JSON file for modifications and sends partial
+        state updates as SSE events. Useful for monitoring active optimization
+        runs in the frontend.
+
+        Event types:
+        - state_update: session state changed (iteration, ppa_metrics, status)
+        - complete: session reached terminal state
+        - error: session file disappeared or became unreadable
+        """
+        _validate_session_id(session_id)
+        store = _get_store(request)
+
+        # Verify session exists
+        state = store.load(session_id)
+        if state is None:
+            raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
+
+        return StreamingResponse(
+            _session_event_generator(store, session_id),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no",
+            },
+        )
+
     return router
 
 
+async def _session_event_generator(
+    store: SessionStore,
+    session_id: str,
+    poll_interval: float = 1.0,
+    timeout: float = 600.0,
+) -> AsyncGenerator[str, None]:
+    """Generate SSE events by polling the session file for changes.
+
+    Args:
+        store: SessionStore to read from.
+        session_id: Session to watch.
+        poll_interval: Seconds between polls.
+        timeout: Maximum stream duration in seconds.
+    """
+    session_path = store.session_dir / f"{session_id}.json"
+    last_mtime: float = 0.0
+    elapsed: float = 0.0
+
+    # Send initial state
+    state = store.load(session_id)
+    if state:
+        last_mtime = session_path.stat().st_mtime if session_path.exists() else 0.0
+        yield _format_sse("state_update", _extract_update(state))
+
+        # If already terminal, send complete and stop — no polling needed
+        status = state.get("status", "")
+        if status in ("complete", "failed"):
+            yield _format_sse(
+                "complete", {"status": status, "iteration": state.get("iteration", 0)}
+            )
+            return
+
+    while elapsed < timeout:
+        await asyncio.sleep(poll_interval)
+        elapsed += poll_interval
+
+        # Check if file was modified
+        if not session_path.exists():
+            yield _format_sse("error", {"message": "Session file not found"})
+            return
+
+        current_mtime = session_path.stat().st_mtime
+        if current_mtime <= last_mtime:
+            # Send keepalive comment to prevent connection timeout
+            yield ": keepalive\n\n"
+            continue
+
+        last_mtime = current_mtime
+
+        # File changed — read new state with retry for transient errors
+        # (e.g., JSONDecodeError from reading mid-write, though atomic
+        # saves should prevent this)
+        state = None
+        for attempt in range(3):
+            try:
+                state = store.load(session_id)
+                break
+            except (json.JSONDecodeError, OSError) as exc:
+                if attempt < 2:
+                    logger.debug(
+                        "Transient read error for %s (attempt %d): %s",
+                        session_id,
+                        attempt + 1,
+                        exc,
+                    )
+                    await asyncio.sleep(0.1)
+                else:
+                    logger.warning(
+                        "Failed to read session %s after 3 attempts: %s",
+                        session_id,
+                        exc,
+                    )
+                    yield _format_sse("error", {"message": f"Read failed: {exc}"})
+                    return
+        if state is None:
+            yield _format_sse("error", {"message": "Failed to read session"})
+            return
+
+        current_iteration = state.get("iteration", 0)
+        status = state.get("status", "")
+
+        yield _format_sse("state_update", _extract_update(state))
+
+        # Check for terminal state
+        if status in ("complete", "failed"):
+            yield _format_sse("complete", {"status": status, "iteration": current_iteration})
+            return
+
+    # Timeout reached
+    yield _format_sse("timeout", {"message": f"Stream timed out after {timeout}s"})
+
+
+def _extract_update(state: dict[str, Any]) -> dict[str, Any]:
+    """Extract the fields relevant for a streaming update."""
+    ppa = state.get("ppa_metrics", {})
+    return {
+        "session_id": state.get("session_id", ""),
+        "status": state.get("status", ""),
+        "iteration": state.get("iteration", 0),
+        "max_iterations": state.get("max_iterations", 20),
+        "ppa_metrics": {
+            "power_watts": ppa.get("power_watts"),
+            "latency_ms": ppa.get("latency_ms"),
+            "area_mm2": ppa.get("area_mm2"),
+            "cost_usd": ppa.get("cost_usd"),
+        },
+        "verdicts": ppa.get("verdicts", {}),
+    }
+
+
+def _format_sse(event: str, data: dict[str, Any]) -> str:
+    """Format a Server-Sent Event string."""
+    payload = json.dumps(data, default=str)
+    return f"event: {event}\ndata: {payload}\n\n"
+
+
+# Session ID must match soc_<alphanumeric> — prevents path traversal
+_SESSION_ID_PATTERN = re.compile(r"^soc_[a-zA-Z0-9_-]+$")
+
+
+def _validate_session_id(session_id: str) -> None:
+    """Validate session_id format to prevent path traversal."""
+    if not _SESSION_ID_PATTERN.match(session_id):
+        raise HTTPException(status_code=400, detail="Invalid session ID format")
+
+
 def _load_or_404(session_id: str, request: Request) -> dict[str, Any]:
-    """Load a session or raise 404."""
+    """Validate session_id, load session, or raise 404."""
+    _validate_session_id(session_id)
     store = _get_store(request)
     state = store.load(session_id)
     if state is None:
