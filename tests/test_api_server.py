@@ -543,6 +543,64 @@ class TestCORS:
 
 
 # ---------------------------------------------------------------------------
+# Path traversal protection
+# ---------------------------------------------------------------------------
+
+
+class TestPathTraversal:
+    """Session ID validation prevents path traversal.
+
+    Note: Starlette normalizes ../.. in URLs before routing, so those
+    never reach the handler (they get 404 from the router). Our validation
+    catches cases that bypass URL normalization (e.g., encoded dots,
+    non-soc prefixes).
+    """
+
+    def test_rejects_non_soc_prefix(self, client):
+        """IDs without soc_ prefix are rejected with 400."""
+        resp = client.get("/api/sessions/malicious_id")
+        assert resp.status_code == 400
+        assert "Invalid session ID" in resp.json()["detail"]
+
+    def test_rejects_dots_in_id(self, client):
+        """IDs containing dots are rejected."""
+        resp = client.get("/api/sessions/soc_..test")
+        assert resp.status_code == 400
+
+    def test_rejects_spaces(self, client):
+        resp = client.get("/api/sessions/soc_test%20injection")
+        assert resp.status_code == 400
+
+    def test_rejects_special_characters(self, client):
+        for bad_id in ["soc_test;rm", "soc_test$(cmd)", "soc_test&evil"]:
+            resp = client.get(f"/api/sessions/{bad_id}")
+            assert resp.status_code == 400, f"Should reject: {bad_id}"
+
+    def test_accepts_valid_session_id(self, client):
+        resp = client.get("/api/sessions/soc_testapi")
+        assert resp.status_code == 200
+
+    def test_accepts_hex_session_id(self, client):
+        """soc_fa0074e8 format should be accepted."""
+        resp = client.get("/api/sessions/soc_fa0074e8")
+        assert resp.status_code == 404  # not found, but format is valid
+
+    def test_accepts_hyphenated_session_id(self, client):
+        resp = client.get("/api/sessions/soc_test-run-1")
+        assert resp.status_code == 404  # format valid, session doesn't exist
+
+    def test_validation_on_derived_endpoints(self, client):
+        """All derived endpoints validate session_id."""
+        for suffix in ["/pareto", "/slackness", "/trajectory", "/taskgraph", "/workload"]:
+            resp = client.get(f"/api/sessions/bad_id{suffix}")
+            assert resp.status_code == 400, f"Validation missing on {suffix}"
+
+    def test_validation_on_stream(self, client):
+        resp = client.get("/api/sessions/bad_id/stream")
+        assert resp.status_code == 400
+
+
+# ---------------------------------------------------------------------------
 # SSE Streaming
 # ---------------------------------------------------------------------------
 

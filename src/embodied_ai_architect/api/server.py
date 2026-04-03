@@ -16,6 +16,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
 from typing import Any, AsyncGenerator
 
 from fastapi import FastAPI, HTTPException, Request
@@ -237,6 +238,7 @@ def _build_router():
         - complete: session reached terminal state
         - error: session file disappeared or became unreadable
         """
+        _validate_session_id(session_id)
         store = _get_store(request)
 
         # Verify session exists
@@ -373,8 +375,19 @@ def _format_sse(event: str, data: dict[str, Any]) -> str:
     return f"event: {event}\ndata: {payload}\n\n"
 
 
+# Session ID must match soc_<alphanumeric> — prevents path traversal
+_SESSION_ID_PATTERN = re.compile(r"^soc_[a-zA-Z0-9_-]+$")
+
+
+def _validate_session_id(session_id: str) -> None:
+    """Validate session_id format to prevent path traversal."""
+    if not _SESSION_ID_PATTERN.match(session_id):
+        raise HTTPException(status_code=400, detail="Invalid session ID format")
+
+
 def _load_or_404(session_id: str, request: Request) -> dict[str, Any]:
-    """Load a session or raise 404."""
+    """Validate session_id, load session, or raise 404."""
+    _validate_session_id(session_id)
     store = _get_store(request)
     state = store.load(session_id)
     if state is None:
