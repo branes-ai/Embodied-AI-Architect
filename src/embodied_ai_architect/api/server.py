@@ -124,9 +124,12 @@ def _build_router():
         pareto_results = state.get("pareto_results", {})
         opt_snap = state.get("optimization_review_snapshot", {})
 
+        # Front indices: non-dominated points only
+        front_indices = [i for i, p in enumerate(pareto_points) if not p.get("dominated", False)]
+
         return ParetoResponse(
             points=pareto_points,
-            front=pareto_results.get("front", []),
+            front=front_indices,
             knee_point_index=pareto_results.get("knee_point_index"),
             pareto_front_size=opt_snap.get("pareto_front_size", len(pareto_points)),
             hypervolume=opt_snap.get("hypervolume"),
