@@ -19,6 +19,17 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from embodied_ai_architect.api.schemas import (
+    ConstraintSlackness,
+    HealthResponse,
+    OperatorBreakdown,
+    ParetoResponse,
+    SessionSummary,
+    TaskGraphNode,
+    TaskGraphResponse,
+    TrajectoryEntry,
+    WorkloadResponse,
+)
 from embodied_ai_architect.graphs.session_store import SessionStore
 
 logger = logging.getLogger(__name__)
@@ -81,55 +92,51 @@ def _build_router():
 
     router = APIRouter(prefix="/api")
 
-    @router.get("/health")
-    async def health(request: Request) -> dict[str, Any]:
+    @router.get("/health", response_model=HealthResponse)
+    async def health(request: Request) -> HealthResponse:
         """Server health check."""
         store = _get_store(request)
-        return {
-            "status": "ok",
-            "session_dir": str(store.session_dir),
-            "session_count": len(store.list_sessions()),
-        }
+        return HealthResponse(
+            session_dir=str(store.session_dir),
+            session_count=len(store.list_sessions()),
+        )
 
-    @router.get("/sessions")
-    async def list_sessions(request: Request) -> list[dict[str, Any]]:
+    @router.get("/sessions", response_model=list[SessionSummary])
+    async def list_sessions(request: Request) -> list[SessionSummary]:
         """List all saved design sessions."""
         store = _get_store(request)
-        return store.list_sessions()
+        return [SessionSummary(**s) for s in store.list_sessions()]
 
     @router.get("/sessions/{session_id}")
     async def get_session(session_id: str, request: Request) -> dict[str, Any]:
-        """Get full session state."""
+        """Get full session state (untyped — full SoCDesignState)."""
         return _load_or_404(session_id, request)
 
-    @router.get("/sessions/{session_id}/pareto")
-    async def get_pareto(session_id: str, request: Request) -> dict[str, Any]:
+    @router.get("/sessions/{session_id}/pareto", response_model=ParetoResponse)
+    async def get_pareto(session_id: str, request: Request) -> ParetoResponse:
         """Get Pareto frontier data for visualization."""
         state = _load_or_404(session_id, request)
         pareto_points = state.get("pareto_points", [])
         pareto_results = state.get("pareto_results", {})
-
-        # Also extract from optimization review snapshot if available
         opt_snap = state.get("optimization_review_snapshot", {})
 
-        return {
-            "points": pareto_points,
-            "front": pareto_results.get("front", []),
-            "knee_point_index": pareto_results.get("knee_point_index"),
-            "objectives": ["power_watts", "latency_ms", "cost_usd"],
-            "pareto_front_size": opt_snap.get("pareto_front_size", len(pareto_points)),
-            "hypervolume": opt_snap.get("hypervolume"),
-        }
+        return ParetoResponse(
+            points=pareto_points,
+            front=pareto_results.get("front", []),
+            knee_point_index=pareto_results.get("knee_point_index"),
+            pareto_front_size=opt_snap.get("pareto_front_size", len(pareto_points)),
+            hypervolume=opt_snap.get("hypervolume"),
+        )
 
-    @router.get("/sessions/{session_id}/slackness")
-    async def get_slackness(session_id: str, request: Request) -> list[dict[str, Any]]:
+    @router.get("/sessions/{session_id}/slackness", response_model=list[ConstraintSlackness])
+    async def get_slackness(session_id: str, request: Request) -> list[ConstraintSlackness]:
         """Get constraint slackness analysis."""
         state = _load_or_404(session_id, request)
 
         # Try optimization review snapshot first (pre-computed)
         opt_snap = state.get("optimization_review_snapshot", {})
         if opt_snap.get("constraint_slackness"):
-            return opt_snap["constraint_slackness"]
+            return [ConstraintSlackness(**cs) for cs in opt_snap["constraint_slackness"]]
 
         # Fall back to computing from state
         try:
@@ -138,19 +145,20 @@ def _build_router():
             )
 
             slackness = compute_constraint_slackness(state)
-            return [cs.model_dump() for cs in slackness]
+            return [ConstraintSlackness(**cs.model_dump()) for cs in slackness]
         except (KeyError, TypeError, ValueError) as exc:
             logger.warning("Failed to compute slackness for session %s: %s", session_id, exc)
             return []
 
-    @router.get("/sessions/{session_id}/trajectory")
-    async def get_trajectory(session_id: str, request: Request) -> list[dict[str, Any]]:
+    @router.get("/sessions/{session_id}/trajectory", response_model=list[TrajectoryEntry])
+    async def get_trajectory(session_id: str, request: Request) -> list[TrajectoryEntry]:
         """Get optimization trajectory (PPA history across iterations)."""
         state = _load_or_404(session_id, request)
-        return state.get("optimization_history", [])
+        history = state.get("optimization_history", [])
+        return [TrajectoryEntry(**entry) for entry in history]
 
-    @router.get("/sessions/{session_id}/taskgraph")
-    async def get_taskgraph(session_id: str, request: Request) -> dict[str, Any]:
+    @router.get("/sessions/{session_id}/taskgraph", response_model=TaskGraphResponse)
+    async def get_taskgraph(session_id: str, request: Request) -> TaskGraphResponse:
         """Get task graph structure for DAG visualization."""
         state = _load_or_404(session_id, request)
         task_graph = state.get("task_graph", {"nodes": {}})
@@ -169,23 +177,23 @@ def _build_router():
             execution_order = list(nodes.keys())
             parallel_groups = []
 
-        return {
-            "nodes": [
-                {
-                    "id": tid,
-                    "name": node.get("name", ""),
-                    "agent": node.get("agent", ""),
-                    "status": node.get("status", "pending"),
-                    "dependencies": node.get("dependencies", []),
-                }
+        return TaskGraphResponse(
+            nodes=[
+                TaskGraphNode(
+                    id=tid,
+                    name=node.get("name", ""),
+                    agent=node.get("agent", ""),
+                    status=node.get("status", "pending"),
+                    dependencies=node.get("dependencies", []),
+                )
                 for tid, node in nodes.items()
             ],
-            "execution_order": execution_order,
-            "parallel_groups": parallel_groups,
-        }
+            execution_order=execution_order,
+            parallel_groups=parallel_groups,
+        )
 
-    @router.get("/sessions/{session_id}/workload")
-    async def get_workload(session_id: str, request: Request) -> dict[str, Any]:
+    @router.get("/sessions/{session_id}/workload", response_model=WorkloadResponse)
+    async def get_workload(session_id: str, request: Request) -> WorkloadResponse:
         """Get per-operator workload breakdown."""
         state = _load_or_404(session_id, request)
         wp = state.get("workload_profile", {})
@@ -193,22 +201,25 @@ def _build_router():
         operators = []
         for w in wp.get("workloads", []):
             operators.append(
-                {
-                    "name": w.get("name", "unknown"),
-                    "model_class": w.get("model_class", ""),
-                    "gflops": w.get("estimated_gflops"),
-                    "memory_mb": w.get("estimated_memory_mb"),
-                    "scheduling": w.get("scheduling", ""),
-                }
+                OperatorBreakdown(
+                    name=w.get("name", "unknown"),
+                    model_class=w.get("model_class", ""),
+                    gflops=w.get("estimated_gflops"),
+                    memory_mb=w.get("estimated_memory_mb"),
+                    latency_ms=w.get("latency_ms"),
+                    mapped_to=w.get("mapped_to"),
+                    bound=w.get("bound"),
+                    scheduling=w.get("scheduling", ""),
+                )
             )
 
-        return {
-            "operators": operators,
-            "total_gflops": wp.get("total_estimated_gflops"),
-            "total_memory_mb": wp.get("total_estimated_memory_mb"),
-            "dominant_op": wp.get("dominant_op", ""),
-            "source": wp.get("source", ""),
-        }
+        return WorkloadResponse(
+            operators=operators,
+            total_gflops=wp.get("total_estimated_gflops"),
+            total_memory_mb=wp.get("total_estimated_memory_mb"),
+            dominant_op=wp.get("dominant_op", ""),
+            source=wp.get("source", ""),
+        )
 
     return router
 
