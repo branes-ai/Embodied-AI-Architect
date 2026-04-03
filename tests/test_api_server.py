@@ -540,3 +540,69 @@ class TestCORS:
             },
         )
         assert resp.headers.get("access-control-allow-origin") != "http://evil.com"
+
+
+# ---------------------------------------------------------------------------
+# SSE Streaming
+# ---------------------------------------------------------------------------
+
+
+class TestSSEStream:
+    """Test SSE streaming components.
+
+    The async generator with asyncio.sleep cannot be tested via TestClient
+    (it blocks). We test the helper functions directly and the HTTP 404.
+    """
+
+    def test_stream_http_404_for_nonexistent(self, client):
+        """HTTP endpoint should return 404 for nonexistent session."""
+        resp = client.get("/api/sessions/soc_nonexistent/stream")
+        assert resp.status_code == 404
+
+    def test_extract_update_fields(self, session_dir, rich_state):
+        """_extract_update should return the expected field set."""
+        from embodied_ai_architect.api.server import _extract_update
+
+        store = SessionStore(session_dir=session_dir)
+        state = store.load("soc_testapi")
+        update = _extract_update(state)
+        assert update["session_id"] == "soc_testapi"
+        assert update["status"] == state.get("status")  # matches whatever fixture sets
+        assert update["iteration"] == 3
+        assert update["max_iterations"] == 20
+        assert update["ppa_metrics"]["power_watts"] == 4.5
+        assert update["ppa_metrics"]["latency_ms"] == 28.0
+        assert update["verdicts"]["power"] == "PASS"
+
+    def test_extract_update_empty_state(self):
+        """_extract_update handles empty state gracefully."""
+        from embodied_ai_architect.api.server import _extract_update
+
+        update = _extract_update({})
+        assert update["session_id"] == ""
+        assert update["status"] == ""
+        assert update["iteration"] == 0
+        assert update["ppa_metrics"]["power_watts"] is None
+
+    def test_format_sse_state_update(self):
+        """SSE format should match the spec: event + data + double newline."""
+        from embodied_ai_architect.api.server import _format_sse
+
+        result = _format_sse("state_update", {"status": "ok"})
+        assert result == 'event: state_update\ndata: {"status": "ok"}\n\n'
+
+    def test_format_sse_complete(self):
+        from embodied_ai_architect.api.server import _format_sse
+
+        result = _format_sse("complete", {"status": "complete", "iteration": 5})
+        assert result.startswith("event: complete\n")
+        assert "data:" in result
+        assert '"iteration": 5' in result
+        assert result.endswith("\n\n")
+
+    def test_format_sse_error(self):
+        from embodied_ai_architect.api.server import _format_sse
+
+        result = _format_sse("error", {"message": "Session file not found"})
+        assert "event: error\n" in result
+        assert "Session file not found" in result
