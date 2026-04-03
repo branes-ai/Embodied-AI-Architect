@@ -306,15 +306,33 @@ async def _session_event_generator(
 
         last_mtime = current_mtime
 
-        # File changed — read new state
-        try:
-            state = store.load(session_id)
-            if state is None:
-                yield _format_sse("error", {"message": "Failed to read session"})
-                return
-        except Exception as exc:
-            logger.warning("Error reading session %s during stream: %s", session_id, exc)
-            yield _format_sse("error", {"message": str(exc)})
+        # File changed — read new state with retry for transient errors
+        # (e.g., JSONDecodeError from reading mid-write, though atomic
+        # saves should prevent this)
+        state = None
+        for attempt in range(3):
+            try:
+                state = store.load(session_id)
+                break
+            except (json.JSONDecodeError, OSError) as exc:
+                if attempt < 2:
+                    logger.debug(
+                        "Transient read error for %s (attempt %d): %s",
+                        session_id,
+                        attempt + 1,
+                        exc,
+                    )
+                    await asyncio.sleep(0.1)
+                else:
+                    logger.warning(
+                        "Failed to read session %s after 3 attempts: %s",
+                        session_id,
+                        exc,
+                    )
+                    yield _format_sse("error", {"message": f"Read failed: {exc}"})
+                    return
+        if state is None:
+            yield _format_sse("error", {"message": "Failed to read session"})
             return
 
         current_iteration = state.get("iteration", 0)

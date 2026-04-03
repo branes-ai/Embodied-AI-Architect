@@ -63,8 +63,12 @@ class SessionStore:
         save_data = dict(state)
         save_data["_saved_at"] = datetime.now().isoformat()
 
-        with open(path, "w") as f:
+        # Atomic write: write to temp file, then rename. Prevents readers
+        # from seeing truncated JSON if they poll mid-write.
+        tmp_path = path.with_suffix(".tmp")
+        with open(tmp_path, "w") as f:
             json.dump(save_data, f, indent=2, default=str)
+        tmp_path.rename(path)
 
         logger.debug("Saved session %s to %s", session_id, path)
         return session_id
