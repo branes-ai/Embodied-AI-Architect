@@ -73,6 +73,19 @@ def platform_show(ctx, platform_id, as_json):
     p = registry.get(platform_id)
 
     if not p:
+        # Maybe the user typed a category name — list platforms in that category
+        category_platforms = registry.list_by_category(platform_id)
+        if category_platforms:
+            console.print(
+                f"\n[bold]{platform_id}[/bold] is a category with "
+                f"{len(category_platforms)} platform(s):\n"
+            )
+            for cp in category_platforms:
+                console.print(f"  [cyan]{cp.id}[/cyan] — {cp.name}")
+                console.print(f"    [dim]{cp.description}[/dim]")
+            console.print("\nUse [cyan]branes platform show <id>[/cyan] to see full details.")
+            return
+
         console.print(f"[red]Platform not found: {platform_id}[/red]")
         # Suggest close matches
         matches = registry.search(platform_id, top_k=3)
