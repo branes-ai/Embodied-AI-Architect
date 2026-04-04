@@ -1,0 +1,126 @@
+id: aerial.agricultural_sprayer
+name: "Agricultural Sprayer Drone"
+category: aerial
+description: "Precision crop spraying drone for autonomous application of pesticides, herbicides, and fertilizers with variable-rate delivery across agricultural fields."
+aliases:
+  - "spray drone"
+  - "crop sprayer drone"
+  - "ag drone"
+
+keywords:
+  identity:
+    - agricultural drone
+    - spray drone
+    - crop sprayer
+    - ag drone
+    - pesticide drone
+    - farm drone
+    - sprayer UAV
+  descriptions:
+    - "drone that sprays crops with pesticides"
+    - "autonomous aerial sprayer for farming"
+    - "precision agriculture spraying robot"
+  application:
+    - precision agriculture
+    - aerial spraying
+    - crop protection
+    - variable rate application
+    - pest management
+    - foliar feeding
+    - herbicide application
+  industry:
+    - precision ag
+    - agtech
+    - crop science
+    - smart farming
+  components:
+    - spray nozzle
+    - liquid tank
+    - pump
+    - flow meter
+    - RTK GPS
+    - terrain radar
+  related:
+    - NDVI mapping
+    - prescription map
+    - crop scouting
+    - drift reduction
+    - spot spraying
+
+classification:
+  locomotion: "rotary-wing flight"
+  manipulation: "liquid dispensing"
+  load_class: "medium"
+  environment:
+    - rural
+    - agricultural
+    - outdoor
+  human_proximity: "standoff"
+
+attributes:
+  power_watts: {min: 2000, max: 8000, typical: 4500}
+  compute_tops: {min: 2, max: 20, typical: 8}
+  latency_ms: {min: 50, max: 200, typical: 100}
+  weight_kg: {min: 20, max: 70, typical: 40}
+  cost_usd: {min: 10000, max: 80000, typical: 25000}
+  autonomy_level: "L4 - full autonomy within field boundary"
+  safety_level: "agricultural equipment safety"
+  mission_duration_hours: {min: 0.1, max: 0.3, typical: 0.2}
+
+implications:
+  platform_type: "aerial"
+  perception:
+    camera_types: ["downward multispectral", "forward stereo", "downward RGB"]
+    detection_classes: ["crop row", "obstacle", "person", "tree", "power line", "weed", "diseased area"]
+    max_latency_ms: 100
+    min_fps: 10
+  sensors:
+    modalities: ["RGB camera", "multispectral camera", "RTK GPS", "IMU", "radar altimeter", "flow sensor", "wind sensor"]
+  actuators:
+    actuator_types: ["brushless DC motor", "peristaltic pump", "spray nozzle servo"]
+    dof: 4
+    control_rate_hz: 200
+  comms:
+    protocols: ["900MHz radio", "4G/LTE", "MAVLink", "Wi-Fi"]
+  power:
+    compute_power_watts: 10
+  safety:
+    level: "agricultural equipment"
+    certifications: ["Part 107", "EPA pesticide application", "state ag permits"]
+
+context:
+  typical_architecture: "Heavy-lift hexacopter or octocopter frame with 10-40L liquid tank, centrifugal or peristaltic pump system, and 4-8 spray nozzles. Flight controller with RTK GPS for centimeter-level swath accuracy. Companion computer runs prescription map overlay and variable-rate control logic."
+  common_pitfalls:
+    - "Spray drift in winds above 3 m/s causes off-target contamination and regulatory violations"
+    - "Tank slosh during aggressive maneuvers destabilizes flight; baffled tanks are essential"
+    - "Nozzle clogging from particulate matter requires in-line filtration and flow monitoring"
+    - "Short flight times (8-12 min loaded) demand efficient multi-battery swap logistics"
+    - "Corrosive chemicals degrade airframe and electronics without proper sealing"
+  regulatory:
+    - "FAA Part 107 and Part 137 agricultural aircraft operator certificate"
+    - "EPA Worker Protection Standard for pesticide application"
+    - "State-level pesticide applicator licensing"
+    - "Drift buffer zone regulations near water bodies"
+  reference_designs:
+    - "DJI Agras T40"
+    - "XAG P100"
+    - "Hylio AG-272"
+    - "HSE UAV AG V6A+"
+  design_considerations: "Agricultural sprayer drones operate in a regime where liquid payload mass dominates total weight, so structural efficiency and motor sizing are driven by the full-tank takeoff weight. Perception requirements are modest compared to urban drones; the primary compute task is GPS-guided path following with terrain-following altitude hold. Variable-rate spraying requires real-time lookup against prescription maps at 10Hz+. The compute budget should prioritize reliability and thermal tolerance over raw performance, as field conditions involve dust, vibration, and temperature extremes."
+
+qualification:
+  suggested_questions:
+    - tank_capacity_liters
+    - field_size_hectares
+    - spray_type
+    - terrain_type
+    - chemical_compatibility
+  critical_constraints:
+    - "Spray rate accuracy within 5%"
+    - "Swath overlap < 10%"
+    - "Wind speed operating limit"
+    - "Chemical-resistant materials"
+  optional_constraints:
+    - "Multispectral crop health detection"
+    - "Spot spraying capability"
+    - "Night operation lighting"

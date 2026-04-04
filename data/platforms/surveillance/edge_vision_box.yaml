@@ -1,0 +1,155 @@
+id: surveillance.edge_vision_box
+name: "Edge Vision Box"
+category: surveillance
+description: "General-purpose edge AI appliance for running computer vision inference at the network edge, supporting multi-camera analytics including detection, classification, and tracking without cloud dependency."
+aliases:
+  - "edge AI box"
+  - "AI appliance"
+  - "vision inference box"
+  - "edge compute box"
+  - "edge analytics unit"
+
+keywords:
+  identity:
+    - edge device
+    - edge computing
+    - edge AI
+    - edge detection
+    - edge inference
+    - vision box
+    - AI appliance
+    - edge appliance
+    - inference box
+    - smart camera
+    - edge processor
+    - AI box
+    - neural compute
+    - edge compute device
+    - edge analytics
+  descriptions:
+    - "edge device running edge detection"
+    - "box that runs AI models on camera feeds locally"
+    - "small computer that does vision inference at the edge"
+    - "appliance for running neural networks on video streams"
+    - "local AI processing unit for camera analytics"
+  application:
+    - edge inference
+    - video analytics
+    - object detection
+    - real-time classification
+    - people counting
+    - vehicle detection
+    - license plate recognition
+    - anomaly detection
+    - visual inspection
+    - multi-camera processing
+  industry:
+    - edge computing
+    - IoT
+    - AIoT
+    - industrial IoT
+    - smart building
+    - retail analytics
+    - smart city
+  components:
+    - inference accelerator
+    - GPU module
+    - NPU
+    - VPU
+    - video decoder
+    - Ethernet switch
+    - PoE input
+    - NVMe storage
+  related:
+    - ONNX runtime
+    - TensorRT
+    - OpenVINO
+    - model optimization
+    - quantization
+    - INT8 inference
+    - model serving
+    - triton inference server
+
+classification:
+  locomotion: "fixed installation"
+  manipulation: "none"
+  load_class: "appliance"
+  environment:
+    - indoor
+    - outdoor (IP65 variants)
+    - edge location
+    - network closet
+  human_proximity: "unattended operation"
+
+attributes:
+  power_watts: {min: 10, max: 150, typical: 40}
+  compute_tops: {min: 4, max: 275, typical: 40}
+  latency_ms: {min: 5, max: 100, typical: 20}
+  weight_kg: {min: 0.3, max: 5, typical: 1.5}
+  cost_usd: {min: 200, max: 5000, typical: 800}
+  autonomy_level: "fully autonomous inference"
+  safety_level: "commercial/industrial"
+  mission_duration_hours: {min: 8760, max: 8760, typical: 8760}
+
+implications:
+  platform_type: "surveillance"
+  perception:
+    camera_types: ["IP camera input", "USB camera", "MIPI CSI", "RTSP stream"]
+    detection_classes: ["configurable per deployment"]
+    max_latency_ms: 30
+    min_fps: 30
+  sensors:
+    modalities: ["video stream input (IP/USB/CSI)", "optional GPIO", "optional serial"]
+  actuators:
+    actuator_types: ["GPIO output", "relay", "alarm trigger"]
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols: ["Ethernet", "Wi-Fi", "MQTT", "REST API", "RTSP", "gRPC", "ONVIF"]
+  power:
+    compute_power_watts: 30
+  safety:
+    level: "commercial"
+    certifications: ["CE", "FCC", "UL", "RoHS"]
+
+context:
+  typical_architecture: "Compact fanless enclosure housing a system-on-module (Jetson Orin, Intel NUC, Hailo-8, or Qualcomm QCS) with hardware video decoder, inference accelerator (GPU/NPU/VPU), and multi-port Ethernet or PoE for camera connectivity. Runs a lightweight Linux OS with container-based model serving (Triton, ONNX Runtime, or TensorRT). Typically processes 4-16 camera streams simultaneously depending on resolution and model complexity."
+  common_pitfalls:
+    - "Thermal throttling in sealed enclosures limits sustained inference throughput; test at worst-case ambient temperature"
+    - "Video decode bandwidth is often the bottleneck before inference; H.265 hardware decode support is essential for multi-stream"
+    - "INT8 quantization can degrade accuracy 2-5% if calibration dataset is not representative of deployment conditions"
+    - "Model updates over-the-air require robust rollback mechanisms to avoid bricking remote devices"
+    - "PoE power budget (15-25W per camera) limits total system power when edge box also runs on PoE"
+    - "Memory bandwidth, not TOPS, is usually the true performance limiter for detection models"
+  regulatory:
+    - "FCC Part 15 for electromagnetic emissions"
+    - "CE marking for EU deployment"
+    - "NDAA Section 889 if used in government installations"
+    - "GDPR/CCPA for video analytics with PII"
+  reference_designs:
+    - "NVIDIA Jetson Orin NX/Nano DevKit"
+    - "Intel NUC with OpenVINO"
+    - "Hailo-8 AI Accelerator Module"
+    - "Qualcomm QCS8550 Vision Intelligence Platform"
+    - "Google Coral Dev Board"
+    - "Advantech EI-52 Edge AI System"
+    - "AAEON BOXER-8640AI"
+  design_considerations: "Edge vision boxes are defined by their performance-per-watt envelope; the key metric is inferences-per-second-per-watt across the target model zoo. Memory bandwidth (not peak TOPS) is typically the binding constraint for detection models like YOLO, so platform selection should prioritize memory subsystem performance. Multi-stream processing requires careful scheduling of decode, preprocess, inference, and postprocess stages to maximize accelerator utilization. Deployment at scale demands container-based model management with OTA update capability, health monitoring, and remote diagnostics."
+
+qualification:
+  suggested_questions:
+    - number_of_cameras
+    - model_type
+    - target_fps
+    - power_budget_watts
+    - deployment_environment
+  critical_constraints:
+    - "Inference latency < 30ms per frame"
+    - "Multi-stream processing (4+ cameras)"
+    - "Fanless/sealed operation"
+    - "24/7 unattended operation"
+  optional_constraints:
+    - "IP65 outdoor rating"
+    - "PoE powered"
+    - "GPU vs NPU preference"
+    - "Specific framework support (TensorRT, OpenVINO, ONNX)"

@@ -1,0 +1,77 @@
+id: food.grading_sorting
+name: "Food Grading and Sorting System"
+category: food
+description: "High-speed optical inspection and robotic sorting system for grading fruit, vegetables, and seafood by quality, size, color, and defect detection."
+aliases:
+  - "produce sorting robot"
+  - "fruit grading system"
+  - "food quality sorter"
+
+keywords:
+  identity: [food sorting, fruit grading, vegetable sorting, quality grading, optical sorting]
+  descriptions: [food inspection system, produce sorting machine, automated grading, food quality robot, smart sorter]
+  application: [quality grading, defect detection, size sorting, color sorting, produce packing, food safety inspection]
+  industry: [food processing, agriculture, packing house, seafood processing, fresh produce]
+  components: [line-scan camera, hyperspectral sensor, air ejector, conveyor, LED illumination]
+  related: [optical sorting, machine vision inspection, food safety, pack house automation]
+
+classification:
+  locomotion: "stationary.fixed_mount"
+  manipulation: "fixed_tool"
+  load_class: "light"
+  environment: [indoor_food_grade, cold_storage]
+  human_proximity: "humans_nearby"
+
+attributes:
+  power_watts: {min: 1000, max: 10000, typical: 3000}
+  compute_tops: {min: 4, max: 40, typical: 15}
+  latency_ms: {min: 5, max: 30, typical: 10}
+  weight_kg: {min: 500, max: 5000, typical: 2000}
+  cost_usd: {min: 100000, max: 1000000, typical: 300000}
+  autonomy_level: "full"
+  safety_level: "sil_1"
+  mission_duration_hours: {min: 8, max: 20, typical: 12}
+
+implications:
+  platform_type: "stationary_inspection"
+  perception:
+    camera_types: [rgb_line_scan, nir, hyperspectral, x_ray]
+    detection_classes: [bruise, rot, insect_damage, foreign_object, size_grade, color_grade, shape_defect]
+    max_latency_ms: 15
+    min_fps: 60
+  sensors:
+    modalities: [camera, hyperspectral, nir, x_ray, weight_sensor]
+  actuators:
+    actuator_types: [air_ejector, diverter_gate, robotic_pick]
+    dof: null
+    control_rate_hz: 200
+  comms:
+    protocols: [ethernet, opc_ua, modbus]
+  power:
+    compute_power_watts: 30
+  safety:
+    level: "sil_1"
+    certifications: [FDA_21CFR, CE, USDA]
+
+context:
+  typical_architecture: "Products pass through an illuminated inspection zone on a belt or roller conveyor; line-scan cameras (RGB, NIR, or hyperspectral) capture 360-degree views; FPGA or GPU processes images in real-time at 10+ items per second; air ejectors or diverter gates route items into grade-specific lanes. Weight and size sensors provide supplementary grading data."
+  common_pitfalls:
+    - "Natural biological variability makes defect classification models fragile across seasons and varieties"
+    - "Wet or reflective produce surfaces cause specular highlights that confuse vision systems"
+    - "Throughput requirements demand sub-10ms classification—standard GPU inference may be insufficient"
+    - "Foreign object detection (stems, leaves, insects) requires different sensing than quality grading"
+  regulatory:
+    - "FDA 21 CFR (food safety)"
+    - "USDA grading standards"
+    - "HACCP compliance"
+    - "EU food hygiene regulations (EC 852/2004)"
+  reference_designs:
+    - "TOMRA Food Sorting"
+    - "Key Technology VERYX"
+    - "Unitec Uni Sort"
+  design_considerations: "Food grading systems must process 5-20 items per second with sub-millimeter defect detection. Line-scan cameras with controlled LED illumination provide consistent imaging. Hyperspectral sensing can detect internal defects (bruising, sugar content) invisible to RGB. The entire system must be washdown-rated (IP69K) for food safety sanitation. Model retraining is needed seasonally as product appearance varies. Latency is extremely tight—the entire detect-to-eject pipeline must complete before the item passes the ejection point."
+
+qualification:
+  suggested_questions: [product_type, throughput_items_per_second, defect_types, grade_categories, washdown_requirement, existing_line_speed]
+  critical_constraints: [throughput_rate, defect_detection_accuracy, latency_budget_ms, food_safety_rating]
+  optional_constraints: [internal_quality_sensing, multi_product_flexibility, data_traceability]

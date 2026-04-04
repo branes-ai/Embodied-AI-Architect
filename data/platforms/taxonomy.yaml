@@ -1,0 +1,142 @@
+# Platform Registry Taxonomy
+# Defines the classification axes and valid values.
+
+locomotion:
+  aerial:
+    - rotary_wing
+    - fixed_wing
+    - vtol
+    - lighter_than_air
+    - tethered
+  ground:
+    - wheeled
+    - legged
+    - tracked
+    - hybrid
+  marine:
+    - surface
+    - underwater
+    - amphibious
+  space:
+    - orbital
+    - planetary_surface
+    - atmospheric
+  stationary:
+    - fixed_mount
+    - pan_tilt
+    - gantry
+    - conveyor_mounted
+    - benchtop
+  wearable:
+    - head_mounted
+    - body_worn
+    - limb_attached
+
+manipulation:
+  - none
+  - fixed_tool
+  - fluid_dispenser
+  - 1_dof_gripper
+  - multi_dof_hand
+  - soft_gripper
+  - articulated_arm
+  - dual_arm
+  - mobile_manipulation
+  - surgical_instrument
+  - full_humanoid
+  - heavy_gantry
+
+load_class:
+  - none
+  - micro              # <10g
+  - micro_fluid        # uL-mL
+  - fragile_micro      # <100g fragile
+  - light              # 0.1-10kg
+  - deformable_light   # 0.1-5kg deformable
+  - medium             # 10-50kg
+  - heavy              # 50-500kg
+  - ultra_heavy        # 500-50,000kg
+  - live_animal        # 0.1-1000kg
+  - sterile_fluid      # aseptic
+  - hazardous          # explosive, radioactive, toxic
+  - contact_tool       # tool-on-arm
+
+environment:
+  - indoor_structured
+  - indoor_unstructured
+  - indoor_cleanroom
+  - indoor_sterile
+  - indoor_lab
+  - indoor_cold_chain
+  - outdoor_urban
+  - outdoor_rural
+  - outdoor_extreme
+  - outdoor_farmyard
+  - underwater_shallow
+  - underwater_deep
+  - space_orbital
+  - space_planetary
+  - subterranean
+  - hazardous_chemical
+  - hazardous_radiation
+  - hazardous_fire
+  - food_processing
+
+human_proximity:
+  - no_humans
+  - humans_distant
+  - humans_nearby
+  - humans_contact
+  - humans_on_body
+  - humans_inside
+
+autonomy_level:
+  - teleoperated
+  - assisted
+  - partial
+  - conditional
+  - high
+  - full
+
+safety_level:
+  - none
+  - basic
+  - sil_1
+  - sil_2
+  - sil_3
+  - sil_4
+
+categories:
+  - aerial
+  - ground_wheeled
+  - ground_legged
+  - ground_tracked
+  - manipulation
+  - surgical
+  - veterinary
+  - lab
+  - marine_surface
+  - marine_underwater
+  - space
+  - surveillance
+  - wearable
+  - consumer
+  - agriculture
+  - construction
+  - logistics
+  - energy
+  - entertainment
+  - military
+  - healthcare
+  - assistive
+  - waste
+  - food
+  - underground
+  - forestry
+  - weather
+  - datacenter
+  - mining
+  - oil_gas
+  - aerospace
+  - textile
+  - municipal

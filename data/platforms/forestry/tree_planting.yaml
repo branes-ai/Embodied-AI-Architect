@@ -1,0 +1,75 @@
+id: forestry.tree_planting
+name: "Automated Tree Planting Robot"
+category: forestry
+description: "Autonomous ground or aerial robot for high-throughput seedling planting in reforestation and afforestation projects across varied terrain."
+aliases:
+  - "reforestation robot"
+  - "seedling planter"
+  - "tree planter robot"
+
+keywords:
+  identity: [tree planting robot, reforestation robot, seedling planter, tree planter, forestry robot]
+  descriptions: [automated planting, planting drone, forest restoration robot, seedling deployment, autonomous planter]
+  application: [reforestation, afforestation, seedling planting, forest restoration, post-fire replanting]
+  industry: [forestry, environmental restoration, conservation, carbon offset, silviculture]
+  components: [planting mechanism, seedling hopper, GNSS receiver, terrain sensor]
+  related: [seed pod drone, mechanical planter, silviculture, carbon sequestration]
+
+classification:
+  locomotion: "ground.tracked"
+  manipulation: "fixed_tool"
+  load_class: "medium"
+  environment: [outdoor_unstructured, forest, hillside]
+  human_proximity: "humans_distant"
+
+attributes:
+  power_watts: {min: 500, max: 15000, typical: 5000}
+  compute_tops: {min: 1, max: 10, typical: 4}
+  latency_ms: {min: 50, max: 500, typical: 200}
+  weight_kg: {min: 200, max: 5000, typical: 1500}
+  cost_usd: {min: 50000, max: 500000, typical: 150000}
+  autonomy_level: "high"
+  safety_level: "basic"
+  mission_duration_hours: {min: 4, max: 12, typical: 8}
+
+implications:
+  platform_type: "ground_tracked"
+  perception:
+    camera_types: [rgb, depth]
+    detection_classes: [obstacle, stump, rock, existing_tree, suitable_planting_spot, slope]
+    max_latency_ms: 300
+    min_fps: 10
+  sensors:
+    modalities: [camera, gnss_rtk, imu, lidar, soil_probe]
+  actuators:
+    actuator_types: [hydraulic_auger, planting_head, tracked_drive]
+    dof: null
+    control_rate_hz: 10
+  comms:
+    protocols: [cellular_4g, satellite, radio_link]
+  power:
+    compute_power_watts: 10
+  safety:
+    level: "basic"
+    certifications: [CE]
+
+context:
+  typical_architecture: "A tracked or wheeled platform traverses post-harvest or fire-damaged terrain using GNSS-guided waypoints. Onboard sensors identify suitable planting locations based on soil conditions, slope, and spacing rules. A planting head (auger + dibble tube) prepares a hole and deposits a seedling from an onboard hopper. Drone-based alternatives fire seed pods from the air for inaccessible terrain."
+  common_pitfalls:
+    - "Rocky or root-dense soil causing planting mechanism jams or seedling damage"
+    - "GNSS signal degradation under remaining forest canopy"
+    - "Steep terrain (>30 degrees) limiting ground vehicle access"
+    - "Seedling survival rates depending heavily on planting depth and soil compaction"
+  regulatory:
+    - "Forest management regulations (varies by jurisdiction)"
+    - "Environmental impact assessments for large-scale planting"
+    - "Aviation regulations for drone-based seed dispersal"
+  reference_designs:
+    - "Milrem Robotics Forester"
+    - "Flash Forest (drone-based seed pods)"
+  design_considerations: "Tree planting robots must operate on rough, uneven terrain with stumps, slash, and rocks. Planting quality (depth, spacing, soil compaction) directly impacts seedling survival rates and must meet forestry standards. Ground-based systems offer higher planting quality but slower coverage; drone-based systems cover more area but with lower precision. GNSS + IMU localization must maintain planting grid accuracy. Seedling capacity in the hopper determines refill frequency and operational efficiency. Consider hybrid approaches: drones for access-limited slopes, ground robots for higher-quality planting on accessible terrain."
+
+qualification:
+  suggested_questions: [terrain_type, planting_density, seedling_species, slope_range, area_hectares, soil_conditions]
+  critical_constraints: [terrain_slope, planting_density_per_hectare, seedling_survival_rate, soil_type]
+  optional_constraints: [drone_vs_ground, seedling_hopper_capacity, remote_monitoring, multi_species]

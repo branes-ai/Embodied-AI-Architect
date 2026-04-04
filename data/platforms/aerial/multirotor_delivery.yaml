@@ -1,0 +1,126 @@
+id: aerial.multirotor_delivery
+name: "Multirotor Delivery Drone"
+category: aerial
+description: "Last-mile package delivery drone designed for autonomous point-to-point transport of parcels weighing 2-5 kg over urban and suburban environments."
+aliases:
+  - "delivery drone"
+  - "package drone"
+  - "last-mile drone"
+
+keywords:
+  identity:
+    - drone
+    - uav
+    - delivery drone
+    - package drone
+    - multirotor
+    - quadcopter
+    - hexacopter
+    - octocopter
+  descriptions:
+    - "autonomous drone that delivers packages"
+    - "flying robot for last-mile delivery"
+    - "unmanned aerial vehicle carrying parcels"
+  application:
+    - last-mile delivery
+    - autonomous delivery
+    - aerial delivery
+    - package transport
+    - parcel delivery
+    - e-commerce delivery
+  industry:
+    - urban air mobility
+    - logistics
+    - UAM
+    - drone logistics
+  components:
+    - flight controller
+    - ESC
+    - brushless motor
+    - LiPo battery
+    - GPS module
+    - barometer
+    - IMU
+  related:
+    - eVTOL
+    - drone corridor
+    - UTM
+    - beyond visual line of sight
+    - BVLOS
+
+classification:
+  locomotion: "rotary-wing flight"
+  manipulation: "payload release mechanism"
+  load_class: "light"
+  environment:
+    - urban
+    - suburban
+    - outdoor
+  human_proximity: "overhead / standoff"
+
+attributes:
+  power_watts: {min: 400, max: 2500, typical: 1200}
+  compute_tops: {min: 4, max: 40, typical: 12}
+  latency_ms: {min: 20, max: 100, typical: 50}
+  weight_kg: {min: 5, max: 25, typical: 12}
+  cost_usd: {min: 5000, max: 50000, typical: 15000}
+  autonomy_level: "L4 - full autonomy within ODD"
+  safety_level: "SORA specific assurance"
+  mission_duration_hours: {min: 0.25, max: 0.5, typical: 0.35}
+
+implications:
+  platform_type: "aerial"
+  perception:
+    camera_types: ["downward stereo", "forward mono", "omnidirectional"]
+    detection_classes: ["person", "vehicle", "building", "landing pad", "obstacle", "bird"]
+    max_latency_ms: 50
+    min_fps: 20
+  sensors:
+    modalities: ["RGB camera", "stereo depth", "GPS/RTK", "IMU", "barometer", "ultrasonic altimeter", "ADS-B receiver", "LiDAR"]
+  actuators:
+    actuator_types: ["brushless DC motor", "servo (payload release)"]
+    dof: 4
+    control_rate_hz: 400
+  comms:
+    protocols: ["4G/LTE", "5G", "MAVLink", "ADS-B Out", "Remote ID"]
+  power:
+    compute_power_watts: 15
+  safety:
+    level: "SORA Medium"
+    certifications: ["Part 107", "SORA", "Remote ID", "ASTM F3322"]
+
+context:
+  typical_architecture: "Pixhawk-class flight controller for inner-loop stabilization paired with a companion computer (Jetson Orin NX or similar) for perception, path planning, and obstacle avoidance. Separate payload bay with servo-actuated release."
+  common_pitfalls:
+    - "Battery capacity vs payload mass trade-off limits range to 10-15 km round trip"
+    - "Wind gusts above 12 m/s degrade GPS accuracy and increase power consumption dramatically"
+    - "Rotor wash interferes with ultrasonic landing sensors below 3 m altitude"
+    - "Thermal throttling of compute module in direct sunlight reduces inference throughput"
+  regulatory:
+    - "FAA Part 107 waiver for BVLOS operations"
+    - "Remote ID broadcast mandatory (ASTM F3411)"
+    - "SORA risk assessment for operations over populated areas"
+    - "Local noise ordinances may restrict operating hours"
+  reference_designs:
+    - "DJI FlyCart 30"
+    - "Wing (Google / Alphabet)"
+    - "Amazon Prime Air MK30"
+    - "Zipline P2 Zip"
+  design_considerations: "Delivery drones must balance payload capacity against flight time; every 100g of compute hardware directly reduces deliverable payload or range. Perception pipelines should prioritize detect-and-avoid (DAA) over detailed classification since the primary safety function is collision avoidance. Landing zone verification requires sub-10cm precision, often achieved through AprilTag or IR beacon detection. Power budget for compute should stay below 15W to preserve at least 85% of battery for propulsion."
+
+qualification:
+  suggested_questions:
+    - max_payload_kg
+    - delivery_range_km
+    - operating_environment
+    - regulatory_jurisdiction
+    - landing_zone_type
+  critical_constraints:
+    - "Payload capacity 2-5 kg"
+    - "Flight time 15-25 minutes"
+    - "Detect-and-avoid latency < 500ms"
+    - "GPS-denied navigation capability"
+  optional_constraints:
+    - "Weather tolerance (rain, wind)"
+    - "Night operations capability"
+    - "Noise level at ground < 65 dBA"

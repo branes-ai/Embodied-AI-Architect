@@ -1,0 +1,135 @@
+id: surgical.orthopedic
+name: "Orthopedic Surgical Robot"
+category: surgical
+description: "Robotic system for joint replacement surgery providing pre-operative 3D planning, intra-operative navigation, and active or semi-active bone cutting with sub-millimeter accuracy."
+aliases:
+  - "knee replacement robot"
+  - "hip replacement robot"
+  - "joint surgery robot"
+  - "orthopedic robot"
+
+keywords:
+  identity:
+    - surgical robot
+    - orthopedic surgery
+    - orthopedic robot
+    - joint surgery
+    - robotic surgery
+    - surgical navigation
+    - bone cutting robot
+  descriptions:
+    - "robot that assists surgeons in knee and hip replacement"
+    - "robotic system for precise bone cutting during joint surgery"
+    - "surgical robot for orthopedic joint replacement"
+  application:
+    - knee replacement
+    - hip replacement
+    - total knee arthroplasty
+    - total hip arthroplasty
+    - bone cutting
+    - implant alignment
+    - joint resurfacing
+    - partial knee replacement
+    - unicompartmental knee
+  industry:
+    - orthopedic surgery
+    - medical robotics
+    - surgical planning
+    - arthroplasty
+    - musculoskeletal
+  components:
+    - robotic arm
+    - surgical saw
+    - surgical burr
+    - navigation camera
+    - optical tracker
+    - CT planning software
+    - registration probe
+  related:
+    - haptic boundary
+    - virtual fence
+    - bone registration
+    - implant templating
+    - patient-specific instrumentation
+    - surgical navigation
+    - pre-operative planning
+
+classification:
+  locomotion: "fixed/cart-mounted"
+  manipulation: "articulated arm with constrained workspace"
+  load_class: "medium"
+  environment:
+    - indoor
+    - operating room
+    - sterile field
+  human_proximity: "surgeon in direct contact"
+
+attributes:
+  power_watts: {min: 200, max: 1500, typical: 600}
+  compute_tops: {min: 4, max: 40, typical: 16}
+  latency_ms: {min: 1, max: 10, typical: 5}
+  weight_kg: {min: 100, max: 800, typical: 350}
+  cost_usd: {min: 500000, max: 2000000, typical: 1000000}
+  autonomy_level: "surgeon-supervised active/semi-active"
+  safety_level: "IEC 62304 Class C / IEC 60601"
+  mission_duration_hours: {min: 1, max: 4, typical: 2}
+
+implications:
+  platform_type: "surgical"
+  perception:
+    camera_types: ["optical tracking (IR)", "structured light 3D", "fluoroscopy compatible"]
+    detection_classes: ["bone surface", "registration marker", "implant", "surgical tool", "soft tissue boundary"]
+    max_latency_ms: 5
+    min_fps: 60
+  sensors:
+    modalities: ["optical tracker (IR)", "force/torque sensor", "position encoder", "CT/MRI pre-op imaging", "accelerometer (bone-mounted)"]
+  actuators:
+    actuator_types: ["servo motor (joint)", "surgical saw/burr spindle", "haptic brake"]
+    dof: 6
+    control_rate_hz: 2000
+  comms:
+    protocols: ["EtherCAT", "proprietary real-time bus", "DICOM", "HL7 FHIR"]
+  power:
+    compute_power_watts: 50
+  safety:
+    level: "IEC 60601 / IEC 62304 Class C"
+    certifications: ["FDA 510(k) / De Novo", "CE MDR Class IIb", "IEC 60601-1", "IEC 62304", "ISO 13482", "ISO 14708"]
+
+context:
+  typical_architecture: "Cart-mounted robotic arm with 6-DOF kinematics and force/torque sensing at the end effector. Pre-operative CT scan is segmented to create a patient-specific 3D bone model for surgical planning. Intra-operative registration aligns the plan to the patient using surface digitization or fluoroscopy. During cutting, the robot either actively guides the saw/burr along planned resection planes or provides haptic boundaries that constrain the surgeon's hand."
+  common_pitfalls:
+    - "Bone registration accuracy degrades if tracker line-of-sight is occluded by surgical team; OR layout must be carefully planned"
+    - "Bone-mounted reference arrays can loosen during surgery, causing catastrophic navigation error"
+    - "Soft tissue retraction changes bone position relative to pre-op CT; dynamic tracking is essential"
+    - "Sterilization cycles (autoclave at 134C) degrade optical components and cable insulation over time"
+    - "Surgeon learning curve of 20-40 cases before achieving consistent time savings over manual technique"
+  regulatory:
+    - "FDA 510(k) or De Novo classification for surgical robots"
+    - "EU MDR Class IIb medical device"
+    - "IEC 60601-1 medical electrical equipment safety"
+    - "IEC 62304 medical device software lifecycle"
+    - "ISO 14971 risk management for medical devices"
+  reference_designs:
+    - "Stryker Mako SmartRobotics"
+    - "Smith+Nephew CORI Surgical System"
+    - "Zimmer Biomet ROSA Knee/Hip"
+    - "Johnson & Johnson VELYS"
+    - "Think Surgical TSolution One"
+  design_considerations: "Orthopedic surgical robots demand sub-millimeter accuracy (< 1mm position, < 1 degree angular) maintained under cutting forces up to 50N. The control loop must run at 2kHz+ to provide stable haptic feedback and enforce virtual cutting boundaries in real-time. All software is classified IEC 62304 Class C (life-critical), requiring full traceability, formal verification of safety functions, and validated software development lifecycle. The system must integrate with hospital PACS/DICOM for pre-operative planning and post-operative documentation. Sterile draping of the robotic arm adds 10-15 minutes to setup and must not compromise joint movement or force sensing."
+
+qualification:
+  suggested_questions:
+    - procedure_type
+    - annual_case_volume
+    - existing_navigation_system
+    - or_space_sqm
+    - implant_manufacturer
+  critical_constraints:
+    - "Sub-millimeter bone cutting accuracy"
+    - "Real-time haptic feedback (< 5ms latency)"
+    - "FDA/CE regulatory clearance pathway"
+    - "Sterile field compatibility"
+  optional_constraints:
+    - "CT-free workflow option"
+    - "Bilateral procedure support"
+    - "Integration with existing implant systems"

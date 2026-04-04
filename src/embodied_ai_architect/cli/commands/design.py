@@ -882,8 +882,10 @@ def _show_design_inputs(qualifier) -> None:
     console.print("  See what the planner would build from these requirements:")
     console.print(f"  [cyan]{next_cmd}[/cyan]")
     console.print()
-    console.print("  [dim]The planner decomposes the goal into a task graph (DAG)")
-    console.print("  of specialist agents. You can then review, edit, and execute it.[/dim]")
+    console.print(
+        "  [dim]The planner decomposes the goal into a task graph (DAG)\n"
+        "  of specialist agents. You can then review, edit, and execute it.[/dim]"
+    )
 
 
 def _show_available_usecases() -> None:
