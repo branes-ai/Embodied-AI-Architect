@@ -826,6 +826,7 @@ def _show_platform_context(qualifier, console) -> None:
             console.print(f"  [dim]Watch out for:[/dim] {ctx['common_pitfalls'][0]}")
         console.print()
     except Exception:
+        # Platform context display is best-effort — never block qualification
         pass
 
 

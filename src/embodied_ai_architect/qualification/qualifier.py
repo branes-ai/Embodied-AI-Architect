@@ -239,7 +239,7 @@ class GoalQualifier:
             try:
                 apply_numeric_answer(self._spec_fields, question_id, float(value))
             except (ValueError, TypeError):
-                pass
+                logger.debug("Could not parse numeric value for %s", question_id)
 
         return self._build_result()
 

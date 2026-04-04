@@ -14,6 +14,7 @@ New domains can be added by creating a module that exports TEMPLATE.
 
 from __future__ import annotations
 
+import logging
 from typing import Optional
 
 from embodied_ai_architect.qualification.models import DomainTemplate
@@ -21,6 +22,8 @@ from embodied_ai_architect.qualification.models import DomainTemplate
 from .drone import TEMPLATE as DRONE_TEMPLATE
 from .ugv import TEMPLATE as UGV_TEMPLATE
 from .robot_arm import TEMPLATE as ROBOT_ARM_TEMPLATE
+
+logger = logging.getLogger(__name__)
 
 # Registry of all domain templates
 _TEMPLATES: dict[str, DomainTemplate] = {
@@ -116,7 +119,8 @@ def detect_domain_with_context(goal_text: str) -> tuple[Optional[str], dict]:
             }
             return domain, context
     except Exception:
-        pass
+        # Registry unavailable or failed — degrade gracefully to no match
+        logger.debug("Platform registry lookup failed", exc_info=True)
 
     return None, {}
 
@@ -131,7 +135,8 @@ def _detect_domain_from_registry(goal_text: str) -> Optional[str]:
         if matches and len(matches[0].matched_keywords) >= 2:
             return _map_category_to_domain(matches[0].platform.category)
     except Exception:
-        pass
+        # Registry unavailable or failed — degrade gracefully to no match
+        logger.debug("Platform registry fallback failed", exc_info=True)
     return None
 
 
