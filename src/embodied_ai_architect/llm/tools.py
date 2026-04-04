@@ -344,6 +344,37 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         },
     ]
 
+    # Hardware listing is always available (static data, no graphs dependency)
+    base_tools.append(
+        {
+            "name": "list_available_hardware",
+            "description": (
+                "List all available hardware targets for analysis, organized by category "
+                "(datacenter GPU, edge GPU, CPU, TPU, accelerators, automotive)."
+            ),
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "category": {
+                        "type": "string",
+                        "enum": [
+                            "all",
+                            "datacenter_gpu",
+                            "edge_gpu",
+                            "datacenter_cpu",
+                            "edge_cpu",
+                            "tpu",
+                            "accelerators",
+                            "automotive",
+                        ],
+                        "description": "Filter by category (default: all)",
+                    },
+                },
+                "required": [],
+            },
+        }
+    )
+
     # Add graphs tools if available (more detailed analysis)
     if HAS_GRAPHS:
         base_tools.extend(get_graphs_tool_definitions())
@@ -373,6 +404,70 @@ def get_tool_definitions() -> list[dict[str, Any]]:
         base_tools.extend(get_soc_design_tool_definitions())
 
     return base_tools
+
+
+# ---------------------------------------------------------------------------
+# Hardware listing (always available, no graphs dependency)
+# ---------------------------------------------------------------------------
+
+_BASE_HARDWARE_CATALOG = {
+    "datacenter_gpu": [
+        "H100-SXM5-80GB",
+        "A100-SXM4-80GB",
+        "A100-SXM4-40GB",
+        "V100-SXM2-32GB",
+        "L4",
+        "T4",
+    ],
+    "edge_gpu": [
+        "Jetson-Orin-AGX",
+        "Jetson-Orin-NX",
+        "Jetson-Orin-Nano",
+    ],
+    "datacenter_cpu": [
+        "Intel-Xeon-8490H",
+        "AMD-EPYC-9654",
+    ],
+    "edge_cpu": [
+        "Intel-i7-12700K",
+        "Raspberry-Pi-5",
+    ],
+    "tpu": [
+        "TPU-v4",
+        "Coral-Edge-TPU",
+    ],
+    "accelerators": [
+        "KPU-T256",
+        "KPU-T64",
+        "Hailo-8",
+        "Hailo-8L",
+    ],
+    "automotive": [
+        "TDA4VM",
+        "TDA4VL",
+    ],
+}
+
+
+def _list_available_hardware(category: str = "all") -> str:
+    """List available hardware targets by category."""
+    all_hw = [hw for hw_list in _BASE_HARDWARE_CATALOG.values() for hw in hw_list]
+    if category == "all":
+        output = {
+            "total_hardware_targets": len(all_hw),
+            "categories": _BASE_HARDWARE_CATALOG,
+        }
+    elif category in _BASE_HARDWARE_CATALOG:
+        output = {
+            "category": category,
+            "hardware": _BASE_HARDWARE_CATALOG[category],
+        }
+    else:
+        output = {
+            "error": f"Unknown category: {category}",
+            "available_categories": list(_BASE_HARDWARE_CATALOG.keys()),
+        }
+    return json.dumps(output, indent=2)
 
 
 def create_tool_executors() -> dict[str, Callable]:
@@ -575,9 +670,10 @@ def create_tool_executors() -> dict[str, Callable]:
         "list_files": list_files,
         "read_file": read_file,
         "deploy_model": deploy_model,
+        "list_available_hardware": _list_available_hardware,
     }
 
-    # Add graphs executors if available
+    # Add graphs executors if available (overrides base list_available_hardware with richer version)
     if HAS_GRAPHS:
         executors.update(create_graphs_tool_executors())
 
