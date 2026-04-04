@@ -84,12 +84,12 @@ def chat(ctx, model: str, verbose: bool):
     console.print(
         Panel(
             "[bold cyan]Branes Embodied AI Platform[/bold cyan]\n"
-            "Interactive AI assistant for edge deployment\n\n"
+            "Interactive design environment for embodied AI systems\n\n"
             "[dim]Commands:[/dim]\n"
             "  [green]exit[/green] or [green]quit[/green] - End session\n"
             "  [green]reset[/green] - Clear conversation history\n"
             "  [green]help[/green] - Show example queries\n\n"
-            '[dim]Try:[/dim] "Can ResNet-18 meet 10ms latency on H100?"',
+            '[dim]Try:[/dim] "Design a drone perception SoC for VIO at <3W, <20ms"',
             border_style="cyan",
         )
     )
