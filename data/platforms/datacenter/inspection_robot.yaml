@@ -1,0 +1,75 @@
+id: datacenter.inspection_robot
+name: "Data Center Inspection Robot"
+category: datacenter
+description: "Autonomous mobile robot for continuous thermal monitoring, asset auditing, and anomaly detection across data center server rooms and hot/cold aisles."
+aliases:
+  - "server room robot"
+  - "data center patrol robot"
+  - "rack inspection robot"
+
+keywords:
+  identity: [data center robot, server room robot, data center inspection, rack inspection robot, IT robot]
+  descriptions: [thermal monitoring robot, asset audit robot, data center patrol, server room inspector, autonomous rack scanner]
+  application: [thermal monitoring, asset audit, hot spot detection, cable inspection, environmental monitoring]
+  industry: [data center operations, IT infrastructure, colocation, cloud computing, facilities management]
+  components: [thermal camera, barcode/QR scanner, LiDAR, environmental sensor]
+  related: [DCIM, hot aisle cold aisle, server rack, facilities management]
+
+classification:
+  locomotion: "ground.wheeled.differential"
+  manipulation: "none"
+  load_class: "none"
+  environment: [indoor_datacenter]
+  human_proximity: "humans_nearby"
+
+attributes:
+  power_watts: {min: 50, max: 300, typical: 120}
+  compute_tops: {min: 2, max: 15, typical: 6}
+  latency_ms: {min: 30, max: 200, typical: 80}
+  weight_kg: {min: 15, max: 80, typical: 35}
+  cost_usd: {min: 30000, max: 200000, typical: 80000}
+  autonomy_level: "high"
+  safety_level: "sil_1"
+  mission_duration_hours: {min: 4, max: 24, typical: 12}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: [rgb, thermal, depth]
+    detection_classes: [hot_spot, server_led_status, cable_anomaly, barcode, qr_code, human, obstacle]
+    max_latency_ms: 100
+    min_fps: 15
+  sensors:
+    modalities: [camera, thermal, lidar_2d, temperature, humidity, airflow, barcode_scanner]
+  actuators:
+    actuator_types: [wheel_motor]
+    dof: null
+    control_rate_hz: 20
+  comms:
+    protocols: [wifi, ethernet_docking, rest_api]
+  power:
+    compute_power_watts: 12
+  safety:
+    level: "sil_1"
+    certifications: [CE, UL]
+
+context:
+  typical_architecture: "A wheeled mobile robot navigates data center aisles using 2D LiDAR SLAM. Thermal cameras scan rack fronts and rears for hot spots; RGB cameras with barcode readers perform asset audits by reading server labels. Environmental sensors (temperature, humidity, airflow) build spatial maps. Data is uploaded to DCIM software via Wi-Fi for trending and alerting."
+  common_pitfalls:
+    - "Raised floor tiles and cable runs between racks create navigation hazards"
+    - "Thermal camera readings affected by reflective server surfaces and airflow patterns"
+    - "Asset tag readability varies—dirty, angled, or partially obscured labels are common"
+    - "Autonomous operation must not obstruct human technicians performing maintenance"
+  regulatory:
+    - "SOC 2 / ISO 27001 (data center security—robot must not introduce cyber risk)"
+    - "Fire safety codes for mobile equipment in data centers"
+    - "Access control integration requirements"
+  reference_designs:
+    - "Boston Dynamics Spot for data centers"
+    - "Compass by Switch"
+  design_considerations: "Data center inspection robots must operate quietly and safely in environments with strict physical security and environmental controls. Thermal scanning must detect 2-3 degree C anomalies at rack level to provide early warning of cooling failures. Asset auditing requires reading labels at varying heights (0-2 m) and angles. The robot must navigate narrow hot/cold aisles (1-1.2 m) without contacting racks. Integration with DCIM software is essential for actionable insights. Consider cybersecurity implications—the robot is a networked device inside a secure facility."
+
+qualification:
+  suggested_questions: [data_center_size, aisle_width, rack_count, inspection_frequency, dcim_integration, security_requirements]
+  critical_constraints: [aisle_width, thermal_resolution, asset_tag_readability, cybersecurity_requirements]
+  optional_constraints: [multi_floor, charging_strategy, environmental_sensing, noise_level_dba]

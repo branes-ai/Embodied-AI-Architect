@@ -779,6 +779,10 @@ def design_qualify(ctx, goal, domain, auto):
             else:
                 result = qualifier.skip(q.id)
 
+        # Show platform context after registry-driven selection
+        if q.id == "_platform_selection" and hasattr(qualifier, "_selected_platform_id"):
+            _show_platform_context(qualifier, console)
+
         # Show updated scorecard
         console.print()
         console.print(render_qualification_result(result))
@@ -790,6 +794,40 @@ def design_qualify(ctx, goal, domain, auto):
         console.print(
             "[dim]Missing: " + ", ".join(result.qualification.missing_dimensions) + "[/dim]"
         )
+
+
+def _show_platform_context(qualifier, console) -> None:
+    """Show domain context after a registry platform is selected."""
+    pid = getattr(qualifier, "_selected_platform_id", None)
+    if not pid:
+        return
+    try:
+        from embodied_ai_architect.platforms import PlatformRegistry
+
+        registry = PlatformRegistry()
+        platform = registry.get(pid)
+        if not platform or not platform.context:
+            return
+
+        ctx = platform.context
+        console.print()
+        console.print("─" * 72)
+        console.print(f"  [bold]PLATFORM CONTEXT: {platform.name}[/bold]")
+        console.print("─" * 72)
+        console.print()
+        if ctx.get("typical_architecture"):
+            console.print(f"  [dim]Architecture:[/dim] {ctx['typical_architecture'][:200]}...")
+        if ctx.get("design_considerations"):
+            console.print(f"  [dim]Design:[/dim] {ctx['design_considerations'][:200]}...")
+        if ctx.get("reference_designs"):
+            refs = ", ".join(ctx["reference_designs"][:4])
+            console.print(f"  [dim]References:[/dim] {refs}")
+        if ctx.get("common_pitfalls"):
+            console.print(f"  [dim]Watch out for:[/dim] {ctx['common_pitfalls'][0]}")
+        console.print()
+    except Exception:
+        # Platform context display is best-effort — never block qualification
+        pass
 
 
 def _collect_custom_answers(question, console) -> list[dict]:
@@ -882,8 +920,10 @@ def _show_design_inputs(qualifier) -> None:
     console.print("  See what the planner would build from these requirements:")
     console.print(f"  [cyan]{next_cmd}[/cyan]")
     console.print()
-    console.print("  [dim]The planner decomposes the goal into a task graph (DAG)")
-    console.print("  of specialist agents. You can then review, edit, and execute it.[/dim]")
+    console.print(
+        "  [dim]The planner decomposes the goal into a task graph (DAG)\n"
+        "  of specialist agents. You can then review, edit, and execute it.[/dim]"
+    )
 
 
 def _show_available_usecases() -> None:

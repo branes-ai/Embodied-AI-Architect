@@ -1,0 +1,128 @@
+id: ground_wheeled.warehouse_amr
+name: "Warehouse Autonomous Mobile Robot"
+category: ground_wheeled
+description: "Shelf-to-person autonomous mobile robot for goods transport within warehouse and fulfillment center environments, navigating dynamically among human workers and other robots."
+aliases:
+  - "warehouse robot"
+  - "AMR"
+  - "goods-to-person robot"
+
+keywords:
+  identity:
+    - warehouse robot
+    - AMR
+    - autonomous mobile robot
+    - mobile robot
+    - shelf robot
+    - pick robot
+    - goods to person
+    - warehouse AMR
+  descriptions:
+    - "robot that moves shelves in a warehouse"
+    - "autonomous cart for warehouse goods transport"
+    - "mobile robot that brings items to pickers"
+  application:
+    - warehouse automation
+    - goods to person
+    - order fulfillment
+    - material handling
+    - intralogistics
+    - pick assist
+    - sortation
+  industry:
+    - logistics
+    - e-commerce
+    - 3PL
+    - supply chain
+    - fulfillment
+  components:
+    - LiDAR scanner
+    - wheel encoder
+    - lifting mechanism
+    - safety bumper
+    - charging contacts
+  related:
+    - WMS integration
+    - fleet management
+    - SLAM
+    - path planning
+    - traffic management
+
+classification:
+  locomotion: "differential drive"
+  manipulation: "shelf lifting / towing"
+  load_class: "medium"
+  environment:
+    - indoor
+    - warehouse
+    - structured
+  human_proximity: "collaborative / shared space"
+
+attributes:
+  power_watts: {min: 100, max: 800, typical: 300}
+  compute_tops: {min: 2, max: 20, typical: 8}
+  latency_ms: {min: 30, max: 150, typical: 80}
+  weight_kg: {min: 50, max: 300, typical: 130}
+  cost_usd: {min: 15000, max: 80000, typical: 35000}
+  autonomy_level: "L4 - full autonomy within facility"
+  safety_level: "ISO 3691-4 / ANSI B56.5"
+  mission_duration_hours: {min: 4, max: 12, typical: 8}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: ["forward stereo", "360 LiDAR", "floor-facing"]
+    detection_classes: ["person", "forklift", "pallet", "shelf", "obstacle", "doorway", "charging station"]
+    max_latency_ms: 80
+    min_fps: 15
+  sensors:
+    modalities: ["2D LiDAR", "3D LiDAR", "RGB camera", "depth camera", "wheel odometry", "IMU", "safety bumper", "cliff sensor"]
+  actuators:
+    actuator_types: ["brushless DC wheel motor", "lifting actuator"]
+    dof: 2
+    control_rate_hz: 50
+  comms:
+    protocols: ["Wi-Fi 6", "5G private network", "REST API", "ROS 2 DDS"]
+  power:
+    compute_power_watts: 15
+  safety:
+    level: "ISO 3691-4"
+    certifications: ["ISO 3691-4", "ANSI/ITSDF B56.5", "CE", "UL"]
+
+context:
+  typical_architecture: "Differential-drive base with 2D/3D LiDAR for SLAM and obstacle avoidance, plus safety-rated laser scanners for protective field monitoring. Central compute module (x86 or Jetson class) runs localization, path planning, and fleet coordination. Lifting platform or towing hitch for payload engagement. Battery with opportunity charging at designated stations."
+  common_pitfalls:
+    - "SLAM drift in featureless warehouse aisles requires supplemental localization (reflectors, QR codes, or UWB)"
+    - "Dynamic obstacle avoidance must handle humans walking unpredictably at close range"
+    - "Fleet deadlocks at intersections without centralized traffic management"
+    - "Charging station contention during peak hours reduces effective fleet throughput"
+    - "Floor surface variation (joints, ramps, debris) causes wheel slip and odometry errors"
+  regulatory:
+    - "ISO 3691-4 for driverless industrial trucks"
+    - "ANSI/ITSDF B56.5 for guided industrial vehicles"
+    - "OSHA guidelines for human-robot shared workspaces"
+    - "Local fire code for battery charging areas"
+  reference_designs:
+    - "Locus Robotics Origin"
+    - "6 River Systems Chuck"
+    - "Fetch Robotics Freight"
+    - "Amazon Proteus"
+    - "MiR250"
+  design_considerations: "Warehouse AMRs operate in highly dynamic shared spaces where safety-rated sensing (dual-channel LiDAR with SIL-2 rated processing) is non-negotiable. The perception stack must handle both static map-based navigation and real-time dynamic obstacle avoidance simultaneously. Fleet-level coordination is as important as individual robot intelligence; a central fleet manager must prevent deadlocks and optimize throughput. Battery sizing should target a full shift (8h) with opportunity charging to avoid fleet downtime clustering."
+
+qualification:
+  suggested_questions:
+    - payload_capacity_kg
+    - facility_size_sqm
+    - fleet_size
+    - wms_integration
+    - aisle_width_m
+  critical_constraints:
+    - "Payload capacity 50-500 kg"
+    - "Safety-rated obstacle detection"
+    - "WMS/WCS integration"
+    - "8+ hour continuous operation"
+  optional_constraints:
+    - "Multi-floor operation (elevator integration)"
+    - "Cold storage tolerance (-25C)"
+    - "IP54 dust/water protection"

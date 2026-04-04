@@ -1,0 +1,75 @@
+id: logistics.autonomous_forklift
+name: "Autonomous Forklift"
+category: logistics
+description: "Self-driving forklift for autonomous pallet handling, stacking, and transport within warehouse and distribution center environments."
+aliases:
+  - "robotic forklift"
+  - "AGV forklift"
+  - "automated guided forklift"
+
+keywords:
+  identity: [autonomous forklift, AGV forklift, robotic forklift, self-driving forklift, automated forklift]
+  descriptions: [pallet handling robot, warehouse forklift, autonomous pallet mover, driverless forklift, smart forklift]
+  application: [pallet handling, warehouse logistics, goods transport, pallet stacking, dock loading]
+  industry: [warehouse automation, intralogistics, material handling, 3PL, distribution center]
+  components: [fork assembly, LiDAR, safety scanner, hydraulic lift]
+  related: [AGV, AMR, pallet jack, warehouse management system]
+
+classification:
+  locomotion: "ground.wheeled.differential"
+  manipulation: "fixed_tool"
+  load_class: "heavy"
+  environment: [indoor_warehouse, loading_dock]
+  human_proximity: "humans_nearby"
+
+attributes:
+  power_watts: {min: 2000, max: 15000, typical: 5000}
+  compute_tops: {min: 2, max: 20, typical: 8}
+  latency_ms: {min: 30, max: 200, typical: 80}
+  weight_kg: {min: 1500, max: 8000, typical: 3500}
+  cost_usd: {min: 80000, max: 400000, typical: 180000}
+  autonomy_level: "high"
+  safety_level: "sil_2"
+  mission_duration_hours: {min: 4, max: 16, typical: 8}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: [rgb, depth, fisheye]
+    detection_classes: [pallet, human, obstacle, rack, dock_door, forklift]
+    max_latency_ms: 100
+    min_fps: 15
+  sensors:
+    modalities: [camera, lidar, safety_scanner, encoder, fork_height_sensor]
+  actuators:
+    actuator_types: [electric_drive, hydraulic_lift]
+    dof: null
+    control_rate_hz: 50
+  comms:
+    protocols: [wifi, fleet_management_api]
+  power:
+    compute_power_watts: 15
+  safety:
+    level: "sil_2"
+    certifications: [ISO_3691-4, ANSI_B56.5]
+
+context:
+  typical_architecture: "Industrial PC with safety PLC handles navigation and fork control; 2D/3D LiDAR for localization and obstacle avoidance; fleet management system dispatches tasks via Wi-Fi; safety-rated scanners enforce speed zones around humans."
+  common_pitfalls:
+    - "Pallet detection failures due to damaged, non-standard, or dark-colored pallets"
+    - "Localization drift in large featureless warehouse aisles"
+    - "Insufficient safety scanner coverage during reversing with elevated loads"
+  regulatory:
+    - "ISO 3691-4 (driverless industrial trucks)"
+    - "ANSI/ITSDF B56.5 (safety for guided industrial vehicles)"
+    - "EN 1175 (electrical safety of industrial trucks)"
+  reference_designs:
+    - "Seegrid Palion"
+    - "OTTO Motors OTTO 1500"
+    - "Vecna Robotics"
+  design_considerations: "Autonomous forklifts must reliably detect and engage pallets in varying conditions—wrapped, unwrapped, damaged, and at different heights. Safety is paramount since they operate near humans; dual safety-rated LiDAR scanners with configurable speed zones are standard. Fork height sensing and load weight estimation prevent tip-over. Integration with WMS/WES for task dispatch is essential. Battery swapping or opportunity charging must support multi-shift operation."
+
+qualification:
+  suggested_questions: [warehouse_layout, pallet_types, max_lift_height, aisle_width, shift_duration, human_traffic_density]
+  critical_constraints: [payload_capacity, lift_height, safety_rating, aisle_width]
+  optional_constraints: [fleet_size, charging_strategy, wms_integration]

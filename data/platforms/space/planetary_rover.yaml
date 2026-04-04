@@ -1,0 +1,78 @@
+id: space.planetary_rover
+name: "Planetary Exploration Rover"
+category: space
+description: "Autonomous or teleoperated surface rover for scientific exploration, sample collection, and terrain mapping on Mars, the Moon, or other planetary bodies."
+aliases:
+  - "Mars rover"
+  - "lunar rover"
+  - "space exploration rover"
+
+keywords:
+  identity: [planetary rover, Mars rover, lunar rover, space robot, exploration rover, space rover]
+  descriptions: [surface exploration robot, extraterrestrial rover, space exploration vehicle, planetary surface robot, science rover]
+  application: [surface exploration, sample collection, terrain mapping, geological analysis, astrobiology]
+  industry: [space exploration, planetary science, astrobiology, aerospace, space robotics]
+  components: [rocker-bogie suspension, rad-hard processor, RTG/solar panel, navigation camera]
+  related: [JPL, ESA, ISRO, space-grade, radiation hardening]
+
+classification:
+  locomotion: "ground.wheeled.rocker_bogie"
+  manipulation: "articulated_arm"
+  load_class: "light"
+  environment: [extraterrestrial, vacuum, extreme_temperature]
+  human_proximity: "no_humans"
+
+attributes:
+  power_watts: {min: 50, max: 900, typical: 300}
+  compute_tops: {min: 0.001, max: 1, typical: 0.05}
+  latency_ms: {min: 100, max: 5000, typical: 500}
+  weight_kg: {min: 10, max: 1100, typical: 300}
+  cost_usd: {min: 50000000, max: 3000000000, typical: 500000000}
+  autonomy_level: "conditional"
+  safety_level: "sil_4"
+  mission_duration_hours: {min: 2160, max: 131400, typical: 26280}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: [navcam_stereo, hazcam, mast_cam, microscopic_imager]
+    detection_classes: [rock, crater, slope, sand_trap, wheel_sinkage, science_target]
+    max_latency_ms: 1000
+    min_fps: 1
+  sensors:
+    modalities: [camera_stereo, spectrometer, lidar, imu, wheel_odometry, sun_sensor]
+  actuators:
+    actuator_types: [wheel_motor, robotic_arm, drill, sample_handler]
+    dof: 5
+    control_rate_hz: 10
+  comms:
+    protocols: [uhf_relay, x_band_direct, deep_space_network]
+  power:
+    compute_power_watts: 5
+  safety:
+    level: "sil_4"
+    certifications: [NASA_NPR_7150, ECSS_Q_ST_60]
+
+context:
+  typical_architecture: "Radiation-hardened processors (e.g., RAD750, LEON) run onboard autonomy including hazard avoidance and path planning. Stereo navigation cameras build local terrain maps; autonomous driving covers 50-200 m/sol. Communication via UHF relay satellite or direct X-band with 4-24 minute one-way light delay to Earth. A robotic arm carries science instruments. Power from RTG (nuclear) or solar panels. All components must survive launch vibration, vacuum, radiation, and extreme thermal cycling."
+  common_pitfalls:
+    - "Radiation-induced single-event upsets in electronics require robust fault tolerance"
+    - "Wheel degradation on sharp rocks (as experienced by Curiosity)"
+    - "Sand traps and steep slopes can immobilize the rover (Spirit)"
+    - "Extremely limited compute budget—radiation-hardened processors are generations behind commercial"
+  regulatory:
+    - "NASA NPR 7150.2 (software engineering requirements)"
+    - "ECSS-Q-ST-60 (space product assurance)"
+    - "Planetary protection protocols (COSPAR)"
+    - "ITAR/EAR export controls"
+  reference_designs:
+    - "NASA Mars Perseverance"
+    - "NASA Mars Curiosity"
+    - "NASA VIPER (lunar)"
+    - "ISRO Pragyan (Chandrayaan-3)"
+  design_considerations: "Planetary rovers operate under extreme constraints: radiation-hardened processors with 1/10000th the performance of commercial chips, communication delays of minutes to hours, limited power (100-900 W), and no possibility of repair. Autonomy is essential for hazard avoidance but every drive command is validated on Earth first. Thermal management is critical with day/night swings of 100+ degrees C. Every gram matters—mass directly impacts launch cost. Software must be flawlessly reliable with extensive ground testing and simulation. Multi-year mission durations demand exceptional component reliability."
+
+qualification:
+  suggested_questions: [target_body, mission_duration_years, power_source, science_instruments, communication_architecture, launch_vehicle]
+  critical_constraints: [radiation_tolerance, mass_budget_kg, power_budget_watts, communication_delay, thermal_range]
+  optional_constraints: [sample_return, drilling_depth, autonomous_driving_range, helicopter_scout]

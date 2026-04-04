@@ -1,0 +1,136 @@
+id: agriculture.vineyard_robot
+name: "Vineyard Management Robot"
+category: agriculture
+description: "Autonomous robot for vineyard operations including canopy management, health monitoring, selective harvesting assistance, and precision spraying in narrow inter-row spaces."
+aliases:
+  - "vineyard robot"
+  - "viticulture robot"
+  - "grape robot"
+  - "vine robot"
+
+keywords:
+  identity:
+    - vineyard robot
+    - grape robot
+    - wine robot
+    - viticulture robot
+    - vine management robot
+    - vineyard automation
+  descriptions:
+    - "robot that manages grapevines in a vineyard"
+    - "autonomous machine for vineyard canopy and health monitoring"
+    - "robot for grape growing and vine management"
+  application:
+    - viticulture
+    - vine management
+    - grape harvester
+    - canopy management
+    - leaf pulling
+    - shoot thinning
+    - grape sampling
+    - vineyard spraying
+    - yield estimation
+    - disease detection
+  industry:
+    - viticulture
+    - wine industry
+    - precision agriculture
+    - agtech
+    - horticulture
+  components:
+    - narrow-track chassis
+    - multispectral camera
+    - pruning tool
+    - spray nozzle
+    - grape sampling mechanism
+    - RTK GPS
+  related:
+    - grape phenology
+    - berry sampling
+    - brix measurement
+    - downy mildew
+    - powdery mildew
+    - phylloxera
+    - terroir
+    - precision viticulture
+    - NDVI vineyard
+
+classification:
+  locomotion: "wheeled (narrow-track)"
+  manipulation: "tool arm for canopy work"
+  load_class: "medium"
+  environment:
+    - outdoor
+    - vineyard
+    - sloped terrain
+    - agricultural
+  human_proximity: "standoff"
+
+attributes:
+  power_watts: {min: 200, max: 2000, typical: 800}
+  compute_tops: {min: 4, max: 20, typical: 10}
+  latency_ms: {min: 30, max: 200, typical: 80}
+  weight_kg: {min: 100, max: 1000, typical: 400}
+  cost_usd: {min: 40000, max: 200000, typical: 80000}
+  autonomy_level: "L4 - full autonomy within vineyard"
+  safety_level: "agricultural machinery"
+  mission_duration_hours: {min: 4, max: 12, typical: 8}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: ["side-facing RGB", "multispectral", "hyperspectral", "stereo depth"]
+    detection_classes: ["grape cluster", "vine trunk", "canopy", "leaf", "disease spot", "wire trellis", "end post", "person", "row end"]
+    max_latency_ms: 100
+    min_fps: 15
+  sensors:
+    modalities: ["RGB camera", "multispectral camera", "LiDAR", "RTK GPS", "IMU", "soil moisture probe", "weather station link"]
+  actuators:
+    actuator_types: ["wheel motor", "steering actuator", "tool arm servo", "pruning cutter", "spray nozzle solenoid"]
+    dof: 4
+    control_rate_hz: 50
+  comms:
+    protocols: ["4G/LTE", "Wi-Fi", "LoRa", "RTK NTRIP", "CAN bus"]
+  power:
+    compute_power_watts: 15
+  safety:
+    level: "agricultural machinery"
+    certifications: ["ISO 18497", "CE Machinery Directive"]
+
+context:
+  typical_architecture: "Narrow-track electric platform (< 1.2m wide) designed to fit between vineyard rows spaced 1.5-2.5m apart. Side-mounted cameras and LiDAR scan the vine canopy on both sides as the robot drives slowly (2-5 km/h) down each row. Edge compute processes canopy imagery for disease detection (mildew, botrytis), vigor mapping, and yield estimation. Optional tool arm for mechanical operations (leaf pulling, shoot positioning). RTK GPS with row-detection fallback for navigation under dense canopy."
+  common_pitfalls:
+    - "Steep vineyard slopes (up to 45% grade) require low center of gravity and differential traction control"
+    - "Vine trellis wires and hanging shoots snag on robot body; enclosed chassis design is essential"
+    - "GPS signal degradation under dense canopy requires visual row-following as primary navigation mode"
+    - "Disease detection models must be trained per grape variety as leaf morphology varies significantly"
+    - "Wet soil conditions after rain make vineyard rows impassable for weeks; wide tires and low ground pressure help"
+  regulatory:
+    - "ISO 18497 autonomous agricultural machinery"
+    - "EU Machinery Directive"
+    - "Organic certification restrictions on spray chemicals"
+    - "Local labor regulations for harvesting automation"
+  reference_designs:
+    - "Naiotech TED vineyard robot"
+    - "VitiBot Bakus"
+    - "Pellenc Robotic vineyard tractor"
+    - "Agreenculture Ceol"
+    - "SITIA Trektor"
+  design_considerations: "Vineyard robots must navigate extremely constrained row widths (1.5-2.5m) on irregular terrain with slopes up to 30 degrees, making platform stability and traction the primary mechanical challenges. Canopy-level perception is unique: the camera must image individual leaves and grape clusters at close range (0.3-1m) while the robot moves, requiring high-resolution sensors and motion compensation. Disease detection (especially early-stage mildew) demands multispectral or hyperspectral imaging in the 400-1000nm range. Battery-electric drive is strongly preferred to avoid diesel exhaust contamination of grapes."
+
+qualification:
+  suggested_questions:
+    - row_spacing_m
+    - terrain_slope_percent
+    - grape_varieties
+    - primary_task
+    - vineyard_size_hectares
+  critical_constraints:
+    - "Platform width < 1.2m"
+    - "Slope handling up to 30%"
+    - "Canopy disease detection capability"
+    - "All-day battery life"
+  optional_constraints:
+    - "Mechanical canopy management tools"
+    - "Yield estimation accuracy"
+    - "Multi-vineyard fleet management"

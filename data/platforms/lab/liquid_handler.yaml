@@ -1,0 +1,147 @@
+id: lab.liquid_handler
+name: "Laboratory Liquid Handler"
+category: lab
+description: "Automated pipetting robot for precise liquid transfer, serial dilution, and sample preparation across microplates, tubes, and reservoirs in life science and clinical laboratories."
+aliases:
+  - "pipetting robot"
+  - "liquid handling system"
+  - "automated pipettor"
+  - "lab robot"
+
+keywords:
+  identity:
+    - liquid handler
+    - pipetting robot
+    - pipette robot
+    - lab robot
+    - laboratory automation
+    - liquid handling system
+    - automated pipettor
+    - dispensing robot
+  descriptions:
+    - "robot that pipettes liquids between plates and tubes"
+    - "automated system for precise liquid transfer in labs"
+    - "laboratory robot that prepares samples"
+  application:
+    - sample prep
+    - sample preparation
+    - serial dilution
+    - PCR setup
+    - ELISA preparation
+    - high throughput screening
+    - compound management
+    - NGS library prep
+    - cell culture
+    - assay development
+  industry:
+    - life science
+    - clinical laboratory
+    - pharmaceutical
+    - drug discovery
+    - genomics
+    - proteomics
+    - diagnostics
+  components:
+    - pipetting head
+    - microplate
+    - well plate
+    - tip rack
+    - reservoir
+    - shaker
+    - temperature module
+    - magnetic module
+    - gripper
+  related:
+    - 96-well plate
+    - 384-well plate
+    - aspiration
+    - dispensing
+    - dead volume
+    - meniscus detection
+    - liquid class
+    - CV percentage
+    - high throughput
+
+classification:
+  locomotion: "fixed gantry (XYZ)"
+  manipulation: "pipetting and plate handling"
+  load_class: "light"
+  environment:
+    - indoor
+    - laboratory
+    - cleanroom
+    - BSL-2/3
+  human_proximity: "shared workspace / enclosed"
+
+attributes:
+  power_watts: {min: 100, max: 1000, typical: 400}
+  compute_tops: {min: 0.5, max: 4, typical: 1}
+  latency_ms: {min: 10, max: 100, typical: 50}
+  weight_kg: {min: 30, max: 300, typical: 120}
+  cost_usd: {min: 15000, max: 500000, typical: 100000}
+  autonomy_level: "programmed protocol execution"
+  safety_level: "IVD / laboratory equipment"
+  mission_duration_hours: {min: 0.5, max: 24, typical: 4}
+
+implications:
+  platform_type: "manipulation"
+  perception:
+    camera_types: ["overhead deck camera", "tip-mounted camera", "barcode reader"]
+    detection_classes: ["microplate", "tube", "tip rack", "reservoir", "liquid level", "bubble", "barcode"]
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities: ["capacitive liquid detection", "pressure sensor", "barcode scanner", "deck camera", "tip presence sensor", "temperature sensor"]
+  actuators:
+    actuator_types: ["stepper motor (XYZ gantry)", "pipette piston motor", "plate gripper", "tip ejector"]
+    dof: 4
+    control_rate_hz: 100
+  comms:
+    protocols: ["USB", "Ethernet", "RS-232", "LIMS integration (HL7/ASTM)", "REST API"]
+  power:
+    compute_power_watts: 15
+  safety:
+    level: "IVD / laboratory"
+    certifications: ["CE IVD", "UL 61010", "ISO 13485", "21 CFR Part 11"]
+
+context:
+  typical_architecture: "XYZ gantry system with single or multi-channel pipetting head (1, 8, 96, or 384 channels) mounted on a linear rail system. Deck layout holds microplates, tip racks, reservoirs, and peripheral modules (shaker, heater/cooler, magnetic separator). Embedded controller manages motion and aspiration/dispense profiles. Host PC runs protocol design software with LIMS integration. Liquid detection via capacitive or pressure sensing ensures accurate aspirations."
+  common_pitfalls:
+    - "Pipetting accuracy degrades with viscous liquids (glycerol, DMSO) unless liquid class parameters are tuned per reagent"
+    - "Tip-to-tip variation in multi-channel heads compounds across serial dilution steps; regular calibration is critical"
+    - "Bubble formation during aspiration causes volume errors; slow aspiration speed and submerged tip entry mitigate this"
+    - "Cross-contamination from tip reuse or aerosol carry-over invalidates sensitive assays (PCR)"
+    - "Deck position teaching drifts over time due to thermal expansion of the gantry frame"
+    - "21 CFR Part 11 compliance for clinical/GxP labs requires audit trails on all protocol modifications"
+  regulatory:
+    - "CE IVD for clinical diagnostic applications"
+    - "21 CFR Part 11 electronic records and signatures"
+    - "ISO 13485 quality management for medical devices"
+    - "ISO 8655 gravimetric pipette calibration"
+    - "CLIA/CAP for clinical laboratory use"
+  reference_designs:
+    - "Hamilton STAR / STARlet"
+    - "Beckman Coulter Biomek i7"
+    - "Tecan Fluent / Freedom EVO"
+    - "OpenTrons OT-2 / Flex"
+    - "Agilent Bravo"
+    - "PerkinElmer Janus"
+  design_considerations: "Liquid handler accuracy is specified as coefficient of variation (CV%) at target volumes; achieving < 2% CV at 1uL requires precise piston control, consistent tip seating, and per-liquid-class tuning of aspiration/dispense speeds. The gantry must achieve 0.1mm positional repeatability to reliably enter 384-well plates (well pitch = 4.5mm). Protocol throughput is dominated by tip handling time; systems with washable tips or 96-channel heads dramatically reduce per-plate processing time. For regulated environments, every pipetting event must be logged with timestamp, volume, position, and operator identity."
+
+qualification:
+  suggested_questions:
+    - volume_range_ul
+    - throughput_plates_per_day
+    - assay_type
+    - regulatory_environment
+    - channel_count
+  critical_constraints:
+    - "Volume accuracy CV < 5% at target volume"
+    - "Positional repeatability < 0.1mm"
+    - "LIMS/LIS integration"
+    - "Contamination prevention"
+  optional_constraints:
+    - "BSL-2/3 enclosure"
+    - "21 CFR Part 11 compliance"
+    - "384-well plate support"
+    - "Heated/cooled deck positions"
