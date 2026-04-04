@@ -615,33 +615,37 @@ def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platfo
     console.print(render_plan_review_rich(snapshot))
 
     # Workflow guidance — what can the user do next?
+    # Build constraint flags for the command examples
+    constraint_flags = ""
+    if power:
+        constraint_flags += f" --power {power}"
+    if latency:
+        constraint_flags += f" --latency {latency}"
+    if cost:
+        constraint_flags += f" --cost {cost}"
+
     console.print()
     console.print("─" * 72)
     console.print("  NEXT STEPS")
     console.print("─" * 72)
     console.print()
+    escaped_goal = goal.replace('"', '\\"')
+
     console.print("  The plan above shows the task graph the system will execute.")
     console.print("  From here you can:")
     console.print()
-    console.print("  [cyan]1. Execute this plan[/cyan]")
-    console.print("     Run the full pipeline (plan → dispatch → optimize → report)")
-    console.print(
-        f"     [dim]branes workflow run <model> --power {power or '?'} "
-        f"--latency {latency or '?'}[/dim]"
-    )
+    console.print("  [cyan]1. Interactive design session[/cyan]")
+    console.print("     Execute the plan with real-time review and steering via chat")
+    console.print("     [dim]branes chat[/dim]")
+    console.print(f'     then: [dim]"{goal}"[/dim]')
     console.print()
     console.print("  [cyan]2. Refine the goal[/cyan]")
     console.print("     Go back to qualification to add/change requirements")
-    console.print(f'     [dim]branes design qualify "{goal}"[/dim]')
+    console.print(f'     [dim]branes design qualify "{escaped_goal}"[/dim]')
     console.print()
-    console.print("  [cyan]3. Interactive design session[/cyan]")
-    console.print("     Review, edit, and steer execution in real-time via chat")
-    console.print("     [dim]branes chat[/dim]")
-    console.print('     then: "Design a drone SoC for fixed-wing survey with VIO at <3W, <20ms"')
-    console.print()
-    console.print("  [cyan]4. Run the demo[/cyan]")
-    console.print("     Execute the full interactive review flow programmatically")
-    console.print("     [dim]python examples/demo_interactive_review.py --modify[/dim]")
+    console.print("  [cyan]3. Model-first workflow[/cyan]")
+    console.print("     If you already have a model (.pt / .onnx), evaluate it directly")
+    console.print(f"     [dim]branes workflow run model.pt{constraint_flags}[/dim]")
     console.print()
 
 
