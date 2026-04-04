@@ -1,0 +1,144 @@
+id: wearable.cardiac_monitor
+name: "Continuous Cardiac Monitor"
+category: wearable
+description: "Wearable continuous ECG monitoring device for real-time arrhythmia detection, atrial fibrillation screening, and cardiac event recording over multi-day wear periods."
+aliases:
+  - "ECG monitor"
+  - "heart monitor"
+  - "cardiac wearable"
+  - "arrhythmia monitor"
+
+keywords:
+  identity:
+    - cardiac monitor
+    - ECG monitor
+    - heart monitor
+    - arrhythmia detector
+    - wearable ECG
+    - continuous ECG
+    - holter monitor
+    - cardiac wearable
+    - heart rhythm monitor
+  descriptions:
+    - "wearable device that continuously monitors heart rhythm"
+    - "patch or watch that detects irregular heartbeats"
+    - "device that records ECG and alerts on arrhythmia"
+  application:
+    - atrial fibrillation detection
+    - AF detection
+    - arrhythmia detection
+    - cardiac event recording
+    - heart rate monitoring
+    - QT interval monitoring
+    - bradycardia detection
+    - tachycardia detection
+    - stroke prevention screening
+  industry:
+    - cardiology
+    - remote patient monitoring
+    - digital health
+    - mHealth
+    - telehealth
+    - clinical trials
+  components:
+    - ECG electrode
+    - analog front end
+    - ADC
+    - BLE SoC
+    - flex PCB
+    - adhesive patch
+    - coin cell battery
+  related:
+    - R-R interval
+    - QRS complex
+    - P-wave detection
+    - PPG
+    - photoplethysmography
+    - signal quality index
+    - motion artifact
+    - baseline wander
+    - Butterworth filter
+
+classification:
+  locomotion: "body-worn"
+  manipulation: "none"
+  load_class: "ultralight"
+  environment:
+    - body-worn
+    - ambulatory
+    - home
+    - clinical
+  human_proximity: "skin contact"
+
+attributes:
+  power_watts: {min: 0.001, max: 0.05, typical: 0.01}
+  compute_tops: {min: 0.001, max: 0.1, typical: 0.01}
+  latency_ms: {min: 50, max: 5000, typical: 500}
+  weight_kg: {min: 0.01, max: 0.1, typical: 0.03}
+  cost_usd: {min: 50, max: 800, typical: 300}
+  autonomy_level: "continuous autonomous monitoring"
+  safety_level: "IEC 60601 / FDA Class II"
+  mission_duration_hours: {min: 24, max: 336, typical: 168}
+
+implications:
+  platform_type: "wearable"
+  perception:
+    camera_types: []
+    detection_classes: ["normal sinus rhythm", "atrial fibrillation", "premature ventricular contraction", "pause", "bradycardia", "tachycardia"]
+    max_latency_ms: 1000
+    min_fps: null
+  sensors:
+    modalities: ["ECG (1-12 lead)", "PPG", "accelerometer", "skin temperature", "skin impedance"]
+  actuators:
+    actuator_types: ["haptic vibration motor", "LED indicator"]
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols: ["BLE 5.0", "NFC", "Wi-Fi (gateway)", "cellular (gateway)", "HL7 FHIR"]
+  power:
+    compute_power_watts: 0.005
+  safety:
+    level: "IEC 60601 / FDA Class II"
+    certifications: ["FDA 510(k) Class II", "CE MDR Class IIa", "IEC 60601-2-47", "IEC 62304", "AAMI EC11"]
+
+context:
+  typical_architecture: "Adhesive chest patch or wrist-worn device with dry or wet ECG electrodes feeding a low-noise analog front end (ADS1292 class). Ultra-low-power MCU (Cortex-M4/M33 class) runs real-time QRS detection and rhythm classification at 250-500 Hz sample rate. On-device ML model (< 100KB) performs AF detection and event flagging. Raw ECG data stored to onboard flash for clinician review. BLE connection to smartphone app for real-time display and cloud upload."
+  common_pitfalls:
+    - "Motion artifacts from daily activities mimic arrhythmia patterns; robust artifact rejection is the primary signal processing challenge"
+    - "Electrode-skin impedance increases over multi-day wear as adhesive degrades and skin oils accumulate"
+    - "Single-lead ECG cannot differentiate all arrhythmia subtypes; some events require 12-lead confirmation"
+    - "Battery life vs sampling rate trade-off: 500Hz provides better morphology but doubles power consumption vs 250Hz"
+    - "BLE transmission gaps during phone-out-of-range periods require reliable on-device storage and sync"
+    - "False AF alerts erode physician trust; specificity > 95% is more important than sensitivity for screening"
+  regulatory:
+    - "FDA 510(k) for ECG monitoring devices"
+    - "FDA De Novo for AI/ML-based arrhythmia detection software"
+    - "IEC 60601-2-47 ambulatory ECG systems"
+    - "AAMI EC11 diagnostic ECG requirements"
+    - "HIPAA for patient health data"
+    - "EU MDR Class IIa for continuous monitoring"
+  reference_designs:
+    - "Apple Watch ECG (Series 4+)"
+    - "AliveCor KardiaMobile 6L"
+    - "iRhythm Zio XT / Zio AT"
+    - "BioTelemetry MCOT"
+    - "Withings ScanWatch"
+  design_considerations: "Cardiac monitors are dominated by power constraints; the entire system must operate on a coin cell or small LiPo for 7-14 days, limiting compute to sub-milliwatt MCU inference. The AF detection algorithm must run on-device in real-time with < 100KB model size, typically using handcrafted features (R-R interval variability, P-wave absence) fed to a lightweight classifier rather than deep learning. Signal quality assessment must gate algorithm output to avoid false positives from noisy segments. The analog front end design (input impedance, CMRR, bandwidth) determines the floor of achievable signal quality and is the most critical hardware design decision."
+
+qualification:
+  suggested_questions:
+    - lead_configuration
+    - wear_duration_days
+    - target_arrhythmias
+    - regulatory_pathway
+    - clinical_vs_consumer
+  critical_constraints:
+    - "AF detection sensitivity > 95%"
+    - "Battery life > 7 days continuous"
+    - "Motion artifact rejection"
+    - "FDA/CE regulatory pathway"
+  optional_constraints:
+    - "Multi-lead capability"
+    - "Real-time streaming to clinician"
+    - "Waterproof (IP67)"
+    - "Prescription vs OTC"
