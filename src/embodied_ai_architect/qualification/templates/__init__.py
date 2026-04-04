@@ -95,8 +95,8 @@ def detect_domain_with_context(goal_text: str) -> tuple[Optional[str], dict]:
         from embodied_ai_architect.platforms import PlatformRegistry
 
         registry = PlatformRegistry()
-        matches = registry.search(goal_text, top_k=3, min_score=0.1)
-        if matches:
+        matches = registry.search(goal_text, top_k=3, min_score=0.3)
+        if matches and len(matches[0].matched_keywords) >= 2:
             top = matches[0]
             # Map platform category to closest domain template, or use category
             domain = _map_category_to_domain(top.platform.category)
@@ -127,8 +127,8 @@ def _detect_domain_from_registry(goal_text: str) -> Optional[str]:
         from embodied_ai_architect.platforms import PlatformRegistry
 
         registry = PlatformRegistry()
-        matches = registry.search(goal_text, top_k=1, min_score=0.1)
-        if matches:
+        matches = registry.search(goal_text, top_k=1, min_score=0.3)
+        if matches and len(matches[0].matched_keywords) >= 2:
             return _map_category_to_domain(matches[0].platform.category)
     except Exception:
         pass

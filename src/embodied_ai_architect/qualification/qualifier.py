@@ -29,7 +29,6 @@ from embodied_ai_architect.qualification.models import (
     QualificationResult,
 )
 from embodied_ai_architect.qualification.templates import (
-    detect_domain,
     get_all_templates,
     get_domain_template,
     list_domains,
@@ -52,6 +51,7 @@ class GoalQualifier:
         self._spec_fields: dict[str, Any] = {}
         self._original_goal: str = ""
         self._warnings: list[str] = []
+        self._platform_context: dict[str, Any] = {}  # From platform registry match
         self._assumptions: list[str] = []
 
     def reset(self) -> None:
@@ -62,6 +62,27 @@ class GoalQualifier:
         self._original_goal = ""
         self._warnings = []
         self._assumptions = []
+        self._platform_context = {}
+
+    def _apply_platform_attributes(self, attrs: dict[str, Any]) -> None:
+        """Pre-fill spec fields from platform registry attribute ranges.
+
+        Uses 'typical' values from attribute ranges as defaults for
+        power budget, latency, cost, etc.
+        """
+        attr_to_spec = {
+            "power_watts": "power.compute_power_watts",
+            "latency_ms": "perception.max_latency_ms",
+            "cost_usd": "cost.target_cost_usd",
+        }
+        for attr_key, spec_path in attr_to_spec.items():
+            val = attrs.get(attr_key)
+            if isinstance(val, dict) and "typical" in val:
+                parts = spec_path.split(".")
+                d = self._spec_fields
+                for p in parts[:-1]:
+                    d = d.setdefault(p, {})
+                d[parts[-1]] = val["typical"]
 
     @property
     def domain(self) -> Optional[str]:
@@ -95,16 +116,39 @@ class GoalQualifier:
         if domain:
             self._domain = domain
         else:
-            self._domain = detect_domain(goal)
+            # Try detect_domain_with_context for richer matching
+            from embodied_ai_architect.qualification.templates import (
+                detect_domain_with_context,
+            )
+
+            detected, platform_ctx = detect_domain_with_context(goal)
+            self._domain = detected
+            if platform_ctx:
+                self._platform_context = platform_ctx
 
         if self._domain is None:
             # Can't even determine the platform — ask first
             return self._build_domain_selection_result()
 
-        # Apply base implications from domain
+        # Apply base implications from domain template (if one exists)
         template = get_domain_template(self._domain)
         if template and template.base_implications:
             self._merge_implications(template.base_implications)
+        elif not template and self._platform_context:
+            # No domain template for this category (e.g., "surveillance").
+            # Pre-fill from platform registry match, then fall through to
+            # the domain selection prompt so the user picks a template
+            # that has questions (or we proceed with what we have).
+            implications = self._platform_context.get("implications", {})
+            if implications:
+                self._merge_implications(implications)
+            # Apply attribute ranges as constraints
+            attrs = self._platform_context.get("attributes", {})
+            self._apply_platform_attributes(attrs)
+            # No template means no questions — show domain selection
+            # so user can pick drone/ugv/robot_arm for the Q&A flow,
+            # but with context already loaded
+            return self._build_domain_selection_result()
 
         return self._build_result()
 
@@ -342,20 +386,32 @@ class GoalQualifier:
             required=True,
         )
 
+        warnings = []
+        if self._platform_context:
+            pid = self._platform_context.get("platform_id", "")
+            pname = self._platform_context.get("platform_name", "")
+            score = self._platform_context.get("score", 0)
+            warnings.append(
+                f"Matched platform registry: {pname} ({pid}, score={score:.2f}). "
+                f"Select the closest platform domain for detailed questions."
+            )
+        else:
+            warnings.append(
+                "Could not determine platform type from goal text. "
+                "Please select a platform domain."
+            )
+
         return QualificationResult(
             qualification=GoalQualification(),
             original_goal=self._original_goal,
             refined_goal=self._original_goal,
-            domain=None,
+            domain=self._domain,
             answers={},
-            accumulated_spec={},
+            accumulated_spec=dict(self._spec_fields),
             next_question=domain_question,
             questions_asked=0,
             questions_remaining=0,
-            warnings=[
-                "Could not determine platform type from goal text. "
-                "Please select a platform domain."
-            ],
+            warnings=warnings,
             assumptions=[],
         )
 
