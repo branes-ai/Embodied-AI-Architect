@@ -135,6 +135,9 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+# Branes local data (specs, sessions, design state)
+.branes/
+
 # Environments
 .env
 .envrc
