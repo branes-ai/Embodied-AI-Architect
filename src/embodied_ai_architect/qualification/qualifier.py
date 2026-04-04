@@ -26,6 +26,7 @@ from embodied_ai_architect.qualification.models import (
     CustomAnswer,
     GoalQualification,
     Question,
+    QuestionType,
     QualificationResult,
 )
 from embodied_ai_architect.qualification.templates import (
@@ -53,6 +54,8 @@ class GoalQualifier:
         self._warnings: list[str] = []
         self._platform_context: dict[str, Any] = {}  # From platform registry match
         self._assumptions: list[str] = []
+        self._generated_questions: list = []  # Dynamic questions from registry
+        self._selected_platform_id: Optional[str] = None
 
     def reset(self) -> None:
         """Clear all state for a new qualification session."""
@@ -63,6 +66,8 @@ class GoalQualifier:
         self._warnings = []
         self._assumptions = []
         self._platform_context = {}
+        self._generated_questions = []
+        self._selected_platform_id = None
 
     def _apply_platform_attributes(self, attrs: dict[str, Any]) -> None:
         """Pre-fill spec fields from platform registry attribute ranges.
@@ -83,6 +88,58 @@ class GoalQualifier:
                 for p in parts[:-1]:
                     d = d.setdefault(p, {})
                 d[parts[-1]] = val["typical"]
+
+    def _handle_platform_selection(self, platform_id: str) -> QualificationResult:
+        """Handle user selecting a platform from registry matches."""
+        try:
+            from embodied_ai_architect.platforms import PlatformRegistry
+
+            registry = PlatformRegistry()
+            platform = registry.get(platform_id)
+        except Exception:
+            platform = None
+
+        if not platform:
+            # Fallback: treat as domain selection
+            self._domain = platform_id
+            return self._build_result()
+
+        self._selected_platform_id = platform_id
+        self._domain = platform.category
+
+        # Merge platform implications into spec
+        if platform.implications:
+            self._merge_implications(platform.implications)
+
+        # Apply attribute ranges as constraint defaults
+        if platform.attributes:
+            self._apply_platform_attributes(platform.attributes)
+
+        # Set platform_type in spec
+        platform_type = platform.implications.get("platform_type", platform.category)
+        self._merge_implications({"platform_type": platform_type})
+
+        # Generate dynamic questions from platform data
+        from embodied_ai_architect.qualification.generic_questions import (
+            build_universal_questions,
+        )
+
+        self._generated_questions = build_universal_questions(platform.raw)
+
+        return self._build_result()
+
+    def _find_question_by_id(self, question_id: str):
+        """Find a question by ID in either domain template or generated questions."""
+        template = get_domain_template(self._domain)
+        if template:
+            q = template.get_question(question_id)
+            if q:
+                return q
+        # Search generated questions
+        for q in self._generated_questions:
+            if q.id == question_id:
+                return q
+        return None
 
     @property
     def domain(self) -> Optional[str]:
@@ -136,19 +193,8 @@ class GoalQualifier:
             self._merge_implications(template.base_implications)
         elif not template and self._platform_context:
             # No domain template for this category (e.g., "surveillance").
-            # Pre-fill from platform registry match, then fall through to
-            # the domain selection prompt so the user picks a template
-            # that has questions (or we proceed with what we have).
-            implications = self._platform_context.get("implications", {})
-            if implications:
-                self._merge_implications(implications)
-            # Apply attribute ranges as constraints
-            attrs = self._platform_context.get("attributes", {})
-            self._apply_platform_attributes(attrs)
-            # No template means no questions — show domain selection
-            # so user can pick drone/ugv/robot_arm for the Q&A flow,
-            # but with context already loaded
-            return self._build_domain_selection_result()
+            # Show matched platforms from registry as selectable options.
+            return self._build_platform_selection_result()
 
         return self._build_result()
 
@@ -169,20 +215,31 @@ class GoalQualifier:
                 self._merge_implications(template.base_implications)
             return self._build_result()
 
+        if question_id == "_platform_selection":
+            return self._handle_platform_selection(value)
+
         self._answers[question_id] = value
 
         # Apply implications from this answer
-        template = get_domain_template(self._domain)
-        if template:
-            question = template.get_question(question_id)
-            if question and question.implications:
-                if isinstance(value, list):
-                    # Multi-choice: merge implications for all selected values
-                    for v in value:
-                        if v in question.implications:
-                            self._merge_implications(question.implications[v])
-                elif isinstance(value, str) and value in question.implications:
-                    self._merge_implications(question.implications[value])
+        question = self._find_question_by_id(question_id)
+        if question and question.implications:
+            if isinstance(value, list):
+                for v in value:
+                    if v in question.implications:
+                        self._merge_implications(question.implications[v])
+            elif isinstance(value, str) and value in question.implications:
+                self._merge_implications(question.implications[value])
+
+        # Handle numeric questions specially (value goes directly to spec field)
+        if question and question.question_type == QuestionType.NUMERIC:
+            from embodied_ai_architect.qualification.generic_questions import (
+                apply_numeric_answer,
+            )
+
+            try:
+                apply_numeric_answer(self._spec_fields, question_id, float(value))
+            except (ValueError, TypeError):
+                pass
 
         return self._build_result()
 
@@ -343,7 +400,8 @@ class GoalQualifier:
         next_q = self._find_next_question()
 
         template = get_domain_template(self._domain)
-        total_questions = len(template.questions) if template else 0
+        questions = template.questions if template else self._generated_questions
+        total_questions = len(questions)
         answered = len(self._answers)
 
         return QualificationResult(
@@ -415,6 +473,58 @@ class GoalQualifier:
             assumptions=[],
         )
 
+    def _build_platform_selection_result(self) -> QualificationResult:
+        """Build a result showing matched platforms from the registry.
+
+        Instead of the 3 hard-coded domain templates, shows the actual
+        platforms that matched the user's goal text.
+        """
+        ctx = self._platform_context
+        top_id = ctx.get("platform_id", "")
+        top_name = ctx.get("platform_name", "")
+        top_score = ctx.get("score", 0)
+        alternatives = ctx.get("alternatives", [])
+
+        # Build options: top match + alternatives
+        options = [top_id]
+        descriptions = {top_id: f"({top_score:.2f}) {top_name}"}
+
+        for alt in alternatives:
+            alt_id = alt.get("id", "")
+            alt_name = alt.get("name", "")
+            alt_score = alt.get("score", 0)
+            if alt_id:
+                options.append(alt_id)
+                descriptions[alt_id] = f"({alt_score:.2f}) {alt_name}"
+
+        platform_question = Question(
+            id="_platform_selection",
+            dimension="platform",
+            text="Which platform best matches your design?",
+            explanation=(
+                "Based on your goal, these platforms were matched from the "
+                "registry. Select the best fit to load domain-specific context "
+                "and qualification questions."
+            ),
+            options=options,
+            option_descriptions=descriptions,
+            required=True,
+        )
+
+        return QualificationResult(
+            qualification=GoalQualification(),
+            original_goal=self._original_goal,
+            refined_goal=self._original_goal,
+            domain=self._domain,
+            answers={},
+            accumulated_spec=dict(self._spec_fields),
+            next_question=platform_question,
+            questions_asked=0,
+            questions_remaining=0,
+            warnings=[],
+            assumptions=[],
+        )
+
     def _assess_tangibility(self) -> GoalQualification:
         """Evaluate tangibility from accumulated spec fields."""
         spec = self._spec_fields
@@ -457,10 +567,12 @@ class GoalQualifier:
     def _find_next_question(self) -> Optional[Question]:
         """Find the next unanswered question, respecting dependencies."""
         template = get_domain_template(self._domain)
-        if not template:
+        questions = template.questions if template else self._generated_questions
+
+        if not questions:
             return None
 
-        for q in template.questions:
+        for q in questions:
             if q.id in self._answers:
                 continue
 
@@ -544,6 +656,10 @@ class GoalQualifier:
 
     def _infer_use_case(self) -> str:
         """Infer use_case string from domain + answers."""
+        # Registry-selected platform → use platform ID as use_case
+        if self._selected_platform_id:
+            return self._selected_platform_id
+
         if self._domain == "drone":
             drone_type = self._answers.get("drone_type", "")
             return f"drone_{drone_type}" if drone_type else "drone"
