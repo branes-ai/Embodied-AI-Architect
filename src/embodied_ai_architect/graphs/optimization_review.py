@@ -413,15 +413,19 @@ def build_optimization_review_snapshot(
     pareto_points = state.get("pareto_points", [])
     pareto_results = state.get("pareto_results", {})
 
-    # MOO data
+    # MOO data (moo_results is OptimizationResult.model_dump())
     moo_results = state.get("moo_results", {})
     moo_summary = {}
     if moo_results:
+        # Derive convergence metric from convergence_history (last entry's hypervolume)
+        conv_history = moo_results.get("convergence_history", [])
+        convergence_metric = conv_history[-1].get("hypervolume") if conv_history else None
         moo_summary = {
             "total_evaluations": moo_results.get("total_evaluations", 0),
-            "pareto_size": moo_results.get("pareto_size", 0),
+            "pareto_size": len(moo_results.get("pareto_front", [])),
             "hypervolume": moo_results.get("hypervolume"),
-            "convergence_metric": moo_results.get("convergence_metric"),
+            "convergence_metric": convergence_metric,
+            "layers_used": moo_results.get("layers_used", []),
         }
 
     return OptimizationReviewSnapshot(

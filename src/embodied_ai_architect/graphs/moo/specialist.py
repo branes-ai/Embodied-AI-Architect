@@ -19,6 +19,38 @@ from embodied_ai_architect.graphs.task_graph import TaskNode
 logger = logging.getLogger(__name__)
 
 
+def _pareto_front_to_points(pareto_front: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Convert OptimizationResult.pareto_front to ParetoPoint-compatible dicts."""
+    points = []
+    for p in pareto_front:
+        objs = p.get("objectives", {})
+        points.append(
+            {
+                "power": objs.get("power_watts"),
+                "latency": objs.get("latency_ms"),
+                "cost": objs.get("cost_usd"),
+                "area": objs.get("area_mm2"),
+                "hardware": f"custom-{objs.get('process_nm', '?')}nm",
+                "dominated": False,
+                "metadata": p,
+            }
+        )
+    return points
+
+
+def _find_knee_point_index(
+    pareto_front: list[dict[str, Any]],
+    knee_point: dict[str, Any] | None,
+) -> int | None:
+    """Find the index of the knee point in the Pareto front."""
+    if not knee_point or not pareto_front:
+        return None
+    for i, p in enumerate(pareto_front):
+        if p == knee_point:
+            return i
+    return 0 if pareto_front else None
+
+
 def moo_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     """Specialist agent: multi-objective design space exploration.
 
@@ -86,6 +118,11 @@ def moo_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     # Build rich moo_results
     moo_results = result.model_dump()
 
+    # Convert Pareto front to ParetoPoint-compatible dicts for API/snapshot
+    pareto_points = _pareto_front_to_points(result.pareto_front)
+    knee_index = _find_knee_point_index(result.pareto_front, result.knee_point)
+    pareto_results["knee_point_index"] = knee_index
+
     # Summary
     n_front = len(result.pareto_front)
     knee_info = ""
@@ -109,6 +146,7 @@ def moo_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         "pareto_results": pareto_results,
         "moo_results": moo_results,
         "_state_updates": {
+            "pareto_points": pareto_points,
             "pareto_results": pareto_results,
             "moo_results": moo_results,
         },
@@ -187,6 +225,11 @@ def swap_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     pareto_results = result.to_pareto_results()
     moo_results = result.model_dump()
 
+    # Convert Pareto front to ParetoPoint-compatible dicts for API/snapshot
+    pareto_points = _pareto_front_to_points(result.pareto_front)
+    knee_index = _find_knee_point_index(result.pareto_front, result.knee_point)
+    pareto_results["knee_point_index"] = knee_index
+
     # Extract BOM from knee point
     system_bom = {}
     if result.knee_point:
@@ -218,6 +261,7 @@ def swap_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         "swap_results": moo_results,
         "system_bom": system_bom,
         "_state_updates": {
+            "pareto_points": pareto_points,
             "pareto_results": pareto_results,
             "moo_results": moo_results,
             "swap_assessment": moo_results,
