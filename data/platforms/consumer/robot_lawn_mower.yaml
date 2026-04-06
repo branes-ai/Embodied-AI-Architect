@@ -1,0 +1,105 @@
+id: consumer.robot_lawn_mower
+name: Robot Lawn Mower
+category: consumer
+description: Robot Lawn Mower platform for consumer applications.
+aliases:
+- robot lawn mower
+- Robot Lawn Mower
+keywords:
+  identity:
+  - robot lawn mower
+  - robot lawn mower
+  - consumer robot lawn mower
+  descriptions:
+  - robot lawn mower system
+  - autonomous robot lawn mower
+  application:
+  - robot lawn mower
+  - consumer automation
+  industry:
+  - consumer
+  - robot lawn mower
+  components:
+  - lidar
+  - camera
+  - imu
+  related:
+  - consumer
+  - robot
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_unstructured
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 10
+    max: 100
+    typical: 30
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: amr
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - camera
+    - imu
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - bluetooth
+  power:
+    compute_power_watts: 9.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard consumer architecture for robot lawn mower applications.
+  common_pitfalls:
+  - Domain-specific challenges for robot lawn mower platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to robot lawn mower in the consumer domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

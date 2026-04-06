@@ -1,0 +1,103 @@
+id: manipulation.smt_pick_place
+name: Smt Pick Place
+category: manipulation
+description: Smt Pick Place platform for manipulation applications.
+aliases:
+- smt pick place
+- Smt Pick Place
+keywords:
+  identity:
+  - smt pick place
+  - smt pick place
+  - manipulation smt pick place
+  descriptions:
+  - smt pick place system
+  - autonomous smt pick place
+  application:
+  - smt pick place
+  - manipulation automation
+  industry:
+  - manipulation
+  - smt pick place
+  components:
+  - force_torque
+  - joint_encoder
+  related:
+  - manipulation
+  - smt
+classification:
+  locomotion: stationary.fixed_mount
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 100
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: industrial_arm
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - force_torque
+    - joint_encoder
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethercat
+    - ethernet
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard manipulation architecture for smt pick place applications.
+  common_pitfalls:
+  - Domain-specific challenges for smt pick place platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to smt pick place in the manipulation domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

@@ -118,9 +118,12 @@ def chat(ctx, model: str, verbose: bool):
                 _show_help()
                 continue
 
+            # Enrich with platform context on design-related prompts
+            enriched_input = _maybe_enrich_with_platform_context(user_input, console, verbose)
+
             # Process with agent
             console.print()
-            _run_agent_turn(agent, user_input, verbose)
+            _run_agent_turn(agent, enriched_input, verbose)
             console.print()
 
         except KeyboardInterrupt:
@@ -129,6 +132,41 @@ def chat(ctx, model: str, verbose: bool):
         except EOFError:
             console.print("\n[dim]Goodbye![/dim]")
             break
+
+
+def _maybe_enrich_with_platform_context(user_input: str, console, verbose: bool) -> str:
+    """If the user input matches a platform, prepend context to the message.
+
+    This gives the LLM domain-specific knowledge (typical architecture,
+    common pitfalls, regulatory requirements) without the user having to
+    provide it. Only activates when a strong match is found.
+    """
+    try:
+        from embodied_ai_architect.platforms.context import (
+            get_platform_context_for_goal,
+            build_context_prompt,
+        )
+
+        ctx = get_platform_context_for_goal(user_input)
+        if not ctx:
+            return user_input
+
+        context_text = build_context_prompt(ctx)
+        if not context_text:
+            return user_input
+
+        pid = ctx.get("platform_id", "")
+        if verbose:
+            console.print(f"  [dim]Platform context loaded: {pid}[/dim]")
+
+        # Prepend context as a system-like block the LLM can use
+        return (
+            f"[Platform context from registry — use this domain knowledge "
+            f"to inform your response]\n\n{context_text}\n\n"
+            f"---\n\nUser request: {user_input}"
+        )
+    except Exception:
+        return user_input
 
 
 def _run_agent_turn(agent, user_input: str, verbose: bool) -> None:
