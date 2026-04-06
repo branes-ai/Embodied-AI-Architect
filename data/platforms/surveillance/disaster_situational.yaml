@@ -1,0 +1,101 @@
+id: surveillance.disaster_situational
+name: Disaster Situational
+category: surveillance
+description: Disaster Situational platform for surveillance applications.
+aliases:
+- disaster situational
+- Disaster Situational
+keywords:
+  identity:
+  - disaster situational
+  - disaster situational
+  - surveillance disaster situational
+  descriptions:
+  - disaster situational system
+  - autonomous disaster situational
+  application:
+  - disaster situational
+  - surveillance automation
+  industry:
+  - surveillance
+  - disaster situational
+  components:
+  - camera
+  related:
+  - surveillance
+  - disaster
+classification:
+  locomotion: stationary.fixed_mount
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  - outdoor_urban
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 5
+    max: 100
+    typical: 30
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: fixed_camera
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - camera
+  actuators:
+    actuator_types: []
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethernet
+    - wifi
+  power:
+    compute_power_watts: 9.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard surveillance architecture for disaster situational applications.
+  common_pitfalls:
+  - Domain-specific challenges for disaster situational platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to disaster situational in the surveillance domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

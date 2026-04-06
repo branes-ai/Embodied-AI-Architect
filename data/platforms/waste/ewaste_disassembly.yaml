@@ -1,0 +1,102 @@
+id: waste.ewaste_disassembly
+name: Ewaste Disassembly
+category: waste
+description: Ewaste Disassembly platform for waste applications.
+aliases:
+- ewaste disassembly
+- Ewaste Disassembly
+keywords:
+  identity:
+  - ewaste disassembly
+  - ewaste disassembly
+  - waste ewaste disassembly
+  descriptions:
+  - ewaste disassembly system
+  - autonomous ewaste disassembly
+  application:
+  - ewaste disassembly
+  - waste automation
+  industry:
+  - waste
+  - ewaste disassembly
+  components:
+  - camera
+  - hyperspectral
+  related:
+  - waste
+  - ewaste
+classification:
+  locomotion: stationary.fixed_mount
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  human_proximity: humans_distant
+attributes:
+  power_watts:
+    min: 200
+    max: 2000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - camera
+    - hyperspectral
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethernet
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard waste architecture for ewaste disassembly applications.
+  common_pitfalls:
+  - Domain-specific challenges for ewaste disassembly platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to ewaste disassembly in the waste domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

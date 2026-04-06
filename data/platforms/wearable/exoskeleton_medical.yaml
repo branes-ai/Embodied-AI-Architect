@@ -1,0 +1,103 @@
+id: wearable.exoskeleton_medical
+name: Exoskeleton Medical
+category: wearable
+description: Exoskeleton Medical platform for wearable applications.
+aliases:
+- exoskeleton medical
+- Exoskeleton Medical
+keywords:
+  identity:
+  - exoskeleton medical
+  - exoskeleton medical
+  - wearable exoskeleton medical
+  descriptions:
+  - exoskeleton medical system
+  - autonomous exoskeleton medical
+  application:
+  - exoskeleton medical
+  - wearable automation
+  industry:
+  - wearable
+  - exoskeleton medical
+  components:
+  - imu
+  - ppg
+  related:
+  - wearable
+  - exoskeleton
+classification:
+  locomotion: wearable.body_worn
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_unstructured
+  - outdoor_urban
+  human_proximity: humans_on_body
+attributes:
+  power_watts:
+    min: 0.01
+    max: 5
+    typical: 0.5
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: handheld
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - imu
+    - ppg
+  actuators:
+    actuator_types: []
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - bluetooth
+    - wifi
+  power:
+    compute_power_watts: 0.15
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard wearable architecture for exoskeleton medical applications.
+  common_pitfalls:
+  - Domain-specific challenges for exoskeleton medical platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to exoskeleton medical in the wearable domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

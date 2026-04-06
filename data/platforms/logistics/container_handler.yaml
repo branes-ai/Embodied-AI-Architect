@@ -1,0 +1,105 @@
+id: logistics.container_handler
+name: Container Handler
+category: logistics
+description: Container Handler platform for logistics applications.
+aliases:
+- container handler
+- Container Handler
+keywords:
+  identity:
+  - container handler
+  - container handler
+  - logistics container handler
+  descriptions:
+  - container handler system
+  - autonomous container handler
+  application:
+  - container handler
+  - logistics automation
+  industry:
+  - logistics
+  - container handler
+  components:
+  - lidar
+  - camera
+  - imu
+  related:
+  - logistics
+  - container
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 50
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: amr
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - camera
+    - imu
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - ethernet
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard logistics architecture for container handler applications.
+  common_pitfalls:
+  - Domain-specific challenges for container handler platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to container handler in the logistics domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

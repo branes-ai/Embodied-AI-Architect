@@ -1,0 +1,103 @@
+id: veterinary.poultry_processing
+name: Poultry Processing
+category: veterinary
+description: Poultry Processing platform for veterinary applications.
+aliases:
+- poultry processing
+- Poultry Processing
+keywords:
+  identity:
+  - poultry processing
+  - poultry processing
+  - veterinary poultry processing
+  descriptions:
+  - poultry processing system
+  - autonomous poultry processing
+  application:
+  - poultry processing
+  - veterinary automation
+  industry:
+  - veterinary
+  - poultry processing
+  components:
+  - camera
+  - ultrasound
+  related:
+  - veterinary
+  - poultry
+classification:
+  locomotion: stationary.fixed_mount
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_farmyard
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 50
+    max: 500
+    typical: 200
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - camera
+    - ultrasound
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - ethernet
+  power:
+    compute_power_watts: 60.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard veterinary architecture for poultry processing applications.
+  common_pitfalls:
+  - Domain-specific challenges for poultry processing platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to poultry processing in the veterinary domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

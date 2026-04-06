@@ -1,0 +1,101 @@
+id: surveillance.vehicle_counting
+name: Vehicle Counting
+category: surveillance
+description: Vehicle Counting platform for surveillance applications.
+aliases:
+- vehicle counting
+- Vehicle Counting
+keywords:
+  identity:
+  - vehicle counting
+  - vehicle counting
+  - surveillance vehicle counting
+  descriptions:
+  - vehicle counting system
+  - autonomous vehicle counting
+  application:
+  - vehicle counting
+  - surveillance automation
+  industry:
+  - surveillance
+  - vehicle counting
+  components:
+  - camera
+  related:
+  - surveillance
+  - vehicle
+classification:
+  locomotion: stationary.fixed_mount
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  - outdoor_urban
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 5
+    max: 100
+    typical: 30
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: fixed_camera
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - camera
+  actuators:
+    actuator_types: []
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethernet
+    - wifi
+  power:
+    compute_power_watts: 9.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard surveillance architecture for vehicle counting applications.
+  common_pitfalls:
+  - Domain-specific challenges for vehicle counting platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to vehicle counting in the surveillance domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

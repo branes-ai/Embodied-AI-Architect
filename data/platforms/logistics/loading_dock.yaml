@@ -1,0 +1,105 @@
+id: logistics.loading_dock
+name: Loading Dock
+category: logistics
+description: Loading Dock platform for logistics applications.
+aliases:
+- loading dock
+- Loading Dock
+keywords:
+  identity:
+  - loading dock
+  - loading dock
+  - logistics loading dock
+  descriptions:
+  - loading dock system
+  - autonomous loading dock
+  application:
+  - loading dock
+  - logistics automation
+  industry:
+  - logistics
+  - loading dock
+  components:
+  - lidar
+  - camera
+  - imu
+  related:
+  - logistics
+  - loading
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 50
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: amr
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - camera
+    - imu
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - ethernet
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard logistics architecture for loading dock applications.
+  common_pitfalls:
+  - Domain-specific challenges for loading dock platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to loading dock in the logistics domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

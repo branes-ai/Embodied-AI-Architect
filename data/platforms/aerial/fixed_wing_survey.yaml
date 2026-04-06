@@ -1,0 +1,130 @@
+name: Fixed-Wing Survey UAV
+description: Mapping, photogrammetry, and corridor survey UAV with long endurance and large area coverage.
+keywords:
+  identity:
+  - survey drone
+  - mapping drone
+  - photogrammetry UAV
+  - survey UAV
+  descriptions:
+  - drone that maps large areas
+  - aerial survey aircraft
+  - photogrammetry drone
+  application:
+  - aerial mapping
+  - photogrammetry
+  - orthomosaic
+  - corridor survey
+  - topographic survey
+  - volumetric survey
+  industry:
+  - GSD
+  - orthomosaic
+  - DSM
+  - DTM
+  - LiDAR survey
+  - photogrammetry
+  components:
+  - survey camera
+  - PPK GPS
+  - LiDAR scanner
+  - fixed wing airframe
+  related:
+  - mining survey
+  - construction progress
+  - land survey
+  - forestry inventory
+classification:
+  locomotion: aerial.fixed_wing
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_rural
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 20
+    max: 200
+    typical: 80
+  compute_tops:
+    min: 1
+    max: 10
+    typical: 4
+  latency_ms:
+    min: 100
+    max: 1000
+    typical: 500
+  weight_kg:
+    min: 2
+    max: 25
+    typical: 8
+  cost_usd:
+    min: 3000
+    max: 50000
+    typical: 15000
+  autonomy_level: high
+  safety_level: basic
+  mission_duration_hours:
+    min: 0.5
+    max: 3
+    typical: 1.5
+implications:
+  platform_type: drone
+  perception:
+    camera_types:
+    - survey_camera
+    - multispectral
+    detection_classes: []
+    max_latency_ms: 500
+    min_fps: 1
+  sensors:
+    modalities:
+    - imu
+    - gps
+    - barometer
+  actuators:
+    actuator_types:
+    - brushless_motor
+    - servo
+    dof: null
+    control_rate_hz: 50
+  comms:
+    protocols:
+    - mavlink
+    - wifi
+  power:
+    compute_power_watts: 5
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Small fixed-wing with electric propulsion, PPK/RTK GPS, high-resolution survey camera (42-61MP), and
+    optional LiDAR. Onboard computer handles flight planning, image triggering, and basic telemetry. Post-processing in cloud
+    (Pix4D, Agisoft).
+  common_pitfalls:
+  - Image overlap must be >70% front, >60% side for photogrammetry quality
+  - Wind affects GSD consistency on long corridors
+  - PPK base station must be within 30km
+  regulatory:
+  - FAA Part 107
+  - EASA open/specific category
+  - Local flight restrictions near airports
+  reference_designs:
+  - senseFly eBee X
+  - WingtraOne
+  - Trinity F90+
+  design_considerations: Survey accuracy is determined by GSD (ground sample distance) which is a function of altitude, camera
+    resolution, and sensor size. Real-time compute requirements are minimal — the heavy lifting is post-processing. Focus
+    on flight endurance, camera trigger accuracy, and PPK GPS precision.
+qualification:
+  suggested_questions:
+  - survey_area_km2
+  - gsd_cm
+  - sensor_type
+  critical_constraints:
+  - GSD resolution
+  - Area coverage per flight
+  - GPS accuracy
+  optional_constraints:
+  - LiDAR capability
+  - Multispectral sensors
