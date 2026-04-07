@@ -54,6 +54,16 @@ class ParetoPoint(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
+class ParetoHistoryEntry(BaseModel):
+    """One snapshot of the accumulated Pareto frontier after a MOO run."""
+
+    iteration: int
+    num_points: int
+    hypervolume: float
+    new_points_added: int = 0
+    dominated_removed: int = 0
+
+
 class ParetoResponse(BaseModel):
     points: list[ParetoPoint] = Field(default_factory=list)
     front: list[int] = Field(
@@ -64,6 +74,10 @@ class ParetoResponse(BaseModel):
     objectives: list[str] = Field(default_factory=lambda: ["power_watts", "latency_ms", "cost_usd"])
     pareto_front_size: int = 0
     hypervolume: Optional[float] = None
+    frontier_history: list[ParetoHistoryEntry] = Field(
+        default_factory=list,
+        description="Per-iteration frontier evolution snapshots (issue #23)",
+    )
 
 
 # ---------------------------------------------------------------------------

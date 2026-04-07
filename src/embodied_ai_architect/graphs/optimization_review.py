@@ -123,6 +123,9 @@ class OptimizationReviewSnapshot(BaseModel):
     pareto_front_size: int = 0
     hypervolume: Optional[float] = None
 
+    # Frontier evolution across MOO iterations (issue #23)
+    frontier_history: list[dict[str, Any]] = Field(default_factory=list)
+
     # MOO convergence (when available)
     moo_summary: dict[str, Any] = Field(default_factory=dict)
 
@@ -412,6 +415,7 @@ def build_optimization_review_snapshot(
     # Pareto data
     pareto_points = state.get("pareto_points", [])
     pareto_results = state.get("pareto_results", {})
+    frontier_history = state.get("pareto_frontier_history", [])
 
     # MOO data (moo_results is OptimizationResult.model_dump())
     moo_results = state.get("moo_results", {})
@@ -448,6 +452,7 @@ def build_optimization_review_snapshot(
         pareto_points=pareto_points,
         pareto_front_size=len(pareto_results.get("front", [])) if pareto_results else 0,
         hypervolume=moo_results.get("hypervolume"),
+        frontier_history=frontier_history,
         moo_summary=moo_summary,
         goal=state.get("goal", ""),
         design_rationale=state.get("design_rationale", [])[-5:],
@@ -676,6 +681,24 @@ def render_optimization_review(snapshot: OptimizationReviewSnapshot) -> str:
             moo = snapshot.moo_summary
             if moo.get("total_evaluations"):
                 lines.append(f"  Total evaluations: {moo['total_evaluations']}")
+        lines.append("")
+
+    # Frontier evolution across iterations (issue #23)
+    if snapshot.frontier_history:
+        lines.append("─" * 72)
+        lines.append("  FRONTIER EVOLUTION")
+        lines.append("─" * 72)
+        lines.append("")
+        for entry in snapshot.frontier_history:
+            it = entry.get("iteration", "?")
+            n = entry.get("num_points", 0)
+            new_added = entry.get("new_points_added", 0)
+            removed = entry.get("dominated_removed", 0)
+            hv = entry.get("hypervolume", 0.0)
+            delta = ""
+            if new_added or removed:
+                delta = f" (+{new_added} new, -{removed} dominated)"
+            lines.append(f"  Iteration {it}: {n} Pareto points{delta}, HV={hv:.4f}")
         lines.append("")
 
     # Recent design rationale
