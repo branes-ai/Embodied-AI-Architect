@@ -200,6 +200,246 @@ def codebase_assess(
         ctx.exit(1)
 
 
+@codebase.command("qualify")
+@click.argument("project_path", type=click.Path(exists=True, file_okay=False))
+@click.option(
+    "--goal",
+    type=str,
+    default=None,
+    help="Override the auto-generated goal text",
+)
+@click.option(
+    "--domain",
+    type=str,
+    default=None,
+    help="Force a domain (drone, ugv, robot_arm) — overrides auto-detection",
+)
+@click.option(
+    "--auto",
+    is_flag=True,
+    help="Skip interactive Q&A; only use auto-detected answers",
+)
+@click.pass_context
+def codebase_qualify(
+    ctx,
+    project_path: str,
+    goal: str | None,
+    domain: str | None,
+    auto: bool,
+):
+    """Auto-qualify a project by scanning the codebase.
+
+    Detects platform (drone/ugv/robot_arm), perception tasks (object detection,
+    SLAM, tracking), and control output (flight controller, path planner) from
+    the project's dependencies and source files. Pre-fills the qualifier with
+    detected answers, then runs interactive Q&A only on the remaining gaps.
+
+    \b
+    Examples:
+      branes codebase qualify /path/to/drone_app
+      branes codebase qualify . --domain drone
+      branes codebase qualify . --auto                # non-interactive
+      branes codebase qualify . --goal "custom goal"  # override goal text
+    """
+    json_output = ctx.obj.get("json", False)
+
+    try:
+        from embodied_ai_architect.codebase.qualifier_bridge import (
+            codebase_to_qualification,
+        )
+        from embodied_ai_architect.codebase.scanner import CodebaseScanner
+        from embodied_ai_architect.qualification.qualifier import (
+            GoalQualifier,
+            render_qualification_result,
+        )
+
+        # Step 1: Scan the project
+        if not json_output:
+            console.print(f"[dim]Scanning {project_path}...[/dim]")
+        scanner = CodebaseScanner()
+        scan = scanner.scan(Path(project_path))
+
+        # Step 2: Bridge → detection report + prefilled answers
+        bridge = codebase_to_qualification(scan)
+
+        if not json_output:
+            _display_detection_report(scan, bridge)
+
+        # Step 3: Build the goal text
+        effective_goal = goal or _synthesize_goal(scan, bridge)
+
+        # Step 4: Run the qualifier with the detected domain
+        effective_domain = domain or bridge.domain
+        qualifier = GoalQualifier()
+        result = qualifier.assess(effective_goal, domain=effective_domain)
+
+        # Step 5: Pre-fill the answers
+        if bridge.prefilled_answers:
+            result = qualifier.prefill_answers(bridge.prefilled_answers)
+
+        # Step 6: JSON output mode — dump everything and exit
+        if json_output:
+            click.echo(
+                json.dumps(
+                    {
+                        "scan": scan.model_dump(),
+                        "detection": {
+                            "domain": bridge.domain,
+                            "domain_evidence": bridge.report.domain_evidence,
+                            "perception_tasks": bridge.report.perception_tasks,
+                            "perception_evidence": bridge.report.perception_evidence,
+                            "control_output": bridge.report.control_output,
+                            "control_evidence": bridge.report.control_evidence,
+                            "ml_frameworks": bridge.report.ml_frameworks,
+                            "has_ml_models": bridge.report.has_ml_models,
+                            "confidence": bridge.report.confidence,
+                        },
+                        "prefilled_answers": bridge.prefilled_answers,
+                        "qualification": {
+                            "is_tangible": result.is_tangible,
+                            "missing_dimensions": result.qualification.missing_dimensions,
+                            "answers": result.answers,
+                            "accumulated_spec": result.accumulated_spec,
+                        },
+                    },
+                    indent=2,
+                    default=str,
+                )
+            )
+            return
+
+        # Step 7: Auto mode — print the qualification state and exit
+        if auto:
+            console.print()
+            console.print(render_qualification_result(result))
+            return
+
+        # Step 8: Interactive — only ask the gaps
+        console.print()
+        console.print(render_qualification_result(result))
+
+        while result.next_question:
+            q = result.next_question
+            console.print()
+            console.print(f"[bold]{q.text}[/bold]")
+            if q.explanation:
+                console.print(f"[dim]{q.explanation}[/dim]")
+            if q.options:
+                for i, opt in enumerate(q.options, 1):
+                    desc = q.option_descriptions.get(opt, "")
+                    console.print(f"  {i}. [cyan]{opt}[/cyan]" + (f" — {desc}" if desc else ""))
+                raw = console.input("[bold]Select (number, or 's' to skip): [/bold]").strip()
+                if raw.lower() == "s":
+                    result = qualifier.skip(q.id)
+                elif raw.isdigit():
+                    idx = int(raw) - 1
+                    if 0 <= idx < len(q.options):
+                        result = qualifier.answer(q.id, q.options[idx])
+                    else:
+                        result = qualifier.skip(q.id)
+                else:
+                    result = qualifier.skip(q.id)
+            else:
+                raw = console.input(f"[bold]{q.text} [/bold]")
+                if raw.strip():
+                    if q.question_type.value == "numeric":
+                        try:
+                            result = qualifier.answer(q.id, float(raw))
+                        except ValueError:
+                            result = qualifier.skip(q.id)
+                    else:
+                        result = qualifier.answer(q.id, raw.strip())
+                else:
+                    result = qualifier.skip(q.id)
+            console.print()
+            console.print(render_qualification_result(result))
+
+        if result.is_tangible:
+            console.print("\n[bold green]✓ Goal qualified![/bold green]")
+            console.print("[dim]Next: branes design plan with these constraints[/dim]")
+        else:
+            console.print("\n[yellow]Goal could not be fully qualified.[/yellow]")
+            console.print(
+                "[dim]Missing: " + ", ".join(result.qualification.missing_dimensions) + "[/dim]"
+            )
+
+    except Exception as e:
+        if json_output:
+            click.echo(json.dumps({"status": "error", "error": str(e)}))
+        else:
+            console.print(f"\n[bold red]Error:[/bold red] {e}")
+        ctx.exit(1)
+
+
+def _synthesize_goal(scan, bridge) -> str:
+    """Build a natural-language goal from scan + detection."""
+    parts = [f"Application '{scan.project_name}'"]
+    if bridge.domain:
+        parts.append(f"on a {bridge.domain} platform")
+    if bridge.report.perception_tasks:
+        tasks = ", ".join(bridge.report.perception_tasks)
+        parts.append(f"performing {tasks}")
+    if scan.languages:
+        parts.append(f"({', '.join(scan.languages[:3])})")
+    return " ".join(parts)
+
+
+def _display_detection_report(scan, bridge) -> None:
+    """Display the auto-detection report from the codebase qualifier bridge."""
+    report = bridge.report
+
+    console.print()
+    console.print(
+        Panel(
+            f"Project: [bold]{scan.project_name}[/bold]\n"
+            f"Languages: {', '.join(scan.languages) or 'none'}\n"
+            f"Dependencies: {len(scan.dependencies)}\n"
+            f"ML models: {len(scan.ml_models)}",
+            title="Codebase Scan",
+            border_style="cyan",
+        )
+    )
+
+    detection_lines = []
+    if report.domain:
+        ev = ", ".join(report.domain_evidence[:5])
+        detection_lines.append(f"  [cyan]Domain:[/cyan] [bold]{report.domain}[/bold]  ({ev})")
+    else:
+        detection_lines.append("  [cyan]Domain:[/cyan] [dim]not detected[/dim]")
+
+    if report.perception_tasks:
+        tasks = ", ".join(report.perception_tasks)
+        ev = ", ".join(report.perception_evidence[:3])
+        detection_lines.append(f"  [cyan]Perception:[/cyan] {tasks}  ({ev})")
+    else:
+        detection_lines.append("  [cyan]Perception:[/cyan] [dim]not detected[/dim]")
+
+    if report.control_output:
+        outs = ", ".join(report.control_output)
+        ev = ", ".join(report.control_evidence[:3])
+        detection_lines.append(f"  [cyan]Control:[/cyan] {outs}  ({ev})")
+    else:
+        detection_lines.append("  [cyan]Control:[/cyan] [dim]not detected[/dim]")
+
+    if report.ml_frameworks:
+        detection_lines.append(f"  [cyan]ML frameworks:[/cyan] {', '.join(report.ml_frameworks)}")
+
+    confidence_color = {"high": "green", "medium": "yellow", "low": "red"}.get(
+        report.confidence, "white"
+    )
+    detection_lines.append(
+        f"  [cyan]Confidence:[/cyan] [{confidence_color}]{report.confidence}[/{confidence_color}]"
+    )
+
+    console.print(
+        Panel(
+            "\n".join(detection_lines),
+            title="Auto-Detection",
+            border_style="green" if report.has_any_signal() else "yellow",
+        )
+    )
+
+
 # --- Display helpers ---
 
 

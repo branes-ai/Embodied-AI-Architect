@@ -198,6 +198,38 @@ class GoalQualifier:
 
         return self._build_result()
 
+    def prefill_answers(self, answers: dict[str, Any]) -> QualificationResult:
+        """Pre-fill multiple answers at once (e.g., from codebase analysis).
+
+        For each (question_id, value) pair, records the answer and merges
+        any implications from the matching question into _spec_fields. Skips
+        any question_id that doesn't exist in the current template (silent).
+        Useful for the codebase qualification bridge that auto-detects
+        platform, perception tasks, control output, etc. from a project scan.
+
+        Args:
+            answers: Dict mapping question_id to answer value.
+
+        Returns:
+            Updated QualificationResult after all prefills are applied.
+        """
+        for question_id, value in answers.items():
+            question = self._find_question_by_id(question_id)
+            if question is None:
+                # Silently skip — the bridge may have detected an answer for
+                # a question_id that doesn't apply to the current domain
+                continue
+            self._answers[question_id] = value
+            if question.implications:
+                if isinstance(value, list):
+                    for v in value:
+                        if v in question.implications:
+                            self._merge_implications(question.implications[v])
+                elif isinstance(value, str) and value in question.implications:
+                    self._merge_implications(question.implications[value])
+
+        return self._build_result()
+
     def answer(self, question_id: str, value: Any) -> QualificationResult:
         """Record an answer and return updated qualification result.
 
