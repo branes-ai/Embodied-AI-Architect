@@ -273,9 +273,13 @@ def codebase_qualify(
         qualifier = GoalQualifier()
         result = qualifier.assess(effective_goal, domain=effective_domain)
 
-        # Step 5: Pre-fill the answers
-        if bridge.prefilled_answers:
-            result = qualifier.prefill_answers(bridge.prefilled_answers)
+        # Step 5: Pre-fill the answers — only when a domain template is
+        # actually loaded. If assess() returned a domain selection prompt
+        # (no template), the qualifier has no questions yet so prefilling
+        # would silently drop everything.
+        if bridge.prefilled_answers and effective_domain and result.next_question:
+            if not result.next_question.id.startswith("_"):
+                result = qualifier.prefill_answers(bridge.prefilled_answers)
 
         # Step 6: JSON output mode — dump everything and exit
         if json_output:
@@ -328,9 +332,29 @@ def codebase_qualify(
                 for i, opt in enumerate(q.options, 1):
                     desc = q.option_descriptions.get(opt, "")
                     console.print(f"  {i}. [cyan]{opt}[/cyan]" + (f" — {desc}" if desc else ""))
-                raw = console.input("[bold]Select (number, or 's' to skip): [/bold]").strip()
-                if raw.lower() == "s":
+
+                is_multi = q.question_type.value == "multi_choice"
+                if is_multi:
+                    prompt = "Select (comma-separated numbers, or 's' to skip): "
+                else:
+                    prompt = "Select (number, or 's' to skip): "
+                raw = console.input(f"[bold]{prompt}[/bold]").strip()
+
+                if raw.lower() == "s" or not raw:
                     result = qualifier.skip(q.id)
+                elif is_multi:
+                    # Parse comma-separated indices
+                    selected: list[str] = []
+                    for tok in raw.split(","):
+                        tok = tok.strip()
+                        if tok.isdigit():
+                            idx = int(tok) - 1
+                            if 0 <= idx < len(q.options):
+                                selected.append(q.options[idx])
+                    if selected:
+                        result = qualifier.answer(q.id, selected)
+                    else:
+                        result = qualifier.skip(q.id)
                 elif raw.isdigit():
                     idx = int(raw) - 1
                     if 0 <= idx < len(q.options):

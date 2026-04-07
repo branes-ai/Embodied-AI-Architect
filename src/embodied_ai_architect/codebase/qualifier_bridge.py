@@ -59,8 +59,10 @@ _DOMAIN_HINTS: dict[str, str] = {
     "autoware": "ugv",
 }
 
-# Dependency name → list of perception_tasks for the matching domain.
-# Tasks are domain-specific question option values.
+# Generic perception capability tags. These are NOT question option values
+# directly — _project_perception_to_domain() maps them to the canonical option
+# IDs of the active domain template (drone vs ugv vs robot_arm have different
+# vocabularies).
 _PERCEPTION_HINTS: dict[str, list[str]] = {
     # Object detection
     "ultralytics": ["object_detection"],
@@ -98,16 +100,69 @@ _PERCEPTION_HINTS: dict[str, list[str]] = {
     "elevation_mapping": ["terrain_mapping"],
 }
 
-# Dependency name → control output hint.
+# Maps the generic perception capability → domain-specific option ID.
+# Each domain template has its own perception_tasks vocabulary; the bridge
+# must use the canonical IDs that the qualifier will accept.
+_PERCEPTION_BY_DOMAIN: dict[str, dict[str, str]] = {
+    "drone": {
+        "object_detection": "object_detection",
+        "slam": "slam",
+        "visual_odometry": "visual_odometry",
+        "person_detection": "person_detection",
+        "tracking": "tracking",
+        "terrain_mapping": "terrain_mapping",
+    },
+    "ugv": {
+        # UGV uses different option vocabulary
+        "object_detection": "object_recognition",
+        "slam": "slam_navigation",
+        "visual_odometry": "slam_navigation",
+        "person_detection": "pedestrian_detection",
+        "tracking": "person_following",
+        "terrain_mapping": "terrain_classification",
+    },
+    "robot_arm": {
+        "object_detection": "object_detection",
+        "slam": "workspace_monitoring",
+        "visual_odometry": "workspace_monitoring",
+        "person_detection": "human_presence",
+        "tracking": "hand_tracking",
+        "terrain_mapping": "workspace_monitoring",
+    },
+}
+
+# Generic control capability tags → domain-specific question_id and option ID.
+# Maps from generic capability to (question_id, option_id) tuple per domain.
 _CONTROL_HINTS: dict[str, str] = {
-    "simple_pid": "flight_controller",
-    "control": "flight_controller",
-    "px4_msgs": "flight_controller",
-    "mavros_msgs": "flight_controller",
-    "nav2_msgs": "path_planner",
-    "moveit_msgs": "trajectory_to_joints",
-    "geometry_msgs": "path_planner",
-    "trajectory_msgs": "trajectory_to_joints",
+    # generic capability tag (not a question option)
+    "simple_pid": "low_level_control",
+    "control": "low_level_control",
+    "px4_msgs": "low_level_control",
+    "mavros_msgs": "low_level_control",
+    "nav2_msgs": "path_planning",
+    "moveit_msgs": "joint_trajectory",
+    "geometry_msgs": "path_planning",
+    "trajectory_msgs": "joint_trajectory",
+}
+
+_CONTROL_BY_DOMAIN: dict[str, dict[str, tuple[str, str]]] = {
+    "drone": {
+        # capability → (question_id, option_id)
+        "low_level_control": ("control_output", "flight_controller"),
+        "path_planning": ("control_output", "path_planner"),
+        "joint_trajectory": ("control_output", "flight_controller"),  # rare on drone
+    },
+    "ugv": {
+        "low_level_control": ("control_output", "motor_controller"),
+        "path_planning": ("control_output", "path_planner"),
+        "joint_trajectory": ("control_output", "manipulator_controller"),
+    },
+    "robot_arm": {
+        # robot_arm uses control_architecture, not control_output
+        "low_level_control": ("control_architecture", "direct_joint_command"),
+        "path_planning": ("control_architecture", "trajectory_to_joints"),
+        "joint_trajectory": ("control_architecture", "trajectory_to_joints"),
+    },
 }
 
 # Dependency name → ML framework family (used to flag inference-heavy projects).
@@ -183,11 +238,11 @@ def codebase_to_qualification(
     # 1. Domain detection
     domain = _detect_domain(deps, report)
 
-    # 2. Perception tasks
-    perception_tasks = _detect_perception_tasks(deps, scan, analysis, report)
+    # 2. Generic perception tags (domain-agnostic)
+    perception_tags = _detect_perception_tasks(deps, scan, analysis, report)
 
-    # 3. Control output
-    control_outputs = _detect_control_output(deps, analysis, report)
+    # 3. Generic control capability tags
+    control_tags = _detect_control_output(deps, analysis, report)
 
     # 4. ML frameworks
     report.ml_frameworks = sorted([d for d in deps if d in _ML_FRAMEWORKS])
@@ -196,14 +251,57 @@ def codebase_to_qualification(
     # 5. Compute confidence
     report.confidence = _compute_confidence(report)
 
-    # 6. Build prefilled answers dict (domain-specific question_ids)
+    # 6. Build prefilled answers — only for known domains, using canonical
+    #    option IDs from the matching domain template's vocabulary.
     prefilled: dict[str, list[str] | str] = {}
-    if perception_tasks:
-        prefilled["perception_tasks"] = perception_tasks
-    if control_outputs:
-        prefilled["control_output"] = control_outputs
+    if domain:
+        domain_perception = _project_perception_to_domain(perception_tags, domain)
+        if domain_perception:
+            prefilled["perception_tasks"] = domain_perception
+
+        domain_control = _project_control_to_domain(control_tags, domain)
+        if domain_control:
+            # Group by question_id (drone/ugv use control_output;
+            # robot_arm uses control_architecture)
+            for question_id, option_id in domain_control.items():
+                prefilled[question_id] = option_id
 
     return BridgeResult(domain=domain, prefilled_answers=prefilled, report=report)
+
+
+def _project_perception_to_domain(tags: list[str], domain: str) -> list[str]:
+    """Map generic perception capability tags to canonical domain options."""
+    mapping = _PERCEPTION_BY_DOMAIN.get(domain, {})
+    if not mapping:
+        return []
+    seen: set[str] = set()
+    out: list[str] = []
+    for tag in tags:
+        opt = mapping.get(tag)
+        if opt and opt not in seen:
+            seen.add(opt)
+            out.append(opt)
+    return sorted(out)
+
+
+def _project_control_to_domain(tags: list[str], domain: str) -> dict[str, str]:
+    """Map generic control capability tags to canonical (question_id, option_id).
+
+    Returns a dict mapping question_id → option_id. If multiple tags map to
+    the same question_id, the lexicographically first option_id wins
+    (deterministic).
+    """
+    mapping = _CONTROL_BY_DOMAIN.get(domain, {})
+    if not mapping:
+        return {}
+    by_question: dict[str, list[str]] = {}
+    for tag in tags:
+        entry = mapping.get(tag)
+        if entry is None:
+            continue
+        question_id, option_id = entry
+        by_question.setdefault(question_id, []).append(option_id)
+    return {q: sorted(opts)[0] for q, opts in by_question.items()}
 
 
 # ---------------------------------------------------------------------------
@@ -227,8 +325,12 @@ def _normalize_deps(deps: list[str]) -> set[str]:
 
 
 def _detect_domain(deps: set[str], report: DetectionReport) -> Optional[str]:
-    """Find the first matching domain hint and record evidence."""
-    # Count matches per domain to handle ROS-based projects that match multiple
+    """Find the highest-scoring domain hint and record evidence.
+
+    Deterministic: ties are broken lexicographically by domain name so the
+    same input always produces the same output (set iteration order is not
+    guaranteed across runs).
+    """
     domain_scores: dict[str, list[str]] = {}
     for dep in deps:
         if dep in _DOMAIN_HINTS:
@@ -238,10 +340,11 @@ def _detect_domain(deps: set[str], report: DetectionReport) -> Optional[str]:
     if not domain_scores:
         return None
 
-    # Pick the domain with the most evidence
-    best_domain = max(domain_scores.keys(), key=lambda d: len(domain_scores[d]))
+    # Sort by (-score, domain) so ties resolve lexicographically
+    ranked = sorted(domain_scores.items(), key=lambda kv: (-len(kv[1]), kv[0]))
+    best_domain, evidence = ranked[0]
     report.domain = best_domain
-    report.domain_evidence = sorted(domain_scores[best_domain])
+    report.domain_evidence = sorted(evidence)
     return best_domain
 
 

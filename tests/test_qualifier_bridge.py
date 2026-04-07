@@ -108,10 +108,32 @@ class TestDomainDetection:
 
 class TestPerceptionDetection:
     def test_yolo_to_object_detection(self):
+        # Without a domain hint, the generic tag is detected but not projected
         scan = _make_scan(deps=["ultralytics", "torch"])
         result = codebase_to_qualification(scan)
         assert "object_detection" in result.report.perception_tasks
+        assert result.prefilled_answers == {}  # no domain → no projection
+
+    def test_yolo_with_drone_projects_to_object_detection(self):
+        scan = _make_scan(deps=["mavros", "ultralytics", "torch"])
+        result = codebase_to_qualification(scan)
+        assert result.domain == "drone"
+        # drone template uses "object_detection" as canonical option
         assert "object_detection" in result.prefilled_answers["perception_tasks"]
+
+    def test_yolo_with_ugv_projects_to_object_recognition(self):
+        scan = _make_scan(deps=["nav2", "ultralytics"])
+        result = codebase_to_qualification(scan)
+        assert result.domain == "ugv"
+        # UGV template uses "object_recognition" (different vocabulary)
+        assert "object_recognition" in result.prefilled_answers["perception_tasks"]
+
+    def test_mediapipe_with_ugv_projects_to_pedestrian_detection(self):
+        scan = _make_scan(deps=["nav2", "mediapipe"])
+        result = codebase_to_qualification(scan)
+        assert result.domain == "ugv"
+        # UGV uses "pedestrian_detection" not "person_detection"
+        assert "pedestrian_detection" in result.prefilled_answers["perception_tasks"]
 
     def test_orb_slam_to_slam(self):
         scan = _make_scan(deps=["orb_slam3", "rtabmap"])
@@ -148,15 +170,36 @@ class TestPerceptionDetection:
 
 
 class TestControlDetection:
-    def test_simple_pid_to_flight_controller(self):
+    def test_simple_pid_with_drone_to_flight_controller(self):
         scan = _make_scan(deps=["simple_pid", "mavros"])
         result = codebase_to_qualification(scan)
-        assert "flight_controller" in result.report.control_output
+        # Generic capability tag in the report
+        assert "low_level_control" in result.report.control_output
+        # Domain-projected canonical option in prefilled answers
+        assert result.prefilled_answers.get("control_output") == "flight_controller"
 
-    def test_nav2_to_path_planner(self):
+    def test_simple_pid_with_ugv_to_motor_controller(self):
+        scan = _make_scan(deps=["simple_pid", "nav2"])
+        result = codebase_to_qualification(scan)
+        assert result.domain == "ugv"
+        # UGV uses motor_controller for low-level control
+        assert result.prefilled_answers.get("control_output") == "motor_controller"
+
+    def test_nav2_to_path_planning(self):
         scan = _make_scan(deps=["nav2_msgs", "rclpy"])
         result = codebase_to_qualification(scan)
-        assert "path_planner" in result.report.control_output
+        # Generic tag
+        assert "path_planning" in result.report.control_output
+        # Projected to UGV's path_planner option
+        assert result.prefilled_answers.get("control_output") == "path_planner"
+
+    def test_moveit_with_robot_arm_to_control_architecture(self):
+        scan = _make_scan(deps=["moveit", "moveit_msgs"])
+        result = codebase_to_qualification(scan)
+        assert result.domain == "robot_arm"
+        # robot_arm uses control_architecture, not control_output
+        assert "control_architecture" in result.prefilled_answers
+        assert result.prefilled_answers["control_architecture"] == "trajectory_to_joints"
 
     def test_no_control_for_generic_project(self):
         scan = _make_scan(deps=["numpy"])
@@ -257,6 +300,33 @@ class TestBridgeQualifierIntegration:
         # "fake_question_id" doesn't exist; should be silently skipped
         qualifier.prefill_answers({"fake_question_id": "value"})
         assert "fake_question_id" not in qualifier.answers
+
+    def test_control_output_roundtrip_to_qualifier(self):
+        """control_output prefills must be accepted by the drone qualifier."""
+        scan = _make_scan(deps=["mavros", "simple_pid"])
+        bridge = codebase_to_qualification(scan)
+        assert bridge.domain == "drone"
+        assert bridge.prefilled_answers.get("control_output") == "flight_controller"
+
+        qualifier = GoalQualifier()
+        qualifier.assess("drone perception", domain="drone")
+        qualifier.prefill_answers(bridge.prefilled_answers)
+
+        # The qualifier should have accepted the control_output answer
+        assert qualifier.answers.get("control_output") == "flight_controller"
+
+    def test_control_architecture_roundtrip_to_robot_arm(self):
+        """robot_arm uses control_architecture; bridge must round-trip correctly."""
+        scan = _make_scan(deps=["moveit", "moveit_msgs"])
+        bridge = codebase_to_qualification(scan)
+        assert bridge.domain == "robot_arm"
+        assert bridge.prefilled_answers.get("control_architecture") == "trajectory_to_joints"
+
+        qualifier = GoalQualifier()
+        qualifier.assess("robot arm grasping", domain="robot_arm")
+        qualifier.prefill_answers(bridge.prefilled_answers)
+
+        assert qualifier.answers.get("control_architecture") == "trajectory_to_joints"
 
 
 # ---------------------------------------------------------------------------
