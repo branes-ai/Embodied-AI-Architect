@@ -147,11 +147,15 @@ def _build_router():
         """Get per-variable sensitivity from the BO layer (issue #24).
 
         Variables are ranked by max impact across all objectives so the
-        most influential design knobs surface first.
+        most influential design knobs surface first. The raw producer payload
+        from `bayesian_opt._extract_sensitivity` is normalized to
+        {variable: {objective: float}} via the shared helper.
         """
+        from embodied_ai_architect.graphs.optimization_review import normalize_sensitivity
+
         state = _load_or_404(session_id, request)
         moo_results = state.get("moo_results", {}) or {}
-        sensitivity = moo_results.get("sensitivity", {}) or {}
+        sensitivity = normalize_sensitivity(moo_results.get("sensitivity"))
 
         # Discover the union of all objectives across variables (stable order)
         seen: list[str] = []

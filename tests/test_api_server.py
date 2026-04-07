@@ -148,25 +148,31 @@ def _build_rich_state(session_id="soc_testapi"):
         "knee_point_index": 0,
     }
 
-    # MOO results with per-variable sensitivity (issue #24)
+    # MOO results with per-variable sensitivity (issue #24).
+    # IMPORTANT: this fixture uses the REAL producer format emitted by
+    # bayesian_opt._extract_sensitivity — nested as
+    # {objective: {variable: {lengthscale, importance}}}.
+    # The /sensitivity endpoint normalizes this to {variable: {objective: float}}
+    # via normalize_sensitivity(). Tests should exercise this real shape so
+    # we catch any consumer/producer drift.
     state["moo_results"] = {
         "total_evaluations": 100,
         "pareto_front": [],
         "sensitivity": {
-            "quantization_dtype": {
-                "power_watts": 0.82,
-                "latency_ms": 0.65,
-                "cost_usd": 0.12,
+            "power_watts": {
+                "quantization_dtype": {"lengthscale": 0.45, "importance": 0.82},
+                "npu_frequency_mhz": {"lengthscale": 0.55, "importance": 0.71},
+                "sram_size_kb": {"lengthscale": 2.10, "importance": 0.15},
             },
-            "npu_frequency_mhz": {
-                "power_watts": 0.71,
-                "latency_ms": 0.58,
-                "cost_usd": 0.45,
+            "latency_ms": {
+                "quantization_dtype": {"lengthscale": 0.62, "importance": 0.65},
+                "npu_frequency_mhz": {"lengthscale": 0.70, "importance": 0.58},
+                "sram_size_kb": {"lengthscale": 0.50, "importance": 0.72},
             },
-            "sram_size_kb": {
-                "power_watts": 0.15,
-                "latency_ms": 0.72,
-                "cost_usd": 0.38,
+            "cost_usd": {
+                "quantization_dtype": {"lengthscale": 1.80, "importance": 0.12},
+                "npu_frequency_mhz": {"lengthscale": 0.85, "importance": 0.45},
+                "sram_size_kb": {"lengthscale": 0.95, "importance": 0.38},
             },
         },
     }
