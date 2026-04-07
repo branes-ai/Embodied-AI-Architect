@@ -98,21 +98,28 @@ PLAN = [
     },
     {
         "id": "t4",
-        "name": "Assess PPA metrics against drone constraints",
-        "agent": "ppa_assessor",
-        "dependencies": ["t3"],
+        "name": "Explore Pareto frontier (multi-objective optimization)",
+        "agent": "moo_explorer",
+        "dependencies": ["t2"],
+        "metadata": {"fast_mode": True},
     },
     {
         "id": "t5",
-        "name": "Review design for risks and improvement opportunities",
-        "agent": "critic",
-        "dependencies": ["t4"],
+        "name": "Assess PPA metrics against drone constraints",
+        "agent": "ppa_assessor",
+        "dependencies": ["t3", "t4"],
     },
     {
         "id": "t6",
+        "name": "Review design for risks and improvement opportunities",
+        "agent": "critic",
+        "dependencies": ["t5"],
+    },
+    {
+        "id": "t7",
         "name": "Generate design report with trade-off analysis",
         "agent": "report_generator",
-        "dependencies": ["t5"],
+        "dependencies": ["t6"],
     },
 ]
 
@@ -120,6 +127,7 @@ AVAILABLE_AGENTS = [
     "workload_analyzer",
     "hw_explorer",
     "architecture_composer",
+    "moo_explorer",
     "ppa_assessor",
     "critic",
     "report_generator",

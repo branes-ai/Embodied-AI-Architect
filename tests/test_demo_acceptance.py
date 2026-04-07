@@ -55,9 +55,16 @@ DEMO_1_PLAN = [
         "agent": "architecture_composer",
         "dependencies": ["t2"],
     },
-    {"id": "t4", "name": "Assess PPA", "agent": "ppa_assessor", "dependencies": ["t3"]},
-    {"id": "t5", "name": "Review design", "agent": "critic", "dependencies": ["t4"]},
-    {"id": "t6", "name": "Generate report", "agent": "report_generator", "dependencies": ["t5"]},
+    {
+        "id": "t4",
+        "name": "Explore Pareto frontier",
+        "agent": "moo_explorer",
+        "dependencies": ["t2"],
+        "metadata": {"fast_mode": True},
+    },
+    {"id": "t5", "name": "Assess PPA", "agent": "ppa_assessor", "dependencies": ["t3", "t4"]},
+    {"id": "t6", "name": "Review design", "agent": "critic", "dependencies": ["t5"]},
+    {"id": "t7", "name": "Generate report", "agent": "report_generator", "dependencies": ["t6"]},
 ]
 
 DEMO_2_PLAN = [
@@ -165,6 +172,39 @@ class TestDemo1DeliveryDrone:
         evaluator = AgenticEvaluator(gold_standards=ALL_GOLD_STANDARDS)
         scorecard = evaluator.evaluate_run(trace)
         assert scorecard.composite_score > 0.5  # reasonable threshold
+
+    def test_moo_populates_pareto_points(self):
+        """Issue #22: moo_explorer must run in the default plan and populate
+        pareto_points + moo_results so /architect-* skills can show the
+        Pareto frontier.
+
+        Uses looser constraints than the strict drone scenario to ensure
+        MOO finds at least some feasible designs in the design space.
+        Tighter constraints can produce 0 pareto points which would
+        cause flaky tests.
+        """
+        initial, final, tracing = _run_pipeline(
+            "Design an SoC for warehouse AMR with detection + tracking",
+            DesignConstraints(max_power_watts=15.0, max_latency_ms=50.0, max_cost_usd=100.0),
+            DEMO_1_PLAN,
+            "warehouse_amr",
+            "amr",
+        )
+
+        # MOO ran (regardless of feasibility): total_evaluations > 0 proves
+        # the moo_explorer task was actually scheduled and executed.
+        moo_results = final.get("moo_results", {})
+        assert (
+            moo_results.get("total_evaluations", 0) > 0
+        ), "moo_explorer was not scheduled in the default plan — issue #22 regression"
+
+        # With AMR-class constraints, MOO should find feasible designs
+        pareto_points = final.get("pareto_points", [])
+        assert len(pareto_points) > 0, (
+            f"moo_explorer ran ({moo_results.get('total_evaluations')} evals) "
+            f"but found no feasible designs"
+        )
+        assert len(moo_results.get("pareto_front", [])) > 0
 
 
 class TestDemo2DSEPareto:

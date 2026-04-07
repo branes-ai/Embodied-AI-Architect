@@ -88,21 +88,28 @@ DEMO_1_PLAN = [
     },
     {
         "id": "t4",
-        "name": "Assess PPA metrics against drone constraints",
-        "agent": "ppa_assessor",
-        "dependencies": ["t3"],
+        "name": "Explore Pareto frontier (multi-objective optimization)",
+        "agent": "moo_explorer",
+        "dependencies": ["t2"],
+        "metadata": {"fast_mode": True},
     },
     {
         "id": "t5",
-        "name": "Review design for risks and improvement opportunities",
-        "agent": "critic",
-        "dependencies": ["t4"],
+        "name": "Assess PPA metrics against drone constraints",
+        "agent": "ppa_assessor",
+        "dependencies": ["t3", "t4"],
     },
     {
         "id": "t6",
+        "name": "Review design for risks and improvement opportunities",
+        "agent": "critic",
+        "dependencies": ["t5"],
+    },
+    {
+        "id": "t7",
         "name": "Generate design report with trade-off analysis",
         "agent": "report_generator",
-        "dependencies": ["t5"],
+        "dependencies": ["t6"],
     },
 ]
 
@@ -285,9 +292,7 @@ def _strategy_display_name(name: str, factor: float | None = None) -> str:
     return label
 
 
-def _run_optimization_loop(
-    state: dict, max_iterations: int
-) -> tuple[dict, int]:
+def _run_optimization_loop(state: dict, max_iterations: int) -> tuple[dict, int]:
     """Iteratively optimize the design until all PPA verdicts PASS."""
     section("Optimization Phase")
 
@@ -351,9 +356,7 @@ def _run_optimization_loop(
         display = _strategy_display_name(strategy_name, power_factor)
         print(f"\n  Iteration {iteration}: Applied {display}")
         _print_before_after(pre_ppa, post_ppa)
-        vstr = "  ".join(
-            f"{k}:{v}" for k, v in post_verdicts.items()
-        )
+        vstr = "  ".join(f"{k}:{v}" for k, v in post_verdicts.items())
         print(f"    Verdicts: {vstr}")
 
         # Record decision
@@ -382,8 +385,10 @@ def _run_optimization_loop(
             nre = bd.get("nre_per_unit_usd", 0)
             actual = ppa.get("cost_usd", 0)
             if nre > 0 and actual > 0 and nre / actual > 0.5:
-                print(f"  NRE is {nre / actual * 100:.0f}% of unit cost — "
-                      f"increase volume or relax cost target")
+                print(
+                    f"  NRE is {nre / actual * 100:.0f}% of unit cost — "
+                    f"increase volume or relax cost target"
+                )
 
     return state, iteration
 
@@ -424,13 +429,9 @@ def _run_final_review(state: dict) -> dict:
 def _print_before_after(pre_ppa: dict, post_ppa: dict) -> None:
     parts = []
     if pre_ppa.get("power_watts") is not None and post_ppa.get("power_watts") is not None:
-        parts.append(
-            f"Power: {pre_ppa['power_watts']:.1f}W → {post_ppa['power_watts']:.1f}W"
-        )
+        parts.append(f"Power: {pre_ppa['power_watts']:.1f}W → {post_ppa['power_watts']:.1f}W")
     if pre_ppa.get("latency_ms") is not None and post_ppa.get("latency_ms") is not None:
-        parts.append(
-            f"Latency: {pre_ppa['latency_ms']:.1f}ms → {post_ppa['latency_ms']:.1f}ms"
-        )
+        parts.append(f"Latency: {pre_ppa['latency_ms']:.1f}ms → {post_ppa['latency_ms']:.1f}ms")
     if parts:
         print(f"    {' | '.join(parts)}")
 
@@ -467,7 +468,7 @@ def _print_final_ppa(state: dict) -> None:
         kv("Test", f"${cost_bd.get('test_cost_usd', 0):.2f}")
         kv("NRE/unit", f"${cost_bd.get('nre_per_unit_usd', 0):.2f}")
         kv("Yield", f"{cost_bd.get('yield_percent', 0):.1f}%")
-        kv("Dies/wafer", str(cost_bd.get('dies_per_wafer', 0)))
+        kv("Dies/wafer", str(cost_bd.get("dies_per_wafer", 0)))
 
 
 def _print_decision_trail(state: dict) -> None:
@@ -502,20 +503,23 @@ def _print_results(state: dict) -> None:
         if workloads:
             print()
             for w in workloads:
-                print(f"    {w['name']:.<30s} {w.get('model_class', '')} "
-                      f"({w.get('estimated_gflops', '?')} GFLOPS)")
+                print(
+                    f"    {w['name']:.<30s} {w.get('model_class', '')} "
+                    f"({w.get('estimated_gflops', '?')} GFLOPS)"
+                )
 
     # Hardware candidates
     candidates = state.get("hardware_candidates", [])
     if candidates:
         section("Hardware Candidates")
-        print(f"\n  {'Rank':<5} {'Name':<25} {'TDP':>6} {'Cost':>7} "
-              f"{'INT8 TOPS':>10} {'Score':>6}  Verdict")
+        print(
+            f"\n  {'Rank':<5} {'Name':<25} {'TDP':>6} {'Cost':>7} "
+            f"{'INT8 TOPS':>10} {'Score':>6}  Verdict"
+        )
         print(f"  {'-'*5} {'-'*25} {'-'*6} {'-'*7} {'-'*10} {'-'*6}  {'-'*10}")
         for hw in candidates:
             vstr = " ".join(
-                f"{k}:{verdict_str(v)}"
-                for k, v in hw.get("constraint_verdicts", {}).items()
+                f"{k}:{verdict_str(v)}" for k, v in hw.get("constraint_verdicts", {}).items()
             )
             print(
                 f"  {hw.get('rank', '?'):<5} {hw['name']:<25} "
@@ -596,7 +600,7 @@ def _print_results(state: dict) -> None:
             kv("Test", f"${cost_bd.get('test_cost_usd', 0):.2f}")
             kv("NRE/unit", f"${cost_bd.get('nre_per_unit_usd', 0):.2f}")
             kv("Yield", f"{cost_bd.get('yield_percent', 0):.1f}%")
-            kv("Dies/wafer", str(cost_bd.get('dies_per_wafer', 0)))
+            kv("Dies/wafer", str(cost_bd.get("dies_per_wafer", 0)))
 
     # Critic review
     graph = get_task_graph(state)
@@ -605,8 +609,11 @@ def _print_results(state: dict) -> None:
             section("Design Review (Critic)")
             kv("Assessment", task.result.get("assessment", "N/A"))
 
-            for label, key in [("Strengths", "strengths"), ("Issues", "issues"),
-                               ("Recommendations", "recommendations")]:
+            for label, key in [
+                ("Strengths", "strengths"),
+                ("Issues", "issues"),
+                ("Recommendations", "recommendations"),
+            ]:
                 items = task.result.get(key, [])
                 if items:
                     print(f"\n  {label}:")
@@ -635,27 +642,38 @@ def main() -> None:
         epilog=__doc__,
     )
     parser.add_argument(
-        "--llm", action="store_true",
+        "--llm",
+        action="store_true",
         help="Use Claude LLM for goal decomposition (requires ANTHROPIC_API_KEY)",
     )
     parser.add_argument(
-        "--goal", type=str, default=None,
+        "--goal",
+        type=str,
+        default=None,
         help="Custom design goal (overrides default drone prompt)",
     )
     parser.add_argument(
-        "--power", type=float, default=None,
+        "--power",
+        type=float,
+        default=None,
         help="Max power budget in watts (default: 5.0)",
     )
     parser.add_argument(
-        "--latency", type=float, default=None,
+        "--latency",
+        type=float,
+        default=None,
         help="Max latency in ms (default: 33.3)",
     )
     parser.add_argument(
-        "--cost", type=float, default=None,
+        "--cost",
+        type=float,
+        default=None,
         help="Max BOM cost in USD (default: 30)",
     )
     parser.add_argument(
-        "--max-iterations", type=int, default=5,
+        "--max-iterations",
+        type=int,
+        default=5,
         help="Max optimization iterations if PPA fails (default: 5)",
     )
     args = parser.parse_args()

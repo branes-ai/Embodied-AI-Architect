@@ -282,6 +282,7 @@ class SoCDesignState(TypedDict, total=False):
     rtl_optimization_history: list[dict]  # RTL optimization snapshots
     rtl_process_nm: int  # Target process node for RTL
     rtl_enabled: bool  # Enables KPU config + floorplan + bandwidth + RTL
+    enable_moo: bool  # Enables moo_explorer task in default plan
 
     # === Evaluation ===
     ppa_metrics: dict  # Current PPAMetrics serialized
@@ -334,6 +335,7 @@ def create_initial_soc_state(
     session_id: Optional[str] = None,
     governance: Optional[dict] = None,
     rtl_enabled: bool = False,
+    enable_moo: bool = True,
 ) -> SoCDesignState:
     """Create initial state for a new SoC design session.
 
@@ -346,6 +348,7 @@ def create_initial_soc_state(
         session_id: Unique identifier (auto-generated if None).
         governance: GovernancePolicy serialized dict. None = permissive defaults.
         rtl_enabled: Enable KPU config + floorplan + bandwidth + RTL pipeline.
+        enable_moo: Schedule moo_explorer in default plan to populate pareto_points.
 
     Returns:
         Initial SoCDesignState ready for the Planner agent.
@@ -383,6 +386,7 @@ def create_initial_soc_state(
         rtl_optimization_history=[],
         rtl_process_nm=constraints.target_process_nm or 28 if constraints else 28,
         rtl_enabled=rtl_enabled,
+        enable_moo=enable_moo,
         # Evaluation
         ppa_metrics={},
         baseline_metrics={},

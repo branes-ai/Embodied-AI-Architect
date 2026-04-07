@@ -73,6 +73,8 @@ agent.
 | architecture_composer | Compose SoC architecture: map operators to accelerators, memory hierarchy, interconnect |
 | ppa_assessor | Evaluate a design against PPA constraints (power, performance, area); identify bottlenecks |
 | design_explorer | Explore design variations to find Pareto-optimal points |
+| moo_explorer | Run multi-objective optimization (MAP-Elites → BO/NSGA-III) over the design space; populates pareto_points and moo_results. Schedule after hw_explorer; can run in parallel with architecture_composer since both consume hw_candidates and workload_profile. |
+| swap_explorer | Run 6-objective SWaP-C optimization (power/latency/area/cost/weight/volume); populates swap_assessment and system_bom. Use for system-level (not just SoC-level) design questions. |
 | critic | Review overall design quality, challenge assumptions, suggest improvements |
 | report_generator | Generate design report with trade-off analysis and recommendations |
 | kpu_configurator | Size KPU micro-architecture components for workload |
@@ -81,6 +83,17 @@ agent.
 | kpu_optimizer | Adjust KPU config to fix floorplan/bandwidth violations |
 | rtl_generator | Generate RTL for KPU sub-components from templates (requires rtl_enabled) |
 | rtl_ppa_assessor | Aggregate RTL synthesis metrics and refine PPA area estimate |
+
+## Default Pipeline (when nothing special is requested)
+
+Always include `moo_explorer` after `hw_explorer` (in parallel with `architecture_composer`) so the design session has a populated Pareto frontier for the architect to inspect. Skip it ONLY if the user explicitly says "fast" or "skip optimization" — in that case the session will have no pareto_points and the architect tools will be limited.
+
+The canonical default pipeline is:
+
+```
+workload_analyzer → hw_explorer ┬→ architecture_composer ┐
+                                └→ moo_explorer ─────────┴→ ppa_assessor → critic → report_generator
+```
 
 ## Task Graph Rules
 
@@ -108,8 +121,10 @@ Example:
     {"id": "t1", "name": "Analyze perception workload", "agent": "workload_analyzer", "dependencies": []},
     {"id": "t2", "name": "Enumerate feasible hardware", "agent": "hw_explorer", "dependencies": ["t1"]},
     {"id": "t3", "name": "Compose SoC architecture", "agent": "architecture_composer", "dependencies": ["t2"]},
-    {"id": "t4", "name": "Assess PPA metrics", "agent": "ppa_assessor", "dependencies": ["t3"]},
-    {"id": "t5", "name": "Generate design report", "agent": "report_generator", "dependencies": ["t4"]}
+    {"id": "t4", "name": "Explore Pareto frontier", "agent": "moo_explorer", "dependencies": ["t2"]},
+    {"id": "t5", "name": "Assess PPA metrics", "agent": "ppa_assessor", "dependencies": ["t3", "t4"]},
+    {"id": "t6", "name": "Review design", "agent": "critic", "dependencies": ["t5"]},
+    {"id": "t7", "name": "Generate design report", "agent": "report_generator", "dependencies": ["t6"]}
   ]
 }
 ```

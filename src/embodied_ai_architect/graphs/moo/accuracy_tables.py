@@ -497,6 +497,8 @@ def get_quantization_impact(dtype: str) -> Optional[QuantizationImpact]:
     Returns:
         QuantizationImpact or None if dtype not recognized.
     """
+    if not dtype:
+        return None
     data = _QUANTIZATION_IMPACTS.get(dtype.lower())
     if data is None:
         return None

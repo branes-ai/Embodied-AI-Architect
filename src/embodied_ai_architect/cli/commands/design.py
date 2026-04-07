@@ -562,16 +562,23 @@ def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platfo
             },
             {
                 "id": "t4",
+                "name": "Explore Pareto frontier",
+                "agent": "moo_explorer",
+                "dependencies": ["t2"],
+                "metadata": {"fast_mode": True},
+            },
+            {
+                "id": "t5",
                 "name": "Assess PPA metrics",
                 "agent": "ppa_assessor",
-                "dependencies": ["t3"],
+                "dependencies": ["t3", "t4"],
             },
-            {"id": "t5", "name": "Review design", "agent": "critic", "dependencies": ["t4"]},
+            {"id": "t6", "name": "Review design", "agent": "critic", "dependencies": ["t5"]},
             {
-                "id": "t6",
+                "id": "t7",
                 "name": "Generate report",
                 "agent": "report_generator",
-                "dependencies": ["t5"],
+                "dependencies": ["t6"],
             },
         ]
         planner = PlannerNode(static_plan=static_plan)
