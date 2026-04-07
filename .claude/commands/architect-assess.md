@@ -37,6 +37,35 @@ Or inspect a specific one:
 
 3. **Operator breakdown**: Read `workload_profile` for per-operator GFLOPS, memory, latency, and hardware mapping.
 
+   **If `workload_profile.source == "codebase_analysis"`** (the session was created from a codebase scan), show a richer **source-mapped operator breakdown** that ties each workload back to the actual source code. Read `codebase_metadata` for the project context and use the per-workload `source_file`, `line_range`, `kernel_type`, `estimated_gflops`, `estimated_memory_mb`, and `frameworks` fields:
+
+   ```text
+   OPERATOR BREAKDOWN (from codebase: <codebase_metadata.project_path>)
+     Operator             Source                       Lines     Type              Est. Ops  Memory  Hardware
+     ───────────────────  ───────────────────────────  ───────   ───────────────   ────────  ──────  ─────────
+     <workload.name>      <workload.source_file>       <a-b>     <kernel_type>     <gflops>  <mb>    <ip block>
+     ...
+   ```
+
+   The hardware mapping comes from looking up which `ip_block` the workload was assigned to (check `selected_architecture`). If no explicit mapping exists, fall back to inferring from `kernel_type` using this complete table:
+
+   | kernel_type | Default hardware |
+   |---|---|
+   | `ml_inference` | KPU / GPU |
+   | `signal_processing` | DSP / CPU |
+   | `image_processing` | GPU / DSP |
+   | `control_loop` | MCU / CPU |
+   | `sensor_fusion` | CPU / GPU |
+   | `io_bound` | MCU / CPU |
+   | `general_compute` | CPU |
+
+   Below the table, surface key metadata from `codebase_metadata`:
+   - **Project**: name, languages, build system
+   - **Code**: total lines of code, kernel count
+   - **ML frameworks**: aggregate `workload.frameworks` across all workloads (e.g., pytorch, ultralytics, opencv)
+
+   Suggest: *"To deep-dive a specific kernel, run /architect-drill source:<kernel_name>"*
+
 4. **Efficiency metrics**: Compute from PPA data:
    - Capability/Watt, GOPS/Watt
    - KPU/GPU/CPU utilization

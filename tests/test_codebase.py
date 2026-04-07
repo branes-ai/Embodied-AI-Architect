@@ -210,6 +210,47 @@ class TestCodebaseConverter:
         assert profile["workload_count"] == 1
         assert profile["total_estimated_gflops"] > 0
 
+    def test_converter_preserves_source_traceability(self):
+        """Per-workload source_file, line_range, frameworks must survive
+        the conversion (issue #42)."""
+        analysis = CodebaseAnalysisResult(
+            project_name="drone_app",
+            kernels=[
+                ComputeKernel(
+                    name="yolo_inference",
+                    source_file="src/perception/detect.py",
+                    line_range=(45, 120),
+                    kernel_type="ml_inference",
+                    estimated_ops_per_invocation=8.7e9,
+                    frameworks=["pytorch", "ultralytics"],
+                ),
+            ],
+        )
+        converter = CodebaseConverter()
+        profile = converter.to_workload_profile(analysis)
+
+        workload = profile["workloads"][0]
+        assert workload["source_file"] == "src/perception/detect.py"
+        assert workload["line_range"] == [45, 120]
+        assert workload["frameworks"] == ["pytorch", "ultralytics"]
+
+    def test_converter_marks_codebase_analysis_source(self):
+        """Top-level workload_profile must have source='codebase_analysis'
+        so /architect-assess can detect it (issue #42)."""
+        analysis = CodebaseAnalysisResult(
+            project_name="test",
+            kernels=[
+                ComputeKernel(
+                    name="k",
+                    source_file="x.py",
+                    kernel_type="ml_inference",
+                ),
+            ],
+        )
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        assert profile["source"] == "codebase_analysis"
+        assert profile["project_name"] == "test"
+
     def test_converter_multiple_kernels(self):
         analysis = CodebaseAnalysisResult(
             project_name="drone",
@@ -455,3 +496,89 @@ class TestCodebaseTools:
 
         executors = create_tool_executors()
         assert "scan_project" in executors
+
+
+# ---------------------------------------------------------------------------
+# Session creation from codebase analysis (issue #42)
+# ---------------------------------------------------------------------------
+
+
+class TestCodebaseSessionCreation:
+    """Tests for _save_codebase_session and the codebase_metadata field."""
+
+    def test_save_codebase_session_populates_metadata(self, tmp_path, monkeypatch):
+        """The CLI helper must persist project_path, languages, and kernel
+        sources into the session's codebase_metadata field for /architect-*."""
+        from embodied_ai_architect.cli.commands.codebase import _save_codebase_session
+        from embodied_ai_architect.graphs.session_store import SessionStore
+
+        # Point SessionStore at a temp directory so we don't pollute the real one
+        monkeypatch.setattr(
+            "embodied_ai_architect.graphs.session_store.DEFAULT_SESSION_DIR",
+            tmp_path,
+            raising=False,
+        )
+
+        data = {
+            "scan_result": {
+                "project_name": "drone_app",
+                "languages": ["python", "cpp"],
+                "build_system": "cmake",
+                "total_lines": 12500,
+                "source_files": [{"path": "main.py", "language": "python", "lines": 200}],
+                "dependencies": ["torch", "ultralytics"],
+                "ml_models": [{"path": "yolov8.pt", "format": "pt", "size_bytes": 6_000_000}],
+            },
+            "analysis": {
+                "kernels": [
+                    {
+                        "name": "yolo_inference",
+                        "source_file": "src/perception/detect.py",
+                        "kernel_type": "ml_inference",
+                    }
+                ],
+            },
+            "workload_profile": {
+                "source": "codebase_analysis",
+                "workloads": [
+                    {
+                        "name": "yolo_inference",
+                        "source_file": "src/perception/detect.py",
+                        "line_range": [45, 120],
+                        "estimated_gflops": 8.4,
+                        "estimated_memory_mb": 50.0,
+                        "kernel_type": "ml_inference",
+                        "frameworks": ["pytorch"],
+                    },
+                ],
+            },
+        }
+
+        # Use a real absolute path so .resolve() doesn't error
+        project_dir = tmp_path / "drone_app_src"
+        project_dir.mkdir()
+
+        store = SessionStore(session_dir=tmp_path)
+        session_id = _save_codebase_session(str(project_dir), data, 15.0, 33.0)
+
+        # Reload via the same temp store
+        loaded = store.load(session_id)
+        assert loaded is not None
+        assert loaded["use_case"] == "codebase_analysis"
+        assert loaded["workload_profile"]["source"] == "codebase_analysis"
+
+        meta = loaded.get("codebase_metadata", {})
+        # project_path must be absolute (resolved) so drill-down works
+        # regardless of cwd at session load time
+        assert meta["project_path"] == str(project_dir.resolve())
+        assert Path(meta["project_path"]).is_absolute()
+        assert meta["project_name"] == "drone_app"
+        assert "python" in meta["languages"]
+        assert meta["build_system"] == "cmake"
+        assert meta["kernel_count"] == 1
+        assert meta["scan_summary"]["total_lines"] == 12500
+
+        # Per-workload source data must be preserved on the workload itself
+        workload = loaded["workload_profile"]["workloads"][0]
+        assert workload["source_file"] == "src/perception/detect.py"
+        assert workload["line_range"] == [45, 120]

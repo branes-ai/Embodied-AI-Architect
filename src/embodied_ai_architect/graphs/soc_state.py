@@ -260,6 +260,7 @@ class SoCDesignState(TypedDict, total=False):
 
     # === Design Artifacts ===
     workload_profile: dict  # Operator graph, compute/memory requirements
+    codebase_metadata: dict  # Source mapping when workload came from codebase analysis
     hardware_candidates: list[dict]  # Scored hardware options
     selected_architecture: dict  # Chosen SoC composition
     ip_blocks: list[dict]  # CPU, NPU, ISP, memory controller configs
@@ -362,6 +363,7 @@ def create_initial_soc_state(
         current_task_id="",
         # Design Artifacts (empty initially)
         workload_profile={},
+        codebase_metadata={},
         hardware_candidates=[],
         selected_architecture={},
         ip_blocks=[],
