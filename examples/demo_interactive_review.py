@@ -98,21 +98,28 @@ PLAN = [
     },
     {
         "id": "t4",
-        "name": "Assess PPA metrics against drone constraints",
-        "agent": "ppa_assessor",
-        "dependencies": ["t3"],
+        "name": "Explore Pareto frontier (multi-objective optimization)",
+        "agent": "moo_explorer",
+        "dependencies": ["t2"],
+        "metadata": {"fast_mode": True},
     },
     {
         "id": "t5",
-        "name": "Review design for risks and improvement opportunities",
-        "agent": "critic",
-        "dependencies": ["t4"],
+        "name": "Assess PPA metrics against drone constraints",
+        "agent": "ppa_assessor",
+        "dependencies": ["t3", "t4"],
     },
     {
         "id": "t6",
+        "name": "Review design for risks and improvement opportunities",
+        "agent": "critic",
+        "dependencies": ["t5"],
+    },
+    {
+        "id": "t7",
         "name": "Generate design report with trade-off analysis",
         "agent": "report_generator",
-        "dependencies": ["t5"],
+        "dependencies": ["t6"],
     },
 ]
 
@@ -120,6 +127,7 @@ AVAILABLE_AGENTS = [
     "workload_analyzer",
     "hw_explorer",
     "architecture_composer",
+    "moo_explorer",
     "ppa_assessor",
     "critic",
     "report_generator",
@@ -156,22 +164,24 @@ def demo_plan_review(state: dict, interactive: bool = False, modify: bool = Fals
     # Decide what to do
     if modify:
         # Programmatic modification: add a safety check, remove the report
+        # Note: PLAN now has 7 tasks (t1-t7) after issue #22 added moo_explorer.
+        # t5 = ppa_assessor, t6 = critic, t7 = report_generator.
         print("\n  [Architect] Adding safety review, removing report generator")
         review = PlanReviewInput(
             decision=ReviewDecision.MODIFY,
-            tasks_to_remove=["t6"],
+            tasks_to_remove=["t7"],  # remove report_generator (was t6 before MOO insertion)
             tasks_to_add=[
                 {
-                    "id": "t7",
+                    "id": "t8",
                     "name": "Validate safety constraints for flight-critical system",
                     "agent": "safety_detector",
-                    "dependencies": ["t4"],
+                    "dependencies": ["t5"],  # depends on ppa_assessor
                 },
                 {
-                    "id": "t8",
+                    "id": "t9",
                     "name": "Generate report after safety validation",
                     "agent": "report_generator",
-                    "dependencies": ["t5", "t7"],
+                    "dependencies": ["t6", "t8"],  # depends on critic + new safety check
                 },
             ],
             notes="Added safety validation because this is a flight-critical drone system",
