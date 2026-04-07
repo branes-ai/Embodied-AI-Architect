@@ -194,6 +194,7 @@ def codebase_assess(
         if not result.success:
             raise Exception(result.error)
 
+        session_id: str | None = None
         if save_session:
             session_id = _save_codebase_session(
                 project_path, result.data, power_budget, latency_target
@@ -206,7 +207,10 @@ def codebase_assess(
                 )
 
         if json_output:
-            click.echo(json.dumps(result.data, indent=2, default=str))
+            payload = dict(result.data)
+            if session_id:
+                payload["session_id"] = session_id
+            click.echo(json.dumps(payload, indent=2, default=str))
         else:
             _display_assessment_result(result.data, power_budget, latency_target)
 
@@ -240,6 +244,10 @@ def _save_codebase_session(
     scan_result = data.get("scan_result", {})
     analysis = data.get("analysis", {})
 
+    # Resolve project_path to an absolute path so /architect-drill source:
+    # works regardless of the cwd at session-load time.
+    resolved_project_path = str(Path(project_path).resolve())
+
     # Build a goal text from project name
     project_name = scan_result.get("project_name", Path(project_path).name)
     goal = f"Codebase analysis: {project_name}"
@@ -259,7 +267,7 @@ def _save_codebase_session(
     )
     state["workload_profile"] = workload_profile
     state["codebase_metadata"] = {
-        "project_path": str(project_path),
+        "project_path": resolved_project_path,
         "project_name": project_name,
         "languages": scan_result.get("languages", []),
         "build_system": scan_result.get("build_system", "unknown"),

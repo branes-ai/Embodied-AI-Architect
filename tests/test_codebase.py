@@ -554,8 +554,12 @@ class TestCodebaseSessionCreation:
             },
         }
 
+        # Use a real absolute path so .resolve() doesn't error
+        project_dir = tmp_path / "drone_app_src"
+        project_dir.mkdir()
+
         store = SessionStore(session_dir=tmp_path)
-        session_id = _save_codebase_session("/path/to/drone_app", data, 15.0, 33.0)
+        session_id = _save_codebase_session(str(project_dir), data, 15.0, 33.0)
 
         # Reload via the same temp store
         loaded = store.load(session_id)
@@ -564,7 +568,10 @@ class TestCodebaseSessionCreation:
         assert loaded["workload_profile"]["source"] == "codebase_analysis"
 
         meta = loaded.get("codebase_metadata", {})
-        assert meta["project_path"] == "/path/to/drone_app"
+        # project_path must be absolute (resolved) so drill-down works
+        # regardless of cwd at session load time
+        assert meta["project_path"] == str(project_dir.resolve())
+        assert Path(meta["project_path"]).is_absolute()
         assert meta["project_name"] == "drone_app"
         assert "python" in meta["languages"]
         assert meta["build_system"] == "cmake"
