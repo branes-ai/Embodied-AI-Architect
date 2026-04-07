@@ -123,6 +123,7 @@ def _build_router():
         pareto_points = state.get("pareto_points", [])
         pareto_results = state.get("pareto_results", {})
         opt_snap = state.get("optimization_review_snapshot", {})
+        frontier_history = state.get("pareto_frontier_history", [])
 
         # Front indices: non-dominated points only
         front_indices = [i for i, p in enumerate(pareto_points) if not p.get("dominated", False)]
@@ -133,6 +134,7 @@ def _build_router():
             knee_point_index=pareto_results.get("knee_point_index"),
             pareto_front_size=opt_snap.get("pareto_front_size", len(pareto_points)),
             hypervolume=opt_snap.get("hypervolume"),
+            frontier_history=frontier_history,
         )
 
     @router.get("/sessions/{session_id}/slackness", response_model=list[ConstraintSlackness])

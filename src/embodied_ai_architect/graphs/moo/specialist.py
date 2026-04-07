@@ -51,6 +51,99 @@ def _find_knee_point_index(
     return 0 if pareto_front else None
 
 
+# Default objective dimensions used by moo_explorer (4-objective MOO).
+# swap_explorer uses 6 objectives — see _merge_swap_frontiers.
+_DEFAULT_OBJECTIVES = ("power", "latency", "cost", "area")
+
+
+def _merge_pareto_frontiers(
+    accumulated: list[dict[str, Any]],
+    new_points: list[dict[str, Any]],
+    objective_keys: tuple[str, ...] = _DEFAULT_OBJECTIVES,
+) -> tuple[list[dict[str, Any]], int, int]:
+    """Merge new Pareto points with accumulated frontier.
+
+    Returns (merged_non_dominated, num_new_added, num_accumulated_dominated).
+
+    Each input point is in the ParetoPoint-compatible dict format produced
+    by `_pareto_front_to_points()` (top-level `power`, `latency`, `cost`,
+    `area`, plus `metadata` with the original objectives dict).
+    """
+    if not accumulated:
+        # First run: just normalize the dominated flag
+        merged = []
+        for p in new_points:
+            cp = dict(p)
+            cp["dominated"] = False
+            merged.append(cp)
+        return merged, len(new_points), 0
+
+    # Combine and re-compute dominance using the simple objective tuple.
+    # All four default objectives are minimize (lower is better for power,
+    # latency, cost, area).
+    combined = list(accumulated) + list(new_points)
+    n = len(combined)
+    n_obj = len(objective_keys)
+
+    # Skip points where any objective is None (corrupt/missing data)
+    vectors: list[list[float] | None] = []
+    for p in combined:
+        try:
+            vec = [float(p[k]) if p.get(k) is not None else float("inf") for k in objective_keys]
+        except (TypeError, ValueError):
+            vec = None
+        vectors.append(vec)
+
+    dominated_flags = [False] * n
+    for i in range(n):
+        if vectors[i] is None:
+            dominated_flags[i] = True
+            continue
+        for j in range(n):
+            if i == j or vectors[j] is None:
+                continue
+            vi, vj = vectors[i], vectors[j]
+            all_leq = all(vj[k] <= vi[k] for k in range(n_obj))
+            any_lt = any(vj[k] < vi[k] for k in range(n_obj))
+            if all_leq and any_lt:
+                dominated_flags[i] = True
+                break
+
+    # Build the merged non-dominated set
+    merged: list[dict[str, Any]] = []
+    accumulated_dominated = 0
+    new_added = 0
+    for idx, p in enumerate(combined):
+        if dominated_flags[idx]:
+            if idx < len(accumulated):
+                accumulated_dominated += 1
+            continue
+        cp = dict(p)
+        cp["dominated"] = False
+        merged.append(cp)
+        if idx >= len(accumulated):
+            new_added += 1
+
+    return merged, new_added, accumulated_dominated
+
+
+def _build_history_entry(
+    iteration: int,
+    merged: list[dict[str, Any]],
+    new_added: int,
+    dominated_removed: int,
+    hypervolume: float,
+) -> dict[str, Any]:
+    """Build a per-iteration frontier history snapshot for issue #23."""
+    return {
+        "iteration": iteration,
+        "num_points": len(merged),
+        "hypervolume": float(hypervolume),
+        "new_points_added": new_added,
+        "dominated_removed": dominated_removed,
+    }
+
+
 def moo_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     """Specialist agent: multi-objective design space exploration.
 
@@ -119,9 +212,26 @@ def moo_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     moo_results = result.model_dump()
 
     # Convert Pareto front to ParetoPoint-compatible dicts for API/snapshot
-    pareto_points = _pareto_front_to_points(result.pareto_front)
+    new_points = _pareto_front_to_points(result.pareto_front)
     knee_index = _find_knee_point_index(result.pareto_front, result.knee_point)
     pareto_results["knee_point_index"] = knee_index
+
+    # Issue #23: merge new points with accumulated frontier from prior runs
+    accumulated = state.get("pareto_points", []) or []
+    merged_points, new_added, dominated_removed = _merge_pareto_frontiers(accumulated, new_points)
+
+    # Append to frontier history (per-iteration evolution snapshot)
+    history = list(state.get("pareto_frontier_history", []) or [])
+    iteration = state.get("iteration", 0)
+    history.append(
+        _build_history_entry(
+            iteration=iteration,
+            merged=merged_points,
+            new_added=new_added,
+            dominated_removed=dominated_removed,
+            hypervolume=result.hypervolume,
+        )
+    )
 
     # Summary
     n_front = len(result.pareto_front)
@@ -136,7 +246,9 @@ def moo_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
 
     summary = (
         f"MOO exploration: {result.total_evaluations} evals, "
-        f"{n_front} Pareto-optimal designs, "
+        f"{n_front} new Pareto-optimal designs "
+        f"(merged: {len(merged_points)} total, +{new_added} new, "
+        f"-{dominated_removed} dominated), "
         f"HV={result.hypervolume:.2f}"
         f"{knee_info}"
     )
@@ -146,8 +258,9 @@ def moo_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         "pareto_results": pareto_results,
         "moo_results": moo_results,
         "_state_updates": {
-            "pareto_points": pareto_points,
+            "pareto_points": merged_points,
             "pareto_results": pareto_results,
+            "pareto_frontier_history": history,
             "moo_results": moo_results,
         },
     }
@@ -226,9 +339,25 @@ def swap_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     moo_results = result.model_dump()
 
     # Convert Pareto front to ParetoPoint-compatible dicts for API/snapshot
-    pareto_points = _pareto_front_to_points(result.pareto_front)
+    new_points = _pareto_front_to_points(result.pareto_front)
     knee_index = _find_knee_point_index(result.pareto_front, result.knee_point)
     pareto_results["knee_point_index"] = knee_index
+
+    # Issue #23: merge with accumulated frontier from prior runs
+    accumulated = state.get("pareto_points", []) or []
+    merged_points, new_added, dominated_removed = _merge_pareto_frontiers(accumulated, new_points)
+
+    history = list(state.get("pareto_frontier_history", []) or [])
+    iteration = state.get("iteration", 0)
+    history.append(
+        _build_history_entry(
+            iteration=iteration,
+            merged=merged_points,
+            new_added=new_added,
+            dominated_removed=dominated_removed,
+            hypervolume=result.hypervolume,
+        )
+    )
 
     # Extract BOM from knee point
     system_bom = {}
@@ -249,7 +378,9 @@ def swap_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
 
     summary = (
         f"SWaP-C exploration: {result.total_evaluations} evals, "
-        f"{n_front} Pareto-optimal designs, "
+        f"{n_front} new Pareto-optimal designs "
+        f"(merged: {len(merged_points)} total, +{new_added} new, "
+        f"-{dominated_removed} dominated), "
         f"HV={result.hypervolume:.2f}"
         f"{knee_info}"
     )
@@ -261,8 +392,9 @@ def swap_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         "swap_results": moo_results,
         "system_bom": system_bom,
         "_state_updates": {
-            "pareto_points": pareto_points,
+            "pareto_points": merged_points,
             "pareto_results": pareto_results,
+            "pareto_frontier_history": history,
             "moo_results": moo_results,
             "swap_assessment": moo_results,
             "system_bom": system_bom,

@@ -287,8 +287,9 @@ class SoCDesignState(TypedDict, total=False):
     # === Evaluation ===
     ppa_metrics: dict  # Current PPAMetrics serialized
     baseline_metrics: dict  # Reference point for optimization
-    pareto_points: list[dict]  # Explored design space points
+    pareto_points: list[dict]  # Accumulated non-dominated points across all MOO runs
     pareto_results: dict  # Pareto front analysis results
+    pareto_frontier_history: list[dict]  # Per-iteration frontier evolution snapshots
     moo_results: dict  # Multi-objective optimization results (rich data)
     swap_assessment: dict  # SWaP-C optimization results (6-objective)
     system_bom: dict  # Hierarchical system BOM data
@@ -392,6 +393,7 @@ def create_initial_soc_state(
         baseline_metrics={},
         pareto_points=[],
         pareto_results={},
+        pareto_frontier_history=[],
         moo_results={},
         swap_assessment={},
         system_bom={},
