@@ -126,6 +126,10 @@ class OptimizationReviewSnapshot(BaseModel):
     # Frontier evolution across MOO iterations (issue #23)
     frontier_history: list[dict[str, Any]] = Field(default_factory=list)
 
+    # Per-variable sensitivity from Bayesian optimization (issue #24)
+    # Shape: {variable_name: {objective_name: impact_score_0_to_1}}
+    sensitivity: dict[str, dict[str, float]] = Field(default_factory=dict)
+
     # MOO convergence (when available)
     moo_summary: dict[str, Any] = Field(default_factory=dict)
 
@@ -420,6 +424,7 @@ def build_optimization_review_snapshot(
     # MOO data (moo_results is OptimizationResult.model_dump())
     moo_results = state.get("moo_results", {})
     moo_summary = {}
+    sensitivity: dict[str, dict[str, float]] = {}
     if moo_results:
         # Derive convergence metric from convergence_history (last entry's hypervolume)
         conv_history = moo_results.get("convergence_history", [])
@@ -431,6 +436,8 @@ def build_optimization_review_snapshot(
             "convergence_metric": convergence_metric,
             "layers_used": moo_results.get("layers_used", []),
         }
+        # Per-variable sensitivity from BO layer (issue #24)
+        sensitivity = moo_results.get("sensitivity", {}) or {}
 
     return OptimizationReviewSnapshot(
         iteration=state.get("iteration", 0),
@@ -453,6 +460,7 @@ def build_optimization_review_snapshot(
         pareto_front_size=len(pareto_results.get("front", [])) if pareto_results else 0,
         hypervolume=moo_results.get("hypervolume"),
         frontier_history=frontier_history,
+        sensitivity=sensitivity,
         moo_summary=moo_summary,
         goal=state.get("goal", ""),
         design_rationale=state.get("design_rationale", [])[-5:],
@@ -699,6 +707,51 @@ def render_optimization_review(snapshot: OptimizationReviewSnapshot) -> str:
             if new_added or removed:
                 delta = f" (+{new_added} new, -{removed} dominated)"
             lines.append(f"  Iteration {it}: {n} Pareto points{delta}, HV={hv:.4f}")
+        lines.append("")
+
+    # Design variable sensitivity from BO layer (issue #24)
+    if snapshot.sensitivity:
+        lines.append("─" * 72)
+        lines.append("  DESIGN VARIABLE SENSITIVITY (most impactful first)")
+        lines.append("─" * 72)
+        lines.append("")
+        # Discover the objective columns (union across all variables)
+        objectives: list[str] = []
+        for obj_map in snapshot.sensitivity.values():
+            for obj_name in obj_map:
+                if obj_name not in objectives:
+                    objectives.append(obj_name)
+        # Stable column order: power → latency → cost → area → others
+        _OBJ_ORDER = ["power_watts", "latency_ms", "cost_usd", "area_mm2"]
+        ordered = [o for o in _OBJ_ORDER if o in objectives] + [
+            o for o in objectives if o not in _OBJ_ORDER
+        ]
+
+        # Rank variables by max impact across all objectives (most impactful first)
+        ranked_vars = sorted(
+            snapshot.sensitivity.items(),
+            key=lambda kv: max(kv[1].values(), default=0.0),
+            reverse=True,
+        )
+
+        # Header row
+        header = f"  {'Variable':<22}"
+        for obj in ordered:
+            header += f"  {obj:>10}"
+        lines.append(header)
+        lines.append(f"  {'─' * 22}" + ("  " + "─" * 10) * len(ordered))
+
+        # Data rows
+        for var_name, obj_map in ranked_vars:
+            row = f"  {var_name:<22}"
+            for obj in ordered:
+                val = obj_map.get(obj)
+                row += f"  {val:>10.2f}" if val is not None else f"  {'—':>10}"
+            lines.append(row)
+        lines.append("")
+        lines.append(
+            "  [hint] Highest-impact variables drive the design — focus optimization on these"
+        )
         lines.append("")
 
     # Recent design rationale

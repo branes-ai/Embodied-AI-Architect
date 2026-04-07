@@ -52,6 +52,14 @@ No active design session. Start one with:
    - For cost: `.venv/bin/branes swap estimate --area X --power Y --process Z` for cost decomposition
    - For power: check `ip_blocks` config for clock/voltage settings
    - For latency: check per-operator latency from `workload_profile`
+   - **Use sensitivity to find the right knob**: Read
+     `optimization_review_snapshot.sensitivity` (issue #24). It maps each
+     design variable to its impact on each objective (0–1 score from the BO
+     layer). For the failing metric, sort variables by their impact on that
+     specific objective and pick the top 1-2 — those are the highest-leverage
+     knobs to turn. Example: if power is failing and `quantization_dtype` has
+     impact 0.82 on power but `noc_link_width_bits` has impact 0.04, propose
+     changing the dtype not the NoC width.
 
 4. **Propose 3-5 concrete options** from the strategy catalog:
    Read `optimization_review_snapshot.strategies` for what's available vs tried.

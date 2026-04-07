@@ -221,6 +221,42 @@ class TestBuildOptimizationReviewSnapshot:
         snap2 = OptimizationReviewSnapshot(**data)
         assert snap2.iteration == snap.iteration
 
+    def test_sensitivity_extracted_from_moo_results(self):
+        """Issue #24: sensitivity must flow from moo_results into the snapshot."""
+        state = _make_state(power=4.0, latency=30.0)
+        # Inject a sensitivity dict like the BO layer would produce
+        state["moo_results"] = {
+            "sensitivity": {
+                "quantization_dtype": {
+                    "power_watts": 0.82,
+                    "latency_ms": 0.65,
+                    "cost_usd": 0.12,
+                },
+                "npu_frequency_mhz": {
+                    "power_watts": 0.71,
+                    "latency_ms": 0.58,
+                    "cost_usd": 0.45,
+                },
+                "sram_size_kb": {
+                    "power_watts": 0.15,
+                    "latency_ms": 0.72,
+                    "cost_usd": 0.38,
+                },
+            },
+            "total_evaluations": 100,
+            "pareto_front": [],
+        }
+        snap = build_optimization_review_snapshot(state)
+        assert snap.sensitivity
+        assert "quantization_dtype" in snap.sensitivity
+        assert snap.sensitivity["quantization_dtype"]["power_watts"] == 0.82
+
+    def test_sensitivity_empty_when_no_moo(self):
+        """When MOO hasn't run, sensitivity should be an empty dict, not crash."""
+        state = _make_state()
+        snap = build_optimization_review_snapshot(state)
+        assert snap.sensitivity == {}
+
 
 # ---------------------------------------------------------------------------
 # Steering application

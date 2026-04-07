@@ -56,7 +56,18 @@ For additional hardware analysis, use the branes MCP/CLI:
    - Configuration issue? (clock speed, SRAM sizing, data width)
    - Physical limitation? (process node, die area budget)
 
+   **Use sensitivity to find which design variables matter most** (issue #24):
+   Read `optimization_review_snapshot.sensitivity` — a `{variable_name:
+   {objective_name: impact_score}}` map from the BO layer. Sort by impact on
+   the failing objective; the top variables tell you which design knobs to
+   prioritize. If the target is a constraint (power/latency/cost), the
+   highest-impact variables for that objective ARE the answer.
+
 5. **Propose 3-5 targeted actions** with estimated impact and side effects.
+   When sensitivity data is available, prefer actions that turn high-impact
+   variables. Cite the impact score in each option (e.g., "Lower
+   `quantization_dtype` to int8 — sensitivity to power = 0.82, est. 30%
+   power reduction").
 
 ## Source drill (`source:<kernel_name>`)
 
