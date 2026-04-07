@@ -177,4 +177,9 @@ class CodebaseConverter:
             "data_types": kernel.data_types,
             "parallelism": kernel.parallelism,
             "invocation_frequency_hz": kernel.invocation_frequency_hz,
+            # Source traceability — preserved from ComputeKernel for the
+            # /architect-assess and /architect-drill skills (issue #42)
+            "source_file": kernel.source_file,
+            "line_range": list(kernel.line_range),
+            "frameworks": list(kernel.frameworks),
         }

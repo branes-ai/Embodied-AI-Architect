@@ -150,6 +150,11 @@ def codebase_analyze(ctx, project_path: str):
     default=None,
     help="Target end-to-end latency in milliseconds",
 )
+@click.option(
+    "--save-session",
+    is_flag=True,
+    help="Persist results as a design session for /architect-* skills",
+)
 @click.pass_context
 def codebase_assess(
     ctx,
@@ -157,6 +162,7 @@ def codebase_assess(
     hardware: str | None,
     power_budget: float | None,
     latency_target: float | None,
+    save_session: bool,
 ):
     """End-to-end hardware assessment of a codebase.
 
@@ -168,6 +174,7 @@ def codebase_assess(
       branes codebase assess /path/to/app
       branes codebase assess /path/to/app --hardware jetson_orin,custom_kpu
       branes codebase assess /path/to/app --power-budget 15 --latency-target 33
+      branes codebase assess /path/to/app --save-session
     """
     json_output = ctx.obj.get("json", False)
 
@@ -187,6 +194,17 @@ def codebase_assess(
         if not result.success:
             raise Exception(result.error)
 
+        if save_session:
+            session_id = _save_codebase_session(
+                project_path, result.data, power_budget, latency_target
+            )
+            if not json_output:
+                console.print(f"\n[bold green]Session saved:[/bold green] {session_id}")
+                console.print(
+                    "[dim]Run [cyan]/architect-assess[/cyan] in chat to see "
+                    "source-mapped operator breakdown[/dim]"
+                )
+
         if json_output:
             click.echo(json.dumps(result.data, indent=2, default=str))
         else:
@@ -198,6 +216,65 @@ def codebase_assess(
         else:
             console.print(f"\n[bold red]Error:[/bold red] {e}")
         ctx.exit(1)
+
+
+def _save_codebase_session(
+    project_path: str,
+    data: dict,
+    power_budget: float | None,
+    latency_target: float | None,
+) -> str:
+    """Persist a codebase assessment as a SoC design session.
+
+    Stores the workload_profile, scan_result, and analysis under
+    codebase_metadata so /architect-assess and /architect-drill can
+    surface source-level information.
+    """
+    from embodied_ai_architect.graphs.session_store import SessionStore
+    from embodied_ai_architect.graphs.soc_state import (
+        DesignConstraints,
+        create_initial_soc_state,
+    )
+
+    workload_profile = data.get("workload_profile", {})
+    scan_result = data.get("scan_result", {})
+    analysis = data.get("analysis", {})
+
+    # Build a goal text from project name
+    project_name = scan_result.get("project_name", Path(project_path).name)
+    goal = f"Codebase analysis: {project_name}"
+
+    constraint_kwargs = {}
+    if power_budget is not None:
+        constraint_kwargs["max_power_watts"] = power_budget
+    if latency_target is not None:
+        constraint_kwargs["max_latency_ms"] = latency_target
+    constraints = DesignConstraints(**constraint_kwargs) if constraint_kwargs else None
+
+    state = create_initial_soc_state(
+        goal=goal,
+        constraints=constraints,
+        use_case="codebase_analysis",
+        platform="custom",
+    )
+    state["workload_profile"] = workload_profile
+    state["codebase_metadata"] = {
+        "project_path": str(project_path),
+        "project_name": project_name,
+        "languages": scan_result.get("languages", []),
+        "build_system": scan_result.get("build_system", "unknown"),
+        "kernel_count": len(analysis.get("kernels", [])) if analysis else 0,
+        "ml_models": scan_result.get("ml_models", []),
+        "scan_summary": {
+            "total_lines": scan_result.get("total_lines", 0),
+            "source_file_count": len(scan_result.get("source_files", [])),
+            "dependencies": scan_result.get("dependencies", [])[:50],
+        },
+    }
+
+    store = SessionStore()
+    session_id = store.save(state)
+    return session_id
 
 
 @codebase.command("qualify")

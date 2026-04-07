@@ -25,6 +25,9 @@ For additional hardware analysis, use the branes MCP/CLI:
    - `workload_profile.workloads[].name` for operators
    - `ip_blocks[].name` for hardware blocks
    - `ppa_metrics` fields for constraints (power, latency, cost)
+   - **Special prefix `source:<kernel_name>`** — drill into the actual source
+     code for a kernel (only valid when `workload_profile.source ==
+     "codebase_analysis"`). See "Source drill" below.
    - If ambiguous, list available targets from the session and ask.
 
 2. **Gather metrics for the target** from the session JSON:
@@ -54,6 +57,45 @@ For additional hardware analysis, use the branes MCP/CLI:
    - Physical limitation? (process node, die area budget)
 
 5. **Propose 3-5 targeted actions** with estimated impact and side effects.
+
+## Source drill (`source:<kernel_name>`)
+
+When the target starts with `source:`, the user wants to see the actual code
+behind a workload. Only works for sessions with `workload_profile.source ==
+"codebase_analysis"`.
+
+Steps:
+1. Strip the `source:` prefix to get the kernel name.
+2. Find the matching workload in `workload_profile.workloads[]` by name.
+3. Read its `source_file`, `line_range`, `kernel_type`, `frameworks`,
+   `estimated_gflops`, `estimated_memory_mb`, and `invocation_frequency_hz`.
+4. Resolve the source file path. If `codebase_metadata.project_path` exists
+   and `source_file` is relative, join them: `Path(project_path) / source_file`.
+5. Read the snippet using the line_range (e.g., `Read tool with offset/limit`).
+   If the file is missing or unreadable, report the path and skip the snippet.
+6. Present:
+
+   ```
+   KERNEL: <name>
+   ─────────────────────────────────────────────────────
+   Source:    <project_path>/<source_file>
+   Lines:     <a-b>
+   Type:      <kernel_type>
+   Frameworks: <list>
+   Estimated: <gflops> GFLOPS, <memory_mb> MB, <freq_hz> Hz
+
+   Source code:
+   ```python
+   <snippet>
+   ```
+
+   Performance hotspots:
+   - <root cause analysis: why this kernel is interesting>
+
+   Optimization options:
+   - <3-5 targeted actions, e.g., quantize to INT8, fuse with adjacent
+     kernel, move to KPU, reduce input resolution>
+   ```
 
 ## Running what-if analysis
 
