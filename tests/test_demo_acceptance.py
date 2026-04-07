@@ -173,6 +173,30 @@ class TestDemo1DeliveryDrone:
         scorecard = evaluator.evaluate_run(trace)
         assert scorecard.composite_score > 0.5  # reasonable threshold
 
+    def test_enable_moo_false_skips_moo_task(self):
+        """When enable_moo=False, the planner must strip moo_explorer from
+        the plan even if the static plan includes it. This is the escape
+        hatch for fast iterations or when the user explicitly opts out."""
+        from embodied_ai_architect.graphs.planner import _strip_moo_tasks
+
+        # Direct unit test on the helper
+        plan = [
+            {"id": "t1", "name": "WA", "agent": "workload_analyzer", "dependencies": []},
+            {"id": "t2", "name": "HW", "agent": "hw_explorer", "dependencies": ["t1"]},
+            {"id": "t3", "name": "AC", "agent": "architecture_composer", "dependencies": ["t2"]},
+            {"id": "t4", "name": "MOO", "agent": "moo_explorer", "dependencies": ["t2"]},
+            {"id": "t5", "name": "PPA", "agent": "ppa_assessor", "dependencies": ["t3", "t4"]},
+        ]
+        cleaned = _strip_moo_tasks(plan)
+        # MOO task removed
+        agents = [t["agent"] for t in cleaned]
+        assert "moo_explorer" not in agents
+        assert len(cleaned) == 4
+        # PPA's dependency on t4 was filtered out
+        ppa_task = next(t for t in cleaned if t["agent"] == "ppa_assessor")
+        assert "t4" not in ppa_task["dependencies"]
+        assert "t3" in ppa_task["dependencies"]
+
     def test_moo_populates_pareto_points(self):
         """Issue #22: moo_explorer must run in the default plan and populate
         pareto_points + moo_results so /architect-* skills can show the

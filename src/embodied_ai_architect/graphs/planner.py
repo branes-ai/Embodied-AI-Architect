@@ -134,6 +134,35 @@ Respond ONLY with the JSON object. No explanation, no markdown fences, no preamb
 
 
 # ---------------------------------------------------------------------------
+# Plan post-processing
+# ---------------------------------------------------------------------------
+
+
+def _strip_moo_tasks(task_dicts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Remove moo_explorer tasks and rewrite dependencies that pointed to them.
+
+    When the caller sets `enable_moo=False` on the design state, the planner
+    skips MOO regardless of whether the static plan or LLM included it.
+    Tasks that depended on a removed MOO task have those IDs filtered out
+    of their dependency list (the remaining hw_explorer/architecture_composer
+    edges are still satisfied).
+    """
+    moo_ids = {t["id"] for t in task_dicts if t.get("agent") == "moo_explorer"}
+    if not moo_ids:
+        return list(task_dicts)
+
+    cleaned: list[dict[str, Any]] = []
+    for task in task_dicts:
+        if task.get("agent") == "moo_explorer":
+            continue
+        new_task = dict(task)
+        deps = [d for d in task.get("dependencies", []) if d not in moo_ids]
+        new_task["dependencies"] = deps
+        cleaned.append(new_task)
+    return cleaned
+
+
+# ---------------------------------------------------------------------------
 # Plan parsing
 # ---------------------------------------------------------------------------
 
@@ -256,11 +285,18 @@ class PlannerNode:
         constraints = get_constraints(state)
         use_case = state.get("use_case", "")
         platform = state.get("platform", "")
+        enable_moo = state.get("enable_moo", True)
 
         if self.static_plan is not None:
             task_dicts = self.static_plan
         else:
             task_dicts = self._plan_with_llm(goal, constraints, use_case, platform)
+
+        # Honor enable_moo: strip moo_explorer tasks (and their dependents'
+        # references) when the user opted out. The default plans and the LLM
+        # are encouraged to include moo_explorer; this is the escape hatch.
+        if not enable_moo:
+            task_dicts = _strip_moo_tasks(task_dicts)
 
         graph = tasks_to_graph(task_dicts)
 
