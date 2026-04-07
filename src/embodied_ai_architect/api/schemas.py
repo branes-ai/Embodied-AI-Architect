@@ -81,6 +81,36 @@ class ParetoResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Sensitivity (issue #24)
+# ---------------------------------------------------------------------------
+
+
+class SensitivityEntry(BaseModel):
+    """Per-variable impact across all objectives."""
+
+    variable: str
+    impacts: dict[str, float] = Field(
+        default_factory=dict,
+        description="objective_name -> impact_score (0-1)",
+    )
+    max_impact: float = Field(default=0.0, description="Max impact across all objectives")
+
+
+class SensitivityResponse(BaseModel):
+    """Response for the /sessions/{id}/sensitivity endpoint.
+
+    Variables are sorted by max_impact descending so the architect sees the
+    most influential design knobs first.
+    """
+
+    entries: list[SensitivityEntry] = Field(default_factory=list)
+    objectives: list[str] = Field(
+        default_factory=list,
+        description="Objective names (column order for the impact table)",
+    )
+
+
+# ---------------------------------------------------------------------------
 # Constraint slackness
 # ---------------------------------------------------------------------------
 

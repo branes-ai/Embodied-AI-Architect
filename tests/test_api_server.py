@@ -148,6 +148,35 @@ def _build_rich_state(session_id="soc_testapi"):
         "knee_point_index": 0,
     }
 
+    # MOO results with per-variable sensitivity (issue #24).
+    # IMPORTANT: this fixture uses the REAL producer format emitted by
+    # bayesian_opt._extract_sensitivity — nested as
+    # {objective: {variable: {lengthscale, importance}}}.
+    # The /sensitivity endpoint normalizes this to {variable: {objective: float}}
+    # via normalize_sensitivity(). Tests should exercise this real shape so
+    # we catch any consumer/producer drift.
+    state["moo_results"] = {
+        "total_evaluations": 100,
+        "pareto_front": [],
+        "sensitivity": {
+            "power_watts": {
+                "quantization_dtype": {"lengthscale": 0.45, "importance": 0.82},
+                "npu_frequency_mhz": {"lengthscale": 0.55, "importance": 0.71},
+                "sram_size_kb": {"lengthscale": 2.10, "importance": 0.15},
+            },
+            "latency_ms": {
+                "quantization_dtype": {"lengthscale": 0.62, "importance": 0.65},
+                "npu_frequency_mhz": {"lengthscale": 0.70, "importance": 0.58},
+                "sram_size_kb": {"lengthscale": 0.50, "importance": 0.72},
+            },
+            "cost_usd": {
+                "quantization_dtype": {"lengthscale": 1.80, "importance": 0.12},
+                "npu_frequency_mhz": {"lengthscale": 0.85, "importance": 0.45},
+                "sram_size_kb": {"lengthscale": 0.95, "importance": 0.38},
+            },
+        },
+    }
+
     # Design rationale
     state["design_rationale"] = [
         "[planner] Created task graph with 3 tasks",
@@ -374,6 +403,55 @@ class TestSlackness:
 
     def test_slackness_404(self, client):
         assert client.get("/api/sessions/soc_nope/slackness").status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Sensitivity (issue #24)
+# ---------------------------------------------------------------------------
+
+
+class TestSensitivity:
+    def test_sensitivity_structure(self, client):
+        resp = client.get("/api/sessions/soc_testapi/sensitivity")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert "entries" in data
+        assert "objectives" in data
+
+    def test_sensitivity_entries_present(self, client):
+        data = client.get("/api/sessions/soc_testapi/sensitivity").json()
+        assert len(data["entries"]) == 3
+        var_names = {e["variable"] for e in data["entries"]}
+        assert var_names == {"quantization_dtype", "npu_frequency_mhz", "sram_size_kb"}
+
+    def test_sensitivity_ranked_by_max_impact(self, client):
+        """Variables must be sorted by max impact descending."""
+        data = client.get("/api/sessions/soc_testapi/sensitivity").json()
+        max_impacts = [e["max_impact"] for e in data["entries"]]
+        assert max_impacts == sorted(max_impacts, reverse=True)
+        # quantization_dtype has max impact 0.82 → should be first
+        assert data["entries"][0]["variable"] == "quantization_dtype"
+        assert data["entries"][0]["max_impact"] == 0.82
+
+    def test_sensitivity_impacts_dict_contents(self, client):
+        data = client.get("/api/sessions/soc_testapi/sensitivity").json()
+        first = data["entries"][0]
+        assert first["impacts"]["power_watts"] == 0.82
+        assert first["impacts"]["latency_ms"] == 0.65
+
+    def test_sensitivity_objectives_listed(self, client):
+        data = client.get("/api/sessions/soc_testapi/sensitivity").json()
+        # All three objective columns should appear
+        assert set(data["objectives"]) == {"power_watts", "latency_ms", "cost_usd"}
+
+    def test_sensitivity_empty_for_minimal_session(self, client_with_both):
+        """Sessions without MOO results return empty sensitivity."""
+        data = client_with_both.get("/api/sessions/soc_minimal/sensitivity").json()
+        assert data["entries"] == []
+        assert data["objectives"] == []
+
+    def test_sensitivity_404(self, client):
+        assert client.get("/api/sessions/soc_nope/sensitivity").status_code == 404
 
 
 # ---------------------------------------------------------------------------

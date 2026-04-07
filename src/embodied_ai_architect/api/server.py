@@ -28,6 +28,8 @@ from embodied_ai_architect.api.schemas import (
     HealthResponse,
     OperatorBreakdown,
     ParetoResponse,
+    SensitivityEntry,
+    SensitivityResponse,
     SessionSummary,
     TaskGraphNode,
     TaskGraphResponse,
@@ -136,6 +138,40 @@ def _build_router():
             hypervolume=opt_snap.get("hypervolume"),
             frontier_history=frontier_history,
         )
+
+    @router.get(
+        "/sessions/{session_id}/sensitivity",
+        response_model=SensitivityResponse,
+    )
+    async def get_sensitivity(session_id: str, request: Request) -> SensitivityResponse:
+        """Get per-variable sensitivity from the BO layer (issue #24).
+
+        Variables are ranked by max impact across all objectives so the
+        most influential design knobs surface first. The raw producer payload
+        from `bayesian_opt._extract_sensitivity` is normalized to
+        {variable: {objective: float}} via the shared helper.
+        """
+        from embodied_ai_architect.graphs.optimization_review import normalize_sensitivity
+
+        state = _load_or_404(session_id, request)
+        moo_results = state.get("moo_results", {}) or {}
+        sensitivity = normalize_sensitivity(moo_results.get("sensitivity"))
+
+        # Discover the union of all objectives across variables (stable order)
+        seen: list[str] = []
+        for impacts in sensitivity.values():
+            for obj in impacts:
+                if obj not in seen:
+                    seen.append(obj)
+
+        # Build entries sorted by max impact descending
+        entries = []
+        for var, impacts in sensitivity.items():
+            max_impact = max(impacts.values()) if impacts else 0.0
+            entries.append(SensitivityEntry(variable=var, impacts=impacts, max_impact=max_impact))
+        entries.sort(key=lambda e: e.max_impact, reverse=True)
+
+        return SensitivityResponse(entries=entries, objectives=seen)
 
     @router.get("/sessions/{session_id}/slackness", response_model=list[ConstraintSlackness])
     async def get_slackness(session_id: str, request: Request) -> list[ConstraintSlackness]:

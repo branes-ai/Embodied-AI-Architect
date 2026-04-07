@@ -221,6 +221,116 @@ class TestBuildOptimizationReviewSnapshot:
         snap2 = OptimizationReviewSnapshot(**data)
         assert snap2.iteration == snap.iteration
 
+    def test_sensitivity_extracted_from_real_producer_format(self):
+        """Issue #24: sensitivity from BO layer is in
+        {objective: {variable: {importance, lengthscale}}} format. The
+        snapshot builder must normalize it to {variable: {objective: float}}.
+        """
+        state = _make_state(power=4.0, latency=30.0)
+        # This is the EXACT shape produced by
+        # bayesian_opt._extract_sensitivity (verified against the source).
+        state["moo_results"] = {
+            "sensitivity": {
+                "power_watts": {
+                    "quantization_dtype": {"lengthscale": 0.45, "importance": 0.82},
+                    "npu_frequency_mhz": {"lengthscale": 0.55, "importance": 0.71},
+                    "sram_size_kb": {"lengthscale": 2.10, "importance": 0.15},
+                },
+                "latency_ms": {
+                    "quantization_dtype": {"lengthscale": 0.62, "importance": 0.65},
+                    "npu_frequency_mhz": {"lengthscale": 0.70, "importance": 0.58},
+                    "sram_size_kb": {"lengthscale": 0.50, "importance": 0.72},
+                },
+            },
+            "total_evaluations": 100,
+            "pareto_front": [],
+        }
+        snap = build_optimization_review_snapshot(state)
+        assert snap.sensitivity
+        # Normalized to variable-keyed
+        assert "quantization_dtype" in snap.sensitivity
+        # Each value is now a {objective: float} dict
+        assert snap.sensitivity["quantization_dtype"]["power_watts"] == 0.82
+        assert snap.sensitivity["quantization_dtype"]["latency_ms"] == 0.65
+        assert snap.sensitivity["sram_size_kb"]["latency_ms"] == 0.72
+
+    def test_sensitivity_empty_when_no_moo(self):
+        """When MOO hasn't run, sensitivity should be an empty dict, not crash."""
+        state = _make_state()
+        snap = build_optimization_review_snapshot(state)
+        assert snap.sensitivity == {}
+
+
+class TestNormalizeSensitivity:
+    """Direct unit tests for the normalize_sensitivity helper (issue #24)."""
+
+    def test_normalize_real_producer_format(self):
+        """The producer format {objective: {variable: {importance,
+        lengthscale}}} must be transposed to {variable: {objective: float}}."""
+        from embodied_ai_architect.graphs.optimization_review import normalize_sensitivity
+
+        raw = {
+            "power_watts": {
+                "quantization_dtype": {"lengthscale": 0.45, "importance": 0.82},
+                "npu_frequency_mhz": {"lengthscale": 0.55, "importance": 0.71},
+            },
+            "latency_ms": {
+                "quantization_dtype": {"lengthscale": 0.62, "importance": 0.65},
+                "npu_frequency_mhz": {"lengthscale": 0.70, "importance": 0.58},
+            },
+        }
+        out = normalize_sensitivity(raw)
+        assert set(out.keys()) == {"quantization_dtype", "npu_frequency_mhz"}
+        assert out["quantization_dtype"]["power_watts"] == 0.82
+        assert out["quantization_dtype"]["latency_ms"] == 0.65
+        # Lengthscale must be dropped
+        assert "lengthscale" not in out["quantization_dtype"]
+
+    def test_normalize_already_normalized_passes_through(self):
+        """If a future producer emits the normalized form directly, the
+        helper should accept it as-is."""
+        from embodied_ai_architect.graphs.optimization_review import normalize_sensitivity
+
+        raw = {
+            "quantization_dtype": {"power_watts": 0.82, "latency_ms": 0.65},
+            "sram_size_kb": {"power_watts": 0.15, "latency_ms": 0.72},
+        }
+        out = normalize_sensitivity(raw)
+        assert out == raw
+
+    def test_normalize_objective_keyed_floats_transposed(self):
+        """If the input is keyed by objectives but values are flat floats
+        (not nested metrics), transpose to variable-keyed."""
+        from embodied_ai_architect.graphs.optimization_review import normalize_sensitivity
+
+        raw = {
+            "power_watts": {"quantization_dtype": 0.82, "npu_frequency_mhz": 0.71},
+            "latency_ms": {"quantization_dtype": 0.65, "npu_frequency_mhz": 0.58},
+        }
+        out = normalize_sensitivity(raw)
+        assert out["quantization_dtype"]["power_watts"] == 0.82
+        assert out["npu_frequency_mhz"]["latency_ms"] == 0.58
+
+    def test_normalize_empty(self):
+        from embodied_ai_architect.graphs.optimization_review import normalize_sensitivity
+
+        assert normalize_sensitivity(None) == {}
+        assert normalize_sensitivity({}) == {}
+
+    def test_normalize_skips_missing_importance(self):
+        """If a variable's metrics dict is missing the importance key, skip it."""
+        from embodied_ai_architect.graphs.optimization_review import normalize_sensitivity
+
+        raw = {
+            "power_watts": {
+                "good_var": {"importance": 0.5, "lengthscale": 0.4},
+                "bad_var": {"lengthscale": 0.4},  # no importance
+            },
+        }
+        out = normalize_sensitivity(raw)
+        assert "good_var" in out
+        assert "bad_var" not in out
+
 
 # ---------------------------------------------------------------------------
 # Steering application
