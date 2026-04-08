@@ -41,6 +41,10 @@ No active design session. Start one with:
    - Is memory bandwidth saturated? (`workload_profile` has BW data)
    - Is utilization unbalanced? (one IP block at 90%, another at 20%)
 
+   **Use MOO sensitivity to break ties** (issue #24): when `optimization_review_snapshot.sensitivity` is populated, two metrics that look equally bad are not equally easy to fix. The metric whose primary driver has high MOO sensitivity is the higher-leverage bottleneck — moving that knob will actually shift the metric. Prefer to escalate that one to the top of the ranking.
+
+   Example: power and cost both fail by 10%. Sensitivity says `clock_mhz` impacts power at 0.90 but `process_nm` impacts cost at only 0.20 — power is the higher-leverage bottleneck even though they're tied numerically, because there's a real knob to turn.
+
    For each of the top 3:
    - Name it and locate it (system/subsystem/operator/kernel level)
    - Quantify the gap (actual vs target, % over budget)

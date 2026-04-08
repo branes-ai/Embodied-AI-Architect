@@ -99,8 +99,39 @@ iter 2: P=6.2W, L=28.5ms, C=$35  [1/3 PASS]
   [n/a]   clock_scaling             P-15.0% L--10.0%     acc: none
 ```
 
-**Pareto frontier** — when MOO is active: point count, hypervolume,
-convergence metrics.
+**Pareto frontier** — when MOO is active (the default), the snapshot surfaces
+the multi-objective optimization state at every iteration:
+
+```
+MOO Summary
+  Pareto front:    12 non-dominated designs    (this iteration)
+  Accumulated:     27 points                   (across all iterations)
+  Total evals:     6,656
+  Hypervolume:     613.40
+  Layers used:     map_elites, bayesian
+  Atlas coverage:  72.0%                       (MAP-Elites behavioral space)
+```
+
+The architect can also see **per-variable sensitivity** from the BO layer, which
+ranks each design knob by its impact on each objective (issue #24). This is what
+`/architect-loop` consumes to recommend the highest-leverage knob to turn:
+
+```
+Sensitivity (BO-derived, sorted by total impact):
+  clock_mhz             total=1.70   power=0.90  latency=0.80
+  process_nm            total=0.70   power=0.40  latency=0.30
+  quantization_dtype    total=0.45   power=0.25  latency=0.20
+  ...
+```
+
+The **optimizer's strategy selection rationale** (issue #25) is also surfaced:
+when MOO sensitivity is available, the design optimizer prefers strategies that
+target high-impact variables — and records *why* it picked what it picked.
+
+**Frontier accumulation** — across multiple iterations, `_merge_pareto_frontiers`
+in `moo/specialist.py` ensures the accumulated frontier is monotonic in coverage:
+old non-dominated points are kept unless dominated by new ones, and
+`pareto_frontier_history` records per-iteration evolution for the trajectory views.
 
 **Design rationale** — recent decisions with agent attribution.
 

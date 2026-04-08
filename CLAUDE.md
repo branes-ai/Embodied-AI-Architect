@@ -159,15 +159,49 @@ optimization, and physical analysis.
 - `ip_blocks.py` - IP block specifications and integration
 - `planner.py`, `dispatcher.py`, `runner.py` - Design orchestration
 
-**Multi-Objective Optimization** (`moo/`): 3-layer pipeline:
+**Multi-Objective Optimization** (`moo/`): 3-layer pipeline integrated into the
+LangGraph SoC design pipeline as the `moo_explorer` specialist (issues #21–#27):
+
 - Layer 1: `map_elites.py` - MAP-Elites quality-diversity search (5K-10K evals)
-- Layer 2: `bayesian_opt.py` - Bayesian BO with qNEHVI (sample-efficient, ≤4 objectives)
+- Layer 2: `bayesian_opt.py` - Bayesian BO with qLogNEHVI (sample-efficient, ≤4 objectives)
 - Layer 3: `nsga3.py` - NSGA-III many-objective optimization (>4 objectives)
-- `engine.py` - Orchestrates the 3-layer pipeline
-- `design_space.py` - Design space definition and sampling
+- `engine.py` - Orchestrates the 3-layer pipeline; emits `OptimizationResult`
+- `design_space.py` - Design space definition and sampling (17-var SoC space)
 - `evaluator.py`, `k8s_evaluator.py` - Local and distributed evaluation
 - `executor.py` - Execution orchestration
-- `specialist.py` - Optimization specialists
+- `specialist.py` - `moo_explorer` (4-obj) and `swap_explorer` (6-obj) specialists
+  that bridge `OptimizationEngine` to the LangGraph state and merge per-iteration
+  Pareto frontiers (`_merge_pareto_frontiers` for monotonic accumulation)
+
+**MOO data flow through the LangGraph pipeline:**
+
+```
+planner → dispatch ──┬──> hw_explorer ────┐
+                     │                    ├──> moo_explorer ──> ppa_assessor → ...
+                     │                    │   (writes:
+                     │                    │     pareto_points
+                     │                    │     pareto_frontier_history
+                     │                    │     moo_results)
+                     └──> architecture_composer ──┘
+```
+
+The `moo_explorer` task is **always scheduled in the default plan** (after
+`hw_explorer`, in parallel with `architecture_composer`), so any `SoCDesignRunner`
+session automatically produces a populated Pareto frontier. The escape hatch is
+`enable_moo=False` on the design state (planner strips MOO tasks from the plan).
+
+**Key state fields produced by MOO** (consumed by API, snapshot, and architect skills):
+
+| Field | Producer | Consumer |
+|---|---|---|
+| `pareto_points` | `moo_explorer` (merged across iterations) | `/api/sessions/{id}/pareto`, snapshot |
+| `pareto_frontier_history` | `moo_explorer` per iteration | trajectory views, frontier monotonicity check |
+| `moo_results` | `OptimizationResult.model_dump()` | snapshot, sensitivity API, optimizer #25 |
+| `moo_results.sensitivity` | BO layer hyperparameters | `/api/sessions/{id}/sensitivity`, `/architect-loop`, `design_optimizer` MOO-aware ranking |
+| `moo_results.layers_used` | engine | snapshot, `branes session show` MOO summary |
+| `moo_results.atlas` | MAP-Elites | snapshot (coverage %) |
+| `optimization_review_snapshot.pareto_front_size` | snapshot builder | `branes session show`, API, architect skills |
+| `last_strategy_rationale` | `design_optimizer` (MOO-aware selector) | snapshot, architect skills |
 
 **SWaP-C Analysis:**
 - `physical_estimators.py` - Physical dimension, thermal, cost estimators

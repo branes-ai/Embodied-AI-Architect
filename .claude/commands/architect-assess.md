@@ -35,6 +35,15 @@ Or inspect a specific one:
 
 2. **Constraint slackness**: Read `optimization_review_snapshot.constraint_slackness` for per-constraint margin analysis with trends.
 
+   **MOO frontier (if present)**: When `moo_explorer` ran (the default), read `pareto_points`, `moo_results`, and `optimization_review_snapshot.pareto_front_size` to surface a one-line summary right under the slackness table:
+
+   ```text
+   Pareto frontier:  <pareto_front_size> non-dominated designs   HV=<moo_results.hypervolume>
+   Search effort:    <moo_results.total_evaluations> evals       layers=<moo_results.layers_used>
+   ```
+
+   If `pareto_front_size == 0` and `moo_results.total_evaluations > 0`, that's a signal — the search ran but found no feasible designs. Tell the architect the constraints may be too tight, and suggest loosening one to widen the feasible region. Also offer `/architect-drill pareto:<id>` to inspect a specific design point on the frontier.
+
 3. **Operator breakdown**: Read `workload_profile` for per-operator GFLOPS, memory, latency, and hardware mapping.
 
    **If `workload_profile.source == "codebase_analysis"`** (the session was created from a codebase scan), show a richer **source-mapped operator breakdown** that ties each workload back to the actual source code. Read `codebase_metadata` for the project context and use the per-workload `source_file`, `line_range`, `kernel_type`, `estimated_gflops`, `estimated_memory_mb`, and `frameworks` fields:
