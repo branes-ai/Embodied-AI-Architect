@@ -116,6 +116,28 @@ Tasks:
 Output: Pareto frontier of SAR design options with trade-off analysis
         Recommended option with rationale
 
+How the architect actually consumes the MOO output:
+
+  After moo_explorer runs (it's in the default plan, no extra setup), the
+  session state has:
+
+    state["pareto_points"]              # accumulated non-dominated designs
+    state["moo_results"]["sensitivity"] # which knobs drive which objective
+    state["moo_results"]["layers_used"] # which layers ran (map_elites, bayesian)
+    state["optimization_review_snapshot"]["pareto_front_size"]
+
+  The architect skills wire these into action:
+
+    /architect-assess  → shows MOO summary block + sensitivity-ranked knobs
+    /architect-loop    → uses sensitivity to pick the highest-leverage knob
+                         for the failing objective (issue #24, #25)
+    /architect-drill   → can deep-dive a specific design point from the front
+
+  Or programmatically via the API:
+
+    GET /api/sessions/{id}/pareto       # frontier points + history
+    GET /api/sessions/{id}/sensitivity  # ranked variables × objectives
+
 Key Decision: Burst-mode SAR processing at 25% duty cycle
   - Reduces SAR average power from 6W to 1.5W
   - Increases SAR latency from 50ms to 200ms (acceptable for recon)
