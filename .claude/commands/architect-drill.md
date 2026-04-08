@@ -227,7 +227,7 @@ NoC
   Topology:     <topology>
   Link width:   <link_width_bits> bits
   Frequency:    <frequency_mhz> MHz
-  Link BW:      <link_bandwidth_gbps> GB/s   (link_width_bits * frequency / 8)
+  Link BW:      <link_bandwidth_gbps> GB/s   (link_width_bits * frequency_mhz / 8 / 1000)
   Routers:      <num_routers>
 ```
 
@@ -266,7 +266,7 @@ constraint, and propose 3 options.
 
 ### Examples
 
-```
+```text
 /architect-drill kpu
 /architect-drill systolic_array
 /architect-drill bandwidth_chain
