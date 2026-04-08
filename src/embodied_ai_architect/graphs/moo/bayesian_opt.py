@@ -41,6 +41,17 @@ class BayesianOptConfig(BaseModel):
         default=True,
         description="Use annealing exploration-exploitation schedule",
     )
+    # Acquisition optimization knobs — production defaults are conservative
+    # for solution quality. Tests should dial them down to keep wall time
+    # bounded; CI was hanging at >16 minutes with the defaults.
+    acq_num_restarts: int = Field(
+        default=5,
+        description="optimize_acqf num_restarts (lower = faster, less optimal)",
+    )
+    acq_raw_samples: int = Field(
+        default=256,
+        description="optimize_acqf raw_samples (lower = faster, less optimal)",
+    )
 
 
 class SensitivityResult(BaseModel):
@@ -233,8 +244,16 @@ class BayesianMOO:
         return ModelListGP(*models)
 
     def _generate_candidates(self, model, train_X, train_Y, ref_point, iteration, budget):
-        """Generate candidate points using qNEHVI acquisition."""
-        from botorch.acquisition.multi_objective import qNoisyExpectedHypervolumeImprovement
+        """Generate candidate points using qLogNEHVI acquisition.
+
+        Uses the log-variant (qLogNoisyExpectedHypervolumeImprovement) which
+        botorch upstream recommends over the legacy qNoisyEHVI: same API,
+        fixes known numerical issues, more reliable in higher dimensions.
+        See arxiv.org/abs/2310.20708.
+        """
+        from botorch.acquisition.multi_objective import (
+            qLogNoisyExpectedHypervolumeImprovement,
+        )
         from botorch.optim import optimize_acqf
         from botorch.utils.transforms import normalize, unnormalize
 
@@ -251,7 +270,7 @@ class BayesianMOO:
         )
 
         try:
-            acq = qNoisyExpectedHypervolumeImprovement(
+            acq = qLogNoisyExpectedHypervolumeImprovement(
                 model=model,
                 ref_point=ref_point.tolist(),
                 X_baseline=X_norm,
@@ -262,8 +281,8 @@ class BayesianMOO:
                 acq_function=acq,
                 bounds=norm_bounds,
                 q=self.config.batch_size,
-                num_restarts=5,
-                raw_samples=256,
+                num_restarts=self.config.acq_num_restarts,
+                raw_samples=self.config.acq_raw_samples,
             )
 
             # Unnormalize back to original space
