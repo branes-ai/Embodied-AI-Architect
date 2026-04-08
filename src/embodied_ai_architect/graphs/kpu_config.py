@@ -448,3 +448,51 @@ def create_kpu_config(
         array_rows=grid_side,
         array_cols=grid_side,
     )
+
+
+# ---------------------------------------------------------------------------
+# Architect overrides (issue #29)
+# ---------------------------------------------------------------------------
+
+
+def apply_kpu_overrides(
+    config: KPUMicroArchConfig,
+    overrides: dict[str, Any],
+) -> KPUMicroArchConfig:
+    """Apply a flat dict of dotted-path overrides to a KPU config.
+
+    The architect provides overrides at plan review time using dotted paths
+    that address nested fields:
+
+        {
+            "compute_tile.array_rows": 8,
+            "compute_tile.array_cols": 8,
+            "noc.link_width_bits": 512,
+            "dram.num_controllers": 4,
+            "name": "swkpu-custom",
+        }
+
+    Returns a new KPUMicroArchConfig (does not mutate input). Unknown paths
+    are silently ignored so stale overrides from a previous review do not
+    crash the dispatcher — the architect's surviving overrides still apply.
+    """
+    if not overrides:
+        return config
+
+    data = config.model_dump()
+    for path, value in overrides.items():
+        parts = path.split(".")
+        target = data
+        for p in parts[:-1]:
+            if not isinstance(target, dict) or p not in target or not isinstance(target[p], dict):
+                target = None
+                break
+            target = target[p]
+        if target is None:
+            continue
+        if not isinstance(target, dict) or parts[-1] not in target:
+            # Final key doesn't exist on this level — skip silently
+            continue
+        target[parts[-1]] = value
+
+    return KPUMicroArchConfig(**data)

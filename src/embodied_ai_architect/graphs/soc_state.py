@@ -270,6 +270,7 @@ class SoCDesignState(TypedDict, total=False):
 
     # === KPU Micro-architecture ===
     kpu_config: dict  # KPUMicroArchConfig serialized
+    kpu_config_overrides: dict  # Architect overrides from plan review (issue #29)
     floorplan_estimate: dict  # FloorplanEstimate serialized
     bandwidth_match: dict  # BandwidthMatchResult serialized
     kpu_optimization_history: list[dict]  # Config snapshots per KPU loop iteration
@@ -377,6 +378,7 @@ def create_initial_soc_state(
         rtl_modules={},
         # KPU Micro-architecture
         kpu_config={},
+        kpu_config_overrides={},
         floorplan_estimate={},
         bandwidth_match={},
         kpu_optimization_history=[],

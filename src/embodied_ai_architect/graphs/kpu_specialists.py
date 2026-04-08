@@ -34,11 +34,16 @@ def kpu_configurator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     """Size KPU micro-architecture components for workload.
 
     Reads workload profile and constraints, generates initial KPU config
-    using heuristic sizing.
+    using heuristic sizing. If the architect provided overrides at plan
+    review time (issue #29), they are applied on top of the heuristic
+    output — architect's choices win over the auto-sizer.
 
     Writes to state: kpu_config
     """
-    from embodied_ai_architect.graphs.kpu_config import create_kpu_config
+    from embodied_ai_architect.graphs.kpu_config import (
+        apply_kpu_overrides,
+        create_kpu_config,
+    )
 
     constraints = get_constraints(state)
     workload = state.get("workload_profile", {})
@@ -47,16 +52,25 @@ def kpu_configurator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     constraints_dict = constraints.model_dump(exclude_none=True)
     config = create_kpu_config(use_case, constraints_dict, workload)
 
+    # Issue #29: respect architect overrides from plan review.
+    overrides = state.get("kpu_config_overrides", {}) or {}
+    if overrides:
+        config = apply_kpu_overrides(config, overrides)
+
     config_dict = config.model_dump()
 
+    summary = (
+        f"Configured KPU '{config.name}' at {config.process_nm}nm: "
+        f"{config.array_rows}x{config.array_cols} checkerboard "
+        f"({config.num_compute_tiles} compute + {config.num_memory_tiles} memory tiles), "
+        f"{config.peak_tops_int8:.2f} TOPS INT8, "
+        f"{config.total_sram_bytes / (1024 * 1024):.1f}MB SRAM"
+    )
+    if overrides:
+        summary += f" (with {len(overrides)} architect override(s))"
+
     return {
-        "summary": (
-            f"Configured KPU '{config.name}' at {config.process_nm}nm: "
-            f"{config.array_rows}x{config.array_cols} checkerboard "
-            f"({config.num_compute_tiles} compute + {config.num_memory_tiles} memory tiles), "
-            f"{config.peak_tops_int8:.2f} TOPS INT8, "
-            f"{config.total_sram_bytes / (1024 * 1024):.1f}MB SRAM"
-        ),
+        "summary": summary,
         "kpu_config": config_dict,
         "_state_updates": {"kpu_config": config_dict},
     }

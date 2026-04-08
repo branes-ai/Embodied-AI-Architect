@@ -347,3 +347,119 @@ class TestRenderPlanReviewRich:
         assert "TASK GRAPH" in result
         assert "EXECUTION SCHEDULE" in result
         assert "AVAILABLE AGENTS" in result
+
+
+# ---------------------------------------------------------------------------
+# Issue #29: KPU plan review (preview + overrides)
+# ---------------------------------------------------------------------------
+
+
+def _make_rtl_state():
+    """State with rtl_enabled=True so KPU preview activates."""
+    state = create_initial_soc_state(
+        goal="Design a drone perception SoC",
+        constraints=DesignConstraints(max_power_watts=5.0, max_latency_ms=33.3),
+        use_case="delivery_drone",
+        platform="drone",
+        rtl_enabled=True,
+    )
+    state["task_graph"] = _make_graph().to_dict()
+    return state
+
+
+class TestKPUPreview:
+    """Snapshot must include a KPU preview when rtl_enabled, and not otherwise."""
+
+    def test_no_preview_when_rtl_disabled(self):
+        state = _make_state()  # rtl_enabled defaults to False
+        snap = build_review_snapshot(state, AVAILABLE_AGENTS)
+        assert snap.kpu_preview is None
+        assert snap.kpu_preview_summary == ""
+
+    def test_preview_present_when_rtl_enabled(self):
+        state = _make_rtl_state()
+        snap = build_review_snapshot(state, AVAILABLE_AGENTS)
+        assert snap.kpu_preview is not None
+        assert "Compute tiles" in snap.kpu_preview_summary
+        assert "Systolic array" in snap.kpu_preview_summary
+        assert "L2 SRAM" in snap.kpu_preview_summary
+        assert "NoC" in snap.kpu_preview_summary
+        assert "DRAM" in snap.kpu_preview_summary
+
+    def test_preview_carries_preset_fields(self):
+        state = _make_rtl_state()
+        snap = build_review_snapshot(state, AVAILABLE_AGENTS)
+        kpu = snap.kpu_preview
+        # Standard KPU config keys produced by create_kpu_config()
+        assert "compute_tile" in kpu
+        assert "memory_tile" in kpu
+        assert "noc" in kpu
+        assert "dram" in kpu
+        assert "array_rows" in kpu
+        assert "array_cols" in kpu
+
+    def test_preview_reflects_existing_overrides(self):
+        """If kpu_config_overrides is already on state, preview reflects them."""
+        state = _make_rtl_state()
+        state["kpu_config_overrides"] = {"compute_tile.array_rows": 32}
+        snap = build_review_snapshot(state, AVAILABLE_AGENTS)
+        assert snap.kpu_preview["compute_tile"]["array_rows"] == 32
+        assert "override" in snap.kpu_preview_summary.lower()
+
+    def test_rich_render_includes_kpu_section(self):
+        state = _make_rtl_state()
+        snap = build_review_snapshot(state, AVAILABLE_AGENTS)
+        rendered = render_plan_review_rich(snap)
+        assert "KPU MICRO-ARCHITECTURE" in rendered
+        assert "delivery_drone" in rendered
+        assert "kpu_overrides" in rendered  # the help line
+
+
+class TestKPUOverridesInReview:
+    """PlanReviewInput.kpu_overrides must flow into state via apply_review_edits."""
+
+    def test_kpu_overrides_recorded_in_updates(self):
+        state = _make_rtl_state()
+        review = PlanReviewInput(
+            decision=ReviewDecision.MODIFY,
+            kpu_overrides={
+                "compute_tile.array_rows": 8,
+                "compute_tile.array_cols": 8,
+                "noc.link_width_bits": 512,
+            },
+        )
+        updates = apply_review_edits(state, review, AVAILABLE_AGENTS)
+        assert "kpu_config_overrides" in updates
+        assert updates["kpu_config_overrides"]["compute_tile.array_rows"] == 8
+        assert updates["kpu_config_overrides"]["noc.link_width_bits"] == 512
+
+    def test_kpu_overrides_merge_with_existing(self):
+        """A second review pass should add to (not replace) prior overrides."""
+        state = _make_rtl_state()
+        state["kpu_config_overrides"] = {"dram.num_controllers": 4}
+        review = PlanReviewInput(
+            decision=ReviewDecision.MODIFY,
+            kpu_overrides={"compute_tile.array_rows": 8},
+        )
+        updates = apply_review_edits(state, review, AVAILABLE_AGENTS)
+        merged = updates["kpu_config_overrides"]
+        assert merged["dram.num_controllers"] == 4  # preserved
+        assert merged["compute_tile.array_rows"] == 8  # added
+
+    def test_kpu_override_summary_in_history(self):
+        """The design rationale must mention KPU overrides for traceability."""
+        state = _make_rtl_state()
+        review = PlanReviewInput(
+            decision=ReviewDecision.MODIFY,
+            kpu_overrides={"compute_tile.array_rows": 8},
+        )
+        updates = apply_review_edits(state, review, AVAILABLE_AGENTS)
+        rationale = updates.get("design_rationale", [])
+        assert any("KPU parameter" in r for r in rationale)
+
+    def test_no_kpu_section_when_overrides_empty(self):
+        """Approving without kpu_overrides leaves kpu_config_overrides untouched."""
+        state = _make_rtl_state()
+        review = PlanReviewInput(decision=ReviewDecision.APPROVE)
+        updates = apply_review_edits(state, review, AVAILABLE_AGENTS)
+        assert "kpu_config_overrides" not in updates

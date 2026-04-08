@@ -85,6 +85,15 @@ class PlanReviewInput(BaseModel):
         default_factory=dict,
         description="Override DesignConstraints fields",
     )
+    kpu_overrides: dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "KPU micro-architecture overrides (issue #29). "
+            "Flat dict of dotted-path keys, e.g. "
+            '{"compute_tile.array_rows": 8, "noc.link_width_bits": 512}. '
+            "Applied on top of the heuristic kpu_configurator output."
+        ),
+    )
     notes: str = Field(
         default="",
         description="Freeform architect notes recorded in design history",
@@ -105,6 +114,10 @@ class PlanReviewSnapshot(BaseModel):
     parallel_groups: list[list[str]]
     available_agents: list[str]
     inferred_context: dict[str, Any]
+    # Issue #29: when rtl_enabled, preview the KPU sizing the configurator
+    # would produce, so the architect can override before dispatch starts.
+    kpu_preview: dict[str, Any] | None = None
+    kpu_preview_summary: str = ""
 
 
 # ---------------------------------------------------------------------------
@@ -271,6 +284,65 @@ def summarize_constraints(constraints: DesignConstraints) -> str:
 # ---------------------------------------------------------------------------
 
 
+def _build_kpu_preview(
+    state: SoCDesignState,
+) -> tuple[dict[str, Any] | None, str]:
+    """Eagerly preview the KPU config the configurator would produce.
+
+    Used by `build_review_snapshot` when `rtl_enabled=True` so the architect
+    can see and override the KPU micro-architecture before dispatch begins.
+    Workload may be empty at plan-review time — the heuristic falls back to
+    sensible defaults. If architect overrides are already on the state from
+    a prior pass, they are applied to the preview.
+
+    Returns (preview_dict, summary_string). Returns (None, "") on any error
+    so plan review never breaks because of a preview-side failure.
+    """
+    try:
+        from embodied_ai_architect.graphs.kpu_config import (
+            apply_kpu_overrides,
+            create_kpu_config,
+        )
+
+        constraints = get_constraints(state)
+        workload = state.get("workload_profile", {}) or {}
+        use_case = state.get("use_case", "")
+
+        config = create_kpu_config(
+            use_case,
+            constraints.model_dump(exclude_none=True),
+            workload,
+        )
+
+        overrides = state.get("kpu_config_overrides", {}) or {}
+        if overrides:
+            config = apply_kpu_overrides(config, overrides)
+
+        ct = config.compute_tile
+        mt = config.memory_tile
+        summary_lines = [
+            f"  Compute tiles: {config.num_compute_tiles} "
+            f"({config.array_rows}x{config.array_cols} checkerboard)",
+            f"  Systolic array: {ct.array_rows}x{ct.array_cols} INT8 MACs "
+            f"({config.peak_tops_int8:.2f} TOPS peak)",
+            f"  L2 SRAM: {ct.l2_size_bytes // 1024}KB ({ct.l2_num_banks} banks)  |  "
+            f"L1 skew: {ct.l1_size_bytes // 1024}KB ({ct.l1_num_banks} banks)",
+            f"  Memory tiles: {config.num_memory_tiles} "
+            f"(L3: {mt.l3_tile_size_bytes // 1024}KB each)",
+            f"  NoC: {config.noc.topology}, {config.noc.link_width_bits}-bit links, "
+            f"{config.noc.frequency_mhz:.0f}MHz",
+            f"  DRAM: {config.dram.technology}, {config.dram.num_controllers} controllers, "
+            f"{config.dram.num_controllers * config.dram.channels_per_controller} channels",
+        ]
+        if overrides:
+            summary_lines.append(f"  Architect overrides applied: {len(overrides)}")
+
+        return config.model_dump(), "\n".join(summary_lines)
+    except Exception as e:  # pragma: no cover - defensive
+        logger.warning("KPU preview failed: %s", e)
+        return None, ""
+
+
 def build_review_snapshot(
     state: SoCDesignState,
     available_agents: list[str],
@@ -278,6 +350,13 @@ def build_review_snapshot(
     """Build a complete review snapshot from the current state."""
     graph = get_task_graph(state)
     constraints = get_constraints(state)
+    rtl_enabled = state.get("rtl_enabled", False)
+
+    # Issue #29: KPU preview block when rtl_enabled
+    kpu_preview: dict[str, Any] | None = None
+    kpu_preview_summary = ""
+    if rtl_enabled:
+        kpu_preview, kpu_preview_summary = _build_kpu_preview(state)
 
     return PlanReviewSnapshot(
         goal=state.get("goal", ""),
@@ -294,9 +373,11 @@ def build_review_snapshot(
             "num_tasks": len(graph.nodes),
             "num_parallel_groups": len(compute_parallel_groups(graph)),
             "max_parallelism": max((len(g) for g in compute_parallel_groups(graph)), default=0),
-            "rtl_enabled": state.get("rtl_enabled", False),
+            "rtl_enabled": rtl_enabled,
             "session_id": state.get("session_id", ""),
         },
+        kpu_preview=kpu_preview,
+        kpu_preview_summary=kpu_preview_summary,
     )
 
 
@@ -402,6 +483,13 @@ def apply_review_edits(
         current.update(review_input.constraint_overrides)
         updates["constraints"] = current
 
+    # 6b. Apply KPU overrides (issue #29) — merged into kpu_config_overrides
+    # so kpu_configurator picks them up when it runs during dispatch.
+    if review_input.kpu_overrides:
+        existing = dict(state.get("kpu_config_overrides", {}) or {})
+        existing.update(review_input.kpu_overrides)
+        updates["kpu_config_overrides"] = existing
+
     # 7. Record in history
     state_with_graph = set_task_graph(state, graph)
     if review_input.notes:
@@ -423,6 +511,7 @@ def apply_review_edits(
             "agents_reassigned": review_input.agent_reassignments,
             "dependencies_overridden": list(review_input.dependency_overrides.keys()),
             "constraints_overridden": list(review_input.constraint_overrides.keys()),
+            "kpu_overridden": list(review_input.kpu_overrides.keys()),
         },
     )
 
@@ -446,6 +535,8 @@ def _summarize_edits(review_input: PlanReviewInput) -> str:
         parts.append(f"reordered {len(review_input.dependency_overrides)} dependency chain(s)")
     if review_input.constraint_overrides:
         parts.append(f"overrode {len(review_input.constraint_overrides)} constraint(s)")
+    if review_input.kpu_overrides:
+        parts.append(f"overrode {len(review_input.kpu_overrides)} KPU parameter(s)")
     if not parts:
         return "Approved without changes"
     return "Modified plan: " + ", ".join(parts)
@@ -574,6 +665,18 @@ def render_plan_review_rich(snapshot: PlanReviewSnapshot) -> str:
             lines.append(f"         Pre:  {task['preconditions']}")
         if task["postconditions"] != "-":
             lines.append(f"         Post: {task['postconditions']}")
+        lines.append("")
+
+    # KPU micro-architecture preview (issue #29) — only when rtl_enabled
+    if snapshot.kpu_preview and snapshot.kpu_preview_summary:
+        lines.append("─" * 72)
+        use_case_tag = f" for {snapshot.use_case}" if snapshot.use_case else ""
+        lines.append(f"  KPU MICRO-ARCHITECTURE (initial sizing{use_case_tag})")
+        lines.append("─" * 72)
+        lines.append(snapshot.kpu_preview_summary)
+        lines.append("")
+        lines.append("  To override at plan review, set kpu_overrides in PlanReviewInput, e.g.:")
+        lines.append('    {"compute_tile.array_rows": 8, "noc.link_width_bits": 512}')
         lines.append("")
 
     # Available agents
