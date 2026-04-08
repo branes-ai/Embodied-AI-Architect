@@ -269,3 +269,61 @@ def kpu_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         "kpu_config": config_dict,
         "_state_updates": {"kpu_config": config_dict},
     }
+
+
+# ---------------------------------------------------------------------------
+# RTL → KPU area feedback (issue #31)
+# ---------------------------------------------------------------------------
+
+
+def rtl_area_feedback(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
+    """Feed RTL synthesis area back into the KPU sizing loop.
+
+    Schedule this task after `rtl_ppa_assessor`. When `state["rtl_area_feedback"]`
+    is True and synthesis area exceeds the floorplan estimate by more than 10%,
+    re-runs the KPU optimizer with the synthesis area as a tightened constraint
+    and re-validates floorplan + bandwidth (bounded at 3 iterations).
+
+    The actual re-sizing logic lives in `kpu_loop.apply_rtl_area_feedback()` —
+    this specialist is just the dispatcher-facing wrapper.
+
+    Writes to state: kpu_config, floorplan_estimate, bandwidth_match,
+    kpu_optimization_history.
+    """
+    from embodied_ai_architect.graphs.kpu_loop import apply_rtl_area_feedback
+
+    if not state.get("rtl_area_feedback", False):
+        return {
+            "summary": "RTL area feedback skipped (rtl_area_feedback=False)",
+            "verdict": "SKIP",
+        }
+
+    if not state.get("rtl_enabled", False):
+        return {
+            "summary": "RTL area feedback skipped (rtl_enabled=False)",
+            "verdict": "SKIP",
+        }
+
+    metadata = task.metadata or {}
+    area_tolerance = float(metadata.get("area_tolerance", 1.1))
+    max_iterations = int(metadata.get("max_iterations", 3))
+
+    updates = apply_rtl_area_feedback(
+        state,
+        area_tolerance=area_tolerance,
+        max_iterations=max_iterations,
+    )
+
+    if not updates:
+        return {
+            "summary": "RTL area feedback: insufficient state (need synthesis + floorplan)",
+            "verdict": "SKIP",
+        }
+
+    summary = updates.pop("rtl_area_feedback_summary", "RTL area feedback applied")
+
+    return {
+        "summary": summary,
+        "verdict": "PASS",
+        "_state_updates": updates,
+    }
