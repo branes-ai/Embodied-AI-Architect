@@ -99,6 +99,140 @@ OPTIMIZATION_STRATEGIES: list[dict[str, Any]] = [
 ]
 
 
+# Maps each optimization strategy to the MOO design space variable it directly
+# turns. Used by the MOO-aware selector (issue #25) to consult per-variable
+# sensitivity from the BO layer when picking which knob to turn.
+#
+# Strategies that modify the workload (quantize, prune, smaller model, lower
+# resolution) don't map to a single MOO variable — they get a neutral boost
+# of 1.0 in the scoring so they remain candidates without skewing the choice.
+STRATEGY_VARIABLE_MAP: dict[str, str | None] = {
+    "quantize_int8": None,  # workload-targeting
+    "reduce_resolution": None,  # workload-targeting
+    "model_pruning": None,  # workload-targeting
+    "smaller_model": None,  # workload-targeting
+    "clock_scaling": "clock_mhz",  # directly targets clock_mhz in MOO space
+    "shrink_process_node": "process_nm",  # targets process_nm
+    "grow_process_node": "process_nm",  # targets process_nm
+}
+
+# Maps a failing constraint name (PPA verdict key) to the MOO objective key
+# used in the sensitivity dict. (e.g. "power" → "power_watts")
+_FAILING_TO_OBJECTIVE: dict[str, str] = {
+    "power": "power_watts",
+    "latency": "latency_ms",
+    "area": "area_mm2",
+    "cost": "cost_usd",
+}
+
+
+def _moo_aware_score(
+    strategy: dict[str, Any],
+    failing: list[str],
+    sensitivity: dict[str, dict[str, float]],
+) -> tuple[float, str]:
+    """Score a strategy using MOO sensitivity data when available.
+
+    Returns (score, rationale_fragment). Higher score = better choice.
+
+    The score combines:
+      base = static reduction factor for the failing constraint
+      boost = 1.0 + sensitivity[strategy_var][failing_obj] when the
+              strategy targets a MOO variable, else 1.0 (neutral)
+
+    This way, two strategies with similar static factors get differentiated
+    by which one turns the highest-impact MOO variable.
+    """
+    # Pick the primary failing constraint to score against
+    primary = failing[0] if failing else "power"
+
+    # Static factor for the primary failing constraint
+    if primary == "power":
+        base = strategy.get("power_reduction_factor", 0.0)
+    elif primary == "latency":
+        base = strategy.get("latency_reduction_factor", 0.0)
+    else:
+        # area/cost: use the higher of power/latency factor as a proxy
+        base = max(
+            strategy.get("power_reduction_factor", 0.0),
+            strategy.get("latency_reduction_factor", 0.0),
+        )
+
+    # Compute the sensitivity boost
+    boost = 1.0
+    rationale_frag = "static reduction factor only"
+
+    var = STRATEGY_VARIABLE_MAP.get(strategy["name"])
+    obj = _FAILING_TO_OBJECTIVE.get(primary)
+
+    if var and obj and sensitivity:
+        var_impacts = sensitivity.get(var, {})
+        impact = var_impacts.get(obj)
+        if impact is not None:
+            boost = 1.0 + float(impact)
+            rationale_frag = f"sensitivity[{var}][{obj}]={impact:.2f}, boost={boost:.2f}x"
+
+    return base * boost, rationale_frag
+
+
+def _select_strategy_with_moo(
+    applicable: list[dict[str, Any]],
+    failing: list[str],
+    state: SoCDesignState,
+) -> tuple[dict[str, Any], str]:
+    """Pick the best strategy, consulting MOO sensitivity when available.
+
+    Returns (selected_strategy, structured_rationale).
+
+    Backward-compatible: when sensitivity data is empty (MOO didn't run, or
+    only MAP-Elites ran without BO), this falls back to the original greedy
+    logic — sort by reduction factor for the primary failing constraint.
+    """
+    moo_results = state.get("moo_results", {}) or {}
+    raw_sensitivity = moo_results.get("sensitivity", {})
+
+    # Normalize via the shared helper from optimization_review (issue #24)
+    sensitivity: dict[str, dict[str, float]] = {}
+    if raw_sensitivity:
+        try:
+            from embodied_ai_architect.graphs.optimization_review import (
+                normalize_sensitivity,
+            )
+
+            sensitivity = normalize_sensitivity(raw_sensitivity)
+        except Exception:
+            sensitivity = {}
+
+    if not sensitivity:
+        # Greedy fallback (original behavior)
+        if "power" in failing:
+            applicable.sort(key=lambda s: s["power_reduction_factor"], reverse=True)
+        elif "latency" in failing:
+            applicable.sort(key=lambda s: s["latency_reduction_factor"], reverse=True)
+        else:
+            applicable.sort(key=lambda s: s["power_reduction_factor"], reverse=True)
+        selected = applicable[0]
+        rationale = (
+            f"Selected '{selected['name']}' by greedy reduction factor "
+            f"(MOO sensitivity unavailable). Failing: {', '.join(failing)}."
+        )
+        return selected, rationale
+
+    # MOO-aware: score each strategy and pick the highest
+    scored: list[tuple[float, str, dict[str, Any]]] = []
+    for strat in applicable:
+        score, frag = _moo_aware_score(strat, failing, sensitivity)
+        scored.append((score, frag, strat))
+    scored.sort(key=lambda x: x[0], reverse=True)
+
+    best_score, best_frag, selected = scored[0]
+    rationale = (
+        f"Selected '{selected['name']}' (score={best_score:.3f}) using MOO "
+        f"sensitivity. Reason: {best_frag}. Failing: {', '.join(failing)}."
+    )
+    return selected, rationale
+
+
 def design_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     """Apply an optimization strategy to fix failing PPA constraints.
 
@@ -146,19 +280,16 @@ def design_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
             "already_tried": already_tried,
         }
 
-    # Select best strategy: prefer highest power reduction for power failures
-    if "power" in failing:
-        applicable.sort(key=lambda s: s["power_reduction_factor"], reverse=True)
-    elif "latency" in failing:
-        applicable.sort(key=lambda s: s["latency_reduction_factor"], reverse=True)
-    else:
-        applicable.sort(key=lambda s: s["power_reduction_factor"], reverse=True)
-
-    selected = applicable[0]
+    # Select best strategy. When MOO has run and produced sensitivity data,
+    # use it to pick the strategy that targets the highest-impact variable
+    # for the failing constraint (issue #25). Otherwise fall back to the
+    # greedy reduction-factor heuristic (backward compatible).
+    selected, selection_rationale = _select_strategy_with_moo(applicable, failing, state)
     logger.info(
-        "Optimizer selected strategy '%s' for failing constraints %s",
+        "Optimizer selected strategy '%s' for failing constraints %s — %s",
         selected["name"],
         failing,
+        selection_rationale,
     )
 
     # Apply strategy
@@ -182,6 +313,12 @@ def design_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     )
     state_updates["working_memory"] = store.model_dump()
 
+    # Surface the selection rationale on the state so the optimization
+    # review snapshot picks it up (issue #25). This replaces the generic
+    # rationale built in build_optimization_review_snapshot when MOO data
+    # is the actual driver of the choice.
+    state_updates["last_strategy_rationale"] = selection_rationale
+
     return {
         "summary": f"Applied optimization: {selected['description']}",
         "strategy": selected["name"],
@@ -189,6 +326,7 @@ def design_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         "failing_constraints": failing,
         "power_reduction_factor": selected["power_reduction_factor"],
         "latency_reduction_factor": selected["latency_reduction_factor"],
+        "selection_rationale": selection_rationale,
         "_state_updates": state_updates,
     }
 
