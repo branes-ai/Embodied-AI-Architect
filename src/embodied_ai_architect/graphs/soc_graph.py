@@ -120,6 +120,18 @@ def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[SoCDesignState], di
                     "design_rationale", state.get("design_rationale", [])
                 ),
                 "working_memory": result.get("working_memory", state.get("working_memory", {})),
+                # Issue #27: forward MOO outputs (moo_explorer / swap_explorer)
+                # so the LangGraph outer state retains them. Without these keys
+                # the runner state ends up with empty pareto_points even though
+                # moo_explorer ran successfully inside the inner dispatcher.
+                "pareto_points": result.get("pareto_points", state.get("pareto_points", [])),
+                "pareto_results": result.get("pareto_results", state.get("pareto_results", {})),
+                "pareto_frontier_history": result.get(
+                    "pareto_frontier_history", state.get("pareto_frontier_history", [])
+                ),
+                "moo_results": result.get("moo_results", state.get("moo_results", {})),
+                "swap_results": result.get("swap_results", state.get("swap_results", {})),
+                "system_bom": result.get("system_bom", state.get("system_bom", {})),
                 "status": DesignStatus.OPTIMIZING.value,
             }
 
