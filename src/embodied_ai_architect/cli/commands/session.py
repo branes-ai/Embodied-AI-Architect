@@ -146,6 +146,30 @@ def session_show(ctx, session_id, latest, json_out):
             console.print(f"  {name:<12} margin: {margin_str:>8}  {verdict:<6}  {trend}")
         console.print()
 
+    # MOO summary (issue #27): show that multi-objective optimization ran and
+    # what it produced, so the architect can see at a glance whether the Pareto
+    # frontier is populated without dropping into the API or --json.
+    moo_results = state.get("moo_results", {})
+    pareto_points = state.get("pareto_points", [])
+    if moo_results or pareto_points:
+        console.print("[bold]MOO Summary[/bold]")
+        total_evals = moo_results.get("total_evaluations", 0)
+        hv = moo_results.get("hypervolume")
+        layers = moo_results.get("layers_used", [])
+        front_size = (
+            opt_snap.get("pareto_front_size")
+            if opt_snap
+            else len(moo_results.get("pareto_front", []))
+        )
+        console.print(f"  Pareto front:    {front_size or 0} non-dominated designs")
+        console.print(f"  Accumulated:     {len(pareto_points)} points (across iterations)")
+        console.print(f"  Total evals:     {total_evals}")
+        if hv is not None:
+            console.print(f"  Hypervolume:     {hv:.3f}")
+        if layers:
+            console.print(f"  Layers used:     {', '.join(layers)}")
+        console.print()
+
     # Design rationale
     rationale = state.get("design_rationale", [])
     if rationale:

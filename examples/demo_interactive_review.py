@@ -257,6 +257,25 @@ def demo_execute(state: dict) -> dict:
                     print(f"         -> {summary}")
 
     print(f"\n  Pipeline completed in {step} steps")
+
+    # Issue #27: surface the MOO frontier discovered by moo_explorer so the
+    # architect can see what the joint design space exploration produced
+    # before the human-steered optimization loop kicks in.
+    moo_results = state.get("moo_results", {}) or {}
+    pareto_points = state.get("pareto_points", []) or []
+    if moo_results or pareto_points:
+        print()
+        print("  MOO frontier discovered by moo_explorer:")
+        print(f"    Pareto front:   {len(moo_results.get('pareto_front', []))} new designs")
+        print(f"    Accumulated:    {len(pareto_points)} points")
+        print(f"    Total evals:    {moo_results.get('total_evaluations', 0)}")
+        hv = moo_results.get("hypervolume")
+        if hv is not None:
+            print(f"    Hypervolume:    {hv:.3f}")
+        layers = moo_results.get("layers_used", [])
+        if layers:
+            print(f"    Layers used:    {', '.join(layers)}")
+
     return state
 
 

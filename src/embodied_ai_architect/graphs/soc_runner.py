@@ -68,6 +68,7 @@ class SoCDesignRunner:
         recursion_limit: int = 50,
         human_review: bool = False,
         optimization_review: bool = False,
+        session_dir: Optional[str] = None,
     ) -> None:
         """Initialize the runner.
 
@@ -80,6 +81,8 @@ class SoCDesignRunner:
             recursion_limit: LangGraph recursion limit for the graph.
             human_review: Enable plan review node (interrupt before dispatch).
             optimization_review: Enable optimization transparency in evaluate node.
+            session_dir: Override session storage directory (for tests/isolation).
+                None uses the default user-level session dir.
         """
         self._static_plan = static_plan
         self._llm = llm
@@ -93,7 +96,7 @@ class SoCDesignRunner:
         self._state_history: list[dict[str, Any]] = []
         self._current_state: Optional[dict[str, Any]] = None
         self._config: dict[str, Any] = {}
-        self._session_store = SessionStore()
+        self._session_store = SessionStore(session_dir=session_dir)
 
     def _build_graph(self) -> Any:
         """Build and compile the LangGraph StateGraph."""

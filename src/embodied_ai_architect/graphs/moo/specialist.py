@@ -172,13 +172,18 @@ def moo_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         constraint_bounds=ds.constraint_bounds,
     )
 
-    # Configure based on fast_mode
+    # Configure based on fast_mode. fast_mode skips the expensive Bayesian
+    # layer (~minutes per run on CI) and uses a moderate MAP-Elites budget.
+    # The original 704-eval budget was too sparse for the 17-variable SoC
+    # design space — tests would find 0 feasible designs. ~3000 evals is the
+    # sweet spot: still ~5x faster than full mode, but reliably finds the
+    # feasible region for AMR-class constraints.
     fast_mode = (task.metadata or {}).get("fast_mode", False)
     if fast_mode:
         me_config = MAPElitesConfig(
-            n_iterations=20,
-            batch_size=32,
-            initial_population=64,
+            n_iterations=50,
+            batch_size=48,
+            initial_population=128,
         )
         config = OptimizationConfig(
             layers="map_elites",
@@ -301,13 +306,18 @@ def swap_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
         thermal_config=thermal_config or None,
     )
 
-    # Configure based on fast_mode
+    # Configure based on fast_mode. fast_mode skips the expensive Bayesian
+    # layer (~minutes per run on CI) and uses a moderate MAP-Elites budget.
+    # The original 704-eval budget was too sparse for the 17-variable SoC
+    # design space — tests would find 0 feasible designs. ~3000 evals is the
+    # sweet spot: still ~5x faster than full mode, but reliably finds the
+    # feasible region for AMR-class constraints.
     fast_mode = (task.metadata or {}).get("fast_mode", False)
     if fast_mode:
         me_config = MAPElitesConfig(
-            n_iterations=20,
-            batch_size=32,
-            initial_population=64,
+            n_iterations=50,
+            batch_size=48,
+            initial_population=128,
         )
         config = OptimizationConfig(
             layers="map_elites",
