@@ -77,19 +77,26 @@ INTEGRATION_USE_CASE = "warehouse_amr"
 INTEGRATION_PLATFORM = "amr"
 
 
-@pytest.fixture
-def session_dir(tmp_path):
-    """Isolated session directory so the runner doesn't pollute real sessions."""
-    return str(tmp_path)
+@pytest.fixture(scope="module")
+def session_dir(tmp_path_factory):
+    """Module-scoped isolated session directory.
+
+    Module-scoped (not function-scoped) so the expensive `moo_run_state`
+    fixture only runs the full pipeline once per module. tmp_path_factory
+    is the module-safe equivalent of pytest's per-test tmp_path fixture.
+    """
+    return str(tmp_path_factory.mktemp("moo_integration_sessions"))
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def moo_run_state(session_dir):
-    """Run the full MOO pipeline once and return the final state.
+    """Run the full MOO pipeline ONCE per module and share the result.
 
-    Marked module-scoped via the function — but pytest fixtures default to
-    function scope, so each test that uses this gets a fresh run. The runs are
-    cheap (~5s) thanks to fast_mode in the moo_explorer task metadata.
+    The full pipeline (planner → dispatch → moo_explorer → ppa_assessor →
+    critic → report) costs ~5-10s locally and significantly more on CI
+    runners. Module-scoping cuts the integration suite from ~60s → ~10s
+    by sharing one fully-executed final state across every test that just
+    inspects the result.
     """
     runner = SoCDesignRunner(
         static_plan=PLAN_WITH_MOO,
