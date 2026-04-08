@@ -216,25 +216,26 @@ def _build_router():
         opt_snap = state.get("optimization_review_snapshot", {}) or {}
         snap_fp = opt_snap.get("kpu_floorplan")
         snap_bw = opt_snap.get("kpu_bandwidth")
-        if snap_fp is not None or snap_bw is not None:
-            return KPUSlacknessResponse(floorplan=snap_fp, bandwidth=snap_bw)
 
-        # Fall back to extracting from state directly
+        # Per-field fallback (CodeRabbit PR #80): a session may have one
+        # cached half but not the other. Use the snapshot value when present,
+        # otherwise extract from raw state for that side only.
         try:
             from embodied_ai_architect.graphs.optimization_review import (
                 extract_kpu_bandwidth_slackness,
                 extract_kpu_floorplan_slackness,
             )
 
-            fp = extract_kpu_floorplan_slackness(state)
-            bw = extract_kpu_bandwidth_slackness(state)
-            return KPUSlacknessResponse(
-                floorplan=fp.model_dump() if fp else None,
-                bandwidth=bw.model_dump() if bw else None,
-            )
+            if snap_fp is None:
+                fp = extract_kpu_floorplan_slackness(state)
+                snap_fp = fp.model_dump() if fp else None
+            if snap_bw is None:
+                bw = extract_kpu_bandwidth_slackness(state)
+                snap_bw = bw.model_dump() if bw else None
         except (KeyError, TypeError, ValueError) as exc:
             logger.warning("Failed to extract KPU slackness for session %s: %s", session_id, exc)
-            return KPUSlacknessResponse()
+
+        return KPUSlacknessResponse(floorplan=snap_fp, bandwidth=snap_bw)
 
     @router.get("/sessions/{session_id}/trajectory", response_model=list[TrajectoryEntry])
     async def get_trajectory(session_id: str, request: Request) -> list[TrajectoryEntry]:

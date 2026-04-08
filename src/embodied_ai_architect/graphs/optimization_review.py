@@ -517,11 +517,16 @@ def normalize_sensitivity(
 # ---------------------------------------------------------------------------
 
 
-def _bandwidth_link_status(utilization_pct: float, bottleneck: bool) -> str:
-    """Classify a bandwidth link as OK / TIGHT / BOTTLENECK for issue #30."""
-    if bottleneck or utilization_pct >= 100.0:
+def _bandwidth_link_status(utilization_frac: float, bottleneck: bool) -> str:
+    """Classify a bandwidth link as OK / TIGHT / BOTTLENECK for issue #30.
+
+    Takes the raw utilization fraction (0.0–1.0+) so the threshold check
+    isn't perturbed by display rounding — a 0.8496 link must classify as
+    OK even though it rounds to 85.0%.
+    """
+    if bottleneck or utilization_frac >= 1.0:
         return "BOTTLENECK"
-    if utilization_pct >= 85.0:
+    if utilization_frac >= 0.85:
         return "TIGHT"
     return "OK"
 
@@ -540,18 +545,25 @@ def extract_kpu_floorplan_slackness(
 
     ct = fp.get("compute_tile") or {}
     mt = fp.get("memory_tile") or {}
-    total_area = float(fp.get("total_area_mm2", 0.0) or 0.0)
-    max_area = float(fp.get("max_die_area_mm2", 0.0) or 0.0)
+
+    # Use a small _coerce helper instead of `... or default` so explicit
+    # zero values from the validator are not silently rewritten to the
+    # fallback (CodeRabbit PR #80).
+    def _f(value: Any, default: float) -> float:
+        return float(value) if value is not None else float(default)
+
+    total_area = _f(fp.get("total_area_mm2"), 0.0)
+    max_area = _f(fp.get("max_die_area_mm2"), 0.0)
     area_util_pct = round(total_area / max_area * 100, 1) if max_area > 0 else 0.0
 
     return KPUFloorplanSlackness(
-        compute_tile_width_mm=float(ct.get("width_mm", 0.0) or 0.0),
-        compute_tile_height_mm=float(ct.get("height_mm", 0.0) or 0.0),
-        memory_tile_width_mm=float(mt.get("width_mm", 0.0) or 0.0),
-        memory_tile_height_mm=float(mt.get("height_mm", 0.0) or 0.0),
-        pitch_ratio_width=float(fp.get("pitch_ratio_width", 1.0) or 1.0),
-        pitch_ratio_height=float(fp.get("pitch_ratio_height", 1.0) or 1.0),
-        pitch_tolerance=float(fp.get("pitch_tolerance", 0.15) or 0.15),
+        compute_tile_width_mm=_f(ct.get("width_mm"), 0.0),
+        compute_tile_height_mm=_f(ct.get("height_mm"), 0.0),
+        memory_tile_width_mm=_f(mt.get("width_mm"), 0.0),
+        memory_tile_height_mm=_f(mt.get("height_mm"), 0.0),
+        pitch_ratio_width=_f(fp.get("pitch_ratio_width"), 1.0),
+        pitch_ratio_height=_f(fp.get("pitch_ratio_height"), 1.0),
+        pitch_tolerance=_f(fp.get("pitch_tolerance"), 0.15),
         pitch_matched=bool(fp.get("pitch_matched", True)),
         total_area_mm2=total_area,
         max_die_area_mm2=max_area,
@@ -589,7 +601,10 @@ def extract_kpu_bandwidth_slackness(
                 available_gbps=float(raw.get("available_gbps", 0.0) or 0.0),
                 utilization_pct=utilization_pct,
                 bottleneck=bottleneck,
-                status=_bandwidth_link_status(utilization_pct, bottleneck),
+                # Classify from the unrounded fraction so a link at
+                # 0.8496 stays OK instead of flipping to TIGHT after
+                # display rounding (CodeRabbit PR #80).
+                status=_bandwidth_link_status(utilization_frac, bottleneck),
             )
         )
 

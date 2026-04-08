@@ -511,6 +511,52 @@ class TestKPUSlackness:
     def test_404(self, client):
         assert client.get("/api/sessions/soc_nope/kpu-slackness").status_code == 404
 
+    def test_mixed_cached_and_raw_fallback(self, session_dir, rich_state):
+        """CodeRabbit PR #80: per-field fallback when only one half is cached.
+
+        Build a session whose optimization_review_snapshot caches only the
+        floorplan, while bandwidth lives only in the raw state. The endpoint
+        must return BOTH halves.
+        """
+        from embodied_ai_architect.api.server import create_app
+        from embodied_ai_architect.graphs.session_store import SessionStore
+
+        # Create a fresh state with cached snapshot.kpu_floorplan but no
+        # cached snapshot.kpu_bandwidth — bandwidth should come from raw state.
+        store = SessionStore(session_dir=session_dir)
+        state = store.load("soc_testapi")
+        cached_floorplan = {
+            "compute_tile_width_mm": 2.5,
+            "compute_tile_height_mm": 2.5,
+            "memory_tile_width_mm": 2.5,
+            "memory_tile_height_mm": 2.5,
+            "pitch_ratio_width": 1.0,
+            "pitch_ratio_height": 1.0,
+            "pitch_tolerance": 0.15,
+            "pitch_matched": True,
+            "total_area_mm2": 50.0,
+            "max_die_area_mm2": 100.0,
+            "area_utilization_pct": 50.0,
+            "feasible": True,
+            "issues": [],
+        }
+        state["optimization_review_snapshot"] = {
+            "kpu_floorplan": cached_floorplan,
+            # NOTE: no kpu_bandwidth — must fall back to bandwidth_match
+        }
+        state["session_id"] = "soc_mixed"
+        store.save(state)
+
+        app = create_app(session_dir=str(session_dir))
+        client = TestClient(app)
+
+        data = client.get("/api/sessions/soc_mixed/kpu-slackness").json()
+        # Cached half came through verbatim
+        assert data["floorplan"]["compute_tile_width_mm"] == 2.5
+        # Uncached half was extracted from raw bandwidth_match
+        assert data["bandwidth"] is not None
+        assert len(data["bandwidth"]["links"]) == 2
+
 
 # ---------------------------------------------------------------------------
 # Sensitivity (issue #24)

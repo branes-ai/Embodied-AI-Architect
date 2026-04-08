@@ -584,6 +584,53 @@ class TestSnapshotIncludesKPUSlackness:
         assert snap.kpu_bandwidth is None
 
 
+class TestKPURegressionsCodeRabbitPR80:
+    """Regression tests for the three CodeRabbit findings on PR #80."""
+
+    def test_status_uses_unrounded_fraction(self):
+        """A 0.8496 link must stay OK — rounding to 85.0% must not flip TIGHT."""
+        state = _make_state()
+        bw_dict = _make_bandwidth_match()
+        # Replace one link with a value that crosses the rounding boundary
+        bw_dict["links"][2]["utilization"] = 0.8496
+        bw_dict["links"][2]["bottleneck"] = False
+        state["bandwidth_match"] = bw_dict
+        bw = extract_kpu_bandwidth_slackness(state)
+        link = bw.links[2]
+        # Display percentage rounds to 85.0 ...
+        assert link.utilization_pct == 85.0
+        # ... but the classifier saw the raw 0.8496 and kept OK
+        assert link.status == "OK"
+
+    def test_status_at_exact_threshold(self):
+        """0.85 exactly → TIGHT, 1.0 exactly → BOTTLENECK."""
+        state = _make_state()
+        bw_dict = _make_bandwidth_match()
+        bw_dict["links"][2]["utilization"] = 0.85
+        bw_dict["links"][2]["bottleneck"] = False
+        state["bandwidth_match"] = bw_dict
+        bw = extract_kpu_bandwidth_slackness(state)
+        assert bw.links[2].status == "TIGHT"
+
+        bw_dict["links"][2]["utilization"] = 1.0
+        state["bandwidth_match"] = bw_dict
+        bw = extract_kpu_bandwidth_slackness(state)
+        assert bw.links[2].status == "BOTTLENECK"
+
+    def test_pitch_zero_preserved(self):
+        """Explicit 0.0 pitch ratios from the validator must not be rewritten."""
+        state = _make_state()
+        fp = _make_floorplan_estimate()
+        fp["pitch_ratio_width"] = 0.0  # degenerate case the validator can produce
+        fp["pitch_ratio_height"] = 0.0
+        fp["pitch_tolerance"] = 0.0
+        state["floorplan_estimate"] = fp
+        out = extract_kpu_floorplan_slackness(state)
+        assert out.pitch_ratio_width == 0.0
+        assert out.pitch_ratio_height == 0.0
+        assert out.pitch_tolerance == 0.0
+
+
 class TestRenderKPUSections:
     def test_renders_bandwidth_chain(self):
         state = _make_state()
