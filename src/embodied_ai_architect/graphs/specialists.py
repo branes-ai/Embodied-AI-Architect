@@ -1507,6 +1507,7 @@ def create_default_dispatcher() -> Dispatcher:
         floorplan_validator,
         kpu_configurator,
         kpu_optimizer,
+        rtl_area_feedback,
     )
     from embodied_ai_architect.graphs.rtl_specialists import (
         rtl_generator,
@@ -1534,6 +1535,7 @@ def create_default_dispatcher() -> Dispatcher:
         # RTL specialists
         "rtl_generator": rtl_generator,
         "rtl_ppa_assessor": rtl_ppa_assessor,
+        "rtl_area_feedback": rtl_area_feedback,
         # Phase 4 specialists
         "design_explorer": design_explorer,
         "safety_detector": safety_detector,

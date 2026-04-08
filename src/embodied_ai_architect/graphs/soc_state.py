@@ -283,6 +283,7 @@ class SoCDesignState(TypedDict, total=False):
     rtl_optimization_history: list[dict]  # RTL optimization snapshots
     rtl_process_nm: int  # Target process node for RTL
     rtl_enabled: bool  # Enables KPU config + floorplan + bandwidth + RTL
+    rtl_area_feedback: bool  # Issue #31: re-size KPU when synthesis area > floorplan
     enable_moo: bool  # Enables moo_explorer task in default plan
 
     # === Evaluation ===
@@ -338,6 +339,7 @@ def create_initial_soc_state(
     session_id: Optional[str] = None,
     governance: Optional[dict] = None,
     rtl_enabled: bool = False,
+    rtl_area_feedback: bool = False,
     enable_moo: bool = True,
 ) -> SoCDesignState:
     """Create initial state for a new SoC design session.
@@ -390,6 +392,7 @@ def create_initial_soc_state(
         rtl_optimization_history=[],
         rtl_process_nm=constraints.target_process_nm or 28 if constraints else 28,
         rtl_enabled=rtl_enabled,
+        rtl_area_feedback=rtl_area_feedback,
         enable_moo=enable_moo,
         # Evaluation
         ppa_metrics={},
