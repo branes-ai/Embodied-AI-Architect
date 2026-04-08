@@ -26,6 +26,7 @@ from starlette.responses import StreamingResponse
 from embodied_ai_architect.api.schemas import (
     ConstraintSlackness,
     HealthResponse,
+    KPUResponse,
     KPUSlacknessResponse,
     OperatorBreakdown,
     ParetoResponse,
@@ -236,6 +237,42 @@ def _build_router():
             logger.warning("Failed to extract KPU slackness for session %s: %s", session_id, exc)
 
         return KPUSlacknessResponse(floorplan=snap_fp, bandwidth=snap_bw)
+
+    @router.get("/sessions/{session_id}/kpu", response_model=KPUResponse)
+    async def get_kpu(session_id: str, request: Request) -> KPUResponse:
+        """Get the full KPU snapshot for /architect-drill (issue #33).
+
+        Returns the raw `kpu_config` (the architect's design knobs) plus
+        the derived floorplan and bandwidth slackness from issue #30.
+        Each field is None when the inner KPU loop did not run (typically
+        because rtl_enabled=False on the design state).
+        """
+        state = _load_or_404(session_id, request)
+
+        kpu_config = state.get("kpu_config") or None
+
+        # Reuse the snapshot/state extraction path from /kpu-slackness so
+        # the two endpoints stay consistent.
+        opt_snap = state.get("optimization_review_snapshot", {}) or {}
+        snap_fp = opt_snap.get("kpu_floorplan")
+        snap_bw = opt_snap.get("kpu_bandwidth")
+
+        try:
+            from embodied_ai_architect.graphs.optimization_review import (
+                extract_kpu_bandwidth_slackness,
+                extract_kpu_floorplan_slackness,
+            )
+
+            if snap_fp is None:
+                fp = extract_kpu_floorplan_slackness(state)
+                snap_fp = fp.model_dump() if fp else None
+            if snap_bw is None:
+                bw = extract_kpu_bandwidth_slackness(state)
+                snap_bw = bw.model_dump() if bw else None
+        except (KeyError, TypeError, ValueError) as exc:
+            logger.warning("Failed to extract KPU snapshot for session %s: %s", session_id, exc)
+
+        return KPUResponse(config=kpu_config, floorplan=snap_fp, bandwidth=snap_bw)
 
     @router.get("/sessions/{session_id}/trajectory", response_model=list[TrajectoryEntry])
     async def get_trajectory(session_id: str, request: Request) -> list[TrajectoryEntry]:
