@@ -77,6 +77,58 @@ class ConstraintSlackness(BaseModel):
     )
 
 
+class KPUFloorplanSlackness(BaseModel):
+    """Floorplan slackness derived from FloorplanEstimate (issue #30).
+
+    Surfaces pitch matching, area utilization, and feasibility so the
+    architect can see whether the inner KPU loop is comfortable or
+    crammed against the die budget.
+    """
+
+    compute_tile_width_mm: float = 0.0
+    compute_tile_height_mm: float = 0.0
+    memory_tile_width_mm: float = 0.0
+    memory_tile_height_mm: float = 0.0
+    pitch_ratio_width: float = 1.0
+    pitch_ratio_height: float = 1.0
+    pitch_tolerance: float = 0.15
+    pitch_matched: bool = True
+    total_area_mm2: float = 0.0
+    max_die_area_mm2: float = 0.0
+    area_utilization_pct: float = 0.0
+    feasible: bool = True
+    issues: list[str] = Field(default_factory=list)
+
+
+class KPUBandwidthLink(BaseModel):
+    """One link in the KPU bandwidth waterfall (issue #30).
+
+    Mirrors `bandwidth.BandwidthLink` but lives in the snapshot layer so
+    the architect can render the DRAM→L3→L2→L1→compute chain without
+    pulling in the validator's internal types.
+    """
+
+    name: str
+    source: str = ""
+    sink: str = ""
+    required_gbps: float = 0.0
+    available_gbps: float = 0.0
+    utilization_pct: float = 0.0
+    bottleneck: bool = False
+    status: str = "OK"  # "OK", "TIGHT" (>85%), "BOTTLENECK" (>100%)
+
+
+class KPUBandwidthSlackness(BaseModel):
+    """Bandwidth slackness over the full KPU memory hierarchy."""
+
+    links: list[KPUBandwidthLink] = Field(default_factory=list)
+    balanced: bool = True
+    bottleneck_link: Optional[str] = None
+    peak_utilization_pct: float = 0.0
+    compute_demand_gbps: float = 0.0
+    issues: list[str] = Field(default_factory=list)
+
+
 class StrategyAnalysis(BaseModel):
     """Analysis of available and tried optimization strategies."""
 
@@ -132,6 +184,11 @@ class OptimizationReviewSnapshot(BaseModel):
 
     # MOO convergence (when available)
     moo_summary: dict[str, Any] = Field(default_factory=dict)
+
+    # KPU inner-loop slackness (issue #30) — only present when rtl_enabled
+    # produced a floorplan_estimate / bandwidth_match in state
+    kpu_floorplan: Optional[KPUFloorplanSlackness] = None
+    kpu_bandwidth: Optional[KPUBandwidthSlackness] = None
 
     # Design context
     goal: str = ""
@@ -460,6 +517,92 @@ def normalize_sensitivity(
 # ---------------------------------------------------------------------------
 
 
+def _bandwidth_link_status(utilization_pct: float, bottleneck: bool) -> str:
+    """Classify a bandwidth link as OK / TIGHT / BOTTLENECK for issue #30."""
+    if bottleneck or utilization_pct >= 100.0:
+        return "BOTTLENECK"
+    if utilization_pct >= 85.0:
+        return "TIGHT"
+    return "OK"
+
+
+def extract_kpu_floorplan_slackness(
+    state: SoCDesignState,
+) -> Optional[KPUFloorplanSlackness]:
+    """Convert state['floorplan_estimate'] into a KPUFloorplanSlackness.
+
+    Returns None when no floorplan estimate is on the state (i.e. the
+    inner KPU loop didn't run, typically because rtl_enabled=False).
+    """
+    fp = state.get("floorplan_estimate") or {}
+    if not fp:
+        return None
+
+    ct = fp.get("compute_tile") or {}
+    mt = fp.get("memory_tile") or {}
+    total_area = float(fp.get("total_area_mm2", 0.0) or 0.0)
+    max_area = float(fp.get("max_die_area_mm2", 0.0) or 0.0)
+    area_util_pct = round(total_area / max_area * 100, 1) if max_area > 0 else 0.0
+
+    return KPUFloorplanSlackness(
+        compute_tile_width_mm=float(ct.get("width_mm", 0.0) or 0.0),
+        compute_tile_height_mm=float(ct.get("height_mm", 0.0) or 0.0),
+        memory_tile_width_mm=float(mt.get("width_mm", 0.0) or 0.0),
+        memory_tile_height_mm=float(mt.get("height_mm", 0.0) or 0.0),
+        pitch_ratio_width=float(fp.get("pitch_ratio_width", 1.0) or 1.0),
+        pitch_ratio_height=float(fp.get("pitch_ratio_height", 1.0) or 1.0),
+        pitch_tolerance=float(fp.get("pitch_tolerance", 0.15) or 0.15),
+        pitch_matched=bool(fp.get("pitch_matched", True)),
+        total_area_mm2=total_area,
+        max_die_area_mm2=max_area,
+        area_utilization_pct=area_util_pct,
+        feasible=bool(fp.get("feasible", True)),
+        issues=list(fp.get("issues", []) or []),
+    )
+
+
+def extract_kpu_bandwidth_slackness(
+    state: SoCDesignState,
+) -> Optional[KPUBandwidthSlackness]:
+    """Convert state['bandwidth_match'] into a KPUBandwidthSlackness.
+
+    Returns None when no bandwidth match is on the state.
+    """
+    bw = state.get("bandwidth_match") or {}
+    if not bw:
+        return None
+
+    raw_links = bw.get("links", []) or []
+    links: list[KPUBandwidthLink] = []
+    for raw in raw_links:
+        if not isinstance(raw, dict):
+            continue
+        utilization_frac = float(raw.get("utilization", 0.0) or 0.0)
+        utilization_pct = round(utilization_frac * 100, 1)
+        bottleneck = bool(raw.get("bottleneck", False))
+        links.append(
+            KPUBandwidthLink(
+                name=str(raw.get("name", "")),
+                source=str(raw.get("source", "")),
+                sink=str(raw.get("sink", "")),
+                required_gbps=float(raw.get("required_gbps", 0.0) or 0.0),
+                available_gbps=float(raw.get("available_gbps", 0.0) or 0.0),
+                utilization_pct=utilization_pct,
+                bottleneck=bottleneck,
+                status=_bandwidth_link_status(utilization_pct, bottleneck),
+            )
+        )
+
+    return KPUBandwidthSlackness(
+        links=links,
+        balanced=bool(bw.get("balanced", True)),
+        bottleneck_link=bw.get("bottleneck_link"),
+        peak_utilization_pct=round(float(bw.get("peak_utilization", 0.0) or 0.0) * 100, 1),
+        compute_demand_gbps=float(bw.get("compute_demand_gbps", 0.0) or 0.0),
+        issues=list(bw.get("issues", []) or []),
+    )
+
+
 def build_optimization_review_snapshot(
     state: SoCDesignState,
 ) -> OptimizationReviewSnapshot:
@@ -540,6 +683,11 @@ def build_optimization_review_snapshot(
         # to {variable: {objective: float}} for the architect skills.
         sensitivity = normalize_sensitivity(moo_results.get("sensitivity"))
 
+    # KPU inner-loop slackness (issue #30) — only set when the validators
+    # have written floorplan_estimate / bandwidth_match to state.
+    kpu_floorplan = extract_kpu_floorplan_slackness(state)
+    kpu_bandwidth = extract_kpu_bandwidth_slackness(state)
+
     return OptimizationReviewSnapshot(
         iteration=state.get("iteration", 0),
         max_iterations=state.get("max_iterations", 20),
@@ -563,6 +711,8 @@ def build_optimization_review_snapshot(
         frontier_history=frontier_history,
         sensitivity=sensitivity,
         moo_summary=moo_summary,
+        kpu_floorplan=kpu_floorplan,
+        kpu_bandwidth=kpu_bandwidth,
         goal=state.get("goal", ""),
         design_rationale=state.get("design_rationale", [])[-5:],
     )
@@ -774,6 +924,67 @@ def render_optimization_review(snapshot: OptimizationReviewSnapshot) -> str:
     lines.append("")
     if snapshot.strategy_rationale:
         lines.append(f"  Rationale: {snapshot.strategy_rationale}")
+        lines.append("")
+
+    # KPU bandwidth waterfall (issue #30) — when the inner KPU loop ran
+    if snapshot.kpu_bandwidth and snapshot.kpu_bandwidth.links:
+        bw = snapshot.kpu_bandwidth
+        lines.append("─" * 72)
+        lines.append("  KPU BANDWIDTH CHAIN")
+        lines.append("─" * 72)
+        lines.append("")
+        lines.append(f"  {'Link':<18}{'Demand':>12}{'Supply':>12}{'Util':>8}  {'Status':<12}")
+        lines.append(f"  {'─' * 18}{'─' * 12:>12}{'─' * 12:>12}{'─' * 8:>8}  {'─' * 12:<12}")
+        for link in bw.links:
+            demand_str = f"{link.required_gbps:.1f} GB/s"
+            supply_str = f"{link.available_gbps:.1f} GB/s"
+            util_str = f"{link.utilization_pct:.0f}%"
+            tag = link.status
+            if link.status == "TIGHT":
+                tag = "TIGHT!"
+            elif link.status == "BOTTLENECK":
+                tag = "BOTTLENECK!"
+            lines.append(
+                f"  {link.name:<18}{demand_str:>12}{supply_str:>12}{util_str:>8}  {tag:<12}"
+            )
+        lines.append("")
+        if bw.bottleneck_link:
+            lines.append(f"  Bottleneck link: {bw.bottleneck_link}")
+            lines.append(f"  Peak utilization: {bw.peak_utilization_pct:.0f}%")
+            lines.append("")
+
+    # KPU floorplan (issue #30) — pitch matching + die area utilization
+    if snapshot.kpu_floorplan:
+        fp = snapshot.kpu_floorplan
+        lines.append("─" * 72)
+        lines.append("  KPU FLOORPLAN")
+        lines.append("─" * 72)
+        lines.append("")
+        lines.append(
+            f"  Compute tile: {fp.compute_tile_width_mm:.2f} x "
+            f"{fp.compute_tile_height_mm:.2f} mm  |  "
+            f"Memory tile: {fp.memory_tile_width_mm:.2f} x "
+            f"{fp.memory_tile_height_mm:.2f} mm"
+        )
+        pitch_verdict = "PASS" if fp.pitch_matched else "FAIL"
+        # Use the larger of the two pitch ratios for the headline
+        max_pitch = max(fp.pitch_ratio_width, fp.pitch_ratio_height)
+        lines.append(
+            f"  Pitch ratio: {max_pitch:.2f} "
+            f"(within {fp.pitch_tolerance * 100:.0f}% tolerance)  {pitch_verdict}"
+        )
+        area_verdict = "PASS" if fp.feasible else "FAIL"
+        if fp.max_die_area_mm2 > 0:
+            lines.append(
+                f"  Total die area: {fp.total_area_mm2:.1f} mm² / "
+                f"{fp.max_die_area_mm2:.0f} mm² budget  "
+                f"{fp.area_utilization_pct:.0f}%  {area_verdict}"
+            )
+        else:
+            lines.append(f"  Total die area: {fp.total_area_mm2:.1f} mm²  {area_verdict}")
+        if fp.issues:
+            for issue in fp.issues:
+                lines.append(f"  ! {issue}")
         lines.append("")
 
     # Pareto / MOO summary

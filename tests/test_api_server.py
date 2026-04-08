@@ -184,6 +184,66 @@ def _build_rich_state(session_id="soc_testapi"):
         "[optimizer] Applied quantize_int8: reduced power 20%",
     ]
 
+    # KPU inner-loop slackness inputs (issue #30) — floorplan_estimate +
+    # bandwidth_match are produced by the KPU validators when rtl_enabled.
+    # The test fixture uses pre-fabricated dicts so the API can read them.
+    state["floorplan_estimate"] = {
+        "compute_tile": {
+            "width_mm": 2.10,
+            "height_mm": 2.30,
+            "area_mm2": 4.83,
+            "sub_blocks": [],
+        },
+        "memory_tile": {
+            "width_mm": 2.00,
+            "height_mm": 2.40,
+            "area_mm2": 4.80,
+            "sub_blocks": [],
+        },
+        "pitch_matched": True,
+        "pitch_ratio_width": 1.05,
+        "pitch_ratio_height": 0.96,
+        "pitch_tolerance": 0.15,
+        "array_width_mm": 6.30,
+        "array_height_mm": 6.90,
+        "core_area_mm2": 43.5,
+        "periphery_area_mm2": 4.7,
+        "total_area_mm2": 48.2,
+        "die_edge_mm": 7.0,
+        "feasible": True,
+        "max_die_area_mm2": 100.0,
+        "issues": [],
+    }
+    state["bandwidth_match"] = {
+        "links": [
+            {
+                "name": "DRAM -> L3",
+                "source": "dram",
+                "sink": "l3",
+                "available_gbps": 25.6,
+                "required_gbps": 12.8,
+                "utilization": 0.50,
+                "bottleneck": False,
+            },
+            {
+                "name": "L2 -> L1",
+                "source": "l2",
+                "sink": "l1",
+                "available_gbps": 4.8,
+                "required_gbps": 4.5,
+                "utilization": 0.94,
+                "bottleneck": False,
+            },
+        ],
+        "balanced": True,
+        "bottleneck_link": None,
+        "peak_utilization": 0.94,
+        "ingress_gbps": 12.8,
+        "egress_gbps": 1.4,
+        "compute_demand_gbps": 12.8,
+        "issues": [],
+    }
+
     return state
 
 
@@ -403,6 +463,53 @@ class TestSlackness:
 
     def test_slackness_404(self, client):
         assert client.get("/api/sessions/soc_nope/slackness").status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# KPU slackness (issue #30)
+# ---------------------------------------------------------------------------
+
+
+class TestKPUSlackness:
+    def test_endpoint_returns_200(self, client):
+        resp = client.get("/api/sessions/soc_testapi/kpu-slackness")
+        assert resp.status_code == 200
+
+    def test_response_has_floorplan_and_bandwidth(self, client):
+        data = client.get("/api/sessions/soc_testapi/kpu-slackness").json()
+        assert "floorplan" in data
+        assert "bandwidth" in data
+        assert data["floorplan"] is not None
+        assert data["bandwidth"] is not None
+
+    def test_floorplan_fields(self, client):
+        data = client.get("/api/sessions/soc_testapi/kpu-slackness").json()
+        fp = data["floorplan"]
+        assert fp["compute_tile_width_mm"] == 2.10
+        assert fp["memory_tile_width_mm"] == 2.00
+        assert fp["pitch_matched"] is True
+        assert fp["feasible"] is True
+        assert fp["total_area_mm2"] == 48.2
+        assert fp["max_die_area_mm2"] == 100.0
+        assert fp["area_utilization_pct"] == 48.2
+
+    def test_bandwidth_links_classified(self, client):
+        data = client.get("/api/sessions/soc_testapi/kpu-slackness").json()
+        bw = data["bandwidth"]
+        assert bw["balanced"] is True
+        assert len(bw["links"]) == 2
+        statuses = {link["name"]: link["status"] for link in bw["links"]}
+        assert statuses["DRAM -> L3"] == "OK"
+        assert statuses["L2 -> L1"] == "TIGHT"  # 94% utilization
+
+    def test_returns_null_when_no_kpu_state(self, client_with_both):
+        """Minimal session has no floorplan/bandwidth → both fields None."""
+        data = client_with_both.get("/api/sessions/soc_minimal/kpu-slackness").json()
+        assert data["floorplan"] is None
+        assert data["bandwidth"] is None
+
+    def test_404(self, client):
+        assert client.get("/api/sessions/soc_nope/kpu-slackness").status_code == 404
 
 
 # ---------------------------------------------------------------------------
