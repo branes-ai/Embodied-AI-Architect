@@ -47,13 +47,26 @@ created alongside this doc) tracks the work to fix it.
 
 ### Catalog entries
 
+**Important naming note**: `KPUMicroArchConfig` has *two* sets of `array_rows` /
+`array_cols` fields that are easy to confuse:
+
+- `kpu_config.compute_tile.array_rows` / `array_cols` — the **systolic array
+  dimensions** *inside* a single compute tile (e.g. a 16×16 MAC grid)
+- `kpu_config.array_rows` / `array_cols` — the **compute-tile grid
+  dimensions** of the checkerboard at the top level (e.g. a 3×3 grid of
+  compute + memory tiles)
+
+The two strategies below address different things despite the field-name
+collision: `reduce_systolic_array` shrinks the inner MAC grid;
+`reduce_compute_tiles` shrinks the outer tile grid.
+
 | Strategy | `applies_to` | `applicable_when` | What it mutates |
 |---|---|---|---|
-| `reduce_systolic_array` | `kpu_config` | area, power | `compute_tile.array_rows -= 4`, `compute_tile.array_cols -= 4` (floor 4) |
+| `reduce_systolic_array` | `kpu_config` | area, power | `compute_tile.array_rows -= 4`, `compute_tile.array_cols -= 4` (floor 4) — shrinks the **MAC grid inside each compute tile** |
 | `upgrade_dram_technology` | `kpu_config` | latency | walks `dram.technology` through `LPDDR4X → LPDDR5 → HBM2E` and bumps `dram.bandwidth_per_channel_gbps` accordingly |
 | `add_sram_banks` | `kpu_config` | latency | `compute_tile.l2_num_banks += 2`, `memory_tile.l3_num_banks += 1` |
 | `widen_noc` | `kpu_config` | latency | `noc.link_width_bits *= 2` (cap 1024) |
-| `reduce_compute_tiles` | `kpu_config` | area, power | drop `array_rows -= 1`, fall back to `array_cols -= 1` |
+| `reduce_compute_tiles` | `kpu_config` | area, power | drop `kpu_config.array_rows -= 1` (top-level grid), fall back to `kpu_config.array_cols -= 1` — shrinks the **number of compute tiles in the checkerboard**, not the inner systolic array |
 | `clock_scale_kpu` | `kpu_config` | power | `compute_tile.frequency_mhz *= 0.8` (floor 100 MHz) |
 
 ### Plumbing

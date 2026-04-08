@@ -172,12 +172,15 @@ STRATEGY_VARIABLE_MAP: dict[str, str | None] = {
     "clock_scaling": "clock_mhz",  # directly targets clock_mhz in MOO space
     "shrink_process_node": "process_nm",  # targets process_nm
     "grow_process_node": "process_nm",  # targets process_nm
-    # KPU micro-architecture strategies (issue #32). Tie each to the
-    # closest MOO design space variable when one exists, so the MOO-aware
-    # selector can boost it via per-variable sensitivity.
-    "reduce_systolic_array": "systolic_array_size",
-    "upgrade_dram_technology": "dram_bandwidth_gbps",
-    "add_sram_banks": "sram_size_kb",
+    # KPU micro-architecture strategies (issue #32). Tie each to a real
+    # MOO design space variable from moo/design_space.py so the MOO-aware
+    # selector (issue #25) can boost via BO sensitivity. Strategies whose
+    # natural variable doesn't yet exist in the design space (DRAM tech,
+    # SRAM bank count) are mapped to None so they don't accidentally tie
+    # to a non-existent variable. The redesign in epic #83 will revisit.
+    "reduce_systolic_array": "array_rows",  # also affects array_cols
+    "upgrade_dram_technology": None,  # no dram_tech variable in MOO yet
+    "add_sram_banks": "sram_kb",  # closest existing variable
     "widen_noc": "noc_link_width_bits",
     "reduce_compute_tiles": "num_compute_tiles",
     "clock_scale_kpu": "clock_mhz",
@@ -340,8 +343,14 @@ def design_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     for strat in OPTIMIZATION_STRATEGIES:
         if strat["name"] in already_tried:
             continue
-        if strat.get("applies_to") == "kpu_config" and not has_kpu_config:
-            continue
+        if strat.get("applies_to") == "kpu_config":
+            if not has_kpu_config:
+                continue
+            # Skip KPU strategies that can't actually change anything in
+            # the current config (already at the floor / ceiling) so the
+            # optimizer doesn't pick a no-op (CodeRabbit PR #82).
+            if not _kpu_strategy_is_feasible(strat["name"], state):
+                continue
         if any(f in strat["applicable_when"] for f in failing):
             applicable.append(strat)
 
@@ -368,6 +377,28 @@ def design_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
 
     # Apply strategy
     state_updates = _apply_strategy(selected, state)
+
+    # CodeRabbit PR #82: an empty state_updates dict means the strategy was
+    # filter-feasible but turned into a no-op at apply time (rare — the
+    # filter should catch most cases via _kpu_strategy_is_feasible).
+    # Record it as tried so we don't pick it again, and report applied=False.
+    if not state_updates:
+        wm_data2 = state.get("working_memory", {})
+        store2 = WorkingMemoryStore(**wm_data2) if wm_data2 else WorkingMemoryStore()
+        store2.record_attempt(
+            agent_name="design_optimizer",
+            description=selected["name"],
+            outcome=f"No-op at iteration {state.get('iteration', 0)}",
+            iteration=state.get("iteration", 0),
+        )
+        return {
+            "summary": f"Strategy '{selected['name']}' was a no-op (floor/ceiling reached)",
+            "strategy": selected["name"],
+            "applied": False,
+            "failing_constraints": failing,
+            "selection_rationale": selection_rationale,
+            "_state_updates": {"working_memory": store2.model_dump()},
+        }
 
     # Record attempt in working memory — use dynamic name for process strategies
     # so the optimizer can apply them multiple times (e.g. 28nm -> 22nm -> 16nm)
@@ -424,6 +455,40 @@ def _next_dram_step(current_tech: str) -> tuple[str, float] | None:
         if tech == current_tech and i + 1 < len(_DRAM_UPGRADE_CHAIN):
             return _DRAM_UPGRADE_CHAIN[i + 1]
     return None
+
+
+def _kpu_strategy_is_feasible(strategy_name: str, state: SoCDesignState) -> bool:
+    """Predicate: can this KPU strategy actually mutate the current kpu_config?
+
+    Used by the optimizer's filter step (CodeRabbit PR #82) so we never pick
+    a strategy that would no-op against the current state — for example,
+    upgrade_dram_technology when we're already at HBM2E, or
+    reduce_systolic_array when the array is at the floor.
+    """
+    kpu_dict = state.get("kpu_config") or {}
+    if not kpu_dict:
+        return False
+
+    ct = kpu_dict.get("compute_tile", {}) or {}
+    dram = kpu_dict.get("dram", {}) or {}
+    noc = kpu_dict.get("noc", {}) or {}
+
+    if strategy_name == "reduce_systolic_array":
+        return int(ct.get("array_rows", 0)) > 4 or int(ct.get("array_cols", 0)) > 4
+    if strategy_name == "upgrade_dram_technology":
+        return _next_dram_step(str(dram.get("technology", ""))) is not None
+    if strategy_name == "add_sram_banks":
+        # Always feasible (no upper bound enforced today)
+        return True
+    if strategy_name == "widen_noc":
+        return int(noc.get("link_width_bits", 0)) < 1024
+    if strategy_name == "reduce_compute_tiles":
+        return int(kpu_dict.get("array_rows", 0)) > 2 or int(kpu_dict.get("array_cols", 0)) > 2
+    if strategy_name == "clock_scale_kpu":
+        return float(ct.get("frequency_mhz", 0.0)) > 100.0
+
+    # Unknown KPU strategy: assume feasible, defer to apply-time check
+    return True
 
 
 def _apply_kpu_strategy(
@@ -569,6 +634,13 @@ def _apply_strategy(strategy: dict[str, Any], state: SoCDesignState) -> dict[str
         # stale floorplan/bandwidth so the next dispatch iteration re-runs
         # the validators against the new config.
         kpu_updates = _apply_kpu_strategy(strategy, state)
+        if not kpu_updates:
+            # CodeRabbit PR #82: a no-op KPU strategy (e.g. floor reached)
+            # must NOT propagate the static reduction factors to ppa_metrics,
+            # otherwise we'd record an "applied" strategy that didn't actually
+            # mutate kpu_config. Return empty so design_optimizer can handle
+            # the no-op explicitly.
+            return {}
         updates.update(kpu_updates)
 
     # Adjust PPA estimates based on reduction factors

@@ -399,7 +399,7 @@ class TestKPUStrategies:
         "clock_scale_kpu",
     }
 
-    def _make_kpu_state(self, failing="area"):
+    def _make_kpu_state(self, failing: str = "area") -> dict:
         """State with a populated kpu_config and a failing constraint."""
         from embodied_ai_architect.graphs.kpu_config import KPU_PRESETS
 
@@ -439,18 +439,18 @@ class TestKPUStrategies:
 
     # --- Catalog wiring ---
 
-    def test_catalog_includes_six_kpu_strategies(self):
+    def test_catalog_includes_six_kpu_strategies(self) -> None:
         names = {s["name"] for s in OPTIMIZATION_STRATEGIES}
         assert self.KPU_STRATEGY_NAMES <= names
 
-    def test_kpu_strategies_target_kpu_config(self):
+    def test_kpu_strategies_target_kpu_config(self) -> None:
         for s in OPTIMIZATION_STRATEGIES:
             if s["name"] in self.KPU_STRATEGY_NAMES:
                 assert s["applies_to"] == "kpu_config"
 
     # --- Filter gating ---
 
-    def test_kpu_strategies_filtered_when_no_kpu_config(self):
+    def test_kpu_strategies_filtered_when_no_kpu_config(self) -> None:
         """On non-RTL pipelines (no kpu_config), KPU strategies must not appear."""
         state = create_initial_soc_state(
             goal="Design SoC",
@@ -466,7 +466,7 @@ class TestKPUStrategies:
         # The selected strategy must NOT be a KPU one
         assert result["strategy"] not in self.KPU_STRATEGY_NAMES
 
-    def test_kpu_strategies_available_when_kpu_config_present(self):
+    def test_kpu_strategies_available_when_kpu_config_present(self) -> None:
         """When kpu_config is present and area fails, optimizer can pick a KPU strategy."""
         state = self._make_kpu_state(failing="area")
         result = design_optimizer(_make_task(), state)
@@ -477,7 +477,7 @@ class TestKPUStrategies:
 
     # --- Per-strategy effects ---
 
-    def _force_strategy(self, state, strategy_name):
+    def _force_strategy(self, state: dict, strategy_name: str) -> None:
         """Force a specific KPU strategy by marking all others as tried."""
         store = WorkingMemoryStore()
         for s in OPTIMIZATION_STRATEGIES:
@@ -485,7 +485,7 @@ class TestKPUStrategies:
                 store.record_attempt("design_optimizer", s["name"], "tried", 0)
         state["working_memory"] = store.model_dump()
 
-    def test_reduce_systolic_array_shrinks_array(self):
+    def test_reduce_systolic_array_shrinks_array(self) -> None:
         state = self._make_kpu_state(failing="area")
         before_rows = state["kpu_config"]["compute_tile"]["array_rows"]
         before_cols = state["kpu_config"]["compute_tile"]["array_cols"]
@@ -496,7 +496,7 @@ class TestKPUStrategies:
         assert new_kpu["compute_tile"]["array_rows"] < before_rows
         assert new_kpu["compute_tile"]["array_cols"] < before_cols
 
-    def test_upgrade_dram_technology_advances_chain(self):
+    def test_upgrade_dram_technology_advances_chain(self) -> None:
         state = self._make_kpu_state(failing="latency")
         # Preset starts at LPDDR4X
         assert state["kpu_config"]["dram"]["technology"] == "LPDDR4X"
@@ -507,7 +507,7 @@ class TestKPUStrategies:
         assert new_dram["technology"] == "LPDDR5"
         assert new_dram["bandwidth_per_channel_gbps"] == 12.8
 
-    def test_add_sram_banks_increases_l2_l3(self):
+    def test_add_sram_banks_increases_l2_l3(self) -> None:
         state = self._make_kpu_state(failing="latency")
         before_l2 = state["kpu_config"]["compute_tile"]["l2_num_banks"]
         before_l3 = state["kpu_config"]["memory_tile"]["l3_num_banks"]
@@ -517,7 +517,7 @@ class TestKPUStrategies:
         assert new_kpu["compute_tile"]["l2_num_banks"] == before_l2 + 2
         assert new_kpu["memory_tile"]["l3_num_banks"] == before_l3 + 1
 
-    def test_widen_noc_doubles_link_width(self):
+    def test_widen_noc_doubles_link_width(self) -> None:
         state = self._make_kpu_state(failing="latency")
         before_width = state["kpu_config"]["noc"]["link_width_bits"]
         self._force_strategy(state, "widen_noc")
@@ -525,7 +525,7 @@ class TestKPUStrategies:
         new_width = result["_state_updates"]["kpu_config"]["noc"]["link_width_bits"]
         assert new_width == min(1024, before_width * 2)
 
-    def test_reduce_compute_tiles_drops_grid(self):
+    def test_reduce_compute_tiles_drops_grid(self) -> None:
         state = self._make_kpu_state(failing="area")
         before_rows = state["kpu_config"]["array_rows"]
         self._force_strategy(state, "reduce_compute_tiles")
@@ -533,7 +533,7 @@ class TestKPUStrategies:
         new_kpu = result["_state_updates"]["kpu_config"]
         assert new_kpu["array_rows"] == before_rows - 1
 
-    def test_clock_scale_kpu_reduces_frequency(self):
+    def test_clock_scale_kpu_reduces_frequency(self) -> None:
         state = self._make_kpu_state(failing="power")
         before_freq = state["kpu_config"]["compute_tile"]["frequency_mhz"]
         self._force_strategy(state, "clock_scale_kpu")
@@ -543,7 +543,7 @@ class TestKPUStrategies:
 
     # --- Side effects ---
 
-    def test_kpu_strategy_clears_stale_validators(self):
+    def test_kpu_strategy_clears_stale_validators(self) -> None:
         """After mutating kpu_config, floorplan_estimate and bandwidth_match
         must be cleared so the next dispatch iteration re-runs them."""
         state = self._make_kpu_state(failing="area")
@@ -554,3 +554,34 @@ class TestKPUStrategies:
         updates = result["_state_updates"]
         assert updates["floorplan_estimate"] == {}
         assert updates["bandwidth_match"] == {}
+
+    # --- CodeRabbit PR #82: feasibility filter regression coverage ---
+
+    def test_dram_at_top_of_chain_is_filtered(self) -> None:
+        """upgrade_dram_technology must NOT be selectable when DRAM is HBM2E."""
+        state = self._make_kpu_state(failing="latency")
+        state["kpu_config"]["dram"]["technology"] = "HBM2E"
+        # Force every other latency-applicable strategy to be tried
+        store = WorkingMemoryStore()
+        for s in OPTIMIZATION_STRATEGIES:
+            if s["name"] != "upgrade_dram_technology":
+                store.record_attempt("design_optimizer", s["name"], "tried", 0)
+        state["working_memory"] = store.model_dump()
+        result = design_optimizer(_make_task(), state)
+        # The optimizer should have nothing to apply (no untried strategies)
+        assert result["applied"] is False
+        # Specifically, upgrade_dram_technology must not have been selected
+        assert result.get("strategy") != "upgrade_dram_technology"
+
+    def test_systolic_at_floor_is_filtered(self) -> None:
+        """reduce_systolic_array must NOT be selectable when array is at floor."""
+        state = self._make_kpu_state(failing="area")
+        state["kpu_config"]["compute_tile"]["array_rows"] = 4
+        state["kpu_config"]["compute_tile"]["array_cols"] = 4
+        store = WorkingMemoryStore()
+        for s in OPTIMIZATION_STRATEGIES:
+            if s["name"] != "reduce_systolic_array":
+                store.record_attempt("design_optimizer", s["name"], "tried", 0)
+        state["working_memory"] = store.model_dump()
+        result = design_optimizer(_make_task(), state)
+        assert result["applied"] is False
