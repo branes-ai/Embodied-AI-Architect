@@ -26,6 +26,7 @@ from starlette.responses import StreamingResponse
 from embodied_ai_architect.api.schemas import (
     ConstraintSlackness,
     HealthResponse,
+    KPUSlacknessResponse,
     OperatorBreakdown,
     ParetoResponse,
     SensitivityEntry,
@@ -194,6 +195,47 @@ def _build_router():
         except (KeyError, TypeError, ValueError) as exc:
             logger.warning("Failed to compute slackness for session %s: %s", session_id, exc)
             return []
+
+    @router.get(
+        "/sessions/{session_id}/kpu-slackness",
+        response_model=KPUSlacknessResponse,
+    )
+    async def get_kpu_slackness(session_id: str, request: Request) -> KPUSlacknessResponse:
+        """Get KPU inner-loop slackness (issue #30).
+
+        Surfaces floorplan pitch matching + die area, and the bandwidth
+        waterfall from DRAM through L3/L2/L1 to compute. Returns
+        floorplan=None and bandwidth=None when the inner KPU loop did not
+        run (typically because rtl_enabled=False).
+
+        Prefers the precomputed values on the optimization_review_snapshot
+        when available, otherwise extracts directly from state.
+        """
+        state = _load_or_404(session_id, request)
+
+        opt_snap = state.get("optimization_review_snapshot", {}) or {}
+        snap_fp = opt_snap.get("kpu_floorplan")
+        snap_bw = opt_snap.get("kpu_bandwidth")
+
+        # Per-field fallback (CodeRabbit PR #80): a session may have one
+        # cached half but not the other. Use the snapshot value when present,
+        # otherwise extract from raw state for that side only.
+        try:
+            from embodied_ai_architect.graphs.optimization_review import (
+                extract_kpu_bandwidth_slackness,
+                extract_kpu_floorplan_slackness,
+            )
+
+            if snap_fp is None:
+                fp = extract_kpu_floorplan_slackness(state)
+                snap_fp = fp.model_dump() if fp else None
+            if snap_bw is None:
+                bw = extract_kpu_bandwidth_slackness(state)
+                snap_bw = bw.model_dump() if bw else None
+        except (KeyError, TypeError, ValueError) as exc:
+            logger.warning("Failed to extract KPU slackness for session %s: %s", session_id, exc)
+
+        return KPUSlacknessResponse(floorplan=snap_fp, bandwidth=snap_bw)
 
     @router.get("/sessions/{session_id}/trajectory", response_model=list[TrajectoryEntry])
     async def get_trajectory(session_id: str, request: Request) -> list[TrajectoryEntry]:

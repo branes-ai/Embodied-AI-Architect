@@ -136,6 +136,60 @@ class ConstraintSlackness(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# KPU inner-loop slackness (issue #30)
+# ---------------------------------------------------------------------------
+
+
+class KPUFloorplanSlackness(BaseModel):
+    """Floorplan slackness for the KPU inner loop."""
+
+    compute_tile_width_mm: float = 0.0
+    compute_tile_height_mm: float = 0.0
+    memory_tile_width_mm: float = 0.0
+    memory_tile_height_mm: float = 0.0
+    pitch_ratio_width: float = 1.0
+    pitch_ratio_height: float = 1.0
+    pitch_tolerance: float = 0.15
+    pitch_matched: bool = True
+    total_area_mm2: float = 0.0
+    max_die_area_mm2: float = 0.0
+    area_utilization_pct: float = 0.0
+    feasible: bool = True
+    issues: list[str] = Field(default_factory=list)
+
+
+class KPUBandwidthLink(BaseModel):
+    """One link in the KPU bandwidth waterfall."""
+
+    name: str
+    source: str = ""
+    sink: str = ""
+    required_gbps: float = 0.0
+    available_gbps: float = 0.0
+    utilization_pct: float = 0.0
+    bottleneck: bool = False
+    status: str = "OK"
+
+
+class KPUBandwidthSlackness(BaseModel):
+    """Bandwidth slackness over the KPU memory hierarchy."""
+
+    links: list[KPUBandwidthLink] = Field(default_factory=list)
+    balanced: bool = True
+    bottleneck_link: Optional[str] = None
+    peak_utilization_pct: float = 0.0
+    compute_demand_gbps: float = 0.0
+    issues: list[str] = Field(default_factory=list)
+
+
+class KPUSlacknessResponse(BaseModel):
+    """Response for /api/sessions/{id}/kpu-slackness — both floorplan and bandwidth."""
+
+    floorplan: Optional[KPUFloorplanSlackness] = None
+    bandwidth: Optional[KPUBandwidthSlackness] = None
+
+
+# ---------------------------------------------------------------------------
 # Optimization trajectory
 # ---------------------------------------------------------------------------
 

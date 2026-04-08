@@ -8,6 +8,8 @@ from embodied_ai_architect.graphs.optimization_review import (
     apply_steering_input,
     build_optimization_review_snapshot,
     compute_constraint_slackness,
+    extract_kpu_bandwidth_slackness,
+    extract_kpu_floorplan_slackness,
     render_optimization_review,
     summarize_trajectory,
 )
@@ -413,3 +415,249 @@ class TestRenderOptimizationReview:
         snap = build_optimization_review_snapshot(state)
         result = render_optimization_review(snap)
         assert "ALL CONSTRAINTS PASS" in result
+
+
+# ---------------------------------------------------------------------------
+# Issue #30: KPU inner-loop slackness
+# ---------------------------------------------------------------------------
+
+
+def _make_floorplan_estimate(feasible=True, pitch_matched=True):
+    """Sample FloorplanEstimate dict matching the dataclass shape."""
+    return {
+        "compute_tile": {
+            "width_mm": 2.10,
+            "height_mm": 2.30,
+            "area_mm2": 4.83,
+            "sub_blocks": [],
+        },
+        "memory_tile": {
+            "width_mm": 2.00,
+            "height_mm": 2.40,
+            "area_mm2": 4.80,
+            "sub_blocks": [],
+        },
+        "pitch_matched": pitch_matched,
+        "pitch_ratio_width": 1.05 if pitch_matched else 1.30,
+        "pitch_ratio_height": 0.96,
+        "pitch_tolerance": 0.15,
+        "array_width_mm": 6.30,
+        "array_height_mm": 6.90,
+        "core_area_mm2": 43.5,
+        "periphery_area_mm2": 4.7,
+        "total_area_mm2": 48.2,
+        "die_edge_mm": 7.0,
+        "feasible": feasible,
+        "max_die_area_mm2": 100.0,
+        "issues": [] if feasible else ["Die area exceeds budget"],
+    }
+
+
+def _make_bandwidth_match(balanced=True):
+    """Sample BandwidthMatchResult dict matching the validator output."""
+    links = [
+        {
+            "name": "DRAM -> L3",
+            "source": "dram",
+            "sink": "l3",
+            "available_gbps": 25.6,
+            "required_gbps": 12.8,
+            "utilization": 0.50,
+            "bottleneck": False,
+        },
+        {
+            "name": "L3 -> L2",
+            "source": "l3",
+            "sink": "l2",
+            "available_gbps": 16.4,
+            "required_gbps": 9.0,
+            "utilization": 0.55,
+            "bottleneck": False,
+        },
+        {
+            "name": "L2 -> L1",
+            "source": "l2",
+            "sink": "l1",
+            "available_gbps": 4.8,
+            "required_gbps": 4.5,
+            "utilization": 0.94,
+            "bottleneck": not balanced,
+        },
+        {
+            "name": "L1 -> compute",
+            "source": "l1",
+            "sink": "compute",
+            "available_gbps": 3.2,
+            "required_gbps": 1.4,
+            "utilization": 0.43,
+            "bottleneck": False,
+        },
+    ]
+    return {
+        "links": links,
+        "balanced": balanced,
+        "bottleneck_link": None if balanced else "L2 -> L1",
+        "peak_utilization": 0.94,
+        "ingress_gbps": 12.8,
+        "egress_gbps": 1.4,
+        "compute_demand_gbps": 12.8,
+        "issues": [] if balanced else ["L2 -> L1 saturated at 94%"],
+    }
+
+
+class TestKPUFloorplanSlackness:
+    def test_extract_returns_none_when_no_estimate(self):
+        state = _make_state()
+        assert extract_kpu_floorplan_slackness(state) is None
+
+    def test_extract_populates_all_fields(self):
+        state = _make_state()
+        state["floorplan_estimate"] = _make_floorplan_estimate(feasible=True)
+        fp = extract_kpu_floorplan_slackness(state)
+        assert fp is not None
+        assert fp.compute_tile_width_mm == 2.10
+        assert fp.compute_tile_height_mm == 2.30
+        assert fp.memory_tile_width_mm == 2.00
+        assert fp.memory_tile_height_mm == 2.40
+        assert fp.pitch_matched is True
+        assert fp.feasible is True
+        assert fp.total_area_mm2 == 48.2
+        assert fp.max_die_area_mm2 == 100.0
+        assert fp.area_utilization_pct == 48.2
+
+    def test_extract_propagates_failure_state(self):
+        state = _make_state()
+        state["floorplan_estimate"] = _make_floorplan_estimate(feasible=False)
+        fp = extract_kpu_floorplan_slackness(state)
+        assert fp.feasible is False
+        assert "Die area exceeds budget" in fp.issues
+
+
+class TestKPUBandwidthSlackness:
+    def test_extract_returns_none_when_no_match(self):
+        state = _make_state()
+        assert extract_kpu_bandwidth_slackness(state) is None
+
+    def test_extract_links_with_status_classification(self):
+        state = _make_state()
+        state["bandwidth_match"] = _make_bandwidth_match(balanced=True)
+        bw = extract_kpu_bandwidth_slackness(state)
+        assert bw is not None
+        assert len(bw.links) == 4
+        # 50% → OK, 55% → OK, 94% → TIGHT, 43% → OK
+        statuses = {link.name: link.status for link in bw.links}
+        assert statuses["DRAM -> L3"] == "OK"
+        assert statuses["L2 -> L1"] == "TIGHT"
+        assert statuses["L1 -> compute"] == "OK"
+        # utilization is converted from fraction to percent
+        l2_link = next(link for link in bw.links if link.name == "L2 -> L1")
+        assert l2_link.utilization_pct == 94.0
+
+    def test_extract_marks_bottleneck_when_unbalanced(self):
+        state = _make_state()
+        state["bandwidth_match"] = _make_bandwidth_match(balanced=False)
+        bw = extract_kpu_bandwidth_slackness(state)
+        assert bw.balanced is False
+        assert bw.bottleneck_link == "L2 -> L1"
+        # The bottleneck link should be classified BOTTLENECK regardless of util
+        l2_link = next(link for link in bw.links if link.name == "L2 -> L1")
+        assert l2_link.bottleneck is True
+        assert l2_link.status == "BOTTLENECK"
+
+
+class TestSnapshotIncludesKPUSlackness:
+    def test_snapshot_carries_kpu_floorplan_when_present(self):
+        state = _make_state()
+        state["floorplan_estimate"] = _make_floorplan_estimate()
+        state["bandwidth_match"] = _make_bandwidth_match()
+        snap = build_optimization_review_snapshot(state)
+        assert snap.kpu_floorplan is not None
+        assert snap.kpu_bandwidth is not None
+        assert snap.kpu_floorplan.pitch_matched is True
+        assert len(snap.kpu_bandwidth.links) == 4
+
+    def test_snapshot_omits_kpu_when_no_state_data(self):
+        state = _make_state()
+        # No floorplan_estimate / bandwidth_match
+        snap = build_optimization_review_snapshot(state)
+        assert snap.kpu_floorplan is None
+        assert snap.kpu_bandwidth is None
+
+
+class TestKPURegressionsCodeRabbitPR80:
+    """Regression tests for the three CodeRabbit findings on PR #80."""
+
+    def test_status_uses_unrounded_fraction(self):
+        """A 0.8496 link must stay OK — rounding to 85.0% must not flip TIGHT."""
+        state = _make_state()
+        bw_dict = _make_bandwidth_match()
+        # Replace one link with a value that crosses the rounding boundary
+        bw_dict["links"][2]["utilization"] = 0.8496
+        bw_dict["links"][2]["bottleneck"] = False
+        state["bandwidth_match"] = bw_dict
+        bw = extract_kpu_bandwidth_slackness(state)
+        link = bw.links[2]
+        # Display percentage rounds to 85.0 ...
+        assert link.utilization_pct == 85.0
+        # ... but the classifier saw the raw 0.8496 and kept OK
+        assert link.status == "OK"
+
+    def test_status_at_exact_threshold(self):
+        """0.85 exactly → TIGHT, 1.0 exactly → BOTTLENECK."""
+        state = _make_state()
+        bw_dict = _make_bandwidth_match()
+        bw_dict["links"][2]["utilization"] = 0.85
+        bw_dict["links"][2]["bottleneck"] = False
+        state["bandwidth_match"] = bw_dict
+        bw = extract_kpu_bandwidth_slackness(state)
+        assert bw.links[2].status == "TIGHT"
+
+        bw_dict["links"][2]["utilization"] = 1.0
+        state["bandwidth_match"] = bw_dict
+        bw = extract_kpu_bandwidth_slackness(state)
+        assert bw.links[2].status == "BOTTLENECK"
+
+    def test_pitch_zero_preserved(self):
+        """Explicit 0.0 pitch ratios from the validator must not be rewritten."""
+        state = _make_state()
+        fp = _make_floorplan_estimate()
+        fp["pitch_ratio_width"] = 0.0  # degenerate case the validator can produce
+        fp["pitch_ratio_height"] = 0.0
+        fp["pitch_tolerance"] = 0.0
+        state["floorplan_estimate"] = fp
+        out = extract_kpu_floorplan_slackness(state)
+        assert out.pitch_ratio_width == 0.0
+        assert out.pitch_ratio_height == 0.0
+        assert out.pitch_tolerance == 0.0
+
+
+class TestRenderKPUSections:
+    def test_renders_bandwidth_chain(self):
+        state = _make_state()
+        state["bandwidth_match"] = _make_bandwidth_match()
+        snap = build_optimization_review_snapshot(state)
+        out = render_optimization_review(snap)
+        assert "KPU BANDWIDTH CHAIN" in out
+        assert "DRAM -> L3" in out
+        assert "L2 -> L1" in out
+        assert "TIGHT" in out  # the 94% link
+        assert "GB/s" in out
+
+    def test_renders_floorplan(self):
+        state = _make_state()
+        state["floorplan_estimate"] = _make_floorplan_estimate()
+        snap = build_optimization_review_snapshot(state)
+        out = render_optimization_review(snap)
+        assert "KPU FLOORPLAN" in out
+        assert "Compute tile" in out
+        assert "Memory tile" in out
+        assert "Pitch ratio" in out
+        assert "Total die area" in out
+        assert "100" in out  # the budget
+
+    def test_no_kpu_sections_when_state_empty(self):
+        state = _make_state()
+        snap = build_optimization_review_snapshot(state)
+        out = render_optimization_review(snap)
+        assert "KPU BANDWIDTH CHAIN" not in out
+        assert "KPU FLOORPLAN" not in out
