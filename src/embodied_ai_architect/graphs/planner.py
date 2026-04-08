@@ -228,6 +228,14 @@ def tasks_to_graph(task_dicts: list[dict[str, Any]]) -> TaskGraph:
                 dependencies=td.get("dependencies", []),
                 preconditions=td.get("preconditions", []),
                 postconditions=td.get("postconditions", []),
+                # Forward task metadata so per-task knobs like
+                # `metadata.fast_mode=True` (used by moo_explorer to skip
+                # the expensive Bayesian layer in tests) actually reach the
+                # specialist. Without this, fast_mode was silently dropped
+                # and moo_explorer always ran the full MAP-Elites → BO
+                # pipeline — which on CI runners blew test wall time from
+                # ~30s to ~25 minutes.
+                metadata=td.get("metadata", {}),
             )
         )
 
