@@ -378,3 +378,179 @@ class TestProcessNodeStrategies:
         tried = wm.get_tried_descriptions("design_optimizer")
         assert "grow_process_node_28" in tried
         assert "grow_process_node" not in tried
+
+
+# ---------------------------------------------------------------------------
+# Issue #32: KPU-specific optimization strategies
+# ---------------------------------------------------------------------------
+
+
+class TestKPUStrategies:
+    """KPU strategies must only be applicable when state has a kpu_config,
+    each must mutate the right field, and the optimizer must select them
+    when the failing constraint matches their applicable_when set."""
+
+    KPU_STRATEGY_NAMES = {
+        "reduce_systolic_array",
+        "upgrade_dram_technology",
+        "add_sram_banks",
+        "widen_noc",
+        "reduce_compute_tiles",
+        "clock_scale_kpu",
+    }
+
+    def _make_kpu_state(self, failing="area"):
+        """State with a populated kpu_config and a failing constraint."""
+        from embodied_ai_architect.graphs.kpu_config import KPU_PRESETS
+
+        state = create_initial_soc_state(
+            goal="Design KPU SoC",
+            constraints=DesignConstraints(
+                max_power_watts=10.0,
+                max_latency_ms=50.0,
+                max_area_mm2=50.0,
+                max_cost_usd=100.0,
+            ),
+            use_case="delivery_drone",
+            platform="drone",
+            rtl_enabled=True,
+        )
+        state["kpu_config"] = KPU_PRESETS["edge_balanced"].model_dump()
+        # Build PPA with the requested failing constraint
+        ppa = {
+            "power_watts": 8.0,
+            "latency_ms": 30.0,
+            "area_mm2": 80.0,
+            "cost_usd": 50.0,
+            "verdicts": {
+                "power": "PASS",
+                "latency": "PASS",
+                "area": "PASS",
+                "cost": "PASS",
+            },
+        }
+        ppa["verdicts"][failing] = "FAIL"
+        state["ppa_metrics"] = ppa
+        state["workload_profile"] = {"total_estimated_gflops": 9.2}
+        state["ip_blocks"] = [
+            {"name": "compute_engine", "type": "kpu", "config": {"frequency_mhz": 500}},
+        ]
+        return state
+
+    # --- Catalog wiring ---
+
+    def test_catalog_includes_six_kpu_strategies(self):
+        names = {s["name"] for s in OPTIMIZATION_STRATEGIES}
+        assert self.KPU_STRATEGY_NAMES <= names
+
+    def test_kpu_strategies_target_kpu_config(self):
+        for s in OPTIMIZATION_STRATEGIES:
+            if s["name"] in self.KPU_STRATEGY_NAMES:
+                assert s["applies_to"] == "kpu_config"
+
+    # --- Filter gating ---
+
+    def test_kpu_strategies_filtered_when_no_kpu_config(self):
+        """On non-RTL pipelines (no kpu_config), KPU strategies must not appear."""
+        state = create_initial_soc_state(
+            goal="Design SoC",
+            constraints=DesignConstraints(max_power_watts=5.0, max_area_mm2=50.0),
+        )
+        state["ppa_metrics"] = {
+            "power_watts": 6.0,
+            "area_mm2": 80.0,
+            "verdicts": {"power": "FAIL", "area": "FAIL"},
+        }
+        # No kpu_config — strategies should be filtered out before selection
+        result = design_optimizer(_make_task(), state)
+        # The selected strategy must NOT be a KPU one
+        assert result["strategy"] not in self.KPU_STRATEGY_NAMES
+
+    def test_kpu_strategies_available_when_kpu_config_present(self):
+        """When kpu_config is present and area fails, optimizer can pick a KPU strategy."""
+        state = self._make_kpu_state(failing="area")
+        result = design_optimizer(_make_task(), state)
+        assert result["applied"] is True
+        # At least the chosen strategy should be one that can target area;
+        # the new KPU catalog gives the optimizer concrete options
+        assert result["strategy"] is not None
+
+    # --- Per-strategy effects ---
+
+    def _force_strategy(self, state, strategy_name):
+        """Force a specific KPU strategy by marking all others as tried."""
+        store = WorkingMemoryStore()
+        for s in OPTIMIZATION_STRATEGIES:
+            if s["name"] != strategy_name:
+                store.record_attempt("design_optimizer", s["name"], "tried", 0)
+        state["working_memory"] = store.model_dump()
+
+    def test_reduce_systolic_array_shrinks_array(self):
+        state = self._make_kpu_state(failing="area")
+        before_rows = state["kpu_config"]["compute_tile"]["array_rows"]
+        before_cols = state["kpu_config"]["compute_tile"]["array_cols"]
+        self._force_strategy(state, "reduce_systolic_array")
+        result = design_optimizer(_make_task(), state)
+        assert result["strategy"] == "reduce_systolic_array"
+        new_kpu = result["_state_updates"]["kpu_config"]
+        assert new_kpu["compute_tile"]["array_rows"] < before_rows
+        assert new_kpu["compute_tile"]["array_cols"] < before_cols
+
+    def test_upgrade_dram_technology_advances_chain(self):
+        state = self._make_kpu_state(failing="latency")
+        # Preset starts at LPDDR4X
+        assert state["kpu_config"]["dram"]["technology"] == "LPDDR4X"
+        self._force_strategy(state, "upgrade_dram_technology")
+        result = design_optimizer(_make_task(), state)
+        assert result["strategy"] == "upgrade_dram_technology"
+        new_dram = result["_state_updates"]["kpu_config"]["dram"]
+        assert new_dram["technology"] == "LPDDR5"
+        assert new_dram["bandwidth_per_channel_gbps"] == 12.8
+
+    def test_add_sram_banks_increases_l2_l3(self):
+        state = self._make_kpu_state(failing="latency")
+        before_l2 = state["kpu_config"]["compute_tile"]["l2_num_banks"]
+        before_l3 = state["kpu_config"]["memory_tile"]["l3_num_banks"]
+        self._force_strategy(state, "add_sram_banks")
+        result = design_optimizer(_make_task(), state)
+        new_kpu = result["_state_updates"]["kpu_config"]
+        assert new_kpu["compute_tile"]["l2_num_banks"] == before_l2 + 2
+        assert new_kpu["memory_tile"]["l3_num_banks"] == before_l3 + 1
+
+    def test_widen_noc_doubles_link_width(self):
+        state = self._make_kpu_state(failing="latency")
+        before_width = state["kpu_config"]["noc"]["link_width_bits"]
+        self._force_strategy(state, "widen_noc")
+        result = design_optimizer(_make_task(), state)
+        new_width = result["_state_updates"]["kpu_config"]["noc"]["link_width_bits"]
+        assert new_width == min(1024, before_width * 2)
+
+    def test_reduce_compute_tiles_drops_grid(self):
+        state = self._make_kpu_state(failing="area")
+        before_rows = state["kpu_config"]["array_rows"]
+        self._force_strategy(state, "reduce_compute_tiles")
+        result = design_optimizer(_make_task(), state)
+        new_kpu = result["_state_updates"]["kpu_config"]
+        assert new_kpu["array_rows"] == before_rows - 1
+
+    def test_clock_scale_kpu_reduces_frequency(self):
+        state = self._make_kpu_state(failing="power")
+        before_freq = state["kpu_config"]["compute_tile"]["frequency_mhz"]
+        self._force_strategy(state, "clock_scale_kpu")
+        result = design_optimizer(_make_task(), state)
+        new_freq = result["_state_updates"]["kpu_config"]["compute_tile"]["frequency_mhz"]
+        assert new_freq < before_freq
+
+    # --- Side effects ---
+
+    def test_kpu_strategy_clears_stale_validators(self):
+        """After mutating kpu_config, floorplan_estimate and bandwidth_match
+        must be cleared so the next dispatch iteration re-runs them."""
+        state = self._make_kpu_state(failing="area")
+        state["floorplan_estimate"] = {"total_area_mm2": 80.0, "feasible": False}
+        state["bandwidth_match"] = {"balanced": True, "links": []}
+        self._force_strategy(state, "reduce_systolic_array")
+        result = design_optimizer(_make_task(), state)
+        updates = result["_state_updates"]
+        assert updates["floorplan_estimate"] == {}
+        assert updates["bandwidth_match"] == {}
