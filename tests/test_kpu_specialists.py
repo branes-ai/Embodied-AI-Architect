@@ -1,6 +1,10 @@
 """Tests for KPU specialist agents (configurator, validators, optimizer)."""
 
-from embodied_ai_architect.graphs.kpu_config import KPU_PRESETS
+from embodied_ai_architect.graphs.kpu_config import (
+    KPU_PRESETS,
+    apply_kpu_overrides,
+    create_kpu_config,
+)
 from embodied_ai_architect.graphs.kpu_specialists import (
     bandwidth_validator,
     floorplan_validator,
@@ -80,6 +84,100 @@ class TestKPUConfigurator:
         assert "_state_updates" in result
         assert "kpu_config" in result["_state_updates"]
         assert result["_state_updates"]["kpu_config"] == result["kpu_config"]
+
+
+# ---------------------------------------------------------------------------
+# Issue #29: architect overrides from plan review
+# ---------------------------------------------------------------------------
+
+
+class TestApplyKPUOverrides:
+    """The apply_kpu_overrides helper handles dotted-path merges."""
+
+    def test_no_overrides_returns_input_unchanged(self):
+        cfg = KPU_PRESETS["edge_balanced"]
+        out = apply_kpu_overrides(cfg, {})
+        assert out.compute_tile.array_rows == cfg.compute_tile.array_rows
+
+    def test_top_level_field(self):
+        cfg = KPU_PRESETS["edge_balanced"]
+        out = apply_kpu_overrides(cfg, {"name": "swkpu-custom"})
+        assert out.name == "swkpu-custom"
+
+    def test_nested_field(self):
+        cfg = KPU_PRESETS["edge_balanced"]
+        out = apply_kpu_overrides(
+            cfg,
+            {
+                "compute_tile.array_rows": 8,
+                "compute_tile.array_cols": 8,
+                "noc.link_width_bits": 512,
+                "dram.num_controllers": 4,
+            },
+        )
+        assert out.compute_tile.array_rows == 8
+        assert out.compute_tile.array_cols == 8
+        assert out.noc.link_width_bits == 512
+        assert out.dram.num_controllers == 4
+
+    def test_unknown_path_silently_ignored(self):
+        """Stale overrides from a previous review must not crash dispatch."""
+        cfg = KPU_PRESETS["edge_balanced"]
+        out = apply_kpu_overrides(
+            cfg,
+            {
+                "compute_tile.array_rows": 8,  # valid
+                "nonexistent.field": 42,  # invalid
+                "compute_tile.no_such_field": 99,  # invalid leaf
+            },
+        )
+        # Valid override applied
+        assert out.compute_tile.array_rows == 8
+        # Invalid ones did not raise
+
+    def test_does_not_mutate_input(self):
+        cfg = create_kpu_config("delivery_drone", {"max_power_watts": 5.0}, {"gflops": 5.0})
+        original_rows = cfg.compute_tile.array_rows
+        _ = apply_kpu_overrides(cfg, {"compute_tile.array_rows": 99})
+        assert cfg.compute_tile.array_rows == original_rows
+
+
+class TestKPUConfiguratorRespectsOverrides:
+    """kpu_configurator must overlay state['kpu_config_overrides'] on heuristic output."""
+
+    def test_overrides_win_over_heuristic(self):
+        state = _make_state()
+        # The heuristic for delivery_drone @ 5W gives array_rows=8 typically.
+        # Force a different value via overrides — architect's choice must win.
+        state["kpu_config_overrides"] = {
+            "compute_tile.array_rows": 32,
+            "compute_tile.array_cols": 32,
+            "noc.link_width_bits": 512,
+        }
+        task = _make_task("kpu_configurator")
+        result = kpu_configurator(task, state)
+
+        cfg = result["kpu_config"]
+        assert cfg["compute_tile"]["array_rows"] == 32
+        assert cfg["compute_tile"]["array_cols"] == 32
+        assert cfg["noc"]["link_width_bits"] == 512
+
+    def test_summary_mentions_overrides(self):
+        state = _make_state()
+        state["kpu_config_overrides"] = {"compute_tile.array_rows": 16}
+        task = _make_task("kpu_configurator")
+        result = kpu_configurator(task, state)
+        assert "override" in result["summary"].lower()
+
+    def test_no_overrides_works_as_before(self):
+        """Backward compatibility: empty/missing overrides → heuristic-only path."""
+        state = _make_state()
+        # No kpu_config_overrides set
+        task = _make_task("kpu_configurator")
+        result = kpu_configurator(task, state)
+        assert "kpu_config" in result
+        # Summary should NOT mention overrides
+        assert "override" not in result["summary"].lower()
 
 
 # ---------------------------------------------------------------------------
