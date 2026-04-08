@@ -26,6 +26,77 @@ logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
+# KPU convergence history helper (issue #34)
+# ---------------------------------------------------------------------------
+
+
+def _kpu_history_entry(
+    state: SoCDesignState,
+    *,
+    source: str,
+    config_dict: dict[str, Any] | None = None,
+    fp_dict: dict[str, Any] | None = None,
+    bw_dict: dict[str, Any] | None = None,
+    changes: list[str] | None = None,
+    summary: str = "",
+) -> dict[str, Any]:
+    """Build a per-iteration KPU convergence history entry (issue #34).
+
+    Each KPU specialist (configurator, floorplan validator, bandwidth
+    validator, optimizer) calls this with whatever subset of fields it has
+    available, so the architect can later replay the inner-loop sequence
+    and see exactly how the micro-architecture evolved.
+
+    All fields except `source` are optional — only the columns that the
+    calling specialist actually produced are populated.
+    """
+    cfg = config_dict or state.get("kpu_config") or {}
+    ct = cfg.get("compute_tile") or {}
+    noc = cfg.get("noc") or {}
+
+    fp = fp_dict if fp_dict is not None else (state.get("floorplan_estimate") or {})
+    bw = bw_dict if bw_dict is not None else (state.get("bandwidth_match") or {})
+
+    entry: dict[str, Any] = {
+        "source": source,
+        "iteration": int(state.get("iteration", 0) or 0),
+        "config_name": cfg.get("name"),
+    }
+
+    if cfg:
+        entry["array_rows"] = cfg.get("array_rows")
+        entry["array_cols"] = cfg.get("array_cols")
+    if ct:
+        entry["compute_array"] = f"{ct.get('array_rows', '?')}x{ct.get('array_cols', '?')}"
+        entry["l2_size_bytes"] = ct.get("l2_size_bytes")
+    if noc:
+        entry["noc_link_width_bits"] = noc.get("link_width_bits")
+    if fp:
+        entry["pitch_matched"] = fp.get("pitch_matched")
+        entry["total_area_mm2"] = fp.get("total_area_mm2")
+        entry["floorplan_feasible"] = fp.get("feasible")
+    if bw:
+        entry["bandwidth_balanced"] = bw.get("balanced")
+        entry["peak_utilization"] = bw.get("peak_utilization")
+        entry["bottleneck_link"] = bw.get("bottleneck_link")
+    if changes:
+        entry["changes"] = list(changes)
+    if summary:
+        entry["summary"] = summary
+    return entry
+
+
+def _append_kpu_history(
+    state: SoCDesignState,
+    entry: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Append an entry to state['kpu_optimization_history'] (immutable copy)."""
+    history = list(state.get("kpu_optimization_history", []) or [])
+    history.append(entry)
+    return history
+
+
+# ---------------------------------------------------------------------------
 # KPU Configurator
 # ---------------------------------------------------------------------------
 
@@ -69,10 +140,24 @@ def kpu_configurator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     if overrides:
         summary += f" (with {len(overrides)} architect override(s))"
 
+    # Issue #34: record this iteration in the convergence history
+    history = _append_kpu_history(
+        state,
+        _kpu_history_entry(
+            state,
+            source="kpu_configurator",
+            config_dict=config_dict,
+            summary=summary,
+        ),
+    )
+
     return {
         "summary": summary,
         "kpu_config": config_dict,
-        "_state_updates": {"kpu_config": config_dict},
+        "_state_updates": {
+            "kpu_config": config_dict,
+            "kpu_optimization_history": history,
+        },
     }
 
 
@@ -108,18 +193,34 @@ def floorplan_validator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]
 
     verdict = "PASS" if fp.feasible else "FAIL"
 
-    return {
-        "summary": (
-            f"Floorplan {verdict}: "
-            f"compute tile {fp.compute_tile.width_mm:.2f}x{fp.compute_tile.height_mm:.2f}mm, "
-            f"memory tile {fp.memory_tile.width_mm:.2f}x{fp.memory_tile.height_mm:.2f}mm, "
-            f"pitch ratio W={fp.pitch_ratio_width:.2f} H={fp.pitch_ratio_height:.2f}, "
-            f"die {fp.total_area_mm2:.1f}mm² "
-            f"({'< ' + str(int(max_area)) + 'mm² budget' if fp.feasible else 'EXCEEDS budget'})"
+    summary = (
+        f"Floorplan {verdict}: "
+        f"compute tile {fp.compute_tile.width_mm:.2f}x{fp.compute_tile.height_mm:.2f}mm, "
+        f"memory tile {fp.memory_tile.width_mm:.2f}x{fp.memory_tile.height_mm:.2f}mm, "
+        f"pitch ratio W={fp.pitch_ratio_width:.2f} H={fp.pitch_ratio_height:.2f}, "
+        f"die {fp.total_area_mm2:.1f}mm² "
+        f"({'< ' + str(int(max_area)) + 'mm² budget' if fp.feasible else 'EXCEEDS budget'})"
+    )
+
+    # Issue #34: record this iteration in the convergence history
+    history = _append_kpu_history(
+        state,
+        _kpu_history_entry(
+            state,
+            source="floorplan_validator",
+            fp_dict=fp_dict,
+            summary=summary,
         ),
+    )
+
+    return {
+        "summary": summary,
         "verdict": verdict,
         "floorplan_estimate": fp_dict,
-        "_state_updates": {"floorplan_estimate": fp_dict},
+        "_state_updates": {
+            "floorplan_estimate": fp_dict,
+            "kpu_optimization_history": history,
+        },
     }
 
 
@@ -155,14 +256,29 @@ def bandwidth_validator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]
 
     link_summary = ", ".join(f"{link.name}: {link.utilization:.0%}" for link in result.links)
 
-    return {
-        "summary": (
-            f"Bandwidth {verdict}: peak utilization {result.peak_utilization:.0%} "
-            f"({link_summary})"
+    summary = (
+        f"Bandwidth {verdict}: peak utilization {result.peak_utilization:.0%} " f"({link_summary})"
+    )
+
+    # Issue #34: record this iteration in the convergence history
+    history = _append_kpu_history(
+        state,
+        _kpu_history_entry(
+            state,
+            source="bandwidth_validator",
+            bw_dict=result_dict,
+            summary=summary,
         ),
+    )
+
+    return {
+        "summary": summary,
         "verdict": verdict,
         "bandwidth_match": result_dict,
-        "_state_updates": {"bandwidth_match": result_dict},
+        "_state_updates": {
+            "bandwidth_match": result_dict,
+            "kpu_optimization_history": history,
+        },
     }
 
 
@@ -263,11 +379,32 @@ def kpu_optimizer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     if not changes:
         changes.append("No adjustments needed")
 
+    summary = f"KPU optimizer applied {len(changes)} changes: {'; '.join(changes)}"
+
+    # Issue #34: record this iteration in the convergence history. Carry the
+    # floorplan/bandwidth that motivated the change so the architect can see
+    # the before-state alongside the new config.
+    history = _append_kpu_history(
+        state,
+        _kpu_history_entry(
+            state,
+            source="kpu_optimizer",
+            config_dict=config_dict,
+            fp_dict=fp,
+            bw_dict=bw,
+            changes=changes,
+            summary=summary,
+        ),
+    )
+
     return {
-        "summary": f"KPU optimizer applied {len(changes)} changes: {'; '.join(changes)}",
+        "summary": summary,
         "changes": changes,
         "kpu_config": config_dict,
-        "_state_updates": {"kpu_config": config_dict},
+        "_state_updates": {
+            "kpu_config": config_dict,
+            "kpu_optimization_history": history,
+        },
     }
 
 

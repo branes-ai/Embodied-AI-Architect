@@ -146,6 +146,43 @@ def session_show(ctx, session_id, latest, json_out):
             console.print(f"  {name:<12} margin: {margin_str:>8}  {verdict:<6}  {trend}")
         console.print()
 
+    # KPU convergence history (issue #34): replay the inner-loop sequence
+    # so the architect can see how the micro-architecture evolved.
+    kpu_history = state.get("kpu_optimization_history", [])
+    if kpu_history:
+        console.print("[bold]KPU Convergence History[/bold] " f"({len(kpu_history)} entries)")
+        for entry in kpu_history:
+            it = entry.get("iteration", "?")
+            src = entry.get("source", "?")
+            head = f"  iter {it} [{src}]"
+            cfg_name = entry.get("config_name")
+            if cfg_name:
+                head += f" — {cfg_name}"
+            console.print(head)
+            details = []
+            if entry.get("compute_array"):
+                details.append(f"systolic={entry['compute_array']}")
+            l2 = entry.get("l2_size_bytes")
+            if l2 is not None:
+                details.append(f"L2={l2 // 1024}KB")
+            if entry.get("noc_link_width_bits") is not None:
+                details.append(f"NoC={entry['noc_link_width_bits']}b")
+            if "pitch_matched" in entry:
+                pv = "PASS" if entry["pitch_matched"] else "FAIL"
+                area = entry.get("total_area_mm2")
+                d = f"pitch={pv}"
+                if area is not None:
+                    d += f"/area={area:.1f}mm²"
+                details.append(d)
+            if "bandwidth_balanced" in entry:
+                bv = "PASS" if entry["bandwidth_balanced"] else "FAIL"
+                details.append(f"BW={bv}")
+            if details:
+                console.print("    " + "  |  ".join(details))
+            for change in entry.get("changes", []) or []:
+                console.print(f"    → {change}")
+        console.print()
+
     # MOO summary (issue #27): show that multi-objective optimization ran and
     # what it produced, so the architect can see at a glance whether the Pareto
     # frontier is populated without dropping into the API or --json.

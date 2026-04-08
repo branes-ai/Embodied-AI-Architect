@@ -315,3 +315,108 @@ class TestKPUOptimizer:
         assert "DRAM controller" in changes_text
         assert "_state_updates" in result
         assert result["_state_updates"]["kpu_config"]["dram"]["num_controllers"] == new_controllers
+
+
+# ---------------------------------------------------------------------------
+# Issue #34: KPU convergence history persistence
+# ---------------------------------------------------------------------------
+
+
+class TestKPUConvergenceHistory:
+    """Each KPU specialist must append a per-iteration entry to
+    state['kpu_optimization_history'] so the architect can replay the
+    inner-loop sequence."""
+
+    def test_configurator_writes_history_entry(self) -> None:
+        state = _make_state()
+        result = kpu_configurator(_make_task("kpu_configurator"), state)
+        history = result["_state_updates"]["kpu_optimization_history"]
+        assert len(history) == 1
+        entry = history[0]
+        assert entry["source"] == "kpu_configurator"
+        assert entry["config_name"]
+        assert entry["compute_array"]  # systolic dims
+        assert "summary" in entry
+
+    def test_floorplan_validator_writes_history_entry(self) -> None:
+        state = _make_state()
+        state["kpu_config"] = KPU_PRESETS["drone_minimal"].model_dump()
+        result = floorplan_validator(_make_task("floorplan_validator"), state)
+        history = result["_state_updates"]["kpu_optimization_history"]
+        assert len(history) == 1
+        entry = history[0]
+        assert entry["source"] == "floorplan_validator"
+        assert "pitch_matched" in entry
+        assert "total_area_mm2" in entry
+        assert "floorplan_feasible" in entry
+
+    def test_bandwidth_validator_writes_history_entry(self) -> None:
+        state = _make_state()
+        state["kpu_config"] = KPU_PRESETS["drone_minimal"].model_dump()
+        result = bandwidth_validator(_make_task("bandwidth_validator"), state)
+        history = result["_state_updates"]["kpu_optimization_history"]
+        assert len(history) == 1
+        entry = history[0]
+        assert entry["source"] == "bandwidth_validator"
+        assert "bandwidth_balanced" in entry
+        assert "peak_utilization" in entry
+
+    def test_kpu_optimizer_writes_history_entry_with_changes(self) -> None:
+        state = _make_state()
+        state["kpu_config"] = KPU_PRESETS["drone_minimal"].model_dump()
+        # Force a DRAM bottleneck so the optimizer makes a change
+        state["bandwidth_match"] = {
+            "balanced": False,
+            "bottleneck_link": "dram_to_l3",
+            "peak_utilization": 0.95,
+            "links": [],
+            "issues": ["DRAM bandwidth bottleneck"],
+        }
+        state["floorplan_estimate"] = {
+            "feasible": True,
+            "pitch_matched": True,
+            "pitch_ratio_width": 1.0,
+            "pitch_ratio_height": 1.0,
+        }
+        result = kpu_optimizer(_make_task("kpu_optimizer"), state)
+        history = result["_state_updates"]["kpu_optimization_history"]
+        assert len(history) == 1
+        entry = history[0]
+        assert entry["source"] == "kpu_optimizer"
+        assert "changes" in entry
+        assert len(entry["changes"]) > 0
+        # The change list mentions the DRAM controller bump
+        assert any("DRAM controller" in c for c in entry["changes"])
+
+    def test_history_accumulates_across_iterations(self) -> None:
+        """Three sequential specialist calls should grow the history to 3."""
+        state = _make_state()
+        # Iteration 0: configurator
+        result0 = kpu_configurator(_make_task("kpu_configurator"), state)
+        for k, v in result0["_state_updates"].items():
+            state[k] = v
+        # Iteration 1: floorplan validator
+        result1 = floorplan_validator(_make_task("floorplan_validator"), state)
+        for k, v in result1["_state_updates"].items():
+            state[k] = v
+        # Iteration 2: bandwidth validator
+        result2 = bandwidth_validator(_make_task("bandwidth_validator"), state)
+        for k, v in result2["_state_updates"].items():
+            state[k] = v
+
+        history = state["kpu_optimization_history"]
+        assert len(history) == 3
+        assert [e["source"] for e in history] == [
+            "kpu_configurator",
+            "floorplan_validator",
+            "bandwidth_validator",
+        ]
+
+    def test_history_records_outer_iteration_number(self) -> None:
+        """The history entry should carry state['iteration'] so the architect
+        can correlate KPU steps with the outer dispatch loop."""
+        state = _make_state()
+        state["iteration"] = 5
+        result = kpu_configurator(_make_task("kpu_configurator"), state)
+        entry = result["_state_updates"]["kpu_optimization_history"][0]
+        assert entry["iteration"] == 5
