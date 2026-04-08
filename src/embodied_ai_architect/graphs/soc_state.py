@@ -291,6 +291,7 @@ class SoCDesignState(TypedDict, total=False):
     pareto_results: dict  # Pareto front analysis results
     pareto_frontier_history: list[dict]  # Per-iteration frontier evolution snapshots
     moo_results: dict  # Multi-objective optimization results (rich data)
+    last_strategy_rationale: str  # Last design_optimizer's selection rationale (issue #25)
     swap_assessment: dict  # SWaP-C optimization results (6-objective)
     system_bom: dict  # Hierarchical system BOM data
     safety_analysis: dict  # Safety-critical detection results
@@ -395,6 +396,7 @@ def create_initial_soc_state(
         pareto_results={},
         pareto_frontier_history=[],
         moo_results={},
+        last_strategy_rationale="",
         swap_assessment={},
         system_bom={},
         safety_analysis={},

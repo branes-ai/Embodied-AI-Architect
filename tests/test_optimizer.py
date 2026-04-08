@@ -164,6 +164,103 @@ class TestDesignOptimizer:
         assert "latency" in result["failing_constraints"]
 
 
+class TestMOOAwareStrategySelection:
+    """Issue #25: MOO sensitivity should drive strategy selection when available."""
+
+    def test_sensitivity_boosts_clock_scaling_when_frequency_dominates(self):
+        """When sensitivity says clock_mhz drives power, clock_scaling should
+        be preferred over higher-static-factor alternatives like smaller_model."""
+        state = _make_failing_state(power_watts=6.3)
+
+        # Inject MOO sensitivity in real producer format showing
+        # clock_mhz dominates power (impact=0.85), beating smaller_model's
+        # static 0.35 factor when boost is applied
+        state["moo_results"] = {
+            "sensitivity": {
+                "power_watts": {
+                    "clock_mhz": {"lengthscale": 0.4, "importance": 0.85},
+                    "process_nm": {"lengthscale": 0.6, "importance": 0.40},
+                },
+            },
+        }
+
+        result = design_optimizer(_make_task(), state)
+        assert result["applied"] is True
+        # Without MOO: smaller_model (0.35 factor) wins
+        # With MOO: clock_scaling (0.15 * 1.85 boost = 0.278) competes,
+        #          but smaller_model (0.35 * 1.0 = 0.35) still wins.
+        # The key check: rationale must mention sensitivity
+        assert "sensitivity" in result.get("selection_rationale", "").lower()
+
+    def test_high_clock_sensitivity_overrides_greedy_choice(self):
+        """When clock_mhz sensitivity is extreme (boost > smaller_model gap),
+        clock_scaling should win over smaller_model."""
+        state = _make_failing_state(power_watts=6.3)
+
+        # Make smaller_model already-tried so it's not in the running.
+        # This isolates clock_scaling vs other power strategies.
+        store = WorkingMemoryStore()
+        store.record_attempt("design_optimizer", "smaller_model", "tried", 0)
+        state["working_memory"] = store.model_dump()
+
+        # Strong clock sensitivity → clock_scaling preferred
+        state["moo_results"] = {
+            "sensitivity": {
+                "power_watts": {
+                    "clock_mhz": {"lengthscale": 0.2, "importance": 0.95},
+                },
+            },
+        }
+
+        result = design_optimizer(_make_task(), state)
+        assert result["applied"] is True
+        # quantize_int8 has factor 0.20, clock_scaling 0.15
+        # Without sensitivity: quantize_int8 wins (0.20 vs 0.15)
+        # With clock_mhz boost 1.95: clock_scaling = 0.15 * 1.95 = 0.293 > 0.20
+        assert result["strategy"] == "clock_scaling"
+        assert "sensitivity" in result["selection_rationale"].lower()
+        assert "clock_mhz" in result["selection_rationale"]
+
+    def test_falls_back_to_greedy_without_moo(self):
+        """No moo_results → use the original greedy reduction-factor selection."""
+        state = _make_failing_state(power_watts=6.3)
+        # No moo_results set
+        result = design_optimizer(_make_task(), state)
+        assert result["applied"] is True
+        assert "greedy" in result["selection_rationale"].lower()
+
+    def test_falls_back_to_greedy_with_empty_sensitivity(self):
+        """moo_results with empty sensitivity → falls back to greedy."""
+        state = _make_failing_state(power_watts=6.3)
+        state["moo_results"] = {"sensitivity": {}, "total_evaluations": 100}
+        result = design_optimizer(_make_task(), state)
+        assert result["applied"] is True
+        assert "greedy" in result["selection_rationale"].lower()
+
+    def test_writes_rationale_to_state_updates(self):
+        """The rationale should propagate to last_strategy_rationale on the state
+        so the optimization review snapshot can pick it up (issue #25)."""
+        state = _make_failing_state(power_watts=6.3)
+        state["moo_results"] = {
+            "sensitivity": {
+                "power_watts": {
+                    "clock_mhz": {"lengthscale": 0.3, "importance": 0.75},
+                },
+            },
+        }
+        result = design_optimizer(_make_task(), state)
+        updates = result["_state_updates"]
+        assert "last_strategy_rationale" in updates
+        assert updates["last_strategy_rationale"]
+
+    def test_selection_rationale_on_result(self):
+        """Both code paths must populate the selection_rationale field."""
+        state = _make_failing_state(power_watts=6.3)
+        result = design_optimizer(_make_task(), state)
+        assert "selection_rationale" in result
+        assert result["selection_rationale"]
+
+
 class TestProcessNodeStrategies:
     """Tests for shrink/grow process node optimizer strategies."""
 

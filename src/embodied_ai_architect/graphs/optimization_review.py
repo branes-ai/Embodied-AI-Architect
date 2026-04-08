@@ -508,6 +508,12 @@ def build_optimization_review_snapshot(
     elif tried:
         rationale = f"All applicable strategies exhausted ({len(tried)} tried). Consider relaxing constraints."
 
+    # If the design_optimizer ran with MOO sensitivity, prefer its
+    # structured rationale (issue #25) over the generic one above.
+    live_rationale = state.get("last_strategy_rationale", "")
+    if live_rationale:
+        rationale = live_rationale
+
     # Pareto data
     pareto_points = state.get("pareto_points", [])
     pareto_results = state.get("pareto_results", {})
