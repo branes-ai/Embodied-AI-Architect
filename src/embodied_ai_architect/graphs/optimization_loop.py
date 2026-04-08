@@ -62,6 +62,13 @@ class OptimizationLoopState(TypedDict, total=False):
     total_evaluations: int
     convergence_history: list[dict[str, Any]]
 
+    # --- Issue #26: rich MOO context for LLM reasoning ---
+    sensitivity: dict[str, dict[str, float]]
+    layers_used: list[str]
+    atlas: dict[str, Any]
+    atlas_coverage_pct: float
+    design_variables_ranked: list[dict[str, Any]]
+
     # --- Reasoning output ---
     analysis: str
     recommendation: dict[str, Any]
@@ -102,11 +109,22 @@ explain why, citing research context.
 2. **ITERATE**: The search can be improved — suggest specific refinements to the \
 design space bounds, constraints, or variable selection.
 
+The MOO pipeline runs in layers (MAP-Elites → Bayesian BO → NSGA-III); the layers \
+that ran are reported in `layers_used`. Use this to calibrate confidence:
+- MAP-Elites alone: broad coverage, no per-variable sensitivity yet
+- + Bayesian BO: per-variable sensitivity available, sample-efficient (≤4 obj)
+- + NSGA-III: many-objective refinement (>4 obj)
+
 Your analysis should cover:
 - Key tradeoffs visible in the Pareto front
 - Whether the accuracy/capability-per-watt is competitive with published results
-- Which design variables have the most impact
+- **Which design variables have the most impact** — use `design_variables_ranked`
+  and `sensitivity` to ground this in data, not guesswork
+- **Search quality** — use `atlas_coverage_pct` and `convergence_history` to judge
+  whether the search has explored enough of the behavioral space and is converging
 - Whether constraints are too tight or too loose
+- When recommending narrowed variable bounds, prefer high-sensitivity variables;
+  low-sensitivity variables are not worth tightening
 
 Respond with JSON:
 {
@@ -122,6 +140,101 @@ Respond with JSON:
     "research_citations": ["doc_path", ...]
 }
 """
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _rank_design_variables(
+    sensitivity: dict[str, Any] | None,
+) -> list[dict[str, Any]]:
+    """Rank design variables by aggregate impact across objectives.
+
+    Accepts either the producer format ({objective: {variable: {importance}}})
+    or the already-normalized format ({variable: {objective: float}}). Uses
+    the shared `normalize_sensitivity` helper to handle both.
+
+    Returns a list of {"variable": str, "total_impact": float,
+    "per_objective": {obj: float}} sorted by total_impact descending.
+    """
+    if not sensitivity:
+        return []
+
+    try:
+        from embodied_ai_architect.graphs.optimization_review import (
+            normalize_sensitivity,
+        )
+
+        normalized = normalize_sensitivity(sensitivity)
+    except Exception:
+        return []
+
+    ranked: list[dict[str, Any]] = []
+    for var, per_obj in normalized.items():
+        total = sum(float(v) for v in per_obj.values() if v is not None)
+        ranked.append(
+            {
+                "variable": var,
+                "total_impact": round(total, 4),
+                "per_objective": {k: round(float(v), 4) for k, v in per_obj.items()},
+            }
+        )
+    ranked.sort(key=lambda d: d["total_impact"], reverse=True)
+    return ranked
+
+
+def _build_moo_context_block(state: OptimizationLoopState) -> str:
+    """Build a structured MOO-context block for the reasoning prompt (issue #26).
+
+    Surfaces sensitivity, layers used, atlas coverage, convergence trajectory,
+    and ranked variables so Claude can ground its recommendations in the
+    optimizer's actual evidence rather than just the top-5 Pareto points.
+    """
+    lines: list[str] = ["## MOO Search Evidence", ""]
+
+    layers = state.get("layers_used", [])
+    lines.append(f"Layers run: {', '.join(layers) if layers else '(none)'}")
+
+    atlas_pct = state.get("atlas_coverage_pct", 0.0)
+    atlas = state.get("atlas", {}) or {}
+    if atlas:
+        lines.append(
+            f"MAP-Elites atlas: {atlas_pct:.1f}% coverage "
+            f"({atlas.get('filled_cells', 0)}/{atlas.get('total_cells', 0)} cells)"
+        )
+    else:
+        lines.append("MAP-Elites atlas: not available")
+
+    conv = state.get("convergence_history", [])
+    if conv:
+        lines.append("")
+        lines.append("Convergence history (per iteration):")
+        for entry in conv[-5:]:
+            lines.append(
+                f"  - iter {entry.get('iteration', '?')}: "
+                f"HV={entry.get('hypervolume', 0):.3f}, "
+                f"front={entry.get('pareto_size', 0)}, "
+                f"evals={entry.get('total_evals', 0)}"
+            )
+
+    ranked = state.get("design_variables_ranked", [])
+    if ranked:
+        lines.append("")
+        lines.append("Top design variables by sensitivity (BO-derived):")
+        for entry in ranked[:8]:
+            per_obj = ", ".join(f"{k}={v:.2f}" for k, v in entry.get("per_objective", {}).items())
+            lines.append(
+                f"  - {entry['variable']}: total={entry['total_impact']:.2f} " f"[{per_obj}]"
+            )
+    else:
+        lines.append("")
+        lines.append(
+            "Per-variable sensitivity: not available " "(BO layer did not run or produced no data)"
+        )
+
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
@@ -275,6 +388,13 @@ def optimize_node(state: OptimizationLoopState) -> dict:
             }
         )
 
+        # Issue #26: surface rich MOO context for downstream reasoning.
+        # The engine already produces sensitivity, atlas, and layers_used —
+        # the loop previously dropped them, leaving Claude blind.
+        atlas = result.atlas or {}
+        atlas_coverage_pct = float(atlas.get("coverage", 0.0)) * 100.0
+        design_variables_ranked = _rank_design_variables(result.sensitivity)
+
         return {
             "pareto_front": result.pareto_front[:20],
             "hypervolume": result.hypervolume,
@@ -282,6 +402,11 @@ def optimize_node(state: OptimizationLoopState) -> dict:
             "total_evaluations": (state.get("total_evaluations", 0) + result.total_evaluations),
             "hypervolume_history": hv_history,
             "convergence_history": conv_history,
+            "sensitivity": result.sensitivity,
+            "layers_used": result.layers_used,
+            "atlas": atlas,
+            "atlas_coverage_pct": atlas_coverage_pct,
+            "design_variables_ranked": design_variables_ranked,
         }
     except Exception as e:
         logger.error("Optimization failed: %s", e)
@@ -398,6 +523,7 @@ def _reason_with_llm(state: OptimizationLoopState) -> dict:
 
     # Build the analysis prompt
     pareto_summary = json.dumps(state.get("pareto_front", [])[:5], indent=2, default=str)
+    moo_context_block = _build_moo_context_block(state)
     prompt = f"""Analyze these optimization results for the mission:
 "{state.get('mission_description', '')}"
 
@@ -405,13 +531,16 @@ Platform: {state.get('platform', 'unknown')}
 Iteration: {state.get('iteration', 0)}
 Hypervolume history: {state.get('hypervolume_history', [])}
 
+{moo_context_block}
+
 Top 5 Pareto-optimal designs:
 {pareto_summary}
 
 {research_context}
 
 Decide: RECOMMEND the best design or ITERATE with refinements.
-Respond with JSON only."""
+Use the MOO Search Evidence above (sensitivity, convergence, atlas coverage)
+to justify your decision. Respond with JSON only."""
 
     response = client.chat(
         messages=[{"role": "user", "content": prompt}],
@@ -1371,6 +1500,12 @@ def run_optimization_loop(
         "converged": False,
         "should_iterate": False,
         "llm_available": llm_available,
+        # Issue #26: rich MOO context fields, populated by optimize_node
+        "sensitivity": {},
+        "layers_used": [],
+        "atlas": {},
+        "atlas_coverage_pct": 0.0,
+        "design_variables_ranked": [],
     }
 
     start = time.time()

@@ -12,6 +12,8 @@ from __future__ import annotations
 
 from embodied_ai_architect.graphs.optimization_loop import (
     OptimizationLoopState,
+    _build_moo_context_block,
+    _rank_design_variables,
     build_optimization_loop,
     decompose_node,
     evaluate_node,
@@ -280,3 +282,173 @@ class TestCLI:
 
         # Check the 'mission' subcommand is registered
         assert "mission" in [cmd.name for cmd in optimize.commands.values()]
+
+
+# ---------------------------------------------------------------------------
+# Issue #26: enhanced reasoning context
+# ---------------------------------------------------------------------------
+
+
+class TestRankDesignVariables:
+    """The ranking helper should consume the BO producer format and produce
+    a sorted list of variables by total impact across all objectives."""
+
+    def test_returns_empty_for_no_sensitivity(self):
+        assert _rank_design_variables(None) == []
+        assert _rank_design_variables({}) == []
+
+    def test_ranks_by_total_impact_producer_format(self):
+        # Real producer format from bayesian_opt._extract_sensitivity:
+        # {objective: {variable: {lengthscale, importance}}}
+        sensitivity = {
+            "power_watts": {
+                "clock_mhz": {"lengthscale": 0.3, "importance": 0.90},
+                "process_nm": {"lengthscale": 0.5, "importance": 0.40},
+                "sram_kb": {"lengthscale": 2.0, "importance": 0.10},
+            },
+            "latency_ms": {
+                "clock_mhz": {"lengthscale": 0.4, "importance": 0.80},
+                "process_nm": {"lengthscale": 0.6, "importance": 0.30},
+                "sram_kb": {"lengthscale": 1.5, "importance": 0.20},
+            },
+        }
+        ranked = _rank_design_variables(sensitivity)
+        # clock_mhz: 0.90 + 0.80 = 1.70 → first
+        # process_nm: 0.40 + 0.30 = 0.70 → second
+        # sram_kb: 0.10 + 0.20 = 0.30 → third
+        assert [r["variable"] for r in ranked] == ["clock_mhz", "process_nm", "sram_kb"]
+        assert ranked[0]["total_impact"] == 1.70
+        assert ranked[0]["per_objective"]["power_watts"] == 0.90
+
+
+class TestMOOContextBlock:
+    """The reasoning prompt block must surface MOO evidence to Claude."""
+
+    def test_includes_layers_atlas_convergence_and_sensitivity(self):
+        state: OptimizationLoopState = {
+            "layers_used": ["map_elites", "bayesian"],
+            "atlas": {"filled_cells": 72, "total_cells": 100, "coverage": 0.72},
+            "atlas_coverage_pct": 72.0,
+            "convergence_history": [
+                {"iteration": 0, "hypervolume": 1.2, "pareto_size": 8, "total_evals": 200},
+                {"iteration": 1, "hypervolume": 1.5, "pareto_size": 12, "total_evals": 450},
+            ],
+            "design_variables_ranked": [
+                {
+                    "variable": "clock_mhz",
+                    "total_impact": 1.70,
+                    "per_objective": {"power_watts": 0.90, "latency_ms": 0.80},
+                },
+            ],
+        }
+        block = _build_moo_context_block(state)
+        assert "MOO Search Evidence" in block
+        assert "map_elites, bayesian" in block
+        assert "72.0%" in block
+        assert "iter 1" in block
+        assert "HV=1.500" in block
+        assert "clock_mhz" in block
+        assert "Top design variables by sensitivity" in block
+
+    def test_handles_missing_optional_fields_gracefully(self):
+        state: OptimizationLoopState = {}
+        block = _build_moo_context_block(state)
+        assert "MOO Search Evidence" in block
+        assert "(none)" in block
+        assert "not available" in block
+
+
+class TestOptimizeNodeEnrichedContext:
+    """optimize_node must forward sensitivity/atlas/layers_used from the engine."""
+
+    def test_forwards_rich_moo_fields(self):
+        state: OptimizationLoopState = {
+            "mission_description": "Drone perception at 5 m/s",
+            "errors": [],
+            "iteration": 0,
+            "hypervolume_history": [],
+            "convergence_history": [],
+            "total_evaluations": 0,
+        }
+        state.update(decompose_node(state))
+        state.update(formulate_node(state))
+        result = optimize_node(state)
+        # These keys must always be present, even if MAP-Elites alone ran
+        # (sensitivity may be empty, layers_used should at least contain map_elites)
+        assert "sensitivity" in result
+        assert "layers_used" in result
+        assert "atlas" in result
+        assert "atlas_coverage_pct" in result
+        assert "design_variables_ranked" in result
+        assert "map_elites" in result["layers_used"]
+
+
+class TestReasonPromptIncludesMOOContext:
+    """The LLM reasoning prompt must include the MOO Search Evidence block."""
+
+    def test_prompt_contains_sensitivity_and_layers(self, monkeypatch):
+        # Stub the LLM client so we can capture the prompt without a network call.
+        captured = {}
+
+        class _StubResponse:
+            text = '{"decision": "recommend", "selected_design": null, "analysis": "ok"}'
+
+        class _StubClient:
+            def __init__(self, *a, **kw):
+                pass
+
+            def chat(self, messages, system):
+                captured["prompt"] = messages[0]["content"]
+                captured["system"] = system
+                return _StubResponse()
+
+        import embodied_ai_architect.llm.client as llm_client_mod
+
+        monkeypatch.setattr(llm_client_mod, "LLMClient", _StubClient)
+
+        state: OptimizationLoopState = {
+            "mission_description": "Drone perception",
+            "platform": "drone",
+            "iteration": 0,
+            "hypervolume_history": [1.0, 1.5],
+            "pareto_front": [
+                {
+                    "objectives": {"capability_per_watt": 0.3, "power_watts": 5.0},
+                    "design_params": {"process_nm": 16, "clock_mhz": 1000},
+                    "metadata": {"model_family": "yolov8", "model_variant": "s"},
+                }
+            ],
+            "knee_point": None,
+            "layers_used": ["map_elites", "bayesian"],
+            "atlas": {"filled_cells": 72, "total_cells": 100, "coverage": 0.72},
+            "atlas_coverage_pct": 72.0,
+            "convergence_history": [
+                {"iteration": 0, "hypervolume": 1.5, "pareto_size": 8, "total_evals": 200},
+            ],
+            "design_variables_ranked": [
+                {
+                    "variable": "clock_mhz",
+                    "total_impact": 1.70,
+                    "per_objective": {"power_watts": 0.90, "latency_ms": 0.80},
+                },
+            ],
+            "sensitivity": {
+                "power_watts": {"clock_mhz": {"importance": 0.90, "lengthscale": 0.3}},
+            },
+            "llm_available": True,
+            "converged": False,
+            "research_docs_used": [],
+        }
+
+        from embodied_ai_architect.graphs.optimization_loop import _reason_with_llm
+
+        _reason_with_llm(state)
+
+        prompt = captured["prompt"]
+        assert "MOO Search Evidence" in prompt
+        assert "map_elites, bayesian" in prompt
+        assert "72.0%" in prompt
+        assert "clock_mhz" in prompt
+        # The system prompt must have been updated to guide on this evidence
+        assert "design_variables_ranked" in captured["system"]
+        assert "atlas_coverage_pct" in captured["system"]
