@@ -214,6 +214,52 @@ def _build_rich_state(session_id="soc_testapi"):
         "max_die_area_mm2": 100.0,
         "issues": [],
     }
+    # Issue #33: full KPU config (used by /api/sessions/{id}/kpu)
+    state["kpu_config"] = {
+        "name": "swkpu-test",
+        "process_nm": 28,
+        "array_rows": 3,
+        "array_cols": 3,
+        "compute_tile": {
+            "num_tiles": 4,
+            "array_rows": 16,
+            "array_cols": 16,
+            "vector_lanes": 16,
+            "frequency_mhz": 500.0,
+            "supported_precisions": ["int8", "fp16"],
+            "l2_size_bytes": 262144,
+            "l2_num_banks": 8,
+            "l2_read_ports": 2,
+            "l2_write_ports": 1,
+            "l1_size_bytes": 32768,
+            "l1_num_banks": 4,
+            "num_streamers": 2,
+            "streamer_prefetch_depth": 4,
+            "streamer_buffer_bytes": 16384,
+        },
+        "memory_tile": {
+            "l3_tile_size_bytes": 524288,
+            "l3_num_banks": 4,
+            "num_block_movers": 2,
+            "block_mover_bw_gbps": 32.0,
+            "num_dma_engines": 1,
+            "dma_max_transfer_bytes": 1048576,
+            "dma_queue_depth": 8,
+        },
+        "noc": {
+            "topology": "mesh_2d",
+            "link_width_bits": 256,
+            "frequency_mhz": 1000.0,
+            "num_routers": 16,
+        },
+        "dram": {
+            "technology": "LPDDR4X",
+            "num_controllers": 2,
+            "channels_per_controller": 2,
+            "bandwidth_per_channel_gbps": 6.4,
+            "capacity_gb": 4.0,
+        },
+    }
     state["bandwidth_match"] = {
         "links": [
             {
@@ -556,6 +602,58 @@ class TestKPUSlackness:
         # Uncached half was extracted from raw bandwidth_match
         assert data["bandwidth"] is not None
         assert len(data["bandwidth"]["links"]) == 2
+
+
+# ---------------------------------------------------------------------------
+# KPU full snapshot endpoint (issue #33)
+# ---------------------------------------------------------------------------
+
+
+class TestKPUEndpoint:
+    """Tests for /api/sessions/{id}/kpu — the full KPU snapshot served to
+    /architect-drill (issue #33). Combines kpu_config + floorplan + bandwidth."""
+
+    def test_endpoint_returns_200(self, client):
+        resp = client.get("/api/sessions/soc_testapi/kpu")
+        assert resp.status_code == 200
+
+    def test_response_has_three_sections(self, client):
+        data = client.get("/api/sessions/soc_testapi/kpu").json()
+        assert "config" in data
+        assert "floorplan" in data
+        assert "bandwidth" in data
+        assert data["config"] is not None
+        assert data["floorplan"] is not None
+        assert data["bandwidth"] is not None
+
+    def test_config_carries_full_kpu_microarch(self, client):
+        """The config field must carry the full KPUMicroArchConfig dump
+        so /architect-drill kpu can render compute, memory, NoC, DRAM."""
+        data = client.get("/api/sessions/soc_testapi/kpu").json()
+        config = data["config"]
+        assert config["name"] == "swkpu-test"
+        assert config["process_nm"] == 28
+        # Compute tile knobs
+        assert config["compute_tile"]["array_rows"] == 16
+        assert config["compute_tile"]["array_cols"] == 16
+        assert config["compute_tile"]["frequency_mhz"] == 500.0
+        assert config["compute_tile"]["l2_size_bytes"] == 262144
+        # Memory tile knobs
+        assert config["memory_tile"]["l3_tile_size_bytes"] == 524288
+        # NoC and DRAM
+        assert config["noc"]["topology"] == "mesh_2d"
+        assert config["noc"]["link_width_bits"] == 256
+        assert config["dram"]["technology"] == "LPDDR4X"
+
+    def test_returns_null_config_for_minimal_session(self, client_with_both):
+        """A session without kpu_config returns config=null + None slackness."""
+        data = client_with_both.get("/api/sessions/soc_minimal/kpu").json()
+        assert data["config"] is None
+        assert data["floorplan"] is None
+        assert data["bandwidth"] is None
+
+    def test_404_for_nonexistent_session(self, client):
+        assert client.get("/api/sessions/soc_nope/kpu").status_code == 404
 
 
 # ---------------------------------------------------------------------------

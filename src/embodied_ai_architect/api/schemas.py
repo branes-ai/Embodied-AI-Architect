@@ -189,6 +189,23 @@ class KPUSlacknessResponse(BaseModel):
     bandwidth: Optional[KPUBandwidthSlackness] = None
 
 
+class KPUResponse(BaseModel):
+    """Response for /api/sessions/{id}/kpu — full KPU snapshot for /architect-drill (issue #33).
+
+    Combines the raw `kpu_config` (the architect's design knobs) with the
+    derived floorplan and bandwidth slackness from issue #30. Each field is
+    Optional so non-RTL sessions return a valid response with nulls instead
+    of a 404.
+    """
+
+    config: Optional[dict] = Field(
+        default=None,
+        description="Full KPUMicroArchConfig dump (compute_tile, memory_tile, noc, dram, ...)",
+    )
+    floorplan: Optional[KPUFloorplanSlackness] = None
+    bandwidth: Optional[KPUBandwidthSlackness] = None
+
+
 # ---------------------------------------------------------------------------
 # Optimization trajectory
 # ---------------------------------------------------------------------------
