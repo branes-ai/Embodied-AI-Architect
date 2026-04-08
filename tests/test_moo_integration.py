@@ -267,7 +267,9 @@ class TestFrontierAccumulation:
 
         # Accumulated frontier never shrinks — points only get added or
         # supersede dominated peers; the merged set is monotonic in coverage.
-        assert second_size >= 1
+        assert (
+            second_size >= first_size
+        ), f"Pareto frontier shrank from {first_size} to {second_size} points"
         # pareto_frontier_history records both iterations
         history = state.get("pareto_frontier_history", [])
         assert len(history) == 2
