@@ -7,7 +7,7 @@
 
 Implemented a complete pipeline for analyzing full C++, Rust, and Python applications and mapping them to hardware — extending the system beyond individual PyTorch models to whole-application workloads including signal processing, control loops, and sensor fusion.
 
-The pipeline has three stages: static scan (no LLM), multi-pass LLM analysis (4 passes), and hardware assessment (reuses existing PPA pipeline). Exposed via CLI subcommands (`embodied-ai codebase scan|analyze|assess`) and three interactive chat tools (`scan_project`, `analyze_codebase`, `assess_codebase_on_hardware`).
+The pipeline has three stages: static scan (no LLM), multi-pass LLM analysis (4 passes), and hardware assessment (reuses existing PPA pipeline). Exposed via CLI subcommands (`branes codebase scan|analyze|assess`) and three interactive chat tools (`scan_project`, `analyze_codebase`, `assess_codebase_on_hardware`).
 
 ## Architecture
 
@@ -71,9 +71,9 @@ Project Directory
 
 | Command | Description |
 |---------|-------------|
-| `embodied-ai codebase scan PATH` | Quick static scan (no API key needed) |
-| `embodied-ai codebase analyze PATH` | Full LLM-powered 4-pass analysis |
-| `embodied-ai codebase assess PATH --hardware X --power-budget N --latency-target N` | End-to-end hardware assessment |
+| `branes codebase scan PATH` | Quick static scan (no API key needed) |
+| `branes codebase analyze PATH` | Full LLM-powered 4-pass analysis |
+| `branes codebase assess PATH --hardware X --power-budget N --latency-target N` | End-to-end hardware assessment |
 
 ### Documentation
 

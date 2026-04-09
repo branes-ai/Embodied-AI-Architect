@@ -543,7 +543,7 @@ Agent: [calls compare_variants on both platforms]
 #### 7.2 Demo Video Script
 
 1. Introduction: The problem of embodied AI design
-2. Show the agentic workflow in `embodied-ai chat`
+2. Show the agentic workflow in `branes chat`
 3. Design a PGN&C architecture interactively
 4. Analyze on Ryzen 7 AI NUC
 5. Identify bottleneck (GPU detector)
@@ -617,7 +617,7 @@ python -c "import onnxruntime; print(onnxruntime.get_available_providers())"
 python -m operators.perception.yolo_onnx --model yolov8n.onnx --device npu
 
 # Benchmark architecture
-embodied-ai chat
+branes chat
 > benchmark_architecture pgnc_robot_v1 Ryzen-7-AI-NUC
 
 # Power monitoring

@@ -14,7 +14,7 @@ Verified that the design assistant CLI workflow implemented on 2025-12-16 is com
 | Component | Status | Notes |
 |-----------|--------|-------|
 | `anthropic` package | ✓ Installed | v0.72.0 |
-| CLI `chat` command | ✓ Registered | `embodied-ai chat` available |
+| CLI `chat` command | ✓ Registered | `branes chat` available |
 | LLM imports | ✓ Working | All modules import cleanly |
 | Tool executors (10 tools) | ✓ Working | All execute correctly |
 | Error handling | ✓ Working | Clear API key guidance |
@@ -64,10 +64,10 @@ export ANTHROPIC_API_KEY=sk-ant-...
 ### Run the Chat Interface
 ```bash
 # Standard mode
-embodied-ai chat
+branes chat
 
 # Verbose mode (shows tool execution details)
-embodied-ai chat -v
+branes chat -v
 ```
 
 ### Example Queries

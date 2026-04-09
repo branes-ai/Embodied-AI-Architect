@@ -20,7 +20,7 @@ Implements the 9 items from `docs/dev-environment-improvements.md`.
 **File:** `CLAUDE.md`
 
 Changes:
-- Replace all `embodied-ai` with `branes` in CLI examples (19 occurrences)
+- Replace all `branes` with `branes` in CLI examples (19 occurrences)
 - Prefix all bare `pip`, `pytest`, `black`, `ruff` commands with `.venv/bin/`
 - Change Python target from `3.9+` to `3.11+`
 - Update CLI command list from 8 to 19 groups

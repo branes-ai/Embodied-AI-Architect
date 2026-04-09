@@ -552,7 +552,7 @@ assert graph == graph2  # Round-trip successful
 | MLIR/IREE | Compilation backend |
 | Simulators | Benchmark backends |
 | Compiler Modeler | Hardware mapping analysis |
-| CLI | New `embodied-ai app` commands |
+| CLI | New `branes app` commands |
 
 ---
 
@@ -562,15 +562,15 @@ Add new command group:
 
 ```bash
 # Application commands
-embodied-ai app create <name>          # Scaffold new app
-embodied-ai app validate <app.py>      # Validate application
-embodied-ai app compile <app.py>       # Compile to graph IR
-embodied-ai app visualize <app.py>     # Visualize graph
-embodied-ai app benchmark <app.py>     # Benchmark application
-embodied-ai app export <app.py>        # Export to DSL/MLIR/C++
+branes app create <name>          # Scaffold new app
+branes app validate <app.py>      # Validate application
+branes app compile <app.py>       # Compile to graph IR
+branes app visualize <app.py>     # Visualize graph
+branes app benchmark <app.py>     # Benchmark application
+branes app export <app.py>        # Export to DSL/MLIR/C++
 
 # Examples
-embodied-ai app benchmark drone_nav.py \
+branes app benchmark drone_nav.py \
   --dataset flight_001.bag \
   --backend jetson_agx \
   --metrics latency,accuracy,energy

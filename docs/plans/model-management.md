@@ -9,7 +9,7 @@
   ┌─────────────────────────────────────────────────────────────────┐
   │                      Model Registry                             │
   ├─────────────────────────────────────────────────────────────────┤
-  │  embodied-ai model register model.pt --name "perception_v1"     │
+  │  branes model register model.pt --name "perception_v1"     │
   │                           │                                     │
   │                           ▼                                     │
   │  ┌─────────────────────────────────────────────────────────┐    │
@@ -170,7 +170,7 @@
   Start with Architecture 1 (Static Registry), then layer on Architecture 2 (LLM) for reasoning:
 
   Phase 1: Model Registry (~500 LOC)
-    - embodied-ai model register/list/show/remove
+    - branes model register/list/show/remove
     - Static analysis: params, FLOPs, shapes, layer census
     - JSON/SQLite storage
 

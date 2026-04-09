@@ -109,7 +109,7 @@ docs-site/
 
 ## API
 - MCP Server: branes-mcp serve
-- CLI: embodied-ai analyze model.pt
+- CLI: branes analyze model.pt
 ```
 
 **`llms-full.txt` (comprehensive):**
@@ -196,7 +196,7 @@ What you'll learn and achieve.
 
 ### 1. Analyze Model-Hardware Fit
 ```bash
-embodied-ai analyze yolov8n.pt --hardware jetson-orin-nano
+branes analyze yolov8n.pt --hardware jetson-orin-nano
 ```
 
 ### 2. Export to ONNX

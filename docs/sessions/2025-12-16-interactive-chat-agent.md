@@ -106,7 +106,7 @@ pip install -e ".[chat]"
 export ANTHROPIC_API_KEY=your-key
 
 # Start interactive session
-embodied-ai chat
+branes chat
 ```
 
 Example conversation:

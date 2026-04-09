@@ -13,7 +13,7 @@ The file has several inaccuracies and gaps that actively mislead Claude Code.
 
 | Issue | Current | Correct |
 |-------|---------|---------|
-| CLI entrypoint | `embodied-ai` (19 occurrences) | `branes` |
+| CLI entrypoint | `branes` (19 occurrences) | `branes` |
 | Tool commands | bare `pip`, `pytest`, `black`, `ruff` | `.venv/bin/` prefix |
 | Python target | 3.9+ | >=3.11 (per pyproject.toml) |
 | CLI command groups | 8 listed | 19+ exist |

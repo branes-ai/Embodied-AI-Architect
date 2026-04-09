@@ -64,13 +64,13 @@ Extended `cli/commands/benchmark.py`:
 
 ```bash
 # List available architectures
-embodied-ai benchmark arch-list
+branes benchmark arch-list
 
 # Run architecture benchmark
-embodied-ai benchmark arch drone_perception_v1 --iterations 100 --warmup 10
+branes benchmark arch drone_perception_v1 --iterations 100 --warmup 10
 
 # Use variant and save results
-embodied-ai benchmark arch drone_perception_v1 --variant edge -o results.json
+branes benchmark arch drone_perception_v1 --variant edge -o results.json
 
 # JSON output
 embodied-ai --json benchmark arch pick_and_place_v1

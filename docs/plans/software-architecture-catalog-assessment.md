@@ -337,7 +337,7 @@ class RateFeasibility(BaseModel):
 3. **Architecture visualization** (Week 4)
    - DOT/GraphViz export
    - Mermaid diagram generation
-   - CLI `embodied-ai app show <id>` command
+   - CLI `branes app show <id>` command
 
 **Deliverables**:
 - `SoftwareArchitecture` schema
@@ -475,7 +475,7 @@ Cloud offers 28% better accuracy but requires network round-trip.
 1. **Operator Catalog**: 30+ operators with profiling data
 2. **Architecture Catalog**: 5+ reference architectures
 3. **Analysis Coverage**: End-to-end latency, scheduling, power for any arch+hw pair
-4. **Tool Integration**: All new tools work in `embodied-ai chat`
+4. **Tool Integration**: All new tools work in `branes chat`
 5. **User Value**: Architects can evaluate complete systems, not just isolated models
 
 ## Open Questions

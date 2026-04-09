@@ -107,6 +107,6 @@ branes optimize sensitivity
 branes optimize explain --points 0,3
 
 # From chat
-embodied-ai chat
+branes chat
 > explore the design space for a drone SoC with 5W power budget and 33ms latency
 ```

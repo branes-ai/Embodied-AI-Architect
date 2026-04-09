@@ -166,9 +166,9 @@ and `llm/graphs_tools.py` — tool definitions as dicts, executor functions retu
 Click command group with subcommands:
 
 ```
-embodied-ai codebase scan /path/to/project      # Quick file scan
-embodied-ai codebase analyze /path/to/project    # Full LLM analysis
-embodied-ai codebase assess /path/to/project     # End-to-end hardware assessment
+branes codebase scan /path/to/project      # Quick file scan
+branes codebase analyze /path/to/project    # Full LLM analysis
+branes codebase assess /path/to/project     # End-to-end hardware assessment
     --hardware jetson_orin,custom_kpu
     --power-budget 15
     --latency-target 33
@@ -243,11 +243,11 @@ Small synthetic projects for testing:
 pytest tests/test_codebase.py -v
 
 # Test CLI commands
-embodied-ai codebase scan tests/fixtures/sample_projects/cpp_drone/
-embodied-ai codebase analyze tests/fixtures/sample_projects/python_ml/
+branes codebase scan tests/fixtures/sample_projects/cpp_drone/
+branes codebase analyze tests/fixtures/sample_projects/python_ml/
 
 # Test in chat (requires ANTHROPIC_API_KEY)
-embodied-ai chat
+branes chat
 > scan the project at /path/to/my/app
 > analyze this codebase for hardware mapping
 > assess this app on jetson orin vs custom kpu with 10W power budget

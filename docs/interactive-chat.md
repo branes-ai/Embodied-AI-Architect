@@ -12,7 +12,7 @@ pip install -e ".[chat]"
 export ANTHROPIC_API_KEY=your-key-here
 
 # Start the interactive session
-embodied-ai chat
+branes chat
 ```
 
 ## Architecture
@@ -235,7 +235,7 @@ This is about 5x slower than the estimated Jetson Orin Nano performance.
 ### CLI Options
 
 ```bash
-embodied-ai chat --help
+branes chat --help
 
 Options:
   --model TEXT   Claude model to use [default: claude-sonnet-4-20250514]
