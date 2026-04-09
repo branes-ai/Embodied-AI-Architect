@@ -328,7 +328,7 @@ def codebase_design(
             console.print("[cyan]Analyzing[/cyan] (this calls the LLM) ...")
         llm = LLMClient()
         analyzer = CodeAnalyzer(llm)
-        analysis = analyzer.analyze(scan_result)
+        analysis = analyzer.analyze(scan_result, project_path=project_path)
 
         # 3. Build constraints from CLI options
         constraint_kwargs = {}
