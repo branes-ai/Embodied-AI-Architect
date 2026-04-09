@@ -661,3 +661,86 @@ class TestRenderKPUSections:
         out = render_optimization_review(snap)
         assert "KPU BANDWIDTH CHAIN" not in out
         assert "KPU FLOORPLAN" not in out
+
+
+# ---------------------------------------------------------------------------
+# Issue #34: KPU convergence history in the snapshot
+# ---------------------------------------------------------------------------
+
+
+class TestKPUConvergenceHistoryInSnapshot:
+    def test_snapshot_carries_kpu_history_when_present(self):
+        state = _make_state()
+        state["kpu_optimization_history"] = [
+            {
+                "source": "kpu_configurator",
+                "iteration": 0,
+                "config_name": "swkpu-test",
+                "compute_array": "16x16",
+                "l2_size_bytes": 262144,
+                "summary": "initial sizing",
+            },
+            {
+                "source": "floorplan_validator",
+                "iteration": 0,
+                "pitch_matched": False,
+                "total_area_mm2": 80.0,
+                "floorplan_feasible": True,
+                "summary": "pitch=FAIL",
+            },
+            {
+                "source": "kpu_optimizer",
+                "iteration": 1,
+                "config_name": "swkpu-test",
+                "compute_array": "12x16",
+                "changes": ["Reduced systolic array cols to 12 (pitch match)"],
+                "summary": "applied 1 change",
+            },
+        ]
+        snap = build_optimization_review_snapshot(state)
+        assert len(snap.kpu_history) == 3
+        assert [e["source"] for e in snap.kpu_history] == [
+            "kpu_configurator",
+            "floorplan_validator",
+            "kpu_optimizer",
+        ]
+
+    def test_snapshot_kpu_history_empty_by_default(self):
+        state = _make_state()
+        snap = build_optimization_review_snapshot(state)
+        assert snap.kpu_history == []
+
+    def test_render_includes_kpu_history_section(self):
+        state = _make_state()
+        state["kpu_optimization_history"] = [
+            {
+                "source": "kpu_configurator",
+                "iteration": 0,
+                "config_name": "swkpu-test",
+                "compute_array": "16x16",
+                "summary": "initial sizing",
+            },
+            {
+                "source": "kpu_optimizer",
+                "iteration": 1,
+                "config_name": "swkpu-test",
+                "compute_array": "12x16",
+                "pitch_matched": True,
+                "total_area_mm2": 48.2,
+                "changes": ["Reduced systolic array cols to 12 (pitch match)"],
+                "summary": "applied 1 change",
+            },
+        ]
+        snap = build_optimization_review_snapshot(state)
+        out = render_optimization_review(snap)
+        assert "KPU CONVERGENCE HISTORY" in out
+        assert "kpu_configurator" in out
+        assert "kpu_optimizer" in out
+        assert "16x16" in out
+        assert "Reduced systolic array cols" in out
+
+    def test_no_section_when_history_empty(self):
+        state = _make_state()
+        snap = build_optimization_review_snapshot(state)
+        out = render_optimization_review(snap)
+        assert "KPU CONVERGENCE HISTORY" not in out

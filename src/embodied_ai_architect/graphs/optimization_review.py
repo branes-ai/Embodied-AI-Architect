@@ -190,6 +190,11 @@ class OptimizationReviewSnapshot(BaseModel):
     kpu_floorplan: Optional[KPUFloorplanSlackness] = None
     kpu_bandwidth: Optional[KPUBandwidthSlackness] = None
 
+    # KPU convergence history across iterations (issue #34). Each entry is
+    # a per-iteration snapshot from one of the KPU specialists (configurator,
+    # floorplan_validator, bandwidth_validator, kpu_optimizer, rtl_area_feedback).
+    kpu_history: list[dict[str, Any]] = Field(default_factory=list)
+
     # Design context
     goal: str = ""
     design_rationale: list[str] = Field(default_factory=list)
@@ -728,6 +733,7 @@ def build_optimization_review_snapshot(
         moo_summary=moo_summary,
         kpu_floorplan=kpu_floorplan,
         kpu_bandwidth=kpu_bandwidth,
+        kpu_history=list(state.get("kpu_optimization_history", []) or []),
         goal=state.get("goal", ""),
         design_rationale=state.get("design_rationale", [])[-5:],
     )
@@ -1000,6 +1006,49 @@ def render_optimization_review(snapshot: OptimizationReviewSnapshot) -> str:
         if fp.issues:
             for issue in fp.issues:
                 lines.append(f"  ! {issue}")
+        lines.append("")
+
+    # KPU convergence history (issue #34) — replays the inner-loop sequence
+    if snapshot.kpu_history:
+        lines.append("─" * 72)
+        lines.append("  KPU CONVERGENCE HISTORY")
+        lines.append("─" * 72)
+        lines.append("")
+        for entry in snapshot.kpu_history:
+            it = entry.get("iteration", "?")
+            src = entry.get("source", "?")
+            head = f"  iter {it} [{src}]"
+            cfg_name = entry.get("config_name")
+            if cfg_name:
+                head += f" — {cfg_name}"
+            lines.append(head)
+            # One detail line per available metric
+            details: list[str] = []
+            if entry.get("compute_array"):
+                details.append(f"systolic={entry['compute_array']}")
+            l2 = entry.get("l2_size_bytes")
+            if l2 is not None:
+                details.append(f"L2={l2 // 1024}KB")
+            if entry.get("noc_link_width_bits") is not None:
+                details.append(f"NoC={entry['noc_link_width_bits']}b")
+            if "pitch_matched" in entry:
+                pv = "PASS" if entry["pitch_matched"] else "FAIL"
+                area = entry.get("total_area_mm2")
+                detail = f"pitch={pv}"
+                if area is not None:
+                    detail += f"/area={area:.1f}mm²"
+                details.append(detail)
+            if "bandwidth_balanced" in entry:
+                bv = "PASS" if entry["bandwidth_balanced"] else "FAIL"
+                pu = entry.get("peak_utilization")
+                detail = f"BW={bv}"
+                if pu is not None:
+                    detail += f"@{pu:.0%}"
+                details.append(detail)
+            if details:
+                lines.append("    " + "  |  ".join(details))
+            for change in entry.get("changes", []) or []:
+                lines.append(f"    → {change}")
         lines.append("")
 
     # Pareto / MOO summary
