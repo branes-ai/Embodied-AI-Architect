@@ -63,13 +63,14 @@ def _question_from_dict(d: dict[str, Any]) -> Question:
         "question_type": QuestionType(d.get("question_type", "single_choice")),
         "options": d.get("options", []),
         "option_descriptions": d.get("option_descriptions", {}),
-        "required": d.get("required", False),
         "implications": d.get("implications", {}),
-        "allow_custom": d.get("allow_custom", False),
     }
     # Only set optional fields when they're actually present and non-None
-    # so the Pydantic model's defaults are used otherwise.
+    # so the Pydantic model's defaults are respected (e.g. required
+    # defaults to True in the model — don't override with False).
     for key in (
+        "required",
+        "allow_custom",
         "explanation",
         "default",
         "depends_on",
@@ -89,7 +90,7 @@ def _load_template_from_yaml(path: Path) -> Optional[DomainTemplate]:
     try:
         import yaml
 
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
 
         questions = [_question_from_dict(qd) for qd in data.get("questions", [])]
