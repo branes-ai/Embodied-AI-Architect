@@ -77,13 +77,15 @@ def sensor_show(ctx, sensor_id):
     registry = SensorRegistry()
     s = registry.get(sensor_id)
 
+    json_output = ctx.obj.get("json", False)
     if not s:
-        console.print(f"[red]Sensor '{sensor_id}' not found.[/red]")
-        console.print("[dim]Sensor registry not yet populated (Phase 2).[/dim]")
+        if json_output:
+            click.echo(json.dumps({"error": f"Sensor '{sensor_id}' not found"}))
+        else:
+            console.print(f"[red]Sensor '{sensor_id}' not found.[/red]")
+            console.print("[dim]Sensor registry not yet populated (Phase 2).[/dim]")
         ctx.exit(1)
         return
-
-    json_output = ctx.obj.get("json", False)
     if json_output:
         click.echo(
             json.dumps(

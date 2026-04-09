@@ -7,8 +7,9 @@ definitions (mirroring the platform registry pattern).
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from typing import Any, Optional
+
+from pydantic import BaseModel, Field
 
 # Sensor modality categories — used by `branes sensor categories`
 MODALITIES = [
@@ -33,8 +34,7 @@ MODALITIES = [
 ]
 
 
-@dataclass
-class SensorDefinition:
+class SensorDefinition(BaseModel):
     """A sensor in the registry."""
 
     id: str
@@ -42,7 +42,7 @@ class SensorDefinition:
     modality: str
     vendor: str = ""
     description: str = ""
-    attributes: dict[str, Any] = field(default_factory=dict)
+    attributes: dict[str, Any] = Field(default_factory=dict)
 
 
 class SensorRegistry:
@@ -69,6 +69,8 @@ class SensorRegistry:
 
     def search(self, query: str, top_k: int = 10) -> list[SensorDefinition]:
         """Search sensors by keyword. Returns empty until populated."""
+        if top_k <= 0:
+            return []
         if not self._sensors:
             return []
         query_lower = query.lower()
