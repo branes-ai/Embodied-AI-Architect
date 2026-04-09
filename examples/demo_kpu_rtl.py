@@ -30,7 +30,9 @@ from embodied_ai_architect.graphs.soc_state import (
     get_task_graph,
 )
 from embodied_ai_architect.graphs.planner import PlannerNode
-from embodied_ai_architect.graphs.specialists import create_default_dispatcher
+from embodied_ai_architect.graphs.session_store import SessionStore
+from embodied_ai_architect.graphs.soc_runner import SoCDesignRunner
+from embodied_ai_architect.graphs.specialists import create_default_dispatcher  # noqa: F401
 
 # ---------------------------------------------------------------------------
 # Demo config
@@ -154,18 +156,9 @@ def verdict_str(v: str) -> str:
 
 def run_demo() -> None:
     banner("Demo 4: KPU Micro-architecture + RTL Generation")
-    print(f"\n  Goal:")
+    print("\n  Goal:")
     print(textwrap.fill(DEMO_4_GOAL, width=W - 4, initial_indent="    ", subsequent_indent="    "))
-    print(f"  Mode: Static Plan (deterministic)")
-
-    # ---- Create initial state with RTL enabled ----
-    state = create_initial_soc_state(
-        goal=DEMO_4_GOAL,
-        constraints=DEMO_4_CONSTRAINTS,
-        use_case="delivery_drone",
-        platform="drone",
-        rtl_enabled=True,
-    )
+    print("  Mode: Static Plan via SoCDesignRunner (issue #35)")
 
     section("Constraints")
     cd = DEMO_4_CONSTRAINTS.model_dump(exclude_none=True)
@@ -174,56 +167,53 @@ def run_demo() -> None:
             continue
         kv(k.replace("_", " ").title(), str(v))
 
-    # ---- Plan ----
-    section("Planning")
-    t0 = time.perf_counter()
+    # ---- Show the static plan (purely informational) ----
+    section("Plan Preview")
     planner = PlannerNode(static_plan=DEMO_4_PLAN)
-    plan_updates = planner(state)
-    state = {**state, **plan_updates}
-    plan_time = time.perf_counter() - t0
-
-    graph = get_task_graph(state)
-    print(f"\n  Task graph ({len(graph.nodes)} tasks, planned in {plan_time:.1f}s):\n")
+    preview_state = create_initial_soc_state(
+        goal=DEMO_4_GOAL,
+        constraints=DEMO_4_CONSTRAINTS,
+        use_case="delivery_drone",
+        platform="drone",
+        rtl_enabled=True,
+    )
+    preview_state = {**preview_state, **planner(preview_state)}
+    graph = get_task_graph(preview_state)
+    print(f"\n  Task graph ({len(graph.nodes)} tasks):\n")
     for tid in graph.execution_order():
         task = graph.nodes[tid]
         deps = ", ".join(task.dependencies) if task.dependencies else "(none)"
         print(f"    [{tid}] {task.name}")
         print(f"         agent: {task.agent}  deps: {deps}")
 
-    # ---- Dispatch ----
-    section("Executing Pipeline")
-    dispatcher = create_default_dispatcher()
+    # ---- Run via SoCDesignRunner so the session is persisted ----
+    section("Executing Pipeline (SoCDesignRunner)")
     t0 = time.perf_counter()
 
-    step = 0
-    completed_ids: set[str] = set()
-    while True:
-        graph = get_task_graph(state)
-        if graph.is_complete:
-            state = {**state, "status": "complete"}
-            break
+    runner = SoCDesignRunner(static_plan=DEMO_4_PLAN)
 
-        ready = graph.ready_tasks()
-        if not ready:
-            print(f"\n  Pipeline stuck! Status: {state.get('status')}")
-            break
-
-        for task in ready:
-            print(f"\n  [{task.id}] {task.agent}: {task.name}")
-
-        state = dispatcher.step(state)
-        step += 1
-
-        graph = get_task_graph(state)
-        for task in graph.nodes.values():
-            if task.id not in completed_ids and task.status.value == "completed":
-                completed_ids.add(task.id)
-                summary = (task.result or {}).get("summary", "")
-                if summary:
-                    print(f"         -> {summary}")
+    # SoCDesignRunner.run() doesn't yet plumb rtl_enabled through its
+    # signature (would be a small follow-up); for now, we build the initial
+    # state ourselves and invoke the compiled graph directly. This still
+    # writes the session via the runner's SessionStore.
+    initial_state = create_initial_soc_state(
+        goal=DEMO_4_GOAL,
+        constraints=DEMO_4_CONSTRAINTS,
+        use_case="delivery_drone",
+        platform="drone",
+        rtl_enabled=True,
+    )
+    runner._compiled_graph = runner._build_graph()
+    state = runner._compiled_graph.invoke(
+        initial_state, config={"recursion_limit": runner._recursion_limit}
+    )
+    runner._session_store.save(state)
 
     exec_time = time.perf_counter() - t0
-    print(f"\n  Pipeline completed in {step} steps, {exec_time:.2f}s")
+    print(f"\n  Pipeline completed in {state.get('iteration', 0)} iterations, " f"{exec_time:.2f}s")
+    print(f"  Session saved: {state.get('session_id')}")
+    print(f"  Inspect with: branes session show {state.get('session_id')}")
+    print("  Or:           branes session show --latest")
 
     # ---- KPU Results ----
     _print_kpu_results(state)
@@ -231,9 +221,21 @@ def run_demo() -> None:
     # ---- PPA Summary ----
     _print_ppa_summary(state)
 
+    # ---- Verify session round-trips ----
+    section("Session Persistence Verification")
+    store = SessionStore()
+    loaded = store.load(state.get("session_id", ""))
+    if loaded is None:
+        print("  ! Session not found in store")
+    else:
+        kv("kpu_config present", str(bool(loaded.get("kpu_config"))))
+        kv("floorplan present", str(bool(loaded.get("floorplan_estimate"))))
+        kv("bandwidth present", str(bool(loaded.get("bandwidth_match"))))
+        kv("RTL synth present", str(bool(loaded.get("rtl_synthesis_results"))))
+        kv("KPU history len", str(len(loaded.get("kpu_optimization_history", []))))
+
     banner("Demo 4 Complete")
-    total = plan_time + exec_time
-    print(f"\n  Total time: {total:.2f}s  |  Status: {state.get('status')}")
+    print(f"\n  Total time: {exec_time:.2f}s  |  Status: {state.get('status')}")
     print(f"  RTL enabled: {state.get('rtl_enabled', False)}")
     print()
 
@@ -263,14 +265,26 @@ def _print_kpu_results(state: dict) -> None:
         section("Floorplan Check")
         ct = fp.get("compute_tile", {})
         mt = fp.get("memory_tile", {})
-        kv("Compute Tile", f"{ct.get('width_mm', 0):.2f} x {ct.get('height_mm', 0):.2f}mm "
-           f"= {ct.get('area_mm2', 0):.2f}mm2")
-        kv("Memory Tile", f"{mt.get('width_mm', 0):.2f} x {mt.get('height_mm', 0):.2f}mm "
-           f"= {mt.get('area_mm2', 0):.2f}mm2")
-        kv("Pitch Match W", f"{fp.get('pitch_ratio_width', 0):.2f} "
-           f"({'OK' if abs(fp.get('pitch_ratio_width', 1) - 1) < 0.15 else 'MISMATCH'})")
-        kv("Pitch Match H", f"{fp.get('pitch_ratio_height', 0):.2f} "
-           f"({'OK' if abs(fp.get('pitch_ratio_height', 1) - 1) < 0.15 else 'MISMATCH'})")
+        kv(
+            "Compute Tile",
+            f"{ct.get('width_mm', 0):.2f} x {ct.get('height_mm', 0):.2f}mm "
+            f"= {ct.get('area_mm2', 0):.2f}mm2",
+        )
+        kv(
+            "Memory Tile",
+            f"{mt.get('width_mm', 0):.2f} x {mt.get('height_mm', 0):.2f}mm "
+            f"= {mt.get('area_mm2', 0):.2f}mm2",
+        )
+        kv(
+            "Pitch Match W",
+            f"{fp.get('pitch_ratio_width', 0):.2f} "
+            f"({'OK' if abs(fp.get('pitch_ratio_width', 1) - 1) < 0.15 else 'MISMATCH'})",
+        )
+        kv(
+            "Pitch Match H",
+            f"{fp.get('pitch_ratio_height', 0):.2f} "
+            f"({'OK' if abs(fp.get('pitch_ratio_height', 1) - 1) < 0.15 else 'MISMATCH'})",
+        )
         kv("Total Die Area", f"{fp.get('total_area_mm2', 0):.1f}mm2")
         kv("Feasible", verdict_str("PASS" if fp.get("feasible") else "FAIL"))
 
@@ -320,7 +334,7 @@ def _print_ppa_summary(state: dict) -> None:
             kv("Test", f"${cost_bd.get('test_cost_usd', 0):.2f}")
             kv("NRE/unit", f"${cost_bd.get('nre_per_unit_usd', 0):.2f}")
             kv("Yield", f"{cost_bd.get('yield_percent', 0):.1f}%")
-            kv("Dies/wafer", str(cost_bd.get('dies_per_wafer', 0)))
+            kv("Dies/wafer", str(cost_bd.get("dies_per_wafer", 0)))
 
         verdicts = ppa.get("verdicts", {})
         if verdicts:

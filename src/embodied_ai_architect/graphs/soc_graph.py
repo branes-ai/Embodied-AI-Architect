@@ -84,18 +84,75 @@ def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[SoCDesignState], di
         logger.info("Outer loop: dispatch node (iteration %d)", iteration)
 
         if iteration > 0:
-            # Re-evaluation: only run ppa_assessor on the modified state
+            # Re-evaluation graph. Always re-run ppa_assessor; when kpu_config
+            # is on the state (RTL/KPU pipeline) ALSO re-run the KPU
+            # validators so the floorplan/bandwidth views are refreshed after
+            # an optimizer-induced kpu_config change. Without this, the
+            # validators only run on iteration 0 and any subsequent KPU
+            # strategy (issue #32) that mutates kpu_config leaves
+            # floorplan_estimate / bandwidth_match permanently empty
+            # (issue #35).
             graph = TaskGraph()
+            if state.get("kpu_config"):
+                graph.add_task(
+                    TaskNode(
+                        id="reeval_floorplan",
+                        name="Re-validate floorplan",
+                        agent="floorplan_validator",
+                    )
+                )
+                graph.add_task(
+                    TaskNode(
+                        id="reeval_bandwidth",
+                        name="Re-validate bandwidth",
+                        agent="bandwidth_validator",
+                    )
+                )
             graph.add_task(
-                TaskNode(id="reeval_ppa", name="Re-evaluate PPA metrics", agent="ppa_assessor")
+                TaskNode(
+                    id="reeval_ppa",
+                    name="Re-evaluate PPA metrics",
+                    agent="ppa_assessor",
+                    dependencies=(
+                        ["reeval_floorplan", "reeval_bandwidth"] if state.get("kpu_config") else []
+                    ),
+                )
             )
             reeval_state = {**state, "task_graph": graph.to_dict()}
             result = dispatcher.run(reeval_state)
-            # Extract just the updates we care about
+            # Extract just the updates we care about, but ALSO forward the
+            # KPU/RTL/MOO fields from prior iterations so they survive across
+            # the LangGraph state-merge boundary (issue #35: LangGraph TypedDict
+            # state does not always preserve unmentioned keys, so each node
+            # that returns a partial dict needs to re-forward what should
+            # persist).
             return {
                 "ppa_metrics": result.get("ppa_metrics", state.get("ppa_metrics", {})),
                 "task_graph": state.get("task_graph"),  # preserve original task graph
                 "status": DesignStatus.OPTIMIZING.value,
+                # Forward KPU / RTL artifacts (issue #35). Floorplan and
+                # bandwidth come from `result` (the validators just re-ran);
+                # everything else carries through from prior state.
+                "kpu_config": state.get("kpu_config", {}),
+                "kpu_config_overrides": state.get("kpu_config_overrides", {}),
+                "floorplan_estimate": result.get(
+                    "floorplan_estimate", state.get("floorplan_estimate", {})
+                ),
+                "bandwidth_match": result.get("bandwidth_match", state.get("bandwidth_match", {})),
+                "kpu_optimization_history": result.get(
+                    "kpu_optimization_history", state.get("kpu_optimization_history", [])
+                ),
+                "rtl_modules": state.get("rtl_modules", {}),
+                "rtl_synthesis_results": state.get("rtl_synthesis_results", {}),
+                "rtl_lint_results": state.get("rtl_lint_results", {}),
+                "rtl_validation_results": state.get("rtl_validation_results", {}),
+                # Forward MOO artifacts (issue #27)
+                "pareto_points": state.get("pareto_points", []),
+                "pareto_results": state.get("pareto_results", {}),
+                "pareto_frontier_history": state.get("pareto_frontier_history", []),
+                "moo_results": state.get("moo_results", {}),
+                "swap_results": state.get("swap_results", {}),
+                "system_bom": state.get("system_bom", {}),
             }
         else:
             # Full execution on first pass
@@ -132,6 +189,31 @@ def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[SoCDesignState], di
                 "moo_results": result.get("moo_results", state.get("moo_results", {})),
                 "swap_results": result.get("swap_results", state.get("swap_results", {})),
                 "system_bom": result.get("system_bom", state.get("system_bom", {})),
+                # Issue #35: forward KPU/RTL outputs from the inner dispatcher
+                # so the LangGraph outer state retains them. Same bug pattern
+                # as the MOO fields above — without these the runner state
+                # ends up empty even though the KPU specialists ran.
+                "kpu_config": result.get("kpu_config", state.get("kpu_config", {})),
+                "kpu_config_overrides": result.get(
+                    "kpu_config_overrides", state.get("kpu_config_overrides", {})
+                ),
+                "floorplan_estimate": result.get(
+                    "floorplan_estimate", state.get("floorplan_estimate", {})
+                ),
+                "bandwidth_match": result.get("bandwidth_match", state.get("bandwidth_match", {})),
+                "kpu_optimization_history": result.get(
+                    "kpu_optimization_history", state.get("kpu_optimization_history", [])
+                ),
+                "rtl_modules": result.get("rtl_modules", state.get("rtl_modules", {})),
+                "rtl_synthesis_results": result.get(
+                    "rtl_synthesis_results", state.get("rtl_synthesis_results", {})
+                ),
+                "rtl_lint_results": result.get(
+                    "rtl_lint_results", state.get("rtl_lint_results", {})
+                ),
+                "rtl_validation_results": result.get(
+                    "rtl_validation_results", state.get("rtl_validation_results", {})
+                ),
                 "status": DesignStatus.OPTIMIZING.value,
             }
 
@@ -226,7 +308,30 @@ def _make_optimize_node() -> Callable[[SoCDesignState], dict[str, Any]]:
             "status": DesignStatus.OPTIMIZING.value,
         }
 
-        # Merge state updates from optimizer
+        # Issue #35: forward KPU/RTL/MOO fields explicitly so they survive
+        # the LangGraph state-merge across the optimize node. LangGraph's
+        # TypedDict state replaces dict-typed fields when a node returns a
+        # partial update — unmentioned keys are NOT always preserved.
+        # Pre-fill from current state so an optimizer that returns
+        # _state_updates with these keys can still override them.
+        for key, default in (
+            ("kpu_config", {}),
+            ("kpu_config_overrides", {}),
+            ("floorplan_estimate", {}),
+            ("bandwidth_match", {}),
+            ("kpu_optimization_history", []),
+            ("rtl_modules", {}),
+            ("rtl_synthesis_results", {}),
+            ("rtl_lint_results", {}),
+            ("rtl_validation_results", {}),
+            ("pareto_points", []),
+            ("pareto_results", {}),
+            ("pareto_frontier_history", []),
+            ("moo_results", {}),
+        ):
+            updates[key] = state.get(key, default)
+
+        # Merge state updates from optimizer (these win over the forwarding above)
         state_updates = result.get("_state_updates", {})
         if state_updates:
             updates.update(state_updates)
