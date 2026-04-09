@@ -1,0 +1,45 @@
+id: force.strain_gauge
+name: Strain Gauge
+category: force
+sensor_type: strain_gauge
+description: Deformation measurement for load cells and structural monitoring
+aliases: []
+keywords:
+  identity:
+  - strain gauge
+  - strain gauge
+  descriptions:
+  - strain gauge
+  - load cell
+  - weight
+  - force
+  - deformation
+  - stress
+  application:
+  - wheatstone bridge
+  - foil gauge
+  - bonded
+  - hbm
+  - vishay
+  - structural health
+  industry:
+  - fatigue
+  - torque measurement
+  - calibration
+  components:
+  - precision
+classification:
+  modality: force
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 0.1
+    typical: 0.01
+  cost_usd:
+    min: 5
+    max: 500
+    typical: 50

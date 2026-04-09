@@ -1,0 +1,46 @@
+id: environmental.gas_sensor
+name: Gas Sensor
+category: environmental
+sensor_type: gas_sensor
+description: Chemical gas detection and concentration measurement
+aliases: []
+keywords:
+  identity:
+  - gas sensor
+  - gas sensor
+  descriptions:
+  - gas sensor
+  - gas detector
+  - co2
+  - co
+  - methane
+  - voc
+  application:
+  - air quality
+  - mox
+  - electrochemical
+  - ndir
+  - pid
+  - catalytic
+  industry:
+  - semiconductor
+  - toxic gas
+  - combustible
+  components:
+  - indoor air quality
+  - industrial safety
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.01
+    max: 2.0
+    typical: 0.3
+  cost_usd:
+    min: 5
+    max: 500
+    typical: 30

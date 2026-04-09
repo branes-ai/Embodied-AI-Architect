@@ -1,0 +1,44 @@
+id: position.gps_ppk
+name: GPS PPK
+category: position
+sensor_type: gps_ppk
+description: Post-Processed Kinematic GNSS for survey-grade mapping
+aliases: []
+keywords:
+  identity:
+  - gps ppk
+  - gps ppk
+  descriptions:
+  - ppk
+  - post processed
+  - survey grade
+  - mapping
+  - photogrammetry
+  - aerial survey
+  application:
+  - geotagging
+  - rinex
+  - raw observations
+  - dual frequency
+  - precise ephemeris
+  - millimeter
+  industry:
+  - geodetic
+  - base station
+  - control point
+  components:
+  - datum
+classification:
+  modality: position
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  accuracy:
+    typical: 0.01
+    unit: meters
+  cost_usd:
+    min: 200
+    max: 10000
+    typical: 1000

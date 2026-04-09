@@ -1,0 +1,49 @@
+id: visual.omnidirectional_camera
+name: Omnidirectional Camera
+category: visual
+sensor_type: omnidirectional_camera
+description: 360-degree all-around camera for full environment capture
+aliases: []
+keywords:
+  identity:
+  - omnidirectional camera
+  - omnidirectional camera
+  descriptions:
+  - omnidirectional
+  - 360 camera
+  - all around
+  - catadioptric
+  - panoramic
+  - spherical
+  application:
+  - virtual reality
+  - telepresence
+  - surveillance
+  - dual fisheye
+  - stitching
+  - equirectangular
+  industry:
+  - cubemap
+  - immersive
+  - spatial audio
+  components:
+  - room mapping
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  fov_degrees:
+    min: 360
+    max: 360
+    typical: 360
+  resolution:
+    min: 2048
+    max: 8192
+    typical: 4096
+  cost_usd:
+    min: 200
+    max: 5000
+    typical: 1000

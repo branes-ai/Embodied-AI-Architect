@@ -1,0 +1,58 @@
+id: position.gps_rtk
+name: GPS RTK
+category: position
+sensor_type: gps_rtk
+description: Real-Time Kinematic GNSS for centimeter-level precision
+aliases: []
+keywords:
+  identity:
+  - gps rtk
+  - gps rtk
+  descriptions:
+  - rtk
+  - real time kinematic
+  - centimeter
+  - precision positioning
+  - survey
+  - agriculture
+  application:
+  - drone
+  - base station
+  - rover
+  - correction
+  - ntrip
+  - ublox
+  industry:
+  - septentrio
+  - dual frequency
+  - l1 l2
+  components:
+  - multi constellation
+classification:
+  modality: position
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  accuracy:
+    typical: 0.02
+    unit: meters
+  power_watts:
+    min: 0.3
+    max: 2.0
+    typical: 0.8
+  cost_usd:
+    min: 100
+    max: 5000
+    typical: 500
+reference_products:
+- id: ublox_zed_f9p
+  name: u-blox ZED-F9P
+  vendor: u-blox
+  cost_usd: 200
+  accuracy_cm: 2
+- id: septentrio_mosaic_x5
+  name: Septentrio Mosaic-X5
+  vendor: Septentrio
+  cost_usd: 800

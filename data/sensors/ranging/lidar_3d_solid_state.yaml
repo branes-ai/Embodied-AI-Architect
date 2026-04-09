@@ -1,0 +1,69 @@
+id: ranging.lidar_3d_solid_state
+name: LiDAR 3D Solid State
+category: ranging
+sensor_type: lidar_3d_solid_state
+description: No-moving-parts LiDAR for automotive and robotics
+aliases: []
+keywords:
+  identity:
+  - lidar 3d solid state
+  - lidar 3d solid state
+  descriptions:
+  - solid state lidar
+  - flash lidar
+  - mems lidar
+  - opa lidar
+  - automotive lidar
+  - adas
+  application:
+  - fmcw
+  - hesai
+  - luminar
+  - livox
+  - compact
+  - rugged
+  industry:
+  - low cost
+  - high reliability
+  - silicon photomultiplier
+  components:
+  - spad
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 30
+    max: 300
+    typical: 150
+  frame_rate_fps:
+    min: 10
+    max: 30
+    typical: 15
+  power_watts:
+    min: 5
+    max: 20
+    typical: 12
+  cost_usd:
+    min: 300
+    max: 10000
+    typical: 1500
+reference_products:
+- id: livox_mid360
+  name: Livox Mid-360
+  vendor: Livox
+  cost_usd: 449
+  range_m: 40
+- id: luminar_iris
+  name: Luminar Iris
+  vendor: Luminar
+  cost_usd: 1000
+  range_m: 250
+- id: hesai_pandar_xt32
+  name: Hesai PandarXT-32
+  vendor: Hesai
+  cost_usd: 4000
+  range_m: 120

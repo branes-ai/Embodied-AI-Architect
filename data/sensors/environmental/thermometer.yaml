@@ -1,0 +1,48 @@
+id: environmental.thermometer
+name: Temperature Sensor
+category: environmental
+sensor_type: thermometer
+description: Digital or analog temperature measurement
+aliases: []
+keywords:
+  identity:
+  - temperature sensor
+  - thermometer
+  descriptions:
+  - temperature
+  - thermometer
+  - thermal
+  - digital temperature
+  - thermocouple
+  - rtd
+  application:
+  - ntc
+  - ptc
+  - infrared thermometer
+  - contact
+  - non contact
+  - ambient
+  industry:
+  - industrial
+  - medical
+  - process control
+  components:
+  - data logging
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  accuracy:
+    typical: 0.5
+    unit: celsius
+  power_watts:
+    min: 0.0001
+    max: 0.01
+    typical: 0.001
+  cost_usd:
+    min: 0.5
+    max: 50
+    typical: 3

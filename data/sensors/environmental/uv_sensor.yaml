@@ -1,0 +1,45 @@
+id: environmental.uv_sensor
+name: UV Sensor
+category: environmental
+sensor_type: uv_sensor
+description: Ultraviolet radiation measurement
+aliases: []
+keywords:
+  identity:
+  - uv sensor
+  - uv sensor
+  descriptions:
+  - uv sensor
+  - ultraviolet
+  - uv index
+  - uva
+  - uvb
+  - sun exposure
+  application:
+  - skin protection
+  - curing
+  - sterilization
+  - water treatment
+  - semiconductor
+  - photodiode
+  industry:
+  - veml6075
+  - ltr390
+  - flame detection
+  components:
+  - arc detection
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.0001
+    max: 0.01
+    typical: 0.001
+  cost_usd:
+    min: 1
+    max: 30
+    typical: 5

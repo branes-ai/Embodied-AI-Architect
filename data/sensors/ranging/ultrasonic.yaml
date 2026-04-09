@@ -1,0 +1,49 @@
+id: ranging.ultrasonic
+name: Ultrasonic Sensor
+category: ranging
+sensor_type: ultrasonic
+description: Short-range distance measurement using sound waves
+aliases: []
+keywords:
+  identity:
+  - ultrasonic sensor
+  - ultrasonic
+  descriptions:
+  - ultrasonic
+  - sonar
+  - proximity
+  - short range
+  - parking sensor
+  - level measurement
+  application:
+  - obstacle detection
+  - echo
+  - transducer
+  - piezoelectric
+  - time of flight
+  - maxbotix
+  industry:
+  - cheap
+  - simple
+  - waterproof
+  components:
+  - blind spot
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 0.02
+    max: 10
+    typical: 3
+  power_watts:
+    min: 0.01
+    max: 0.5
+    typical: 0.1
+  cost_usd:
+    min: 2
+    max: 50
+    typical: 10

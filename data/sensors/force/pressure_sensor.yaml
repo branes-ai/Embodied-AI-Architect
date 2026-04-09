@@ -1,0 +1,45 @@
+id: force.pressure_sensor
+name: Pressure Sensor
+category: force
+sensor_type: pressure_sensor
+description: Fluid or gas pressure measurement
+aliases: []
+keywords:
+  identity:
+  - pressure sensor
+  - pressure sensor
+  descriptions:
+  - pressure sensor
+  - pressure transducer
+  - piezoresistive
+  - capacitive
+  - mems
+  - gauge
+  application:
+  - absolute
+  - differential
+  - hydraulic
+  - pneumatic
+  - process control
+  - industrial
+  industry:
+  - medical
+  - barometric
+  - honeywell
+  components:
+  - bosch
+classification:
+  modality: force
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 0.5
+    typical: 0.05
+  cost_usd:
+    min: 2
+    max: 500
+    typical: 30

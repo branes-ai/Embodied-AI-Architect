@@ -1,0 +1,48 @@
+id: position.gps_l1
+name: GPS L1
+category: position
+sensor_type: gps_l1
+description: Single-frequency GNSS receiver for meter-level positioning
+aliases: []
+keywords:
+  identity:
+  - gps l1
+  - gps l1
+  descriptions:
+  - gps
+  - gnss
+  - l1
+  - single frequency
+  - navigation
+  - positioning
+  application:
+  - geolocation
+  - tracking
+  - waypoint
+  - geofencing
+  - nmea
+  - ublox
+  industry:
+  - outdoor
+  - satellite
+  - constellation
+  components:
+  - cold start
+classification:
+  modality: position
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  accuracy:
+    typical: 2.5
+    unit: meters
+  power_watts:
+    min: 0.02
+    max: 0.5
+    typical: 0.1
+  cost_usd:
+    min: 5
+    max: 50
+    typical: 15
