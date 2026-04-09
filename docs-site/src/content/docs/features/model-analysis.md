@@ -29,19 +29,19 @@ When you analyze a model, we extract:
 ### Basic Analysis
 
 ```bash
-embodied-ai analyze model.pt
+branes analyze model.pt
 ```
 
 ### With Hardware Target
 
 ```bash
-embodied-ai analyze model.pt --hardware jetson-orin-nano
+branes analyze model.pt --hardware jetson-orin-nano
 ```
 
 ### With Input Shape
 
 ```bash
-embodied-ai analyze model.pt --input-shape 1,3,640,640
+branes analyze model.pt --input-shape 1,3,640,640
 ```
 
 ## Understanding the Output

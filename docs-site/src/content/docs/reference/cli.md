@@ -1,12 +1,12 @@
 ---
 title: CLI Reference
-description: Complete reference for the embodied-ai command-line interface.
+description: Complete reference for the branes command-line interface.
 ---
 
 ## Global Options
 
 ```bash
-embodied-ai [OPTIONS] COMMAND [ARGS]...
+branes [OPTIONS] COMMAND [ARGS]...
 ```
 
 | Option | Description |
@@ -21,7 +21,7 @@ embodied-ai [OPTIONS] COMMAND [ARGS]...
 Analyze a model's structure and characteristics.
 
 ```bash
-embodied-ai analyze MODEL [OPTIONS]
+branes analyze MODEL [OPTIONS]
 ```
 
 | Option | Description |
@@ -36,7 +36,7 @@ embodied-ai analyze MODEL [OPTIONS]
 Benchmark model performance on target backends.
 
 ```bash
-embodied-ai benchmark MODEL [OPTIONS]
+branes benchmark MODEL [OPTIONS]
 ```
 
 | Option | Description |
@@ -50,7 +50,7 @@ embodied-ai benchmark MODEL [OPTIONS]
 Start interactive AI architect session.
 
 ```bash
-embodied-ai chat [OPTIONS]
+branes chat [OPTIONS]
 ```
 
 | Option | Description |
@@ -65,7 +65,7 @@ Requires `ANTHROPIC_API_KEY` environment variable.
 Run the full analysis workflow.
 
 ```bash
-embodied-ai workflow run MODEL [OPTIONS]
+branes workflow run MODEL [OPTIONS]
 ```
 
 ### deploy
@@ -73,7 +73,7 @@ embodied-ai workflow run MODEL [OPTIONS]
 Deploy a model to target hardware.
 
 ```bash
-embodied-ai deploy MODEL [OPTIONS]
+branes deploy MODEL [OPTIONS]
 ```
 
 | Option | Description |
@@ -89,7 +89,7 @@ embodied-ai deploy MODEL [OPTIONS]
 Analyze full application codebases for hardware assessment.
 
 ```bash
-embodied-ai codebase [scan|analyze|assess] PROJECT_PATH [OPTIONS]
+branes codebase [scan|analyze|assess] PROJECT_PATH [OPTIONS]
 ```
 
 #### codebase scan
@@ -97,7 +97,7 @@ embodied-ai codebase [scan|analyze|assess] PROJECT_PATH [OPTIONS]
 Quick static scan — no LLM or API key needed.
 
 ```bash
-embodied-ai codebase scan /path/to/project
+branes codebase scan /path/to/project
 ```
 
 #### codebase analyze
@@ -105,7 +105,7 @@ embodied-ai codebase scan /path/to/project
 Full LLM-powered multi-pass analysis. Requires `ANTHROPIC_API_KEY`.
 
 ```bash
-embodied-ai codebase analyze /path/to/project
+branes codebase analyze /path/to/project
 ```
 
 #### codebase assess
@@ -113,7 +113,7 @@ embodied-ai codebase analyze /path/to/project
 End-to-end hardware assessment: scan, analyze, convert, and assess.
 
 ```bash
-embodied-ai codebase assess /path/to/project [OPTIONS]
+branes codebase assess /path/to/project [OPTIONS]
 ```
 
 | Option | Description |
@@ -127,7 +127,7 @@ embodied-ai codebase assess /path/to/project [OPTIONS]
 Multi-objective design space optimization.
 
 ```bash
-embodied-ai optimize [explore|show-front|sensitivity|explain] [OPTIONS]
+branes optimize [explore|show-front|sensitivity|explain] [OPTIONS]
 ```
 
 #### optimize explore
@@ -135,7 +135,7 @@ embodied-ai optimize [explore|show-front|sensitivity|explain] [OPTIONS]
 Explore the design space with multi-objective optimization.
 
 ```bash
-embodied-ai optimize explore --goal "drone SoC" --power 5 --latency 33
+branes optimize explore --goal "drone SoC" --power 5 --latency 33
 ```
 
 | Option | Description |
@@ -155,7 +155,7 @@ embodied-ai optimize explore --goal "drone SoC" --power 5 --latency 33
 Show the Pareto front from the last exploration.
 
 ```bash
-embodied-ai optimize show-front --top 10
+branes optimize show-front --top 10
 ```
 
 | Option | Description |
@@ -167,7 +167,7 @@ embodied-ai optimize show-front --top 10
 Show parameter sensitivity from the last exploration. Requires the Bayesian optimization layer to have run.
 
 ```bash
-embodied-ai optimize sensitivity
+branes optimize sensitivity
 ```
 
 #### optimize explain
@@ -175,7 +175,7 @@ embodied-ai optimize sensitivity
 Explain the tradeoff between two Pareto-front designs.
 
 ```bash
-embodied-ai optimize explain --points 0,3
+branes optimize explain --points 0,3
 ```
 
 | Option | Description |
@@ -408,7 +408,7 @@ branes swap explain --points 0,3
 View and manage analysis reports.
 
 ```bash
-embodied-ai report [list|view|export] [OPTIONS]
+branes report [list|view|export] [OPTIONS]
 ```
 
 ### backends
@@ -416,7 +416,7 @@ embodied-ai report [list|view|export] [OPTIONS]
 Manage benchmark backends.
 
 ```bash
-embodied-ai backends [list|add|remove] [OPTIONS]
+branes backends [list|add|remove] [OPTIONS]
 ```
 
 ### secrets
@@ -424,5 +424,5 @@ embodied-ai backends [list|add|remove] [OPTIONS]
 Manage credentials for remote backends.
 
 ```bash
-embodied-ai secrets [set|get|delete] [OPTIONS]
+branes secrets [set|get|delete] [OPTIONS]
 ```

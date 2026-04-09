@@ -12,7 +12,7 @@ Constraint checking gives you definitive answers: Can your model meet the requir
 Check if a model meets a latency target:
 
 ```bash
-embodied-ai check-latency resnet18 --hardware h100 --target 10ms
+branes check-latency resnet18 --hardware h100 --target 10ms
 ```
 
 Output:
@@ -27,7 +27,7 @@ PASS - Latency: 0.8ms (target: 10ms)
 Check if a model fits within a power budget:
 
 ```bash
-embodied-ai check-power yolov8s --hardware jetson-orin-nano --budget 15W
+branes check-power yolov8s --hardware jetson-orin-nano --budget 15W
 ```
 
 Output:
@@ -42,7 +42,7 @@ PASS - Power: 12.4W (budget: 15W)
 Check if a model fits in available memory:
 
 ```bash
-embodied-ai check-memory resnet152 --hardware jetson-orin-nano --limit 8192MB
+branes check-memory resnet152 --hardware jetson-orin-nano --limit 8192MB
 ```
 
 Output:
@@ -112,7 +112,7 @@ print(f"Actual: {data['metrics']['latency_ms']}ms")
 Check multiple constraints at once:
 
 ```bash
-embodied-ai check yolov8n --hardware jetson-orin-nano \
+branes check yolov8n --hardware jetson-orin-nano \
   --latency 33ms \
   --power 15W \
   --memory 4096MB

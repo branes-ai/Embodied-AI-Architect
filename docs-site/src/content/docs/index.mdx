@@ -59,7 +59,7 @@ The Embodied AI Architect helps you determine when custom hardware delivers comp
 ### Intelligent Design Exploration
 
 ```bash
-embodied-ai chat
+branes chat
 > I need 30fps object detection + tracking + depth estimation
 > for a warehouse robot, under 15W, with 5-year production volume of 100K units.
 > Should I use COTS or consider custom silicon?
@@ -72,7 +72,7 @@ The Architect analyzes your requirements across the design space—evaluating CO
 Understand how your solution compares before you build:
 
 ```bash
-embodied-ai analyze my-pipeline.yaml \
+branes analyze my-pipeline.yaml \
   --compare jetson-orin-agx,hailo-8,competitor-estimate \
   --metrics latency,power,unit-cost,5yr-tco
 ```

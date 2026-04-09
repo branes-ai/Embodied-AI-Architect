@@ -24,7 +24,7 @@ You'll learn how to:
 Let's analyze ResNet-50 on a Jetson Orin Nano:
 
 ```bash
-embodied-ai analyze resnet50 --hardware jetson-orin-nano --roofline
+branes analyze resnet50 --hardware jetson-orin-nano --roofline
 ```
 
 **Expected Output:**
@@ -71,7 +71,7 @@ Breakdown:
 ### Memory-Bound (most common at batch=1)
 
 ```bash
-embodied-ai analyze resnet50 --hardware a100 --roofline
+branes analyze resnet50 --hardware a100 --roofline
 ```
 
 ```
@@ -93,7 +93,7 @@ The model's arithmetic intensity (23.4) is well below the hardware ridge point (
 ### Compute-Bound
 
 ```bash
-embodied-ai analyze resnet50 --hardware jetson-orin-nano \
+branes analyze resnet50 --hardware jetson-orin-nano \
   --batch-size 32 --roofline
 ```
 
@@ -117,10 +117,10 @@ At batch=32, arithmetic intensity jumps to 412.8 — well above the ridge point.
 Different hardware has very different roofline shapes. Analyze the same model on several targets:
 
 ```bash
-embodied-ai analyze resnet50 --hardware h100 --roofline
-embodied-ai analyze resnet50 --hardware a100 --roofline
-embodied-ai analyze resnet50 --hardware jetson-orin-nano --roofline
-embodied-ai analyze resnet50 --hardware coral-edge-tpu --roofline
+branes analyze resnet50 --hardware h100 --roofline
+branes analyze resnet50 --hardware a100 --roofline
+branes analyze resnet50 --hardware jetson-orin-nano --roofline
+branes analyze resnet50 --hardware coral-edge-tpu --roofline
 ```
 
 **Comparison:**
@@ -143,9 +143,9 @@ The roofline shows you two levers to change your model's operating point.
 Batching amortizes weight loading across multiple inputs, increasing arithmetic intensity:
 
 ```bash
-embodied-ai analyze resnet50 --hardware a100 --batch-size 1 --roofline
-embodied-ai analyze resnet50 --hardware a100 --batch-size 8 --roofline
-embodied-ai analyze resnet50 --hardware a100 --batch-size 32 --roofline
+branes analyze resnet50 --hardware a100 --batch-size 1 --roofline
+branes analyze resnet50 --hardware a100 --batch-size 8 --roofline
+branes analyze resnet50 --hardware a100 --batch-size 32 --roofline
 ```
 
 | Batch | Arith. Intensity | Utilization | Bottleneck |
@@ -161,9 +161,9 @@ At batch=8 you're near the ridge point — the sweet spot where both compute and
 Lower precision reduces bytes per element, increasing arithmetic intensity and reducing memory traffic:
 
 ```bash
-embodied-ai analyze resnet50 --hardware a100 --precision fp32 --roofline
-embodied-ai analyze resnet50 --hardware a100 --precision fp16 --roofline
-embodied-ai analyze resnet50 --hardware a100 --precision int8 --roofline
+branes analyze resnet50 --hardware a100 --precision fp32 --roofline
+branes analyze resnet50 --hardware a100 --precision fp16 --roofline
+branes analyze resnet50 --hardware a100 --precision int8 --roofline
 ```
 
 | Precision | Arith. Intensity | Speedup | Bottleneck |
@@ -179,7 +179,7 @@ Each precision step roughly doubles the arithmetic intensity. FP16 and INT8 also
 Not all layers have the same bottleneck. Break down by layer type:
 
 ```bash
-embodied-ai analyze resnet50 --hardware a100 --roofline --per-layer
+branes analyze resnet50 --hardware a100 --roofline --per-layer
 ```
 
 **Expected Output (selected layers):**

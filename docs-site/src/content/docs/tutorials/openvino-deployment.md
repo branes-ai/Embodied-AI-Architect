@@ -30,10 +30,10 @@ Start by verifying your model meets constraints on the target:
 
 ```bash
 # Intel Core Ultra (Meteor Lake) with NPU
-embodied-ai check-latency yolov8n --hardware intel-core-ultra --target 33ms
+branes check-latency yolov8n --hardware intel-core-ultra --target 33ms
 
 # Server with Xeon
-embodied-ai check-latency yolov8s --hardware xeon-w9-3495x --target 10ms
+branes check-latency yolov8s --hardware xeon-w9-3495x --target 10ms
 ```
 
 OpenVINO supports a range of Intel hardware:
@@ -50,7 +50,7 @@ OpenVINO supports a range of Intel hardware:
 FP16 is the easiest starting point — no calibration needed, negligible accuracy loss:
 
 ```bash
-embodied-ai deploy yolov8n.pt \
+branes deploy yolov8n.pt \
   --target openvino \
   --precision fp16 \
   --input-shape 1,3,640,640 \
@@ -85,7 +85,7 @@ Validation (CPU):
 For maximum performance, use INT8 with NNCF calibration:
 
 ```bash
-embodied-ai deploy yolov8n.pt \
+branes deploy yolov8n.pt \
   --target openvino \
   --precision int8 \
   --calibration-data ./calibration_images/ \
@@ -159,7 +159,7 @@ compiled = core.compile_model(model, "AUTO")
 Benchmark the deployed model:
 
 ```bash
-embodied-ai benchmark openvino_int8/model.xml \
+branes benchmark openvino_int8/model.xml \
   --backend local \
   --iterations 1000 \
   --warmup 100

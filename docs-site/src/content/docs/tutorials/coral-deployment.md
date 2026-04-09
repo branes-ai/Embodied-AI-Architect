@@ -32,7 +32,7 @@ You'll learn how to:
 Before deploying, verify the model can meet your constraints on the Edge TPU:
 
 ```bash
-embodied-ai check-latency mobilenetv2 \
+branes check-latency mobilenetv2 \
   --hardware coral-edge-tpu \
   --target 10ms
 ```
@@ -51,11 +51,11 @@ Check what works and what doesn't:
 
 ```bash
 # Small models: excellent fit
-embodied-ai check-latency mobilenetv2 --hardware coral-edge-tpu --target 10ms
-embodied-ai check-latency yolov8n --hardware coral-edge-tpu --target 33ms
+branes check-latency mobilenetv2 --hardware coral-edge-tpu --target 10ms
+branes check-latency yolov8n --hardware coral-edge-tpu --target 33ms
 
 # Large models: likely FAIL
-embodied-ai check-latency resnet152 --hardware coral-edge-tpu --target 33ms
+branes check-latency resnet152 --hardware coral-edge-tpu --target 33ms
 ```
 
 | Model | Latency | Power | Verdict |
@@ -83,7 +83,7 @@ We use 320x320 input (not 640) because the Edge TPU has limited on-chip SRAM —
 The deployment command handles the full pipeline — ONNX to TFLite conversion, INT8 quantization with calibration, and Edge TPU compilation:
 
 ```bash
-embodied-ai deploy yolov8n.onnx \
+branes deploy yolov8n.onnx \
   --target coral \
   --precision int8 \
   --calibration-data ./calibration_images/ \
@@ -196,7 +196,7 @@ Once deployed, benchmark on the actual Coral hardware:
 
 ```bash
 # On the Coral device / host with USB Accelerator
-embodied-ai benchmark coral_deployment/model_edgetpu.tflite \
+branes benchmark coral_deployment/model_edgetpu.tflite \
   --backend local \
   --iterations 1000 \
   --warmup 50

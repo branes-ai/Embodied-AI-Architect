@@ -18,7 +18,7 @@ Once you've selected your hardware and verified constraints, deploy your model w
 ### To Jetson (TensorRT)
 
 ```bash
-embodied-ai deploy model.pt \
+branes deploy model.pt \
   --target jetson \
   --precision fp16 \
   --input-shape 1,3,640,640 \
@@ -28,7 +28,7 @@ embodied-ai deploy model.pt \
 ### To Coral (Edge TPU)
 
 ```bash
-embodied-ai deploy model.pt \
+branes deploy model.pt \
   --target coral \
   --precision int8 \
   --calibration-data ./calibration_images/ \
@@ -38,7 +38,7 @@ embodied-ai deploy model.pt \
 ### To OpenVINO
 
 ```bash
-embodied-ai deploy model.pt \
+branes deploy model.pt \
   --target openvino \
   --precision fp16 \
   --input-shape 1,3,640,640
@@ -51,7 +51,7 @@ embodied-ai deploy model.pt \
 For best edge performance, use INT8 with calibration:
 
 ```bash
-embodied-ai deploy model.pt \
+branes deploy model.pt \
   --target jetson \
   --precision int8 \
   --calibration-data ./calibration_images/ \

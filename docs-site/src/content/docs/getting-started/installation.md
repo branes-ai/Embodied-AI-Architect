@@ -85,14 +85,14 @@ pip install -e ../graphs
 Check that everything is installed correctly:
 
 ```bash
-embodied-ai --version
-embodied-ai --help
+branes --version
+branes --help
 ```
 
 You should see:
 
 ```
-Usage: embodied-ai [OPTIONS] COMMAND [ARGS]...
+Usage: branes [OPTIONS] COMMAND [ARGS]...
 
   Embodied AI Architect - Design and deploy AI for the physical world
 

@@ -31,7 +31,7 @@ Performance
 ### CLI
 
 ```bash
-embodied-ai analyze yolov8n.pt --hardware h100 --roofline
+branes analyze yolov8n.pt --hardware h100 --roofline
 ```
 
 ### Interactive Chat

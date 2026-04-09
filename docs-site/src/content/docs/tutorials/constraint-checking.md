@@ -25,7 +25,7 @@ The most common constraint: can your model hit the frame rate target?
 For 30 FPS real-time processing, you need 33ms per frame:
 
 ```bash
-embodied-ai check-latency yolov8n \
+branes check-latency yolov8n \
   --hardware jetson-orin-nano \
   --target 33ms
 ```
@@ -46,7 +46,7 @@ PASS - Latency: 28.5ms (target: 33ms)
 Now try a model that's too large:
 
 ```bash
-embodied-ai check-latency yolov8m \
+branes check-latency yolov8m \
   --hardware jetson-orin-nano \
   --target 33ms
 ```
@@ -64,7 +64,7 @@ The gap percentage tells you how far off you are — 179% means you'd need rough
 Edge devices have strict power budgets. A drone running on battery can't afford a 30W inference pipeline:
 
 ```bash
-embodied-ai check-power yolov8s \
+branes check-power yolov8s \
   --hardware jetson-orin-nano \
   --budget 15W
 ```
@@ -82,7 +82,7 @@ PASS - Power: 12.4W (budget: 15W)
 Try a tighter budget:
 
 ```bash
-embodied-ai check-power yolov8s \
+branes check-power yolov8s \
   --hardware jetson-orin-nano \
   --budget 10W
 ```
@@ -100,7 +100,7 @@ MARGINAL - Power: 12.4W (budget: 10W)
 Ensure your model fits in available device memory:
 
 ```bash
-embodied-ai check-memory resnet152 \
+branes check-memory resnet152 \
   --hardware jetson-orin-nano \
   --limit 4096MB
 ```
@@ -121,7 +121,7 @@ Memory checks include both weight storage and activation memory at the specified
 In practice, you need to check everything at once. Run all constraints in a single command:
 
 ```bash
-embodied-ai check yolov8n --hardware jetson-orin-nano \
+branes check yolov8n --hardware jetson-orin-nano \
   --latency 33ms \
   --power 15W \
   --memory 4096MB
@@ -148,9 +148,9 @@ Check several models against the same constraints to find the best fit:
 
 ```bash
 # Check YOLOv8 variants
-embodied-ai check-latency yolov8n --hardware jetson-orin-nano --target 33ms
-embodied-ai check-latency yolov8s --hardware jetson-orin-nano --target 33ms
-embodied-ai check-latency yolov8m --hardware jetson-orin-nano --target 33ms
+branes check-latency yolov8n --hardware jetson-orin-nano --target 33ms
+branes check-latency yolov8s --hardware jetson-orin-nano --target 33ms
+branes check-latency yolov8m --hardware jetson-orin-nano --target 33ms
 ```
 
 **Summary:**
@@ -171,7 +171,7 @@ YOLOv8n is the only variant that fits. If you need better accuracy than YOLOv8n 
 
 1. **Reduce precision**: FP32 → FP16 → INT8 (often 2-4x speedup)
    ```bash
-   embodied-ai check-latency yolov8s --hardware jetson-orin-nano \
+   branes check-latency yolov8s --hardware jetson-orin-nano \
      --target 33ms --precision int8
    ```
 
@@ -179,7 +179,7 @@ YOLOv8n is the only variant that fits. If you need better accuracy than YOLOv8n 
 
 3. **Upgrade hardware**: Orin Nano → Orin NX → Orin AGX
    ```bash
-   embodied-ai check-latency yolov8s --hardware jetson-orin-agx --target 33ms
+   branes check-latency yolov8s --hardware jetson-orin-agx --target 33ms
    ```
 
 ### Power FAIL
