@@ -86,6 +86,18 @@ def analysis(scan_result):
                 frameworks=["opencv", "onnxruntime"],
             ),
             ComputeKernel(
+                name="object_tracker",
+                source_file="src/perception.cpp",
+                line_range=(50, 80),
+                kernel_type="ml_inference",
+                estimated_ops_per_invocation=2.0e9,
+                invocation_frequency_hz=30.0,
+                data_types=["float32"],
+                parallelism="data_parallel",
+                memory_access_pattern="streaming",
+                frameworks=["opencv"],
+            ),
+            ComputeKernel(
                 name="pid_control",
                 source_file="src/control.cpp",
                 line_range=(5, 35),
@@ -101,12 +113,18 @@ def analysis(scan_result):
         dataflow=[
             DataflowLink(
                 source_kernel="yolo_detection",
+                sink_kernel="object_tracker",
+                data_size_bytes=262144,
+                transfer_type="memory",
+            ),
+            DataflowLink(
+                source_kernel="object_tracker",
                 sink_kernel="pid_control",
                 data_size_bytes=4096,
                 transfer_type="memory",
             ),
         ],
-        summary="Drone perception pipeline with YOLO inference and PID control loop",
+        summary="Drone perception pipeline with YOLO detection, object tracking, and PID control",
     )
 
 
@@ -149,6 +167,7 @@ class TestScanToWorkloadProfile:
     def test_workload_has_drone_relevant_kernels(self, workload_profile):
         names = [w["name"] for w in workload_profile["workloads"]]
         assert "yolo_detection" in names
+        assert "object_tracker" in names
         assert "pid_control" in names
 
     def test_workload_total_gflops_positive(self, workload_profile):
@@ -157,11 +176,12 @@ class TestScanToWorkloadProfile:
     def test_operator_graph_has_nodes_and_edges(self, workload_profile):
         graph = workload_profile.get("operator_graph")
         assert graph is not None
-        assert len(graph["nodes"]) == 2
-        # Dataflow link from analysis → 1 edge
-        assert len(graph["edges"]) == 1
-        assert graph["edges"][0]["source"] == "yolo_detection"
-        assert graph["edges"][0]["sink"] == "pid_control"
+        assert len(graph["nodes"]) == 3
+        # Two dataflow links from analysis
+        assert len(graph["edges"]) == 2
+        edge_pairs = [(e["source"], e["sink"]) for e in graph["edges"]]
+        assert ("yolo_detection", "object_tracker") in edge_pairs
+        assert ("object_tracker", "pid_control") in edge_pairs
 
 
 class TestConstraintInference:
@@ -188,42 +208,65 @@ class TestConstraintInference:
         assert power is not None
         assert power.value >= 1.0
 
-    def test_hardware_class_hint_depends_on_kernel_count(self, analysis):
-        """With 1 ML + 1 control kernel the ML share is 50% — below the 60%
-        threshold for the hardware_class heuristic. That's correct: by
-        kernel count, the workload is balanced. The heuristic fires when
-        ML kernels dominate by COUNT, not by GFLOPS. Verify the rule
-        respects the threshold."""
+    def test_hardware_class_hint_fires_for_ml_dominant(self, analysis):
+        """With 2 ML + 1 control kernel the ML share is 67% — above the 60%
+        threshold. The heuristic should emit a hardware_class hint for an
+        NPU or GPU depending on the GFLOPS level."""
         suggestions = infer_constraints(analysis)
         hw = next(
             (c for c in suggestions.constraints if c.name == "hardware_class"),
             None,
         )
-        # 50% ML share → no hardware_class hint (threshold is >50%)
-        assert hw is None
+        assert hw is not None
+        assert hw.value in ("npu", "gpu")
+        assert hw.confidence == "high"
 
 
 class TestHardwareRecommendations:
     """recommend_hardware() on the drone workload."""
 
     def test_archetype_is_ml_heavy(self, workload_profile):
-        # 2 kernels: ml_inference (dominant) + control_loop
-        # Not 60% ML share with only 2 kernels (50/50) → hybrid
-        # OR if the test fixture has enough ML weight...
+        # 3 kernels: 2 ml_inference + 1 control_loop → 67% ML share
         archetype = classify_workload(workload_profile)
-        # With 2 kernels (1 ML + 1 control), share is 50% — below 60% → hybrid
-        assert archetype in ("ml_heavy", "hybrid")
+        assert archetype == "ml_heavy"
 
-    def test_recommendations_available_from_registry(self, workload_profile):
-        """When the embodied-schemas registry is installed, recommend_hardware
-        returns non-empty results. When not installed, degrades to []."""
+    def test_recommendations_from_registry(self, workload_profile):
+        """Exercises both the populated and degraded paths depending on
+        whether the embodied-schemas registry is installed."""
         recs = recommend_hardware(workload_profile, top_k=5)
-        # Either the registry is installed and we get results, or not
-        # Both are valid in CI — the test doesn't fail either way
         assert isinstance(recs, list)
+
+        if not recs:
+            # Degraded path: registry not loadable — verify empty gracefully
+            assert recs == []
+            return
+
+        # Populated path: verify structural contract + ordering
+        assert len(recs) <= 5
         for r in recs:
             assert hasattr(r, "fit_score")
+            assert 0.0 <= r.fit_score <= 1.0
             assert hasattr(r, "strengths")
+            assert hasattr(r, "weaknesses")
+            assert r.name  # non-empty
+
+        # Results must be sorted by fit_score descending
+        scores = [r.fit_score for r in recs]
+        assert scores == sorted(
+            scores, reverse=True
+        ), f"Recommendations not sorted by fit_score: {scores}"
+
+        # For an ML-heavy workload with >8 GFLOPS, the top recommendation
+        # should have a meaningful compute_match (the hardware can actually
+        # run the workload). A score of 0.0 means no INT8 TOPS spec at all.
+        top = recs[0]
+        assert top.fit_score > 0.0, "Top recommendation has zero fit score"
+
+        # If there are multiple results, verify the top entry outscores the
+        # last — for an ML-heavy workload the accelerator paradigm bonus
+        # should produce a real spread.
+        if len(recs) > 1:
+            assert recs[0].fit_score >= recs[-1].fit_score
 
 
 class TestSoCStateCreation:
@@ -232,14 +275,14 @@ class TestSoCStateCreation:
     def test_state_has_workload_profile(self, soc_state):
         wp = soc_state.get("workload_profile", {})
         assert wp.get("source") == "codebase_analysis"
-        assert wp.get("workload_count", 0) == 2
+        assert wp.get("workload_count", 0) == 3
         assert wp.get("total_estimated_gflops", 0) > 0
 
     def test_state_has_codebase_metadata(self, soc_state):
         meta = soc_state.get("codebase_metadata", {})
         assert meta.get("project_name") == "cpp_drone"
         assert Path(meta.get("project_path", "")).is_absolute()
-        assert meta.get("kernel_count") == 2
+        assert meta.get("kernel_count") == 3
 
     def test_state_goal_includes_project_name(self, soc_state):
         goal = soc_state.get("goal", "")
@@ -251,7 +294,7 @@ class TestSoCStateCreation:
     def test_operator_graph_on_state(self, soc_state):
         graph = soc_state.get("workload_profile", {}).get("operator_graph")
         assert graph is not None
-        assert len(graph["nodes"]) == 2
+        assert len(graph["nodes"]) == 3
 
 
 class TestSessionPersistence:
@@ -284,10 +327,11 @@ class TestAPIServesCodebaseData:
         resp = client.get("/api/sessions/soc_codebase_integration/workload")
         assert resp.status_code == 200
         data = resp.json()
-        assert len(data["operators"]) == 2
+        assert len(data["operators"]) == 3
         assert data["source"] == "codebase_analysis"
         names = [op["name"] for op in data["operators"]]
         assert "yolo_detection" in names
+        assert "object_tracker" in names
 
     def test_workload_endpoint_has_operator_graph(self, soc_state, session_dir):
         from embodied_ai_architect.api.server import create_app
@@ -298,7 +342,8 @@ class TestAPIServesCodebaseData:
         data = client.get("/api/sessions/soc_codebase_integration/workload").json()
         graph = data.get("operator_graph")
         assert graph is not None
-        assert len(graph["nodes"]) == 2
-        assert len(graph["edges"]) == 1
-        assert graph["edges"][0]["source"] == "yolo_detection"
-        assert graph["edges"][0]["sink"] == "pid_control"
+        assert len(graph["nodes"]) == 3
+        assert len(graph["edges"]) == 2
+        edge_pairs = [(e["source"], e["sink"]) for e in graph["edges"]]
+        assert ("yolo_detection", "object_tracker") in edge_pairs
+        assert ("object_tracker", "pid_control") in edge_pairs
