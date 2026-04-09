@@ -127,6 +127,13 @@ class ValidationRunner:
             issues.append("Missing goal")
         if not mission.constraints:
             issues.append("No constraints specified")
+        elif not any(
+            isinstance(v, (int, float)) and not isinstance(v, bool)
+            for v in mission.constraints.values()
+        ):
+            issues.append(
+                "Constraints present but no numeric targets (need power/latency/area/cost)"
+            )
         if not mission.spec and not mission.design_state:
             issues.append("No spec or design state — run qualification or design")
 

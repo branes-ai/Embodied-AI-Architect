@@ -13,13 +13,26 @@ console = Console()
 
 
 def _load_mission(ctx, mission_id: str):
-    """Load a mission or exit with error."""
+    """Load a mission or exit with error.
+
+    Handles both not-found (None) and corrupt/unreadable files so the
+    CLI never shows a raw traceback (CodeRabbit PR #106).
+    """
     from embodied_ai_architect.mission import MissionStore
 
+    json_output = ctx.obj.get("json", False)
     store = MissionStore()
-    m = store.load(mission_id)
+    try:
+        m = store.load(mission_id)
+    except Exception as exc:
+        if json_output:
+            click.echo(json.dumps({"error": f"Failed to load mission '{mission_id}': {exc}"}))
+        else:
+            console.print(f"[red]Failed to load mission '{mission_id}': {exc}[/red]")
+        ctx.exit(1)
+        return None
+
     if not m:
-        json_output = ctx.obj.get("json", False)
         if json_output:
             click.echo(json.dumps({"error": f"Mission '{mission_id}' not found"}))
         else:
