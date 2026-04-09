@@ -76,6 +76,7 @@ def main():
     from embodied_ai_architect.cli.commands import session
     from embodied_ai_architect.cli.commands import api as api_cmd
     from embodied_ai_architect.cli.commands import platform as platform_cmd
+    from embodied_ai_architect.cli.commands import mission as mission_cmd
 
     # Register command groups
     cli.add_command(workflow.workflow)
@@ -101,6 +102,7 @@ def main():
     cli.add_command(session.session)
     cli.add_command(api_cmd.api)
     cli.add_command(platform_cmd.platform)
+    cli.add_command(mission_cmd.mission)
 
     # Run CLI
     cli(obj={})
