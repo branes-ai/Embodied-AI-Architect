@@ -1300,3 +1300,166 @@ class TestRecommendHardware:
         import json as _json
 
         _json.dumps(d)
+
+
+# ---------------------------------------------------------------------------
+# Issue #40: Operator dataflow graph
+# ---------------------------------------------------------------------------
+
+
+class TestOperatorGraph:
+    """The converter must build an operator DAG from DataflowLink edges."""
+
+    def _analysis(self, kernels, dataflow=None):
+        from embodied_ai_architect.codebase.models import (
+            CodebaseAnalysisResult,
+            ComputeKernel,
+            DataflowLink,
+        )
+
+        return CodebaseAnalysisResult(
+            project_name="test",
+            kernels=[
+                ComputeKernel(
+                    name=k["name"],
+                    source_file="k.py",
+                    line_range=(1, 10),
+                    kernel_type=k.get("kernel_type", "ml_inference"),
+                    estimated_ops_per_invocation=k.get("ops", 1e9),
+                )
+                for k in kernels
+            ],
+            dataflow=[DataflowLink(**d) for d in (dataflow or [])],
+        )
+
+    def test_graph_has_nodes_matching_kernels(self):
+        from embodied_ai_architect.codebase.converter import CodebaseConverter
+
+        analysis = self._analysis(
+            [
+                {"name": "yolo_backbone"},
+                {"name": "yolo_head"},
+                {"name": "nms"},
+            ]
+        )
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        graph = profile["operator_graph"]
+        assert len(graph["nodes"]) == 3
+        ids = [n["id"] for n in graph["nodes"]]
+        assert "yolo_backbone" in ids
+        assert "yolo_head" in ids
+        assert "nms" in ids
+
+    def test_dataflow_edges_populate_graph(self):
+        """The headline assertion from the issue body: 3 kernels + 2 links."""
+        from embodied_ai_architect.codebase.converter import CodebaseConverter
+
+        analysis = self._analysis(
+            [
+                {"name": "yolo_backbone"},
+                {"name": "yolo_head"},
+                {"name": "nms"},
+            ],
+            dataflow=[
+                {
+                    "source_kernel": "yolo_backbone",
+                    "sink_kernel": "yolo_head",
+                    "data_size_bytes": 1048576,
+                },
+                {"source_kernel": "yolo_head", "sink_kernel": "nms", "data_size_bytes": 262144},
+            ],
+        )
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        graph = profile["operator_graph"]
+        assert len(graph["nodes"]) == 3
+        assert len(graph["edges"]) == 2
+        edge_pairs = [(e["source"], e["sink"]) for e in graph["edges"]]
+        assert ("yolo_backbone", "yolo_head") in edge_pairs
+        assert ("yolo_head", "nms") in edge_pairs
+        assert graph["edges"][0]["data_bytes"] == 1048576
+
+    def test_falls_back_to_sequential_chain_without_dataflow(self):
+        from embodied_ai_architect.codebase.converter import CodebaseConverter
+
+        analysis = self._analysis(
+            [
+                {"name": "k1"},
+                {"name": "k2"},
+                {"name": "k3"},
+            ]
+        )
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        graph = profile["operator_graph"]
+        # No dataflow → sequential fallback: k1→k2→k3
+        assert len(graph["edges"]) == 2
+        assert graph["edges"][0]["source"] == "k1"
+        assert graph["edges"][0]["sink"] == "k2"
+        assert graph["edges"][1]["source"] == "k2"
+        assert graph["edges"][1]["sink"] == "k3"
+
+    def test_single_kernel_has_no_edges(self):
+        from embodied_ai_architect.codebase.converter import CodebaseConverter
+
+        analysis = self._analysis([{"name": "solo"}])
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        graph = profile["operator_graph"]
+        assert len(graph["nodes"]) == 1
+        assert len(graph["edges"]) == 0
+
+    def test_dangling_dataflow_edges_filtered(self):
+        """Edges referencing non-existent kernels must be silently dropped."""
+        from embodied_ai_architect.codebase.converter import CodebaseConverter
+
+        analysis = self._analysis(
+            [{"name": "k1"}, {"name": "k2"}],
+            dataflow=[
+                {"source_kernel": "k1", "sink_kernel": "k2", "data_size_bytes": 100},
+                {"source_kernel": "k1", "sink_kernel": "ghost", "data_size_bytes": 0},
+            ],
+        )
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        graph = profile["operator_graph"]
+        # Only the valid edge survived
+        assert len(graph["edges"]) == 1
+        assert graph["edges"][0]["sink"] == "k2"
+
+    def test_node_carries_dominant_op_type(self):
+        from embodied_ai_architect.codebase.converter import CodebaseConverter
+
+        analysis = self._analysis([{"name": "k1", "kernel_type": "ml_inference"}])
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        node = profile["operator_graph"]["nodes"][0]
+        assert node["type"] == "convolution"  # ML inference's dominant op per catalog
+        assert node["gflops"] is not None
+
+    def test_duplicate_kernel_names_get_unique_ids(self):
+        """CodeRabbit PR #91: duplicate kernel names must not produce duplicate IDs."""
+        from embodied_ai_architect.codebase.converter import CodebaseConverter
+
+        analysis = self._analysis(
+            [
+                {"name": "conv"},
+                {"name": "conv"},
+                {"name": "conv"},
+            ]
+        )
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        graph = profile["operator_graph"]
+        ids = [n["id"] for n in graph["nodes"]]
+        # All IDs unique
+        assert len(ids) == len(set(ids))
+        # First one keeps the base name, subsequent ones get suffixed
+        assert ids[0] == "conv"
+        assert ids[1] == "conv_1"
+        assert ids[2] == "conv_2"
+
+    def test_empty_analysis_gives_empty_graph(self):
+        from embodied_ai_architect.codebase.converter import CodebaseConverter
+        from embodied_ai_architect.codebase.models import CodebaseAnalysisResult
+
+        analysis = CodebaseAnalysisResult(project_name="empty")
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        graph = profile["operator_graph"]
+        # Single default "application" node but no edges since only one node
+        assert len(graph["nodes"]) == 1
+        assert len(graph["edges"]) == 0

@@ -267,9 +267,45 @@ class OperatorBreakdown(BaseModel):
     scheduling: str = ""
 
 
+class OperatorGraphNode(BaseModel):
+    """A node in the operator dataflow graph (issue #40)."""
+
+    id: str
+    kernel: str = ""
+    gflops: Optional[float] = None
+    memory_mb: Optional[float] = None
+    type: str = ""  # dominant operator type (convolution, matmul, fft, ...)
+    scheduling: str = ""
+
+
+class OperatorGraphEdge(BaseModel):
+    """An edge in the operator dataflow graph (issue #40)."""
+
+    source: str
+    sink: str
+    data_bytes: int = 0
+    transfer_type: str = "memory"
+
+
+class OperatorGraph(BaseModel):
+    """Operator dataflow graph for pipeline visualization (issue #40).
+
+    When `dataflow` links are available from the codebase LLM analysis,
+    this graph represents the execution dependency DAG. Frontends can
+    render it as a pipeline diagram (Cytoscape.js / d3 / mermaid).
+
+    When the LLM didn't produce dataflow links, the converter falls back
+    to a sequential chain: kernel 1 → kernel 2 → ... → kernel N.
+    """
+
+    nodes: list[OperatorGraphNode] = Field(default_factory=list)
+    edges: list[OperatorGraphEdge] = Field(default_factory=list)
+
+
 class WorkloadResponse(BaseModel):
     operators: list[OperatorBreakdown] = Field(default_factory=list)
     total_gflops: Optional[float] = None
     total_memory_mb: Optional[float] = None
     dominant_op: str = ""
     source: str = ""
+    operator_graph: Optional[OperatorGraph] = None

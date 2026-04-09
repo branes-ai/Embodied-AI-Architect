@@ -133,6 +133,11 @@ class CodebaseConverter:
         total_memory_mb = sum(w["estimated_memory_mb"] for w in workloads)
         dominant_op = max(all_operators, key=all_operators.get) if all_operators else "unknown"
 
+        # Issue #40: build the operator dataflow graph from the LLM's
+        # DataflowLink edges. Falls back to a sequential chain when the
+        # LLM didn't produce any dataflow links.
+        operator_graph = self._build_operator_graph(analysis, workloads)
+
         return {
             "workloads": workloads,
             "total_estimated_gflops": round(total_gflops, 2),
@@ -143,7 +148,84 @@ class CodebaseConverter:
             "source": "codebase_analysis",
             "project_name": analysis.project_name,
             "languages": analysis.languages,
+            "operator_graph": operator_graph,
         }
+
+    @staticmethod
+    def _build_operator_graph(
+        analysis: CodebaseAnalysisResult,
+        workloads: list[dict],
+    ) -> dict:
+        """Build an operator DAG from DataflowLink edges (issue #40).
+
+        Nodes correspond 1:1 to the workloads list (same order / same names).
+        Edges come from analysis.dataflow. When no dataflow links exist, the
+        method falls back to a sequential chain: kernel_0 → kernel_1 → ... so
+        downstream consumers always have a connected graph to schedule against.
+
+        Returns a dict with `nodes` (list of node dicts) and `edges` (list of
+        edge dicts), ready to be serialized directly onto the workload_profile.
+        """
+        if not workloads:
+            return {"nodes": [], "edges": []}
+
+        # Build node dicts — keyed by workload name so dataflow edges can
+        # reference them. Disambiguate duplicate names with a numeric suffix
+        # so the graph always has unique node IDs (CodeRabbit PR #91).
+        nodes: list[dict] = []
+        id_counts: dict[str, int] = {}
+        for i, w in enumerate(workloads):
+            base_id = w.get("name") or f"op_{i}"
+            seen = id_counts.get(base_id, 0)
+            node_id = base_id if seen == 0 else f"{base_id}_{seen}"
+            id_counts[base_id] = seen + 1
+
+            dominant_op_type = "general_purpose"
+            ops = w.get("operators", [])
+            if ops:
+                dominant_op_type = max(ops, key=lambda o: o.get("count", 0))["type"]
+            nodes.append(
+                {
+                    "id": node_id,
+                    "kernel": w.get("name", ""),
+                    "gflops": w.get("estimated_gflops"),
+                    "memory_mb": w.get("estimated_memory_mb"),
+                    "type": dominant_op_type,
+                    "scheduling": w.get("scheduling", ""),
+                }
+            )
+
+        node_ids = {n["id"] for n in nodes}
+
+        # Build edges from analysis.dataflow (when available)
+        edges: list[dict] = []
+        if analysis.dataflow:
+            for link in analysis.dataflow:
+                # Only include edges where both endpoints exist in the graph
+                if link.source_kernel in node_ids and link.sink_kernel in node_ids:
+                    edges.append(
+                        {
+                            "source": link.source_kernel,
+                            "sink": link.sink_kernel,
+                            "data_bytes": link.data_size_bytes,
+                            "transfer_type": link.transfer_type,
+                        }
+                    )
+
+        # Fallback: when no dataflow links were found (or the LLM didn't
+        # produce them), create a sequential chain so the graph is connected.
+        if not edges and len(nodes) > 1:
+            for i in range(len(nodes) - 1):
+                edges.append(
+                    {
+                        "source": nodes[i]["id"],
+                        "sink": nodes[i + 1]["id"],
+                        "data_bytes": 0,
+                        "transfer_type": "memory",
+                    }
+                )
+
+        return {"nodes": nodes, "edges": edges}
 
     def _kernel_to_workload(self, kernel: ComputeKernel) -> dict:
         """Map a single ComputeKernel to a workload dict."""

@@ -337,12 +337,24 @@ def _build_router():
                 )
             )
 
+        # Issue #40: include the operator dataflow graph when present
+        from embodied_ai_architect.api.schemas import OperatorGraph
+
+        raw_graph = wp.get("operator_graph")
+        operator_graph = None
+        if raw_graph and isinstance(raw_graph, dict):
+            operator_graph = OperatorGraph(
+                nodes=raw_graph.get("nodes", []),
+                edges=raw_graph.get("edges", []),
+            )
+
         return WorkloadResponse(
             operators=operators,
             total_gflops=wp.get("total_estimated_gflops"),
             total_memory_mb=wp.get("total_estimated_memory_mb"),
             dominant_op=wp.get("dominant_op", ""),
             source=wp.get("source", ""),
+            operator_graph=operator_graph,
         )
 
     @router.get("/sessions/{session_id}/stream")
