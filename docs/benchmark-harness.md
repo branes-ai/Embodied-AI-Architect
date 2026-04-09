@@ -137,7 +137,7 @@ with open("benchmark_results.json", "w") as f:
 #### List Available Architectures
 
 ```bash
-embodied-ai benchmark arch-list
+branes benchmark arch-list
 ```
 
 Output:
@@ -157,19 +157,19 @@ Output:
 
 ```bash
 # Basic benchmark
-embodied-ai benchmark arch drone_perception_v1
+branes benchmark arch drone_perception_v1
 
 # With options
-embodied-ai benchmark arch pick_and_place_v1 \
+branes benchmark arch pick_and_place_v1 \
     --iterations 100 \
     --warmup 10 \
     --output results.json
 
 # Use a variant
-embodied-ai benchmark arch drone_perception_v1 --variant edge
+branes benchmark arch drone_perception_v1 --variant edge
 
 # Disable power monitoring
-embodied-ai benchmark arch pick_and_place_v1 --no-power
+branes benchmark arch pick_and_place_v1 --no-power
 ```
 
 #### JSON Output
