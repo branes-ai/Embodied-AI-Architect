@@ -785,3 +785,204 @@ class TestCodebaseToSoCState:
         assert loaded["workload_profile"]["workload_count"] == 2
         assert loaded["codebase_metadata"]["project_name"] == "test_drone_app"
         assert loaded["codebase_metadata"]["dominant_kernel_type"] == "ml_inference"
+
+
+# ---------------------------------------------------------------------------
+# Issue #38: Inferred design constraints from codebase characteristics
+# ---------------------------------------------------------------------------
+
+
+class TestInferConstraints:
+    """The infer_constraints() heuristic layer."""
+
+    def _kernel(self, **kwargs):
+        from embodied_ai_architect.codebase.models import ComputeKernel
+
+        defaults = {
+            "name": "k",
+            "source_file": "k.py",
+            "line_range": (1, 10),
+            "kernel_type": "general_compute",
+            "estimated_ops_per_invocation": 0.0,
+            "invocation_frequency_hz": 0.0,
+        }
+        defaults.update(kwargs)
+        return ComputeKernel(**defaults)
+
+    def _analysis(self, *kernels):
+        from embodied_ai_architect.codebase.models import CodebaseAnalysisResult
+
+        return CodebaseAnalysisResult(project_name="test", kernels=list(kernels))
+
+    def test_no_kernels_returns_empty(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        suggestions = infer_constraints(self._analysis())
+        assert suggestions.constraints == []
+        assert "0 kernels" in suggestions.summary
+
+    def test_control_loop_at_100hz_implies_10ms_latency(self):
+        """The headline heuristic from the issue body."""
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(
+                name="control",
+                kernel_type="control_loop",
+                invocation_frequency_hz=100.0,
+            )
+        )
+        suggestions = infer_constraints(analysis)
+        latency_entries = [c for c in suggestions.constraints if c.name == "max_latency_ms"]
+        assert len(latency_entries) == 1
+        latency = latency_entries[0]
+        assert latency.value == 10.0
+        assert latency.confidence == "high"
+        assert "100" in latency.rationale
+
+    def test_control_loop_at_1khz_implies_1ms_latency(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(kernel_type="control_loop", invocation_frequency_hz=1000.0)
+        )
+        latency = next(
+            c for c in infer_constraints(analysis).constraints if c.name == "max_latency_ms"
+        )
+        assert latency.value == 1.0
+
+    def test_total_gflops_implies_power_envelope(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(
+                kernel_type="ml_inference",
+                estimated_ops_per_invocation=8.4e9,
+            )
+        )
+        power = next(
+            c for c in infer_constraints(analysis).constraints if c.name == "max_power_watts"
+        )
+        # 8.4 GFLOPS / 2000 = 0.0042 → floored to 1.0 W
+        assert power.value >= 1.0
+        assert power.confidence == "medium"
+
+    def test_high_gflops_drops_power_confidence(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(
+                kernel_type="ml_inference",
+                estimated_ops_per_invocation=200e9,
+            )
+        )
+        power = next(
+            c for c in infer_constraints(analysis).constraints if c.name == "max_power_watts"
+        )
+        assert power.confidence == "low"
+
+    def test_ml_dominant_with_npu_threshold(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        kernels = [
+            self._kernel(
+                name=f"ml_{i}",
+                kernel_type="ml_inference",
+                estimated_ops_per_invocation=2e9,
+            )
+            for i in range(4)
+        ]
+        kernels.append(self._kernel(name="other", kernel_type="general_compute"))
+        analysis = self._analysis(*kernels)
+        suggestions = infer_constraints(analysis)
+        hw = next(c for c in suggestions.constraints if c.name == "hardware_class")
+        assert hw.value == "npu"
+        assert hw.confidence == "high"
+
+    def test_ml_dominant_with_gpu_threshold(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(
+                kernel_type="ml_inference",
+                estimated_ops_per_invocation=60e9,
+            ),
+        )
+        suggestions = infer_constraints(analysis)
+        hw = next(c for c in suggestions.constraints if c.name == "hardware_class")
+        assert hw.value == "gpu"
+
+    def test_signal_processing_at_high_freq_implies_dsp(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(kernel_type="signal_processing", invocation_frequency_hz=5000.0),
+            self._kernel(kernel_type="signal_processing", invocation_frequency_hz=2000.0),
+            self._kernel(kernel_type="general_compute"),
+        )
+        hw_entries = [
+            c
+            for c in infer_constraints(analysis).constraints
+            if c.name == "hardware_class" and c.value == "dsp"
+        ]
+        assert len(hw_entries) == 1
+
+    def test_io_bound_dominant_flags_memory_bw(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(kernel_type="io_bound"),
+            self._kernel(kernel_type="io_bound"),
+            self._kernel(kernel_type="general_compute"),
+        )
+        flag = next(
+            c for c in infer_constraints(analysis).constraints if c.name == "memory_bw_critical"
+        )
+        assert flag.value is True
+        assert flag.confidence == "medium"
+
+    def test_to_design_constraints_kwargs_returns_only_canonical(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(
+                kernel_type="control_loop",
+                invocation_frequency_hz=100.0,
+            ),
+            self._kernel(
+                kernel_type="ml_inference",
+                estimated_ops_per_invocation=10e9,
+            ),
+        )
+        suggestions = infer_constraints(analysis)
+        kwargs = suggestions.to_design_constraints_kwargs()
+        assert "max_latency_ms" in kwargs
+        assert "max_power_watts" in kwargs
+        # Advisory keys excluded
+        assert "hardware_class" not in kwargs
+        assert "memory_bw_critical" not in kwargs
+
+    def test_to_design_constraints_kwargs_feeds_constructor(self):
+        """The kwargs subset can be spread directly into a DesignConstraints."""
+        from embodied_ai_architect.codebase.converter import infer_constraints
+        from embodied_ai_architect.graphs.soc_state import DesignConstraints
+
+        analysis = self._analysis(
+            self._kernel(kernel_type="control_loop", invocation_frequency_hz=100.0)
+        )
+        suggestions = infer_constraints(analysis)
+        constraints = DesignConstraints(**suggestions.to_design_constraints_kwargs())
+        assert constraints.max_latency_ms == 10.0
+
+    def test_to_dict_renders_all_fields(self):
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(kernel_type="control_loop", invocation_frequency_hz=100.0)
+        )
+        d = infer_constraints(analysis).to_dict()
+        assert "max_latency_ms" in d
+        entry = d["max_latency_ms"]
+        assert entry["value"] == 10.0
+        assert entry["confidence"] == "high"
+        assert "rationale" in entry

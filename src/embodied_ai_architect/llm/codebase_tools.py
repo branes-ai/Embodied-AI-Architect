@@ -159,8 +159,9 @@ def create_codebase_tool_executors() -> dict[str, Callable]:
     def analyze_codebase(project_path: str) -> str:
         """Execute full LLM codebase analysis."""
         try:
-            from embodied_ai_architect.llm.client import LLMClient
             from embodied_ai_architect.codebase.analyzer import CodeAnalyzer
+            from embodied_ai_architect.codebase.converter import infer_constraints
+            from embodied_ai_architect.llm.client import LLMClient
 
             path = Path(project_path).expanduser().resolve()
             if not path.is_dir():
@@ -175,7 +176,10 @@ def create_codebase_tool_executors() -> dict[str, Callable]:
             analyzer = CodeAnalyzer(llm)
             analysis = analyzer.analyze(scan_result, path)
 
-            return json.dumps(analysis.model_dump(), indent=2, default=str)
+            # Issue #38: include suggested constraints in the response
+            payload = analysis.model_dump()
+            payload["suggested_constraints"] = infer_constraints(analysis).model_dump()
+            return json.dumps(payload, indent=2, default=str)
         except ImportError:
             return json.dumps(
                 {

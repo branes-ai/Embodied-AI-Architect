@@ -105,10 +105,18 @@ def codebase_analyze(ctx, project_path: str):
         analyzer = CodeAnalyzer(llm)
         analysis = analyzer.analyze(scan_result, path)
 
+        # Issue #38: also infer suggested constraints from kernel characteristics
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        suggestions = infer_constraints(analysis)
+
         if json_output:
-            click.echo(json.dumps(analysis.model_dump(), indent=2, default=str))
+            payload = analysis.model_dump()
+            payload["suggested_constraints"] = suggestions.model_dump()
+            click.echo(json.dumps(payload, indent=2, default=str))
         else:
             _display_analysis_result(analysis)
+            _display_suggested_constraints(suggestions)
 
     except ImportError as e:
         if "anthropic" in str(e).lower() or "LLMClient" in str(e):
@@ -766,6 +774,36 @@ def _display_scan_result(result) -> None:
             f"\n[bold]Next step[/bold] — run LLM-powered analysis on this entry point:\n\n"
             f"  branes codebase analyze {project_path}\n"
         )
+
+
+def _display_suggested_constraints(suggestions) -> None:
+    """Display inferred design constraints (issue #38)."""
+    if not suggestions or not suggestions.constraints:
+        return
+
+    console.print()
+    console.print(
+        "[bold cyan]SUGGESTED CONSTRAINTS[/bold cyan] "
+        "[dim](inferred from codebase analysis)[/dim]"
+    )
+    table = Table(show_header=True, border_style="cyan")
+    table.add_column("Constraint", style="cyan")
+    table.add_column("Value", justify="right")
+    table.add_column("Confidence")
+    table.add_column("Rationale", style="dim")
+
+    confidence_color = {"high": "green", "medium": "yellow", "low": "red"}
+    for c in suggestions.constraints:
+        color = confidence_color.get(c.confidence, "white")
+        confidence_cell = f"[{color}]{c.confidence}[/{color}]"
+        value_str = str(c.value) if not isinstance(c.value, float) else f"{c.value:g}"
+        table.add_row(c.name, value_str, confidence_cell, c.rationale)
+    console.print(table)
+    console.print(f"[dim]{suggestions.summary}[/dim]")
+    console.print(
+        "[dim]To use as a starting point: [cyan]branes codebase design "
+        "<path>[/cyan] (issue #37)[/dim]"
+    )
 
 
 def _display_analysis_result(analysis) -> None:
