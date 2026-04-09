@@ -1,0 +1,49 @@
+id: ranging.flash_lidar
+name: Flash LiDAR
+category: ranging
+sensor_type: flash_lidar
+description: Single-pulse illumination for instantaneous full-frame depth
+aliases: []
+keywords:
+  identity:
+  - flash lidar
+  - flash lidar
+  descriptions:
+  - flash lidar
+  - single shot
+  - instantaneous depth
+  - no scanning
+  - spad array
+  - vcsel array
+  application:
+  - automotive
+  - gesture recognition
+  - apple lidar
+  - iphone
+  - ipad
+  - adas
+  industry:
+  - short range
+  - indoor
+  - fast response
+  components:
+  - eye safe
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 0.1
+    max: 30
+    typical: 5
+  frame_rate_fps:
+    min: 15
+    max: 60
+    typical: 30
+  cost_usd:
+    min: 50
+    max: 2000
+    typical: 300

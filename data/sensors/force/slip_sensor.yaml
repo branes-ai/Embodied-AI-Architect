@@ -1,0 +1,45 @@
+id: force.slip_sensor
+name: Slip Sensor
+category: force
+sensor_type: slip_sensor
+description: Detects incipient slip during robotic grasping
+aliases: []
+keywords:
+  identity:
+  - slip sensor
+  - slip sensor
+  descriptions:
+  - slip sensor
+  - slip detection
+  - grasping
+  - robotic hand
+  - friction
+  - shear force
+  application:
+  - incipient slip
+  - grip control
+  - dexterous manipulation
+  - barometric
+  - optical
+  - vibration based
+  industry:
+  - tactile
+  - biomimetic
+  - fingertip
+  components:
+  - adaptive grip
+classification:
+  modality: force
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.01
+    max: 0.5
+    typical: 0.1
+  cost_usd:
+    min: 50
+    max: 2000
+    typical: 300

@@ -1,0 +1,48 @@
+id: inertial.inclinometer
+name: Inclinometer
+category: inertial
+sensor_type: inclinometer
+description: High-accuracy tilt sensor for leveling and alignment
+aliases: []
+keywords:
+  identity:
+  - inclinometer
+  - inclinometer
+  descriptions:
+  - inclinometer
+  - tilt sensor
+  - leveling
+  - alignment
+  - slope
+  - angle measurement
+  application:
+  - construction
+  - solar tracker
+  - antenna
+  - mems
+  - electrolytic
+  - servo
+  industry:
+  - dual axis
+  - high accuracy
+  - arcsecond
+  components:
+  - platform leveling
+classification:
+  modality: inertial
+  output_type: imu_data
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  accuracy:
+    typical: 0.01
+    unit: degrees
+  power_watts:
+    min: 0.01
+    max: 0.5
+    typical: 0.1
+  cost_usd:
+    min: 20
+    max: 1000
+    typical: 100

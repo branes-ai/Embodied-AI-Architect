@@ -1,0 +1,45 @@
+id: environmental.radiation_sensor
+name: Radiation Sensor
+category: environmental
+sensor_type: radiation_sensor
+description: Ionizing radiation detection for nuclear and medical applications
+aliases: []
+keywords:
+  identity:
+  - radiation sensor
+  - radiation sensor
+  descriptions:
+  - radiation sensor
+  - geiger counter
+  - scintillator
+  - ionizing radiation
+  - gamma
+  - beta
+  application:
+  - alpha
+  - neutron
+  - dosimeter
+  - nuclear
+  - medical
+  - decommissioning
+  industry:
+  - health physics
+  - cpm
+  - microsievert
+  components:
+  - spectroscopy
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.01
+    max: 2
+    typical: 0.3
+  cost_usd:
+    min: 50
+    max: 10000
+    typical: 500

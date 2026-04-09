@@ -1,0 +1,49 @@
+id: visual.global_shutter_camera
+name: Global Shutter Camera
+category: visual
+sensor_type: global_shutter_camera
+description: Distortion-free capture for high-speed inspection and robotics
+aliases: []
+keywords:
+  identity:
+  - global shutter camera
+  - global shutter camera
+  descriptions:
+  - global shutter
+  - no rolling shutter
+  - machine vision
+  - industrial inspection
+  - barcode reading
+  - high speed
+  application:
+  - strobe sync
+  - triggered capture
+  - pick and place
+  - quality control
+  - measurement
+  - on semi
+  industry:
+  - sony pregius
+  - cmos global
+  - no motion blur
+  components:
+  - synchronization
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 640
+    max: 4096
+    typical: 1280
+  frame_rate_fps:
+    min: 30
+    max: 500
+    typical: 120
+  cost_usd:
+    min: 100
+    max: 2000
+    typical: 400

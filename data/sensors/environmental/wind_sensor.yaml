@@ -1,0 +1,49 @@
+id: environmental.wind_sensor
+name: Wind Sensor / Anemometer
+category: environmental
+sensor_type: wind_sensor
+description: Wind speed and direction measurement
+aliases: []
+keywords:
+  identity:
+  - wind sensor / anemometer
+  - wind sensor
+  descriptions:
+  - anemometer
+  - wind sensor
+  - wind speed
+  - wind direction
+  - ultrasonic anemometer
+  - cup anemometer
+  application:
+  - vane
+  - weather station
+  - drone
+  - sailing
+  - wind turbine
+  - meteorological
+  industry:
+  - pitot tube
+  - hot wire
+  - beaufort scale
+  components:
+  - gust measurement
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 0
+    max: 0
+    typical: 0
+  power_watts:
+    min: 0.01
+    max: 2
+    typical: 0.5
+  cost_usd:
+    min: 20
+    max: 2000
+    typical: 200

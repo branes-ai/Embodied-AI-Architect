@@ -1,0 +1,52 @@
+id: position.uwb_anchor
+name: UWB Positioning System
+category: position
+sensor_type: uwb_anchor
+description: Ultra-wideband for centimeter-level indoor positioning
+aliases: []
+keywords:
+  identity:
+  - uwb positioning system
+  - uwb anchor
+  descriptions:
+  - uwb
+  - ultra wideband
+  - indoor positioning
+  - rtls
+  - real time location
+  - decawave
+  application:
+  - qorvo
+  - dw1000
+  - dw3000
+  - two way ranging
+  - twr
+  - tdoa
+  industry:
+  - centimeter accuracy
+  - asset tracking
+  - warehouse
+  components:
+  - factory
+classification:
+  modality: position
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  accuracy:
+    typical: 0.1
+    unit: meters
+  range_m:
+    min: 0.1
+    max: 100
+    typical: 30
+  power_watts:
+    min: 0.05
+    max: 0.5
+    typical: 0.15
+  cost_usd:
+    min: 10
+    max: 100
+    typical: 30

@@ -1,0 +1,49 @@
+id: ranging.mmwave_radar_60ghz
+name: mmWave Radar 60GHz
+category: ranging
+sensor_type: mmwave_radar_60ghz
+description: Short-range gesture and occupancy detection radar
+aliases: []
+keywords:
+  identity:
+  - mmwave radar 60ghz
+  - mmwave radar 60ghz
+  descriptions:
+  - 60ghz radar
+  - mmwave
+  - gesture detection
+  - occupancy sensing
+  - presence detection
+  - vital signs
+  application:
+  - breathing rate
+  - heart rate
+  - smart home
+  - infineon
+  - texas instruments
+  - iwr6843
+  industry:
+  - bgt60
+  - fmcw
+  - short range
+  components:
+  - privacy preserving
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 0.1
+    max: 10
+    typical: 3
+  power_watts:
+    min: 0.5
+    max: 3
+    typical: 1.5
+  cost_usd:
+    min: 10
+    max: 100
+    typical: 30

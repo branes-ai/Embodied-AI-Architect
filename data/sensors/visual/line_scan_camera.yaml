@@ -1,0 +1,49 @@
+id: visual.line_scan_camera
+name: Line Scan Camera
+category: visual
+sensor_type: line_scan_camera
+description: Single-line sensor for high-speed web inspection
+aliases: []
+keywords:
+  identity:
+  - line scan camera
+  - line scan camera
+  descriptions:
+  - line scan
+  - linear sensor
+  - web inspection
+  - print inspection
+  - conveyor
+  - continuous process
+  application:
+  - high speed
+  - tdi
+  - time delay integration
+  - dalsa
+  - basler
+  - surface inspection
+  industry:
+  - textile
+  - paper
+  - packaging
+  components:
+  - food inspection
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 2048
+    max: 16384
+    typical: 8192
+  frame_rate_fps:
+    min: 1000
+    max: 200000
+    typical: 40000
+  cost_usd:
+    min: 500
+    max: 10000
+    typical: 3000
