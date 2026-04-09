@@ -153,7 +153,8 @@ class TestMissionStore:
 
     def test_delete_nonexistent_returns_false(self, tmp_path):
         store = MissionStore(root=tmp_path)
-        assert store.delete("nonexistent_id") is False
+        result = store.delete("nonexistent_id")
+        assert result is False
 
     def test_exists(self, tmp_path):
         store = MissionStore(root=tmp_path)
