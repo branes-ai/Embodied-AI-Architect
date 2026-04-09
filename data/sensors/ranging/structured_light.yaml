@@ -1,0 +1,48 @@
+id: ranging.structured_light
+name: Structured Light Scanner
+category: ranging
+sensor_type: structured_light
+description: Projects patterns for high-accuracy 3D surface reconstruction
+aliases: []
+keywords:
+  identity:
+  - structured light scanner
+  - structured light
+  descriptions:
+  - structured light
+  - fringe projection
+  - pattern projection
+  - 3d scanning
+  - reverse engineering
+  - quality inspection
+  application:
+  - dental scanning
+  - face scanning
+  - high accuracy
+  - sub millimeter
+  - texture mapping
+  - point cloud
+  industry:
+  - surface reconstruction
+  - metrology
+  - calibration
+  components:
+  - gom atos
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 0.1
+    max: 5
+    typical: 1
+  accuracy:
+    typical: 0.05
+    unit: mm
+  cost_usd:
+    min: 1000
+    max: 50000
+    typical: 10000

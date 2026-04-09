@@ -1,0 +1,45 @@
+id: inertial.vibration_sensor
+name: Vibration Sensor
+category: inertial
+sensor_type: vibration_sensor
+description: High-bandwidth accelerometer for condition monitoring
+aliases: []
+keywords:
+  identity:
+  - vibration sensor
+  - vibration sensor
+  descriptions:
+  - vibration sensor
+  - condition monitoring
+  - predictive maintenance
+  - bearing fault
+  - imbalance
+  - misalignment
+  application:
+  - machine health
+  - fft
+  - spectrum analysis
+  - piezoelectric
+  - mems
+  - high bandwidth
+  industry:
+  - triaxial
+  - iec 60751
+  - industrial iot
+  components:
+  - vibration severity
+classification:
+  modality: inertial
+  output_type: imu_data
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.005
+    max: 0.5
+    typical: 0.05
+  cost_usd:
+    min: 20
+    max: 2000
+    typical: 200

@@ -1,0 +1,54 @@
+id: inertial.tactical_imu
+name: Tactical-Grade IMU
+category: inertial
+sensor_type: tactical_imu
+description: High-performance IMU for navigation and stabilization
+aliases: []
+keywords:
+  identity:
+  - tactical-grade imu
+  - tactical imu
+  descriptions:
+  - tactical grade
+  - navigation grade
+  - fiber optic gyro
+  - fog
+  - ring laser
+  - ins
+  application:
+  - inertial navigation
+  - bias stability
+  - angle random walk
+  - kvh
+  - honeywell
+  - northrop grumman
+  industry:
+  - military
+  - aerospace
+  - stabilization
+  components:
+  - georeferencing
+classification:
+  modality: inertial
+  output_type: imu_data
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 3
+    max: 30
+    typical: 10
+  cost_usd:
+    min: 5000
+    max: 100000
+    typical: 20000
+reference_products:
+- id: kvh_1750
+  name: KVH 1750 IMU
+  vendor: KVH
+  cost_usd: 25000
+- id: vectornav_vn100
+  name: VectorNav VN-100
+  vendor: VectorNav
+  cost_usd: 800

@@ -1,0 +1,49 @@
+id: visual.wide_angle_camera
+name: Wide-Angle Camera
+category: visual
+sensor_type: wide_angle_camera
+description: Wide FOV camera (100-140 degrees) for surveillance and ADAS
+aliases: []
+keywords:
+  identity:
+  - wide-angle camera
+  - wide angle camera
+  descriptions:
+  - wide angle
+  - wide fov
+  - adas
+  - surveillance
+  - dashboard camera
+  - action camera
+  application:
+  - gopro
+  - distortion correction
+  - lens correction
+  - barrel distortion
+  - automotive
+  - rear view
+  industry:
+  - backup camera
+  - security
+  - panoramic
+  components:
+  - wide lens
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  fov_degrees:
+    min: 100
+    max: 140
+    typical: 120
+  resolution:
+    min: 1280
+    max: 4096
+    typical: 1920
+  cost_usd:
+    min: 15
+    max: 200
+    typical: 50

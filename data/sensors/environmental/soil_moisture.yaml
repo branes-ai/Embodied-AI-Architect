@@ -1,0 +1,45 @@
+id: environmental.soil_moisture
+name: Soil Moisture Sensor
+category: environmental
+sensor_type: soil_moisture
+description: Volumetric water content measurement for agriculture
+aliases: []
+keywords:
+  identity:
+  - soil moisture sensor
+  - soil moisture
+  descriptions:
+  - soil moisture
+  - volumetric water content
+  - agriculture
+  - irrigation
+  - smart farming
+  - precision agriculture
+  application:
+  - capacitive
+  - tdr
+  - fdr
+  - dielectric
+  - field capacity
+  - wilting point
+  industry:
+  - root zone
+  - decagon
+  - sentek
+  components:
+  - iot agriculture
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 0.1
+    typical: 0.01
+  cost_usd:
+    min: 5
+    max: 500
+    typical: 50

@@ -1,0 +1,45 @@
+id: audio.mems_microphone
+name: MEMS Microphone
+category: audio
+sensor_type: mems_microphone
+description: Silicon MEMS microphone for embedded and wearable devices
+aliases: []
+keywords:
+  identity:
+  - mems microphone
+  - mems microphone
+  descriptions:
+  - mems microphone
+  - silicon
+  - digital microphone
+  - pdm
+  - i2s
+  - snr
+  application:
+  - aop
+  - acoustic overload point
+  - bottom port
+  - top port
+  - knowles
+  - invensense
+  industry:
+  - goertek
+  - hearable
+  - tws earbuds
+  components:
+  - voice assistant
+classification:
+  modality: audio
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.0003
+    max: 0.003
+    typical: 0.001
+  cost_usd:
+    min: 0.3
+    max: 3
+    typical: 0.8

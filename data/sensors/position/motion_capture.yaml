@@ -1,0 +1,48 @@
+id: position.motion_capture
+name: Motion Capture System
+category: position
+sensor_type: motion_capture
+description: Marker-based optical tracking for sub-mm precision
+aliases: []
+keywords:
+  identity:
+  - motion capture system
+  - motion capture
+  descriptions:
+  - motion capture
+  - mocap
+  - optical tracking
+  - marker based
+  - vicon
+  - optitrack
+  application:
+  - qualisys
+  - sub millimeter
+  - ground truth
+  - laboratory
+  - animation
+  - biomechanics
+  industry:
+  - drone testing
+  - robot calibration
+  - infrared camera
+  components:
+  - retroreflective marker
+classification:
+  modality: position
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  accuracy:
+    typical: 0.1
+    unit: mm
+  frame_rate_fps:
+    min: 120
+    max: 2000
+    typical: 360
+  cost_usd:
+    min: 5000
+    max: 500000
+    typical: 50000

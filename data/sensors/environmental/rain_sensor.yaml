@@ -1,0 +1,45 @@
+id: environmental.rain_sensor
+name: Rain Sensor
+category: environmental
+sensor_type: rain_sensor
+description: Precipitation detection for outdoor systems
+aliases: []
+keywords:
+  identity:
+  - rain sensor
+  - rain sensor
+  descriptions:
+  - rain sensor
+  - precipitation
+  - weather
+  - optical rain gauge
+  - capacitive
+  - automotive
+  application:
+  - wiper control
+  - weather station
+  - irrigation
+  - smart agriculture
+  - outdoor robotics
+  - rain intensity
+  industry:
+  - droplet detection
+  - hydrometeor
+  - disdrometer
+  components:
+  - tipping bucket
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.01
+    max: 0.5
+    typical: 0.1
+  cost_usd:
+    min: 5
+    max: 200
+    typical: 30

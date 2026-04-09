@@ -1,0 +1,45 @@
+id: biological.sweat_sensor
+name: Sweat Sensor
+category: biological
+sensor_type: sweat_sensor
+description: Non-invasive biochemical analysis via perspiration
+aliases: []
+keywords:
+  identity:
+  - sweat sensor
+  - sweat sensor
+  descriptions:
+  - sweat sensor
+  - perspiration
+  - biochemical
+  - non invasive
+  - wearable
+  - electrolyte
+  application:
+  - lactate
+  - cortisol
+  - glucose
+  - ph
+  - microfluidic
+  - flexible electronics
+  industry:
+  - sports science
+  - dehydration
+  - stress biomarker
+  components:
+  - real time monitoring
+classification:
+  modality: biological
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 0.1
+    typical: 0.01
+  cost_usd:
+    min: 10
+    max: 500
+    typical: 50
