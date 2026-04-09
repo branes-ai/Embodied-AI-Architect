@@ -61,6 +61,44 @@ def get_codebase_tool_definitions() -> list[dict[str, Any]]:
             },
         },
         {
+            "name": "design_from_codebase",
+            "description": (
+                "End-to-end bridge from a project codebase to a saved SoC design "
+                "session (issue #37). Scans the project, runs LLM analysis, "
+                "auto-generates a goal + use_case + workload_profile, and persists "
+                "the result as a SoCDesignState in the session store. The architect "
+                "can then inspect it with `branes session show` or drill into "
+                "specific kernels with /architect-drill. Use this when the user "
+                "says 'I have a project, design hardware for it'."
+            ),
+            "input_schema": {
+                "type": "object",
+                "properties": {
+                    "project_path": {
+                        "type": "string",
+                        "description": "Path to the project directory",
+                    },
+                    "power_budget_watts": {
+                        "type": "number",
+                        "description": "Optional max power in watts",
+                    },
+                    "latency_target_ms": {
+                        "type": "number",
+                        "description": "Optional max latency in milliseconds",
+                    },
+                    "max_area_mm2": {
+                        "type": "number",
+                        "description": "Optional max die area in mm²",
+                    },
+                    "max_cost_usd": {
+                        "type": "number",
+                        "description": "Optional max unit cost in USD",
+                    },
+                },
+                "required": ["project_path"],
+            },
+        },
+        {
             "name": "assess_codebase_on_hardware",
             "description": (
                 "End-to-end codebase hardware assessment. Scans the project, runs LLM "
@@ -217,10 +255,87 @@ def create_codebase_tool_executors() -> dict[str, Callable]:
         except Exception as e:
             return f"Error: {str(e)}\n{traceback.format_exc()}"
 
+    def design_from_codebase(
+        project_path: str,
+        power_budget_watts: float | None = None,
+        latency_target_ms: float | None = None,
+        max_area_mm2: float | None = None,
+        max_cost_usd: float | None = None,
+    ) -> str:
+        """Bridge codebase analysis → saved SoC design session (issue #37)."""
+        try:
+            from embodied_ai_architect.codebase.analyzer import CodeAnalyzer
+            from embodied_ai_architect.codebase.converter import codebase_to_soc_state
+            from embodied_ai_architect.graphs.session_store import SessionStore
+            from embodied_ai_architect.graphs.soc_state import DesignConstraints
+            from embodied_ai_architect.llm.client import LLMClient
+
+            path = Path(project_path).expanduser().resolve()
+            if not path.is_dir():
+                return json.dumps({"error": f"Not a directory: {project_path}"})
+
+            # Scan + analyze
+            scanner = CodebaseScanner()
+            scan_result = scanner.scan(path)
+            llm = LLMClient()
+            analyzer = CodeAnalyzer(llm)
+            analysis = analyzer.analyze(scan_result, path)
+
+            # Build constraints from kwargs
+            constraint_kwargs: dict[str, Any] = {}
+            if power_budget_watts is not None:
+                constraint_kwargs["max_power_watts"] = power_budget_watts
+            if latency_target_ms is not None:
+                constraint_kwargs["max_latency_ms"] = latency_target_ms
+            if max_area_mm2 is not None:
+                constraint_kwargs["max_area_mm2"] = max_area_mm2
+            if max_cost_usd is not None:
+                constraint_kwargs["max_cost_usd"] = max_cost_usd
+            constraints = DesignConstraints(**constraint_kwargs) if constraint_kwargs else None
+
+            state = codebase_to_soc_state(
+                analysis,
+                constraints=constraints,
+                project_path=str(path),
+            )
+
+            store = SessionStore()
+            session_id = store.save(state)
+
+            return json.dumps(
+                {
+                    "session_id": session_id,
+                    "goal": state.get("goal", ""),
+                    "use_case": state.get("use_case", ""),
+                    "kernel_count": len(analysis.kernels),
+                    "workload_summary": {
+                        "total_gflops": state.get("workload_profile", {}).get(
+                            "total_estimated_gflops", 0
+                        ),
+                        "total_memory_mb": state.get("workload_profile", {}).get(
+                            "total_estimated_memory_mb", 0
+                        ),
+                        "dominant_op": state.get("workload_profile", {}).get(
+                            "dominant_op", "unknown"
+                        ),
+                    },
+                    "next_steps": [
+                        f"branes session show {session_id}",
+                        "/architect-assess in chat for the metrics dashboard",
+                        "/architect-drill <kernel> for source-level deep dive",
+                    ],
+                },
+                indent=2,
+                default=str,
+            )
+        except Exception as e:
+            return f"Error: {str(e)}\n{traceback.format_exc()}"
+
     return {
         "scan_project": scan_project,
         "analyze_codebase": analyze_codebase,
         "assess_codebase_on_hardware": assess_codebase_on_hardware,
+        "design_from_codebase": design_from_codebase,
     }
 
 

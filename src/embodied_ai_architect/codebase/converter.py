@@ -6,7 +6,13 @@ workload_analyzer, hw_explorer, and ppa_assessor pipeline.
 
 from __future__ import annotations
 
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Optional
+
 from embodied_ai_architect.codebase.models import CodebaseAnalysisResult, ComputeKernel
+
+if TYPE_CHECKING:
+    from embodied_ai_architect.graphs.soc_state import DesignConstraints, SoCDesignState
 
 # Kernel type → operator mapping
 KERNEL_OPERATOR_MAP: dict[str, list[dict]] = {
@@ -183,3 +189,147 @@ class CodebaseConverter:
             "line_range": list(kernel.line_range),
             "frameworks": list(kernel.frameworks),
         }
+
+
+# ---------------------------------------------------------------------------
+# Issue #37: Codebase → SoCDesignState bridge
+# ---------------------------------------------------------------------------
+
+# Map dominant kernel type → use_case label that the rest of the pipeline
+# (planner, qualifier, registry) recognizes.
+_KERNEL_TYPE_TO_USE_CASE: dict[str, str] = {
+    "ml_inference": "ml_inference_app",
+    "signal_processing": "signal_processing_app",
+    "image_processing": "image_processing_app",
+    "control_loop": "control_system",
+    "sensor_fusion": "sensor_fusion_app",
+    "io_bound": "io_pipeline",
+    "general_compute": "application_analysis",
+}
+
+
+def _infer_use_case(analysis: CodebaseAnalysisResult) -> str:
+    """Pick a use_case label from the dominant kernel type in the analysis."""
+    if not analysis.kernels:
+        return "application_analysis"
+    counts: dict[str, int] = {}
+    for kernel in analysis.kernels:
+        counts[kernel.kernel_type] = counts.get(kernel.kernel_type, 0) + 1
+    dominant = max(counts, key=counts.get)
+    return _KERNEL_TYPE_TO_USE_CASE.get(dominant, "application_analysis")
+
+
+def _build_goal(analysis: CodebaseAnalysisResult) -> str:
+    """Synthesize a one-line design goal from the codebase analysis."""
+    name = analysis.project_name or "application"
+    parts = [f"Design SoC for {name}"]
+    if analysis.kernels:
+        types = sorted({k.kernel_type for k in analysis.kernels})
+        parts.append(f"({', '.join(types)})")
+    if analysis.summary:
+        # Trim summary to first sentence to keep the goal short
+        first_sentence = analysis.summary.split(".")[0].strip()
+        if first_sentence:
+            parts.append(f"— {first_sentence}")
+    return " ".join(parts)
+
+
+def codebase_to_soc_state(
+    analysis: CodebaseAnalysisResult,
+    constraints: "Optional[DesignConstraints]" = None,
+    project_path: Optional[str] = None,
+    session_id: Optional[str] = None,
+) -> "SoCDesignState":
+    """Build a populated SoCDesignState from a CodebaseAnalysisResult.
+
+    The bridge from "I have an application" to "design hardware for it"
+    (issue #37). Auto-fills:
+
+    - `goal` from project name + dominant kernel types + analysis summary
+    - `workload_profile` from `CodebaseConverter.to_workload_profile`
+    - `use_case` inferred from the dominant kernel type
+    - `codebase_metadata` with the project path, languages, build system,
+      and a brief scan summary so the architect skills (`/architect-assess`,
+      `/architect-drill source:`) can resolve source files later
+
+    Args:
+        analysis: Full codebase analysis result.
+        constraints: Optional design constraints (power, latency, area, cost).
+        project_path: Path used to resolve source files (kept absolute on
+            state so `/architect-drill source:` works regardless of cwd).
+        session_id: Optional session identifier — auto-generated if None.
+
+    Returns:
+        SoCDesignState ready to feed into PlannerNode / SoCDesignRunner.
+    """
+    # Local imports to avoid pulling soc_state into module-load time and
+    # creating a circular dep with the graphs subsystem.
+    from embodied_ai_architect.graphs.soc_state import create_initial_soc_state
+
+    converter = CodebaseConverter()
+    workload_profile = converter.to_workload_profile(analysis)
+
+    use_case = _infer_use_case(analysis)
+    goal = _build_goal(analysis)
+
+    state = create_initial_soc_state(
+        goal=goal,
+        constraints=constraints,
+        use_case=use_case,
+        platform="custom",
+        session_id=session_id,
+    )
+
+    state["workload_profile"] = workload_profile
+
+    resolved_project_path = str(Path(project_path).resolve()) if project_path else ""
+    state["codebase_metadata"] = {
+        "project_path": resolved_project_path,
+        "project_name": analysis.project_name,
+        "languages": list(analysis.languages),
+        "build_system": analysis.build_system,
+        "kernel_count": len(analysis.kernels),
+        "ml_models": list(analysis.ml_models),
+        "scan_summary": {
+            "source_file_count": len(analysis.source_files),
+            "dependencies": list(analysis.dependencies)[:50],
+        },
+    }
+
+    return state
+
+
+def codebase_data_to_soc_state(
+    analysis_data: dict[str, Any],
+    scan_data: Optional[dict[str, Any]] = None,
+    project_path: Optional[str] = None,
+    constraints: "Optional[DesignConstraints]" = None,
+    session_id: Optional[str] = None,
+) -> "SoCDesignState":
+    """Same as `codebase_to_soc_state` but accepts dict payloads.
+
+    Useful for callers that already have the analysis as a model_dump (e.g.
+    the agent layer that returns `result.data`). Reconstructs the
+    `CodebaseAnalysisResult` from the dict, falls back to scan_data fields
+    when the analysis dict is missing them.
+    """
+    merged = dict(analysis_data) if analysis_data else {}
+    if scan_data:
+        merged.setdefault("project_name", scan_data.get("project_name", "application"))
+        merged.setdefault("languages", scan_data.get("languages", []))
+        merged.setdefault("build_system", scan_data.get("build_system", "unknown"))
+        if "source_files" not in merged and scan_data.get("source_files"):
+            merged["source_files"] = scan_data["source_files"]
+        merged.setdefault("ml_models", scan_data.get("ml_models", []))
+        merged.setdefault("dependencies", scan_data.get("dependencies", []))
+    merged.setdefault("project_name", "application")
+    merged.setdefault("kernels", [])
+    merged.setdefault("source_files", [])
+
+    analysis = CodebaseAnalysisResult(**merged)
+    return codebase_to_soc_state(
+        analysis,
+        constraints=constraints,
+        project_path=project_path,
+        session_id=session_id,
+    )
