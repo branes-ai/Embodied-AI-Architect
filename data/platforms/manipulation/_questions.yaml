@@ -1,0 +1,449 @@
+domain: robot_arm
+display_name: Robot Arm / Manipulator / Cobot
+description: 'Articulated robot arms from small desktop units to industrial manipulators and collaborative robots (cobots).
+  Features a dual nervous system architecture: central brain for perception/planning and peripheral joint controllers for
+  real-time safety.'
+keywords:
+- robot arm
+- manipulator
+- cobot
+- collaborative robot
+- pick and place
+- robotic arm
+- industrial robot
+- articulated
+- 6-axis
+- 7-axis
+- scara
+- delta robot
+- palletizing
+- welding robot
+- assembly robot
+base_implications:
+  platform_type: industrial_arm
+  actuators.actuator_types:
+  - servo_motor
+  comms.protocols:
+  - ethercat
+  sensors.modalities:
+  - joint_encoder
+  - torque_sensor
+questions:
+- id: arm_type
+  dimension: platform
+  text: What type of robot arm is this?
+  question_type: single_choice
+  options:
+  - cobot_tabletop
+  - cobot_industrial
+  - industrial_caged
+  - scara_assembly
+  - delta_pick_place
+  - surgical
+  - research_platform
+  required: true
+  explanation: The arm type determines the fundamental safety architecture. A cobot MUST have autonomous joint-level safety
+    (peripheral nervous system) that can limit force/speed independently of the central brain. An industrial arm in a cage
+    may not.
+  option_descriptions:
+    cobot_tabletop: Small collaborative arm (3-10kg payload, desktop/bench mount). Works alongside humans — requires force-limited
+      joints with autonomous safety at each joint controller.
+    cobot_industrial: Large collaborative arm (10-35kg payload, floor mount). Shared workspace with humans — requires both
+      force limiting and speed monitoring at the peripheral joint level.
+    industrial_caged: Traditional industrial arm behind safety cage. No direct human contact during operation. High speed/force,
+      simpler safety architecture.
+    scara_assembly: SCARA (4-axis) for high-speed assembly. Limited workspace, very fast cycle times. Usually caged or light-curtain
+      guarded.
+    delta_pick_place: Delta/parallel robot for high-speed pick-and-place. Typically caged, extremely fast (100+ picks/min).
+    surgical: Surgical or medical robot. Highest safety requirements (IEC 62304 Class C), sub-millimeter precision, force
+      feedback at every joint.
+    research_platform: Research/educational arm. Flexible requirements, moderate safety, ROS-compatible.
+  implications:
+    cobot_tabletop:
+      power.compute_power_watts: 15.0
+      power.power_budget_watts: 150.0
+      actuators.dof: 6
+      actuators.payload_kg: 5.0
+      actuators.control_rate_hz: 1000.0
+      safety.level: sil_2
+      safety.certifications:
+      - ISO_10218
+      - ISO_TS_15066
+      safety.redundancy: dual
+      safety.failsafe_action: stop
+      safety.watchdog_timeout_ms: 2.0
+      custom.architecture: dual_nervous_system
+      custom.joint_controllers: independent_mcu_per_joint
+      custom.joint_safety_bus: ethercat
+      custom.joint_control_rate_hz: 1000
+      custom.force_limiting: true
+      custom.speed_monitoring: true
+      sensors.environmental_rating: indoor
+    cobot_industrial:
+      power.compute_power_watts: 25.0
+      power.power_budget_watts: 500.0
+      actuators.dof: 6
+      actuators.payload_kg: 20.0
+      actuators.control_rate_hz: 1000.0
+      safety.level: sil_3
+      safety.certifications:
+      - ISO_10218
+      - ISO_TS_15066
+      safety.redundancy: dual
+      safety.failsafe_action: stop
+      safety.watchdog_timeout_ms: 1.0
+      custom.architecture: dual_nervous_system
+      custom.joint_controllers: independent_mcu_per_joint
+      custom.joint_safety_bus: ethercat
+      custom.joint_control_rate_hz: 1000
+      custom.force_limiting: true
+      custom.speed_monitoring: true
+      sensors.environmental_rating: indoor
+    industrial_caged:
+      power.compute_power_watts: 20.0
+      power.power_budget_watts: 2000.0
+      actuators.dof: 6
+      actuators.payload_kg: 100.0
+      actuators.control_rate_hz: 500.0
+      safety.level: sil_1
+      safety.certifications:
+      - ISO_10218
+      safety.failsafe_action: stop
+      custom.architecture: centralized
+      custom.joint_controllers: centralized_motion_controller
+      sensors.environmental_rating: indoor
+    scara_assembly:
+      power.compute_power_watts: 10.0
+      power.power_budget_watts: 300.0
+      actuators.dof: 4
+      actuators.payload_kg: 5.0
+      actuators.control_rate_hz: 2000.0
+      safety.level: sil_1
+      custom.architecture: centralized
+      sensors.environmental_rating: indoor
+    delta_pick_place:
+      power.compute_power_watts: 10.0
+      power.power_budget_watts: 500.0
+      actuators.dof: 3
+      actuators.payload_kg: 2.0
+      actuators.control_rate_hz: 4000.0
+      safety.level: sil_1
+      custom.architecture: centralized
+      sensors.environmental_rating: indoor
+    surgical:
+      power.compute_power_watts: 30.0
+      power.power_budget_watts: 200.0
+      actuators.dof: 7
+      actuators.payload_kg: 2.0
+      actuators.control_rate_hz: 2000.0
+      safety.level: sil_4
+      safety.certifications:
+      - IEC_62304_C
+      - ISO_13482
+      safety.redundancy: triple
+      safety.failsafe_action: stop
+      safety.watchdog_timeout_ms: 0.5
+      custom.architecture: dual_nervous_system
+      custom.joint_controllers: independent_mcu_per_joint
+      custom.joint_safety_bus: ethercat
+      custom.joint_control_rate_hz: 2000
+      custom.force_limiting: true
+      custom.haptic_feedback: true
+      sensors.environmental_rating: indoor
+    research_platform:
+      power.compute_power_watts: 15.0
+      power.power_budget_watts: 200.0
+      actuators.dof: 7
+      actuators.payload_kg: 5.0
+      actuators.control_rate_hz: 500.0
+      safety.level: basic
+      custom.architecture: centralized
+      comms.protocols:
+      - ros2
+      - ethernet
+      sensors.environmental_rating: indoor
+  min_selections: 1
+- id: perception_tasks
+  dimension: perception
+  text: What perception tasks does the arm need?
+  question_type: multi_choice
+  options:
+  - object_detection
+  - grasp_planning
+  - pose_estimation_6d
+  - human_presence
+  - hand_tracking
+  - workspace_monitoring
+  - defect_inspection
+  - bin_picking
+  - force_estimation
+  required: true
+  explanation: 'Robot arm perception is fundamentally about understanding the workspace: where are the objects to manipulate,
+    where are the obstacles (including humans), and what is the arm''s relationship to both. This runs on the ''brain'' —
+    the central SoC.'
+  option_descriptions:
+    object_detection: Detect objects to manipulate in the workspace
+    grasp_planning: Compute grasp poses from point clouds or depth images
+    pose_estimation_6d: Estimate 6DoF pose of known objects for precise placement
+    human_presence: Detect humans entering the workspace (safety-critical)
+    hand_tracking: Track human hands for collision avoidance or handover
+    workspace_monitoring: Monitor entire workspace for unexpected changes
+    defect_inspection: Visual inspection of parts for quality control
+    bin_picking: Pick specific items from cluttered bins
+    force_estimation: Estimate contact forces from visual deformation
+  implications:
+    object_detection:
+      perception.detection_classes:
+      - target_object
+      perception.camera_types:
+      - depth
+      perception.min_fps: 10.0
+      perception.max_latency_ms: 100.0
+    grasp_planning:
+      perception.camera_types:
+      - depth
+      perception.min_accuracy: 0.9
+      perception.max_latency_ms: 200.0
+    pose_estimation_6d:
+      perception.camera_types:
+      - depth
+      perception.min_accuracy: 0.95
+      perception.max_latency_ms: 100.0
+    human_presence:
+      perception.detection_classes:
+      - person
+      perception.max_latency_ms: 30.0
+      perception.min_fps: 20.0
+      safety.level: sil_2
+    hand_tracking:
+      perception.detection_classes:
+      - hand
+      perception.max_latency_ms: 20.0
+      perception.min_fps: 30.0
+    bin_picking:
+      perception.camera_types:
+      - depth
+      perception.min_accuracy: 0.85
+      perception.resolution: 1280x720
+    defect_inspection:
+      perception.camera_types:
+      - monocular
+      perception.resolution: 1920x1080
+      perception.min_accuracy: 0.95
+  min_selections: 1
+  allow_custom: true
+  custom_prompt: "Describe the custom perception task. Include:\n  - What sensors it needs (depth camera, force/torque, laser,\
+    \ etc.)\n  - Latency budget in ms\n  - Accuracy requirements\n  - Whether it runs on the brain (central SoC) or peripheral\
+    \ (joint MCU)"
+- id: control_architecture
+  dimension: control
+  text: How does perception connect to arm control?
+  question_type: single_choice
+  options:
+  - trajectory_to_joints
+  - cartesian_to_joints
+  - direct_joint_command
+  - behavior_tree
+  - teleoperation_overlay
+  required: true
+  explanation: In a dual nervous system architecture, the 'brain' sends trajectory goals to the peripheral joint controllers
+    over a deterministic bus. The joint controllers execute the trajectory with local safety guarantees. The brain never directly
+    commands motor currents — it commands positions/velocities that the peripheral system safely executes.
+  option_descriptions:
+    trajectory_to_joints: Brain plans joint-space trajectory, peripheral executes with safety limits. Standard for cobots.
+      ~50-100Hz trajectory update.
+    cartesian_to_joints: Brain specifies Cartesian goals, inverse kinematics runs on peripheral or intermediate controller.
+      ~20-50Hz.
+    direct_joint_command: Brain directly commands joint positions at high rate. Only for caged industrial arms or research
+      platforms.
+    behavior_tree: High-level behavior tree on brain, skill primitives on peripheral. ~1-10Hz decision rate.
+    teleoperation_overlay: Human teleoperates with AI providing safety overlay and autonomous assistance. Surgical and research.
+  implications:
+    trajectory_to_joints:
+      autonomy.planning: trajectory_planning
+      autonomy.decision_rate_hz: 50.0
+      custom.brain_to_joint_rate_hz: 100
+      custom.control_mode: trajectory
+    cartesian_to_joints:
+      autonomy.planning: cartesian_planning
+      autonomy.decision_rate_hz: 20.0
+      custom.brain_to_joint_rate_hz: 50
+      custom.control_mode: cartesian
+    direct_joint_command:
+      autonomy.decision_rate_hz: 500.0
+      custom.control_mode: direct
+    behavior_tree:
+      autonomy.planning: behavior_tree
+      autonomy.decision_rate_hz: 5.0
+      custom.control_mode: skill_primitives
+    teleoperation_overlay:
+      autonomy.level: assisted
+      autonomy.decision_rate_hz: 30.0
+      custom.control_mode: teleop_with_ai
+  min_selections: 1
+- id: safety_requirements
+  dimension: safety
+  text: What safety requirements apply to this arm?
+  question_type: multi_choice
+  options:
+  - power_force_limiting
+  - speed_separation_monitoring
+  - safety_rated_stop
+  - hand_guiding
+  - collision_detection
+  - workspace_restriction
+  - no_cobot_safety
+  required: true
+  explanation: 'Cobot safety is non-negotiable. ISO/TS 15066 defines four collaborative operation modes: safety-rated monitored
+    stop, hand guiding, speed and separation monitoring, and power and force limiting. Each requires specific hardware capabilities
+    at the joint level — the peripheral nervous system.'
+  option_descriptions:
+    power_force_limiting: Each joint limits force/power below injury threshold. Requires torque sensors and current limiting
+      at every joint MCU.
+    speed_separation_monitoring: Arm speed reduced based on human proximity. Requires external sensors (LiDAR/cameras) + fast
+      joint speed control.
+    safety_rated_stop: Arm stops when human enters safety zone. Simplest mode — requires reliable human detection + fast stop
+      capability.
+    hand_guiding: Human physically guides the arm. Requires backdriveable joints or torque sensing for lead-through teaching.
+    collision_detection: Detect unexpected collisions via torque monitoring and stop immediately. Requires torque sensors
+      at every joint.
+    workspace_restriction: Virtual walls/zones that the arm cannot enter. Enforced at joint controller level.
+    no_cobot_safety: No collaborative safety required (caged industrial, research). Standard emergency stop only.
+  implications:
+    power_force_limiting:
+      custom.force_limiting: true
+      custom.joint_controllers: independent_mcu_per_joint
+      sensors.modalities:
+      - torque_sensor
+      - joint_encoder
+      safety.level: sil_2
+      safety.certifications:
+      - ISO_TS_15066
+    speed_separation_monitoring:
+      custom.speed_monitoring: true
+      sensors.modalities:
+      - lidar
+      - depth_camera
+      perception.detection_classes:
+      - person
+      perception.max_latency_ms: 30.0
+    safety_rated_stop:
+      safety.failsafe_action: stop
+      safety.watchdog_timeout_ms: 5.0
+    hand_guiding:
+      custom.backdriveable_joints: true
+      sensors.modalities:
+      - torque_sensor
+    collision_detection:
+      sensors.modalities:
+      - torque_sensor
+      custom.collision_detection_ms: 5.0
+    workspace_restriction:
+      custom.virtual_walls: true
+      custom.joint_controllers: independent_mcu_per_joint
+    no_cobot_safety:
+      safety.level: basic
+      safety.failsafe_action: stop
+  min_selections: 1
+- id: manipulation_task
+  dimension: perception
+  text: What is the primary manipulation task?
+  question_type: single_choice
+  options:
+  - pick_and_place
+  - assembly
+  - welding
+  - palletizing
+  - machine_tending
+  - polishing_grinding
+  - inspection_only
+  - human_handover
+  required: true
+  explanation: The manipulation task determines the precision requirements, cycle time targets, and whether the brain needs
+    to do real-time visual servoing or can pre-plan trajectories.
+  option_descriptions:
+    pick_and_place: Pick objects and place at target location
+    assembly: Precise part mating and insertion (sub-mm tolerance)
+    welding: Arc or spot welding along seams
+    palletizing: Stack items on pallets (high throughput)
+    machine_tending: Load/unload CNC machines or presses
+    polishing_grinding: Surface finishing with force control
+    inspection_only: Move camera/sensor to inspect parts (no manipulation)
+    human_handover: Hand objects to/from humans (cobot-specific)
+  implications:
+    pick_and_place:
+      perception.max_latency_ms: 100.0
+      custom.cycle_time_target_s: 5.0
+      custom.position_accuracy_mm: 1.0
+    assembly:
+      perception.max_latency_ms: 50.0
+      custom.cycle_time_target_s: 10.0
+      custom.position_accuracy_mm: 0.1
+      sensors.modalities:
+      - force_torque_sensor
+    welding:
+      custom.cycle_time_target_s: 30.0
+      custom.position_accuracy_mm: 0.5
+      perception.camera_types:
+      - monocular
+      sensors.environmental_rating: indoor
+    palletizing:
+      custom.cycle_time_target_s: 3.0
+      custom.position_accuracy_mm: 5.0
+      perception.max_latency_ms: 200.0
+    human_handover:
+      perception.detection_classes:
+      - hand
+      - person
+      perception.max_latency_ms: 30.0
+      custom.force_limiting: true
+      safety.level: sil_2
+    inspection_only:
+      perception.camera_types:
+      - monocular
+      perception.resolution: 1920x1080
+      perception.min_accuracy: 0.95
+  min_selections: 1
+- id: operating_environment
+  dimension: environment
+  text: What is the operating environment?
+  question_type: single_choice
+  options:
+  - factory_floor
+  - cleanroom
+  - laboratory
+  - food_processing
+  - outdoor_construction
+  - operating_room
+  required: false
+  explanation: Robot arms operate in controlled environments but the level of control varies significantly. A cleanroom has
+    different requirements than a machine shop floor.
+  option_descriptions:
+    factory_floor: Standard manufacturing floor (dust, vibration, variable lighting)
+    cleanroom: Semiconductor or pharmaceutical cleanroom (ISO class 5-7)
+    laboratory: Research laboratory (controlled, low dust)
+    food_processing: Food-safe environment (washdown, stainless steel)
+    outdoor_construction: Construction site (dust, weather, rough handling)
+    operating_room: Surgical operating room (sterile, critical cleanliness)
+  default: factory_floor
+  implications:
+    factory_floor:
+      sensors.environmental_rating: indoor
+      power.thermal_limit_c: 50.0
+    cleanroom:
+      sensors.environmental_rating: indoor
+      custom.cleanroom_compatible: true
+    food_processing:
+      sensors.environmental_rating: ip67
+      custom.food_safe: true
+    outdoor_construction:
+      sensors.environmental_rating: ip54
+      power.thermal_limit_c: 60.0
+    operating_room:
+      sensors.environmental_rating: indoor
+      safety.level: sil_4
+      safety.certifications:
+      - IEC_62304_C
+      custom.sterile_compatible: true
+  min_selections: 1
+
