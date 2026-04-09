@@ -235,8 +235,14 @@ def mission_edit(ctx, mission_id, name, goal, status, platform_id, use_case):
         m.goal = goal
         changes.append(f"goal → {goal[:50]}")
     if status is not None:
-        m.status = MissionStatus(status)
-        changes.append(f"status → {status}")
+        try:
+            m.status = MissionStatus(status)
+            changes.append(f"status → {status}")
+        except ValueError:
+            valid = ", ".join(s.value for s in MissionStatus)
+            console.print(f"[red]Invalid status '{status}'. Valid: {valid}[/red]")
+            ctx.exit(1)
+            return
     if platform_id is not None:
         m.platform_id = platform_id
         changes.append(f"platform → {platform_id}")
