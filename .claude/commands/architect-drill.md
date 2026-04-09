@@ -131,6 +131,24 @@ skill switches modes and reads from `state["kpu_config"]`,
 when `rtl_enabled=True` — issues #29 / #30 / #31). All five targets are
 read-only inspections; no state mutation.
 
+### Cross-references to other KPU surface area
+
+Before drilling, check whether the architect already has the answer
+elsewhere — drill is the deep-dive, but these surface-level views are
+often enough:
+
+- `branes session show --latest` renders a **KPU Configuration** block
+  (issue #35) and a **KPU Convergence History** block (issue #34) that
+  replays every specialist invocation across iterations.
+- `optimization_review_snapshot.kpu_floorplan` and `kpu_bandwidth`
+  (issue #30) carry the slackness summary — drill is for when the
+  snapshot tells the architect *which* link is bottlenecked but not
+  *why*.
+- The architect can override KPU parameters at plan review time via
+  `PlanReviewInput.kpu_overrides` (issue #29) — drill should mention
+  this when proposing a change the architect could just set as an
+  override on the next session.
+
 ### Recognized KPU targets
 
 | Target | What it shows |
