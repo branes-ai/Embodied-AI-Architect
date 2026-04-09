@@ -210,10 +210,66 @@ session automatically produces a populated Pareto frontier. The escape hatch is
 - `swap_profiles.py` - Profile definitions and templates (drone, UGV, etc.)
 - `swap_analysis.py` - SWaP-C analysis engine
 
-**KPU Design:**
-- `kpu_loop.py` - KPU design iteration loop
-- `kpu_config.py` - Stillwater KPU configuration
-- `kpu_specialists.py` - KPU architecture specialists
+**KPU Design** (issues #29–#35) — the dual-loop micro-architecture pipeline:
+- `kpu_loop.py` - Standalone KPU iteration helper + `apply_rtl_area_feedback` (#31)
+- `kpu_config.py` - `KPUMicroArchConfig`, presets, `apply_kpu_overrides` (#29)
+- `kpu_specialists.py` - `kpu_configurator`, `floorplan_validator`, `bandwidth_validator`, `kpu_optimizer`, `rtl_area_feedback` — each appends to `kpu_optimization_history` (#34)
+
+**Dual-loop architecture:**
+
+```
+                      OUTER LOOP (SoC optimization)
+                      ─────────────────────────────
+  planner → dispatch ─┬→ workload → hw → arch ──────────┐
+                      │                                  │
+                      ├─────── INNER LOOP (KPU) ────────┤
+                      │                                  │
+                      └→ kpu_configurator → floorplan ───┤
+                                          ↘ bandwidth ───┤
+                                          → rtl_generator
+                                          → rtl_ppa_assessor
+                                          → rtl_area_feedback (#31, optional)
+                                                            │
+                                                            ↓
+                                          ppa_assessor → critic → report
+                                                            │
+                                                            ↓
+                                                        evaluate
+                                                            │
+                                            FAIL ─────────────────── PASS
+                                                ↓                       ↓
+                                          design_optimizer            END
+                                                ↓
+                                       (loops back to dispatch,
+                                        re-runs floorplan + bandwidth
+                                        validators when kpu_config
+                                        was just modified — issue #35)
+```
+
+The **outer loop** is the same SoC optimization loop that runs for any
+design (constraint slackness, strategy catalog, MOO frontier). The **inner
+KPU loop** is only active when `rtl_enabled=True` on the design state, and
+adds five specialists that size the KPU micro-architecture, validate
+floorplan and bandwidth, and feed real synthesis area back into sizing.
+
+The architect can steer both loops:
+- **At plan review**: KPU config preview + dotted-path overrides (#29)
+- **During optimization review**: KPU floorplan + bandwidth slackness (#30)
+- **Via the catalog**: 6 KPU-targeted strategies in `design_optimizer` (#32)
+- **Through `/architect-drill`**: 5 KPU drill targets (#33)
+- **In session show**: KPU configuration block + convergence history (#34, #35)
+
+**Key KPU/RTL state fields** (the data the architect skills consume):
+
+| Field | Producer | Consumer |
+|---|---|---|
+| `kpu_config` | `kpu_configurator` (heuristic + #29 overrides) | snapshot, drill, CLI |
+| `kpu_config_overrides` | `PlanReviewInput.kpu_overrides` (#29) | `kpu_configurator` |
+| `floorplan_estimate` | `floorplan_validator` | snapshot, `/api/sessions/{id}/kpu*`, drill |
+| `bandwidth_match` | `bandwidth_validator` | snapshot, `/api/sessions/{id}/kpu*`, drill |
+| `kpu_optimization_history` | every KPU specialist appends one entry (#34) | snapshot, `branes session show`, drill |
+| `rtl_modules` / `rtl_synthesis_results` | `rtl_generator` | `rtl_ppa_assessor`, drill |
+| `rtl_area_feedback` | architect flag (#31) | `rtl_area_feedback` specialist |
 
 **RTL Generation:**
 - `rtl_loop.py` - RTL design iteration loop

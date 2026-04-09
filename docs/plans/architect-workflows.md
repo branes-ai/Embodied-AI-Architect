@@ -329,6 +329,131 @@ millisecond matters.
 
 ---
 
+## Workflow 6: KPU SoC — Inner Loop Convergence
+
+### The Problem
+
+When the design includes a custom KPU (Knowledge Processing Unit) and
+RTL generation, the architect drives **two nested optimization loops**:
+
+- **Outer loop**: SoC-level constraints (power, latency, area, cost) —
+  same as Workflows 1–5
+- **Inner loop**: KPU micro-architecture convergence — systolic array
+  sizing, SRAM hierarchy, NoC topology, DRAM technology, floorplan
+  pitch matching, bandwidth waterfall — issues #29–#35
+
+These loops interact: the outer loop's `design_optimizer` can pick
+KPU-targeted strategies (#32) that mutate `kpu_config`, which in turn
+forces the inner-loop validators to re-run on the next dispatch
+iteration.
+
+### Setting Up the Session
+
+Enable the inner loop on session creation (or via `SoCDesignRunner.run()`):
+
+```python
+runner = SoCDesignRunner(static_plan=KPU_PLAN)
+state = runner.run(
+    goal="Design a KPU-based SoC for delivery drone perception",
+    constraints=DesignConstraints(max_power_watts=5.0, max_area_mm2=100.0),
+    use_case="delivery_drone",
+    platform="drone",
+    rtl_enabled=True,            # turn on KPU + floorplan + bandwidth + RTL
+    rtl_area_feedback=True,      # optional: re-size on synthesis area > floorplan
+)
+```
+
+### The KPU Plan
+
+Schedule KPU specialists in dependency order:
+
+```
+workload_analyzer
+   → hw_explorer
+       → architecture_composer
+           → kpu_configurator       (sizes the micro-architecture)
+               → floorplan_validator (parallel)
+               → bandwidth_validator (parallel)
+                   → rtl_generator
+                       → rtl_ppa_assessor
+                           → ppa_assessor → critic → report_generator
+```
+
+### What the Architect Sees
+
+**At plan review time** (#29):
+The plan review snapshot includes a **KPU configuration preview** — the
+architect can override any field (compute_tile.array_rows,
+noc.link_width_bits, dram.num_controllers, etc.) using dotted-path keys
+in `PlanReviewInput.kpu_overrides`. Overrides survive across review
+passes.
+
+**During optimization review** (#30):
+Two new sections in `OptimizationReviewSnapshot`:
+
+```text
+KPU FLOORPLAN
+  Compute tile: 2.10 x 2.30 mm  |  Memory tile: 2.00 x 2.40 mm
+  Pitch ratio: 1.05 (within 15% tolerance)  PASS
+  Total die area: 48.2 mm² / 100 mm² budget  48%  PASS
+
+KPU BANDWIDTH CHAIN
+  Link              Demand    Supply    Util    Status
+  DRAM → L3         12.8 GB/s  25.6 GB/s  50%   OK
+  L3 → L2            9.0 GB/s  16.4 GB/s  55%   OK
+  L2 → L1            4.5 GB/s   4.8 GB/s  94%   TIGHT!
+  L1 → compute       1.4 GB/s   3.2 GB/s  43%   OK
+```
+
+**Across the session** (#34):
+`branes session show --latest` renders a **KPU Convergence History**
+block showing each iteration's specialist invocation, before/after
+metrics, and the changes the optimizer applied. The history is monotonic
+— a 10-iteration session shows the full trail.
+
+### Drilling Into KPU Internals
+
+`/architect-drill` understands KPU-specific targets (#33):
+
+```text
+/architect-drill kpu              # full config + floorplan + bandwidth
+/architect-drill systolic_array   # array dims, peak TOPS, utilization
+/architect-drill sram_hierarchy   # L1/L2/L3 sizes, banks, area
+/architect-drill noc              # topology, link width, frequency
+/architect-drill bandwidth_chain  # DRAM → L3 → L2 → L1 → compute waterfall
+```
+
+The skill cross-references the bandwidth bottleneck against the catalog
+strategies from #32 (`upgrade_dram_technology`, `widen_noc`,
+`add_sram_banks`) and proposes the right knob to turn.
+
+### The RTL Feedback Loop (#31)
+
+After RTL synthesis runs, the `rtl_area_feedback` specialist compares
+synthesis area against the floorplan estimate. If synthesis exceeds
+floorplan × 1.1, it triggers up to 3 KPU re-sizing iterations using the
+existing optimizer adjustments and then re-validates floorplan +
+bandwidth. Bounded to prevent infinite loops; every iteration is
+recorded in `kpu_optimization_history`.
+
+### Verification
+
+The end-to-end integration test (`tests/test_kpu_integration.py::TestKPUFullPipeline`)
+asserts that a real `SoCDesignRunner` run with `rtl_enabled=True`
+produces:
+
+- non-empty `kpu_config`, `floorplan_estimate`, `bandwidth_match`
+- non-empty `rtl_synthesis_results`
+- `kpu_optimization_history` with at least one entry per specialist
+- session round-trips through `SessionStore`
+- snapshot exposes `kpu_floorplan` + `kpu_bandwidth` + `kpu_history`
+- `branes session show` renders the KPU Configuration block
+
+That test was the forcing function for the dual-loop wiring fixes in
+issue #35.
+
+---
+
 ## The Architect Skill — Codifying the Expert Loop
 
 The five workflows above all follow the same cognitive pattern. This

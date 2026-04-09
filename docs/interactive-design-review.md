@@ -151,6 +151,104 @@ When redirecting, you can:
 - **Relax constraints**: `constraint_relaxation={"max_power_watts": 8.0}`
 - **Tighten constraints**: `constraint_tightening={"max_latency_ms": 20.0}`
 
+## KPU Review (issues #29–#35)
+
+When `rtl_enabled=True` on the design state, an additional **inner KPU
+loop** runs alongside the outer optimization loop. The architect can both
+**inspect and steer** the KPU micro-architecture at every stage:
+
+### At plan review time (issue #29)
+
+Before the dispatcher starts, the plan review snapshot includes a **KPU
+configuration preview** showing what the heuristic configurator would
+produce. The architect can inject overrides via `PlanReviewInput.kpu_overrides`
+using dotted-path keys:
+
+```python
+review = PlanReviewInput(
+    decision=ReviewDecision.MODIFY,
+    kpu_overrides={
+        "compute_tile.array_rows": 8,
+        "compute_tile.array_cols": 8,
+        "noc.link_width_bits": 512,
+        "dram.num_controllers": 4,
+    },
+)
+```
+
+The overrides survive across review passes (additive merge) and are
+applied on top of the heuristic when `kpu_configurator` runs during
+dispatch. Architect's choices win over the auto-sizer.
+
+### During optimization review (issue #30)
+
+The optimization review snapshot exposes **KPU inner-loop slackness**
+under two new fields:
+
+- `kpu_floorplan` — pitch matching, die area utilization, feasibility
+- `kpu_bandwidth` — DRAM → L3 → L2 → L1 → compute waterfall with
+  per-link demand/supply/utilization and OK/TIGHT/BOTTLENECK status
+
+Both render in the rich text snapshot and are served by the API at
+`GET /api/sessions/{id}/kpu-slackness`. Use them to find which level of
+the memory hierarchy is the bottleneck and to verify the floorplan stays
+within the die budget.
+
+### KPU strategies in the design optimizer (issue #32)
+
+The catalog now includes 6 KPU-targeted strategies that mutate
+`kpu_config` directly when the failing constraint maps to a KPU knob:
+
+- `reduce_systolic_array` — shrink the inner MAC grid
+- `reduce_compute_tiles` — shrink the outer checkerboard
+- `clock_scale_kpu` — drop compute-tile frequency
+- `widen_noc` — double NoC link width
+- `add_sram_banks` — add L2 + L3 banks
+- `upgrade_dram_technology` — walk LPDDR4X → LPDDR5 → HBM2E
+
+After mutating `kpu_config`, the next dispatch iteration **re-runs
+the floorplan and bandwidth validators** so the slackness views stay
+honest. See `docs/designs/kpu-optimization-knobs.md` for the design
+notes on this catalog and the planned redesign in epic #83.
+
+### RTL → KPU area feedback (issue #31)
+
+When `rtl_area_feedback=True` AND synthesis area exceeds the floorplan
+estimate by more than a tunable tolerance, the
+`rtl_area_feedback` specialist re-runs the KPU sizing loop with the
+synthesis area as a tightened budget. Bounded at 3 iterations to prevent
+infinite loops; every iteration is recorded in
+`kpu_optimization_history` with `source="rtl_area_feedback"`.
+
+### KPU convergence history (issue #34)
+
+Every KPU specialist appends a per-iteration entry to
+`state["kpu_optimization_history"]`. The architect can replay the
+inner-loop sequence in two places:
+
+- **Optimization review snapshot**: under "KPU CONVERGENCE HISTORY"
+- **`branes session show`**: as a dedicated block
+
+Each entry carries the source (specialist name), outer dispatch
+iteration, the relevant config / floorplan / bandwidth fields, and
+the list of changes if applicable. The history is monotonic — entries
+are only appended, never rewritten — so a 10-iteration session shows
+the full convergence trail.
+
+### Drilling into KPU details (issue #33)
+
+The `/architect-drill` skill supports five KPU-specific targets:
+
+- `kpu` — full config + floorplan + bandwidth one-pager
+- `systolic_array` — array dims, peak TOPS, utilization vs workload
+- `sram_hierarchy` — L1/L2/L3 sizes, banks, area
+- `noc` — topology, link width, frequency, router count
+- `bandwidth_chain` — per-link waterfall with bottleneck identification
+
+The skill reads `kpu_config`, `floorplan_estimate`, and `bandwidth_match`
+from the session and renders an architect-friendly breakdown with
+suggested catalog strategies for the bottleneck.
+
 ## Programmatic Usage
 
 ### Batch mode (no review)
