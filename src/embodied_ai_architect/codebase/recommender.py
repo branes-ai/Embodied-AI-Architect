@@ -129,15 +129,17 @@ def _compute_score(workload_gflops: float, hw_peak_tops: float | None) -> float:
     hw_gflops = hw_peak_tops * 1000  # TOPS → GFLOPS
     ratio = hw_gflops / workload_gflops
     if ratio < 1.0:
-        # Under-provisioned: linear drop from 0.5 at ratio=1 to 0 at ratio=0
-        return max(0.0, 0.5 * ratio)
+        # Under-provisioned: linear ramp 0 → 1.0 as ratio goes 0 → 1.
+        # Continuous at ratio=1.0 (both branches yield 1.0).
+        return max(0.0, ratio)
     if ratio <= 2.0:
-        # Sweet spot: 1× to 2× margin
+        # Sweet spot: 1× to 2× margin — hardware matches or slightly
+        # over-provisions, which is the ideal operating point.
         return 1.0
     if ratio <= 10.0:
-        # Comfortably over-provisioned: gradual decline
-        return 1.0 - 0.04 * (ratio - 2.0)  # 1.0 → 0.68 across 2x..10x
-    # Wildly over-provisioned (>10×): minimum 0.5
+        # Comfortably over-provisioned: gradual decline 1.0 → 0.68
+        return 1.0 - 0.04 * (ratio - 2.0)
+    # Wildly over-provisioned (>10×): floor at 0.5
     return 0.5
 
 
