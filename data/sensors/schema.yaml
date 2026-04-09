@@ -1,0 +1,276 @@
+# Sensor Definition Schema — field reference for sensor YAML files.
+#
+# Each sensor definition file lives in data/sensors/<category>/<type>.yaml
+# (e.g., data/sensors/visual/rgb_camera.yaml) and follows this schema.
+# The SensorRegistry loads all YAML files and indexes them for search.
+#
+# This schema mirrors the platform YAML schema (data/platforms/) so the
+# two registries feel consistent to the architect.
+#
+# Issue #57, Epic #51 Phase 2 Step 2.1
+# =====================================================================
+
+# ── IDENTITY ──────────────────────────────────────────────────────────
+# Required fields that uniquely identify the sensor.
+
+id:
+  type: string
+  required: true
+  description: >
+    Unique identifier in dot notation: <category>.<type>
+    Example: visual.rgb_camera, ranging.lidar_3d_spinning
+  example: "visual.rgb_camera"
+
+name:
+  type: string
+  required: true
+  description: "Human-readable display name"
+  example: "RGB Camera"
+
+category:
+  type: string
+  required: true
+  description: >
+    Top-level modality category from taxonomy.yaml:
+    visual, ranging, inertial, position, environmental, force, audio, biological
+  example: "visual"
+
+sensor_type:
+  type: string
+  required: true
+  description: "Specific sensor type within the category (from taxonomy.yaml types list)"
+  example: "rgb_camera"
+
+description:
+  type: string
+  required: false
+  description: "One-paragraph description of the sensor's purpose and typical deployment"
+  example: "Standard RGB camera for visible-light image capture..."
+
+aliases:
+  type: list[string]
+  required: false
+  description: "Alternative names for search matching"
+  example: ["color camera", "visible light camera", "webcam"]
+
+
+# ── KEYWORDS ──────────────────────────────────────────────────────────
+# Keyword groups for TF-IDF search matching (same structure as platforms).
+
+keywords:
+  type: object
+  required: false
+  description: "Keyword groups for fuzzy matching"
+  fields:
+    identity:
+      description: "Names and aliases"
+      example: ["rgb camera", "color camera", "visible light camera"]
+    descriptions:
+      description: "Descriptive phrases"
+      example: ["image sensor", "video capture", "frame grabber"]
+    application:
+      description: "Common use cases"
+      example: ["object detection", "quality inspection", "surveillance"]
+    industry:
+      description: "Target industries"
+      example: ["robotics", "automotive", "security", "manufacturing"]
+    components:
+      description: "Key components or technologies"
+      example: ["cmos sensor", "ccd", "bayer filter", "rolling shutter"]
+    related:
+      description: "Related concepts"
+      example: ["machine vision", "computer vision", "image processing"]
+
+
+# ── CLASSIFICATION ────────────────────────────────────────────────────
+# Axes for filtering and matching.
+
+classification:
+  type: object
+  required: false
+  description: "Classification axes for filtering"
+  fields:
+    modality:
+      type: string
+      description: >
+        Primary sensing modality: visual, ranging, inertial, position,
+        environmental, force, audio, biological
+      example: "visual"
+    output_type:
+      type: string
+      description: >
+        Data output format: image, point_cloud, imu_data, scalar,
+        time_series, audio_stream, force_vector
+      example: "image"
+    environment:
+      type: list[string]
+      description: >
+        Suitable operating environments: indoor, outdoor, underwater,
+        space, cleanroom, hazardous
+      example: ["indoor", "outdoor"]
+    passive_active:
+      type: string
+      description: "'passive' (relies on ambient energy) or 'active' (emits energy)"
+      example: "passive"
+
+
+# ── ATTRIBUTES ────────────────────────────────────────────────────────
+# Quantitative specifications. Each attribute has min/max/typical.
+
+attributes:
+  type: object
+  required: false
+  description: "Quantitative specifications with min/max/typical ranges"
+  fields:
+    resolution:
+      description: "Spatial resolution (pixels for cameras, points for LiDAR, etc.)"
+      unit: "varies (pixels, mm, degrees)"
+      example: { min: 640, max: 4096, typical: 1920, unit: "pixels_horizontal" }
+    frame_rate_fps:
+      description: "Data output rate"
+      unit: "Hz or FPS"
+      example: { min: 10, max: 240, typical: 30 }
+    fov_degrees:
+      description: "Field of view"
+      unit: "degrees"
+      example: { min: 40, max: 180, typical: 90 }
+    range_m:
+      description: "Maximum sensing range"
+      unit: "meters"
+      example: { min: 0.1, max: 200, typical: 10 }
+    accuracy:
+      description: "Measurement accuracy (units depend on sensor type)"
+      unit: "varies"
+      example: { typical: 0.01, unit: "meters" }
+    power_watts:
+      description: "Power consumption"
+      unit: "watts"
+      example: { min: 0.5, max: 5.0, typical: 2.0 }
+    weight_grams:
+      description: "Sensor weight"
+      unit: "grams"
+      example: { min: 10, max: 500, typical: 100 }
+    cost_usd:
+      description: "Approximate unit cost"
+      unit: "USD"
+      example: { min: 10, max: 5000, typical: 200 }
+    latency_ms:
+      description: "End-to-end measurement latency"
+      unit: "milliseconds"
+      example: { min: 1, max: 100, typical: 10 }
+    data_rate_mbps:
+      description: "Raw data output rate"
+      unit: "Mbps"
+      example: { min: 10, max: 1000, typical: 100 }
+
+
+# ── INTERFACE ─────────────────────────────────────────────────────────
+# Electrical and communication interface specifications.
+
+interface:
+  type: object
+  required: false
+  description: "Electrical and communication interface"
+  fields:
+    protocol:
+      type: list[string]
+      description: >
+        Communication protocols: mipi_csi2, usb3, usb2, ethernet,
+        gigabit_ethernet, can, spi, i2c, uart, analog, wifi, bluetooth
+      example: ["mipi_csi2", "usb3"]
+    data_format:
+      type: list[string]
+      description: >
+        Output data formats: raw_bayer, yuv422, rgb888, h264, h265,
+        point_cloud_xyz, imu_6dof, scalar_float
+      example: ["raw_bayer", "yuv422"]
+    voltage_v:
+      type: object
+      description: "Operating voltage range"
+      example: { min: 3.0, max: 5.5, typical: 3.3 }
+    connector:
+      type: string
+      description: "Physical connector type"
+      example: "15-pin FFC"
+
+
+# ── ENVIRONMENTAL ─────────────────────────────────────────────────────
+# Operating environment specifications.
+
+environmental:
+  type: object
+  required: false
+  description: "Environmental operating specifications"
+  fields:
+    ip_rating:
+      type: string
+      description: "Ingress protection rating"
+      example: "IP67"
+    operating_temp_c:
+      type: object
+      description: "Operating temperature range"
+      example: { min: -20, max: 60 }
+    storage_temp_c:
+      type: object
+      description: "Storage temperature range"
+      example: { min: -40, max: 85 }
+    vibration_g:
+      type: number
+      description: "Maximum sustained vibration tolerance"
+      example: 5.0
+    shock_g:
+      type: number
+      description: "Maximum shock tolerance"
+      example: 100
+
+
+# ── REFERENCE DESIGNS ─────────────────────────────────────────────────
+# Real products that implement this sensor type (populated in Phase 2).
+
+reference_products:
+  type: list[object]
+  required: false
+  description: >
+    Real-world products that implement this sensor type. Each entry has
+    id, name, vendor, and product-specific attribute values.
+  example:
+    - id: "intel_realsense_d435"
+      name: "Intel RealSense D435"
+      vendor: "Intel"
+      cost_usd: 179
+      resolution: "1280x720"
+      frame_rate_fps: 90
+      interface: ["usb3"]
+    - id: "zed_2i"
+      name: "Stereolabs ZED 2i"
+      vendor: "Stereolabs"
+      cost_usd: 449
+      resolution: "2208x1242"
+      frame_rate_fps: 100
+      interface: ["usb3"]
+
+
+# ── IMPLICATIONS ──────────────────────────────────────────────────────
+# What this sensor implies for the design pipeline.
+
+implications:
+  type: object
+  required: false
+  description: >
+    Design implications when this sensor is selected. Maps to fields
+    on the SoCDesignState spec, same structure as platform implications.
+  fields:
+    compute_load:
+      description: "Estimated compute load this sensor adds (GFLOPS)"
+      example: 2.0
+    memory_bandwidth_gbps:
+      description: "Memory bandwidth required for raw data ingestion"
+      example: 1.5
+    interface_requirements:
+      type: list[string]
+      description: "Hardware interfaces the SoC must provide"
+      example: ["mipi_csi2", "i2c"]
+    processing_pipeline:
+      type: list[string]
+      description: "Processing stages needed (ISP, debayer, undistort, etc.)"
+      example: ["isp", "debayer", "undistort", "resize"]
