@@ -1432,6 +1432,27 @@ class TestOperatorGraph:
         assert node["type"] == "convolution"  # ML inference's dominant op per catalog
         assert node["gflops"] is not None
 
+    def test_duplicate_kernel_names_get_unique_ids(self):
+        """CodeRabbit PR #91: duplicate kernel names must not produce duplicate IDs."""
+        from embodied_ai_architect.codebase.converter import CodebaseConverter
+
+        analysis = self._analysis(
+            [
+                {"name": "conv"},
+                {"name": "conv"},
+                {"name": "conv"},
+            ]
+        )
+        profile = CodebaseConverter().to_workload_profile(analysis)
+        graph = profile["operator_graph"]
+        ids = [n["id"] for n in graph["nodes"]]
+        # All IDs unique
+        assert len(ids) == len(set(ids))
+        # First one keeps the base name, subsequent ones get suffixed
+        assert ids[0] == "conv"
+        assert ids[1] == "conv_1"
+        assert ids[2] == "conv_2"
+
     def test_empty_analysis_gives_empty_graph(self):
         from embodied_ai_architect.codebase.converter import CodebaseConverter
         from embodied_ai_architect.codebase.models import CodebaseAnalysisResult

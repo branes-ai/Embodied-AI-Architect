@@ -170,16 +170,23 @@ class CodebaseConverter:
             return {"nodes": [], "edges": []}
 
         # Build node dicts — keyed by workload name so dataflow edges can
-        # reference them.
+        # reference them. Disambiguate duplicate names with a numeric suffix
+        # so the graph always has unique node IDs (CodeRabbit PR #91).
         nodes: list[dict] = []
+        id_counts: dict[str, int] = {}
         for i, w in enumerate(workloads):
+            base_id = w.get("name") or f"op_{i}"
+            seen = id_counts.get(base_id, 0)
+            node_id = base_id if seen == 0 else f"{base_id}_{seen}"
+            id_counts[base_id] = seen + 1
+
             dominant_op_type = "general_purpose"
             ops = w.get("operators", [])
             if ops:
                 dominant_op_type = max(ops, key=lambda o: o.get("count", 0))["type"]
             nodes.append(
                 {
-                    "id": w.get("name", f"op_{i}"),
+                    "id": node_id,
                     "kernel": w.get("name", ""),
                     "gflops": w.get("estimated_gflops"),
                     "memory_mb": w.get("estimated_memory_mb"),
