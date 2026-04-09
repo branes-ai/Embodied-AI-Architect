@@ -15,10 +15,10 @@ class TestSensorList:
 
     def test_with_modality_filter(self):
         runner = CliRunner()
-        result = runner.invoke(sensor, ["list", "--modality", "lidar"], obj={})
+        result = runner.invoke(sensor, ["list", "--modality", "ranging"], obj={})
         assert result.exit_code == 0
         assert "not yet populated" in result.output
-        assert "lidar" in result.output
+        assert "ranging" in result.output
 
 
 class TestSensorShow:
@@ -42,10 +42,10 @@ class TestSensorCategories:
         runner = CliRunner()
         result = runner.invoke(sensor, ["categories"], obj={})
         assert result.exit_code == 0
-        assert "camera" in result.output
-        assert "lidar" in result.output
-        assert "imu" in result.output
-        assert "radar" in result.output
+        assert "visual" in result.output
+        assert "ranging" in result.output
+        assert "inertial" in result.output
+        assert "audio" in result.output
 
 
 class TestSensorRegistry:
@@ -56,9 +56,9 @@ class TestSensorRegistry:
     def test_categories_not_empty(self):
         registry = SensorRegistry()
         cats = registry.categories()
-        assert len(cats) >= 10
-        assert "camera" in cats
-        assert "lidar" in cats
+        assert len(cats) == 8  # matches taxonomy.yaml top-level categories
+        assert "visual" in cats
+        assert "ranging" in cats
 
     def test_search_empty(self):
         registry = SensorRegistry()

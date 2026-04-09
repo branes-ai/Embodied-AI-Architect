@@ -1,0 +1,94 @@
+# Sensor Taxonomy — category hierarchy for the sensor registry.
+#
+# Each top-level key is a modality category. Under each category are the
+# specific sensor types that can be instantiated as YAML definition files.
+#
+# This taxonomy was designed alongside the platform registry taxonomy
+# (data/platforms/) so the two can cross-reference: a platform's
+# implications.sensors.modalities list references these category names,
+# and the sensor definitions reference platform categories they're
+# typically deployed on.
+#
+# Issue #57, Epic #51 Phase 2 Step 2.1
+
+visual:
+  description: "Image-based sensors that capture 2D or 3D visual information"
+  types:
+    - rgb_camera
+    - monochrome_camera
+    - stereo_camera
+    - depth_camera
+    - thermal_camera
+    - multispectral_camera
+    - hyperspectral_camera
+    - event_camera
+    - ir_camera
+    - fisheye_camera
+    - omnidirectional_camera
+
+ranging:
+  description: "Distance and depth measurement sensors"
+  types:
+    - lidar_2d
+    - lidar_3d_spinning
+    - lidar_3d_solid_state
+    - radar_2d
+    - radar_4d
+    - ultrasonic
+    - tof_camera
+    - sonar
+
+inertial:
+  description: "Motion and orientation measurement sensors"
+  types:
+    - imu_6dof
+    - imu_9dof
+    - gyro_only
+    - accelerometer_only
+
+position:
+  description: "Absolute and relative position measurement sensors"
+  types:
+    - gps_l1
+    - gps_rtk
+    - gps_ppk
+    - magnetometer
+    - wheel_encoder
+    - vio
+
+environmental:
+  description: "Ambient condition measurement sensors"
+  types:
+    - barometer
+    - thermometer
+    - humidity_sensor
+    - gas_sensor
+    - particulate_pm25
+    - light_sensor
+    - uv_sensor
+
+force:
+  description: "Force, torque, and pressure measurement sensors"
+  types:
+    - force_torque_6dof
+    - strain_gauge
+    - pressure_sensor
+    - tactile_array
+
+audio:
+  description: "Sound capture and measurement sensors"
+  types:
+    - microphone
+    - microphone_array
+    - hydrophone
+
+biological:
+  description: "Biological signal measurement sensors (medical/wearable)"
+  types:
+    - ecg
+    - eeg
+    - emg
+    - ppg
+    - glucose_sensor
+    - spo2_sensor
+    - blood_pressure_sensor
