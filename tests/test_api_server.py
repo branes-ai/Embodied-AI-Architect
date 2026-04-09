@@ -134,6 +134,23 @@ def _build_rich_state(session_id="soc_testapi"):
                 "scheduling": "concurrent",
             },
         ],
+        # Issue #40: operator dataflow graph
+        "operator_graph": {
+            "nodes": [
+                {
+                    "id": "yolo_detector",
+                    "kernel": "yolo_detector",
+                    "gflops": 8.4,
+                    "type": "convolution",
+                },
+                {"id": "tracker", "kernel": "tracker", "gflops": 2.0, "type": "matmul"},
+                {"id": "vio_pipeline", "kernel": "vio_pipeline", "gflops": 2.0, "type": "matmul"},
+            ],
+            "edges": [
+                {"source": "yolo_detector", "sink": "tracker", "data_bytes": 524288},
+                {"source": "tracker", "sink": "vio_pipeline", "data_bytes": 131072},
+            ],
+        },
     }
 
     # Pareto points
@@ -835,10 +852,23 @@ class TestWorkload:
         assert data["total_memory_mb"] == 24.0
         assert data["dominant_op"] == "detection"
 
+    def test_workload_operator_graph_present(self, client):
+        """Issue #40: the workload endpoint includes the operator DAG."""
+        data = client.get("/api/sessions/soc_testapi/workload").json()
+        assert "operator_graph" in data
+        graph = data["operator_graph"]
+        assert graph is not None
+        assert len(graph["nodes"]) == 3
+        assert len(graph["edges"]) == 2
+        edge_pairs = [(e["source"], e["sink"]) for e in graph["edges"]]
+        assert ("yolo_detector", "tracker") in edge_pairs
+
     def test_workload_empty_session(self, client_with_both):
         data = client_with_both.get("/api/sessions/soc_minimal/workload").json()
         assert data["operators"] == []
         assert data["total_gflops"] is None
+        # No operator_graph when the session has no workload
+        assert data.get("operator_graph") is None
 
     def test_workload_404(self, client):
         assert client.get("/api/sessions/soc_nope/workload").status_code == 404
