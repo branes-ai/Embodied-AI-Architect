@@ -173,16 +173,13 @@ def session_dir(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def kpu_run_state_with_rtl(session_dir):
-    """Same as kpu_run_state but explicitly sets rtl_enabled=True on the state.
+    """Run the full KPU+RTL pipeline ONCE per module via the public runner API.
 
-    Bypasses the runner's run() entrypoint to inject the flag, since the
-    runner's signature doesn't yet plumb rtl_enabled through (would be a
-    separate small enhancement).
+    Module-scoped so the expensive pipeline (~100s on CI) only runs once;
+    each test below inspects the same final state.
     """
-    from embodied_ai_architect.graphs.soc_state import create_initial_soc_state
-
     runner = SoCDesignRunner(static_plan=KPU_PLAN, session_dir=session_dir)
-    state = create_initial_soc_state(
+    return runner.run(
         goal=INTEGRATION_GOAL,
         constraints=INTEGRATION_CONSTRAINTS,
         use_case="warehouse_amr",
@@ -190,12 +187,6 @@ def kpu_run_state_with_rtl(session_dir):
         session_id="soc_kpu_integration_rtl",
         rtl_enabled=True,
     )
-    # Build the graph and invoke directly (matches runner.run internals)
-    runner._compiled_graph = runner._build_graph()
-    config = {"recursion_limit": runner._recursion_limit}
-    result = runner._compiled_graph.invoke(state, config=config)
-    runner._session_store.save(result)
-    return result
 
 
 class TestKPUFullPipeline:

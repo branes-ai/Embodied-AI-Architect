@@ -190,23 +190,13 @@ def run_demo() -> None:
     t0 = time.perf_counter()
 
     runner = SoCDesignRunner(static_plan=DEMO_4_PLAN)
-
-    # SoCDesignRunner.run() doesn't yet plumb rtl_enabled through its
-    # signature (would be a small follow-up); for now, we build the initial
-    # state ourselves and invoke the compiled graph directly. This still
-    # writes the session via the runner's SessionStore.
-    initial_state = create_initial_soc_state(
+    state = runner.run(
         goal=DEMO_4_GOAL,
         constraints=DEMO_4_CONSTRAINTS,
         use_case="delivery_drone",
         platform="drone",
         rtl_enabled=True,
     )
-    runner._compiled_graph = runner._build_graph()
-    state = runner._compiled_graph.invoke(
-        initial_state, config={"recursion_limit": runner._recursion_limit}
-    )
-    runner._session_store.save(state)
 
     exec_time = time.perf_counter() - t0
     print(f"\n  Pipeline completed in {state.get('iteration', 0)} iterations, " f"{exec_time:.2f}s")

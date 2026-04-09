@@ -328,6 +328,11 @@ def _make_optimize_node() -> Callable[[SoCDesignState], dict[str, Any]]:
             ("pareto_results", {}),
             ("pareto_frontier_history", []),
             ("moo_results", {}),
+            # CodeRabbit PR #86: also forward swap_results and system_bom
+            # so they survive the optimize node like the other dispatch_node
+            # outputs.
+            ("swap_results", {}),
+            ("system_bom", {}),
         ):
             updates[key] = state.get(key, default)
 
