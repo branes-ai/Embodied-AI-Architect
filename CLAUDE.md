@@ -58,6 +58,9 @@ It provides:
 .venv/bin/branes codebase analyze /path/to/project
 .venv/bin/branes codebase assess /path/to/project --hardware jetson_orin --power-budget 15
 
+# Codebase → SoC design session (issues #37–#43)
+.venv/bin/branes codebase design /path/to/project --power 5 --latency 33
+
 # SWaP-C analysis
 .venv/bin/branes swap estimate --area 50 --power 5 --process 28
 .venv/bin/branes swap score --area 50 --power 5 --process 28 --profile drone
@@ -130,11 +133,18 @@ The `branes` CLI has 20 command groups, organized by function:
 - `NVDLATarget` - NVIDIA Deep Learning Accelerator (licensable IP)
 - Power monitoring (`power/monitor.py`) and prediction (`power/predictor.py`)
 
-**Codebase Analysis** (`codebase/`): Full application analysis pipeline:
+**Codebase Analysis** (`codebase/`): Full application analysis + design bridge:
 - `scanner.py` - Static file scanner (languages, build system, ML models, deps)
 - `analyzer.py` - LLM multi-pass code analyzer (4 passes: build→entry→kernels→synthesis)
-- `converter.py` - Maps `CodebaseAnalysisResult` → `workload_profile` for PPA pipeline
-- `models.py` - Pydantic models (`ComputeKernel`, `ScanResult`, `CodebaseAnalysisResult`)
+- `converter.py` - Maps `CodebaseAnalysisResult` → `workload_profile` for PPA pipeline;
+  also `codebase_to_soc_state()` (#37) to bridge analysis → `SoCDesignState`,
+  `infer_constraints()` (#38) for heuristic constraint inference, and operator
+  graph builder (#40) for the dataflow DAG
+- `recommender.py` - Hardware target recommender from workload profile (#39):
+  classifies workload into archetypes, scores `HardwareEntry` by fit
+- `models.py` - Pydantic models (`ComputeKernel`, `ScanResult`, `CodebaseAnalysisResult`,
+  `SuggestedConstraints`)
+- `qualifier_bridge.py` - Bridges codebase scan into the goal qualifier (#41)
 
 **CLI** (`cli/`): Click-based CLI with 19 command groups (see CLI Commands above)
 

@@ -257,6 +257,110 @@ if result.success:
 
 The converter is the bridge: it maps rich `CodebaseAnalysisResult` data (with kernel types, ops estimates, data types) into the `workload_profile` format that the existing specialists already consume. No changes to the SoC design pipeline were needed.
 
+## Design Integration (issues #37–#43)
+
+Issues #37–#43 closed the loop so the architect can go from "I have a
+project" to "saved SoC design session" in one command:
+
+```
+branes codebase design /path/to/project --power 5 --latency 33
+  → scanner.scan()                    → ScanResult
+  → analyzer.analyze()                → CodebaseAnalysisResult
+  → converter.to_workload_profile()   → workload_profile + operator_graph (#40)
+  → infer_constraints()               → SuggestedConstraints (#38)
+  → recommend_hardware()              → ranked hardware list (#39)
+  → codebase_to_soc_state()           → SoCDesignState (#37)
+  → SessionStore.save()               → persisted session
+  → render plan review snapshot       → show what the planner would build
+```
+
+### New CLI command: `branes codebase design`
+
+```bash
+branes codebase design /path/to/drone_app --power 5 --latency 33
+
+# With die area and cost constraints:
+branes codebase design . --power 15 --area 100 --cost 50
+
+# JSON output for programmatic consumers:
+branes --json codebase design /path/to/project
+```
+
+The command scans, analyzes (calls the LLM), builds a `SoCDesignState`
+with the workload profile and codebase metadata, optionally runs the
+planner, and saves the session. The architect can then:
+
+- `branes session show --latest` to see the session
+- `/architect-assess` in chat for the source-mapped operator breakdown
+- `/architect-drill source:<kernel_name>` to see the actual code
+- `branes design plan` to run the optimizer
+
+### Constraint inference (#38)
+
+`infer_constraints(analysis)` heuristically derives `DesignConstraints`
+from the kernel characteristics. The heuristics:
+
+| Rule | Trigger | Confidence | Example |
+|---|---|---|---|
+| `max_latency_ms` | control_loop with `invocation_frequency_hz` | high | 100Hz → 10ms |
+| `max_power_watts` | total GFLOPS at ~2 TOPS/W (28nm) | medium/low | 8.4 GFLOPS → 1W |
+| `hardware_class=gpu` | ML dominant + 50+ GFLOPS | high | 80% ML, 60 GFLOPS |
+| `hardware_class=npu` | ML dominant + 5+ GFLOPS | high | 80% ML, 8 GFLOPS |
+| `hardware_class=dsp` | signal_processing + 1kHz+ | medium | 40% SP, 5kHz |
+| `memory_bw_critical` | io_bound dominant | medium | 60% I/O bound |
+
+Each suggestion carries a `confidence` ("high" / "medium" / "low") and a
+`rationale` string naming the heuristic. The architect can spread
+high-confidence suggestions into `DesignConstraints` via
+`suggestions.to_design_constraints_kwargs()`.
+
+### Hardware recommendation (#39)
+
+`recommend_hardware(workload_profile, top_k=5)` classifies the workload
+into one of five archetypes (`ml_heavy`, `control_heavy`, `signal_heavy`,
+`io_heavy`, `hybrid`) and scores every `HardwareEntry` in the
+embodied-schemas registry by:
+
+- **Compute match** (40%): peak TOPS vs workload GFLOPS
+- **Memory match** (20%): hardware memory vs workload requirements
+- **Power fit** (25%): TDP vs power envelope
+- **Cost** (15%): cheaper is better
+- **Archetype bonus**: NPU/GPU for ML, DSP for signal, CPU/MCU for control
+
+When `branes codebase assess` is run without `--hardware`, the recommender
+auto-runs and shows a "RECOMMENDED HARDWARE" table.
+
+### Operator dataflow graph (#40)
+
+The converter now builds an `operator_graph` on the workload profile from
+the LLM's `DataflowLink` edges:
+
+```json
+{
+  "operator_graph": {
+    "nodes": [
+      {"id": "yolo_detection", "kernel": "yolo_detection", "gflops": 8.4, "type": "convolution"},
+      {"id": "tracker", "kernel": "tracker", "gflops": 2.0, "type": "matmul"}
+    ],
+    "edges": [
+      {"source": "yolo_detection", "sink": "tracker", "data_bytes": 262144}
+    ]
+  }
+}
+```
+
+When no dataflow links exist, the converter falls back to a sequential
+chain (k1 → k2 → ... → kN). The graph is served by
+`/api/sessions/{id}/workload` for frontend DAG visualization
+(Cytoscape.js / d3 / mermaid).
+
+### Chat tool: `design_from_codebase`
+
+In `branes chat`, the architect can say "design hardware for
+/path/to/project" and the `design_from_codebase` tool runs the full
+chain, returning a JSON response with the session_id, workload summary,
+and next steps.
+
 ## Limitations (Phase 1)
 
 - **Static analysis only** — the LLM reads source code but doesn't execute it. Runtime hotspots may differ from static estimates.

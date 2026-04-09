@@ -454,9 +454,107 @@ issue #35.
 
 ---
 
+## Workflow 7: Customer Application Assessment (issues #37–#43)
+
+### The Problem
+
+A customer hands the architect a project directory (C++/Python/Rust) and
+says "what hardware do I need to run this?" The architect needs to go from
+source code to a hardware recommendation without manually characterizing
+the workload.
+
+### The One-Command Path
+
+```bash
+branes codebase design /path/to/customer_app --power 5 --latency 33
+```
+
+This runs the full chain:
+
+1. **Scanner** (no LLM) → file inventory, build system, dependencies, ML models
+2. **Analyzer** (LLM) → compute kernels, dataflow links, data types, frequencies
+3. **Converter** → workload_profile + operator_graph (#40) for pipeline visualization
+4. **Constraint inference** (#38) → suggested DesignConstraints from kernel
+   characteristics (control_loop at 100Hz → 10ms latency, total GFLOPS → power
+   envelope, ML dominance → NPU/GPU hint)
+5. **Hardware recommender** (#39) → ranked list of hardware targets from the
+   embodied-schemas registry, scored by compute / memory / power / cost fit
+6. **Session creation** (#37) → `SoCDesignState` persisted to SessionStore
+7. **Plan review** → the planner's task graph rendered for architect approval
+
+### What the Architect Sees
+
+```
+Session saved: soc_abc123
+  Goal:        Design SoC for customer_app (ml_inference, control_loop)
+  Use case:    codebase_analysis
+  Workload:    3 kernels, 10.4 GFLOPS, 70.0 MB
+
+SUGGESTED CONSTRAINTS (inferred from codebase analysis)
+  max_latency_ms   10.0     high    control_loop at 100Hz → 10ms per cycle
+  max_power_watts  1.0      medium  10.4 GFLOPS estimated, ~2 TOPS/W at 28nm
+  hardware_class   npu      high    67% ML inference, 10.4 GFLOPS suits an NPU
+
+RECOMMENDED HARDWARE (for ml_heavy workload, 10.4 GFLOPS)
+  Rank  Hardware             Fit    Strengths             Weaknesses
+  1     Hailo-8              0.85   26.0 TOPS, $200       2GB memory (tight)
+  2     Jetson Orin NX       0.82   100.0 TOPS, INT8      $400 cost
+  ...
+
+PLAN REVIEW — SoC Design Task Graph
+  [t1] Analyze workload (workload_analyzer)
+    └── [t2] Explore hardware (hw_explorer)
+          ├── [t3] Compose architecture (architecture_composer)
+          └── [t4] Explore Pareto frontier (moo_explorer)
+                └── [t5] Assess PPA (ppa_assessor) ...
+```
+
+### After the Session Is Created
+
+The architect can:
+
+- `branes session show --latest` → PPA metrics, constraint slackness, MOO summary
+- `/architect-assess` in chat → source-mapped operator breakdown (ties each
+  workload back to the actual source file and line range)
+- `/architect-drill source:yolo_detection` → see the actual code behind a kernel
+- `/architect-drill bandwidth_chain` → DRAM→L3→L2→L1 waterfall (if KPU enabled)
+- `branes design plan` → run the optimizer to find the Pareto frontier
+
+### The Operator Graph for Frontend Visualization
+
+The workload profile carries an `operator_graph` (#40) with nodes (one per
+kernel) and edges (from the LLM's DataflowLink analysis). The API serves
+it at `/api/sessions/{id}/workload` for rendering as a pipeline DAG:
+
+```json
+{
+  "operator_graph": {
+    "nodes": [
+      {"id": "yolo_detection", "gflops": 8.4, "type": "convolution"},
+      {"id": "tracker", "gflops": 2.0, "type": "matmul"},
+      {"id": "pid_control", "gflops": 0.001, "type": "accumulate"}
+    ],
+    "edges": [
+      {"source": "yolo_detection", "sink": "tracker", "data_bytes": 262144},
+      {"source": "tracker", "sink": "pid_control", "data_bytes": 4096}
+    ]
+  }
+}
+```
+
+### Verification
+
+The end-to-end integration test (`tests/test_codebase_integration.py`)
+asserts the full chain: scanner → analysis → workload with operator graph →
+constraint inference (latency from control loop, power from GFLOPS,
+hardware_class for ML-dominant) → SoC state with codebase metadata → session
+round-trip → API workload endpoint with operators and graph.
+
+---
+
 ## The Architect Skill — Codifying the Expert Loop
 
-The five workflows above all follow the same cognitive pattern. This
+The workflows above all follow the same cognitive pattern. This
 pattern should be codified as a Claude Code skill that amplifies the
 architect's ability to systematically hunt bottlenecks and explore
 solutions.
