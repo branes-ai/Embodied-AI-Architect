@@ -85,3 +85,74 @@ class CodebaseAnalysisResult(BaseModel):
     build_system: str = "unknown"
     dependencies: list[str] = Field(default_factory=list)
     summary: str = ""
+
+
+# ---------------------------------------------------------------------------
+# Issue #38: Constraint inference from codebase characteristics
+# ---------------------------------------------------------------------------
+
+
+class SuggestedConstraint(BaseModel):
+    """A single inferred design constraint with provenance.
+
+    Each suggestion carries the constraint name (one of the DesignConstraints
+    fields, plus a few advisory keys), its inferred value, a confidence
+    bucket, and a one-line rationale that names the heuristic that produced
+    it. The architect uses these to populate `DesignConstraints` (or to
+    override the heuristic when it's wrong).
+    """
+
+    name: str
+    value: float | str | bool
+    confidence: str = "medium"  # "high" | "medium" | "low"
+    rationale: str = ""
+
+
+class SuggestedConstraints(BaseModel):
+    """Collection of inferred constraints from codebase characteristics."""
+
+    constraints: list[SuggestedConstraint] = Field(default_factory=list)
+    summary: str = ""
+
+    def to_dict(self) -> dict[str, dict]:
+        """Render as a {name: {value, confidence, rationale}} dict for display."""
+        return {
+            c.name: {
+                "value": c.value,
+                "confidence": c.confidence,
+                "rationale": c.rationale,
+            }
+            for c in self.constraints
+        }
+
+    def to_design_constraints_kwargs(
+        self,
+        min_confidence: str = "high",
+    ) -> dict[str, float]:
+        """Return numeric suggestions as DesignConstraints kwargs.
+
+        Only the canonical numeric fields (max_power_watts, max_latency_ms,
+        max_area_mm2, max_cost_usd) are included so the output can be
+        spread directly into a `DesignConstraints` constructor. Advisory
+        keys like `hardware_class` and `memory_bw_critical` are excluded.
+
+        Filters by `min_confidence` (default "high") so callers don't
+        silently propagate gut-feel guesses into binding design constraints
+        (CodeRabbit PR #89). Pass `min_confidence="low"` to opt into all
+        suggestions.
+        """
+        canonical = {
+            "max_power_watts",
+            "max_latency_ms",
+            "max_area_mm2",
+            "max_cost_usd",
+        }
+        rank = {"high": 3, "medium": 2, "low": 1}
+        threshold = rank.get(min_confidence, 3)
+        return {
+            c.name: float(c.value)
+            for c in self.constraints
+            if c.name in canonical
+            and isinstance(c.value, (int, float))
+            and rank.get(c.confidence, 0) >= threshold
+        }

@@ -9,7 +9,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
-from embodied_ai_architect.codebase.models import CodebaseAnalysisResult, ComputeKernel
+from embodied_ai_architect.codebase.models import (
+    CodebaseAnalysisResult,
+    ComputeKernel,
+    SuggestedConstraint,
+    SuggestedConstraints,
+)
 
 if TYPE_CHECKING:
     from embodied_ai_architect.graphs.soc_state import DesignConstraints, SoCDesignState
@@ -347,3 +352,196 @@ def codebase_data_to_soc_state(
         project_path=project_path,
         session_id=session_id,
     )
+
+
+# ---------------------------------------------------------------------------
+# Issue #38: Infer DesignConstraints from codebase characteristics
+# ---------------------------------------------------------------------------
+
+# Heuristic constants. Easy to tune as the inference layer matures.
+# All values are crude order-of-magnitude estimates — they're meant to be
+# starting points the architect can refine, not authoritative numbers.
+
+# Power envelope: roughly 1W per 2 TOPS at 28nm. The catalog calls this
+# "edge accelerator" territory; servers and HBM-class designs will be
+# orders of magnitude higher.
+_GFLOPS_PER_WATT_28NM = 2000.0  # 2 TOPS/W → 2000 GFLOPS/W
+
+# Frequency thresholds for the high-frequency signal-processing heuristic
+_SIGNAL_PROC_HIGH_FREQ_HZ = 1000.0  # 1 kHz+ → DSP territory
+
+# Compute thresholds for the ML hardware-class hint
+_ML_NPU_GFLOPS_THRESHOLD = 5.0  # 5 GFLOPS+ → NPU/GPU class
+_ML_GPU_GFLOPS_THRESHOLD = 50.0  # 50 GFLOPS+ → GPU class
+
+
+def _kernel_share_by_type(analysis: CodebaseAnalysisResult) -> dict[str, float]:
+    """Compute the fraction of kernels of each type (sums to 1.0)."""
+    if not analysis.kernels:
+        return {}
+    counts: dict[str, int] = {}
+    for k in analysis.kernels:
+        counts[k.kernel_type] = counts.get(k.kernel_type, 0) + 1
+    total = sum(counts.values())
+    return {k: v / total for k, v in counts.items()}
+
+
+def _max_invocation_frequency_by_type(analysis: CodebaseAnalysisResult, kernel_type: str) -> float:
+    """Find the maximum invocation_frequency_hz across kernels of a type."""
+    freqs = [
+        k.invocation_frequency_hz
+        for k in analysis.kernels
+        if k.kernel_type == kernel_type and k.invocation_frequency_hz > 0
+    ]
+    return max(freqs, default=0.0)
+
+
+def _total_gflops(analysis: CodebaseAnalysisResult) -> float:
+    """Aggregate compute throughput in GFLOPS (ops/sec ÷ 1e9).
+
+    `estimated_ops_per_invocation` is per-call, not per-second — multiplying
+    by `invocation_frequency_hz` gives the actual throughput. When the
+    frequency is unknown, fall back to 1 Hz (one invocation per second) as
+    a pessimistic floor so the kernel still contributes to the total
+    (CodeRabbit PR #89).
+    """
+    total_ops_per_sec = 0.0
+    for k in analysis.kernels:
+        rate = k.invocation_frequency_hz if k.invocation_frequency_hz > 0 else 1.0
+        total_ops_per_sec += k.estimated_ops_per_invocation * rate
+    return total_ops_per_sec / 1e9
+
+
+def infer_constraints(analysis: CodebaseAnalysisResult) -> SuggestedConstraints:
+    """Infer suggested DesignConstraints from codebase characteristics (issue #38).
+
+    Heuristic rules:
+      - control_loop kernel with invocation_frequency_hz → max_latency_ms
+        derived from the period (high confidence when frequency is set)
+      - ML inference dominant + high GFLOPS → hardware_class hint
+        (NPU at 5+ GFLOPS, GPU at 50+ GFLOPS)
+      - Signal processing with high invocation frequency → DSP hint
+      - Total GFLOPS → max_power_watts envelope at ~2 TOPS/W (28nm)
+      - I/O bound dominant → memory_bw_critical=True
+
+    Returns a `SuggestedConstraints` collection. The architect can pass the
+    high-confidence numeric subset directly into a `DesignConstraints`
+    constructor via `to_design_constraints_kwargs()`.
+    """
+    suggestions: list[SuggestedConstraint] = []
+    shares = _kernel_share_by_type(analysis)
+
+    # --- 1. Latency from control loop frequency ---------------------------
+    cl_freq = _max_invocation_frequency_by_type(analysis, "control_loop")
+    if cl_freq > 0:
+        # period_ms = 1000 / freq_hz; deadline must beat the period
+        period_ms = 1000.0 / cl_freq
+        # Conservative: latency budget is the period itself (the next sample
+        # is due then). High confidence when frequency is explicitly set.
+        suggestions.append(
+            SuggestedConstraint(
+                name="max_latency_ms",
+                value=round(period_ms, 2),
+                confidence="high",
+                rationale=(
+                    f"control_loop kernel at {cl_freq:.0f}Hz → " f"{period_ms:.1f}ms per cycle"
+                ),
+            )
+        )
+
+    # --- 2. Total GFLOPS → power envelope ---------------------------------
+    total_gflops = _total_gflops(analysis)
+    if total_gflops > 0:
+        # 2 TOPS/W at 28nm → power = gflops / 2000
+        # Round up to a sensible engineering value (1W minimum)
+        power_w = max(1.0, round(total_gflops / _GFLOPS_PER_WATT_28NM, 1))
+        confidence = "medium" if total_gflops < 100 else "low"
+        suggestions.append(
+            SuggestedConstraint(
+                name="max_power_watts",
+                value=power_w,
+                confidence=confidence,
+                rationale=(f"{total_gflops:.1f} GFLOPS estimated, " f"~2 TOPS/W envelope at 28nm"),
+            )
+        )
+
+    # --- 3. Hardware class hint (single winner) --------------------------
+    # Score every candidate hardware class and emit ONE entry — issuing
+    # multiple `hardware_class` suggestions would silently collide in
+    # `to_dict()` (CodeRabbit PR #89). Score = (confidence_rank, share)
+    # so high-confidence rules beat medium ones, and ties break by
+    # kernel-type dominance.
+    ml_share = shares.get("ml_inference", 0.0)
+    sp_freq = _max_invocation_frequency_by_type(analysis, "signal_processing")
+    sp_share = shares.get("signal_processing", 0.0)
+
+    _CONF_RANK = {"high": 3, "medium": 2, "low": 1}
+    hw_candidates: list[SuggestedConstraint] = []
+
+    if ml_share > 0.5 and total_gflops >= _ML_GPU_GFLOPS_THRESHOLD:
+        hw_candidates.append(
+            SuggestedConstraint(
+                name="hardware_class",
+                value="gpu",
+                confidence="high",
+                rationale=(
+                    f"{ml_share:.0%} of kernels are ML inference, "
+                    f"{total_gflops:.1f} GFLOPS exceeds GPU threshold"
+                ),
+            )
+        )
+    elif ml_share > 0.5 and total_gflops >= _ML_NPU_GFLOPS_THRESHOLD:
+        hw_candidates.append(
+            SuggestedConstraint(
+                name="hardware_class",
+                value="npu",
+                confidence="high",
+                rationale=(
+                    f"{ml_share:.0%} of kernels are ML inference, "
+                    f"{total_gflops:.1f} GFLOPS suits an NPU"
+                ),
+            )
+        )
+
+    if sp_share > 0.3 and sp_freq >= _SIGNAL_PROC_HIGH_FREQ_HZ:
+        hw_candidates.append(
+            SuggestedConstraint(
+                name="hardware_class",
+                value="dsp",
+                confidence="medium",
+                rationale=(
+                    f"{sp_share:.0%} signal processing kernels at " f"{sp_freq:.0f}Hz suggests DSP"
+                ),
+            )
+        )
+
+    if hw_candidates:
+        winner = max(
+            hw_candidates,
+            key=lambda c: (
+                _CONF_RANK.get(c.confidence, 0),
+                ml_share if c.value in ("gpu", "npu") else sp_share,
+            ),
+        )
+        suggestions.append(winner)
+
+    # --- 5. Memory bandwidth flag from I/O bound dominance ---------------
+    io_share = shares.get("io_bound", 0.0)
+    if io_share >= 0.5:
+        suggestions.append(
+            SuggestedConstraint(
+                name="memory_bw_critical",
+                value=True,
+                confidence="medium",
+                rationale=(
+                    f"{io_share:.0%} of kernels are I/O bound — memory "
+                    "bandwidth likely the dominant constraint"
+                ),
+            )
+        )
+
+    summary = (
+        f"Inferred {len(suggestions)} constraint(s) from "
+        f"{len(analysis.kernels)} kernels across {len(shares)} type(s)"
+    )
+    return SuggestedConstraints(constraints=suggestions, summary=summary)
