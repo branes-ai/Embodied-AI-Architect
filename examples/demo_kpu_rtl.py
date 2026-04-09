@@ -32,7 +32,6 @@ from embodied_ai_architect.graphs.soc_state import (
 from embodied_ai_architect.graphs.planner import PlannerNode
 from embodied_ai_architect.graphs.session_store import SessionStore
 from embodied_ai_architect.graphs.soc_runner import SoCDesignRunner
-from embodied_ai_architect.graphs.specialists import create_default_dispatcher  # noqa: F401
 
 # ---------------------------------------------------------------------------
 # Demo config
