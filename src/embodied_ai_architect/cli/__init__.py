@@ -78,6 +78,7 @@ def main():
     from embodied_ai_architect.cli.commands import platform as platform_cmd
     from embodied_ai_architect.cli.commands import mission as mission_cmd
     from embodied_ai_architect.cli.commands import sensor as sensor_cmd
+    from embodied_ai_architect.cli.commands import actuator as actuator_cmd
 
     # Register command groups
     cli.add_command(workflow.workflow)
@@ -105,6 +106,7 @@ def main():
     cli.add_command(platform_cmd.platform)
     cli.add_command(mission_cmd.mission)
     cli.add_command(sensor_cmd.sensor)
+    cli.add_command(actuator_cmd.actuator)
 
     # Run CLI
     cli(obj={})
