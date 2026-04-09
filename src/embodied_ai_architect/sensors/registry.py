@@ -11,26 +11,18 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
-# Sensor modality categories — used by `branes sensor categories`
+# Sensor modality categories — matches data/sensors/taxonomy.yaml top-level
+# keys. Phase 2 will load these dynamically from the YAML; for now they're
+# kept in sync manually (CodeRabbit PR #107).
 MODALITIES = [
-    "camera",
-    "lidar",
-    "radar",
-    "imu",
-    "gps",
-    "barometer",
-    "magnetometer",
-    "ultrasonic",
-    "infrared",
-    "thermal",
-    "depth",
-    "stereo",
-    "event_camera",
-    "microphone",
-    "force_torque",
-    "encoder",
-    "current_sensor",
-    "temperature",
+    "visual",
+    "ranging",
+    "inertial",
+    "position",
+    "environmental",
+    "force",
+    "audio",
+    "biological",
 ]
 
 
