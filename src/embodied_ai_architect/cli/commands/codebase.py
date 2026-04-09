@@ -230,27 +230,13 @@ def _save_codebase_session(
 ) -> str:
     """Persist a codebase assessment as a SoC design session.
 
-    Stores the workload_profile, scan_result, and analysis under
-    codebase_metadata so /architect-assess and /architect-drill can
-    surface source-level information.
+    Delegates to the shared `codebase_data_to_soc_state` helper from issue
+    #37 so this command and `branes codebase design` produce identical
+    state shapes.
     """
+    from embodied_ai_architect.codebase.converter import codebase_data_to_soc_state
     from embodied_ai_architect.graphs.session_store import SessionStore
-    from embodied_ai_architect.graphs.soc_state import (
-        DesignConstraints,
-        create_initial_soc_state,
-    )
-
-    workload_profile = data.get("workload_profile", {})
-    scan_result = data.get("scan_result", {})
-    analysis = data.get("analysis", {})
-
-    # Resolve project_path to an absolute path so /architect-drill source:
-    # works regardless of the cwd at session-load time.
-    resolved_project_path = str(Path(project_path).resolve())
-
-    # Build a goal text from project name
-    project_name = scan_result.get("project_name", Path(project_path).name)
-    goal = f"Codebase analysis: {project_name}"
+    from embodied_ai_architect.graphs.soc_state import DesignConstraints
 
     constraint_kwargs = {}
     if power_budget is not None:
@@ -259,30 +245,184 @@ def _save_codebase_session(
         constraint_kwargs["max_latency_ms"] = latency_target
     constraints = DesignConstraints(**constraint_kwargs) if constraint_kwargs else None
 
-    state = create_initial_soc_state(
-        goal=goal,
+    state = codebase_data_to_soc_state(
+        analysis_data=data.get("analysis", {}) or {},
+        scan_data=data.get("scan_result", {}) or {},
+        project_path=project_path,
         constraints=constraints,
-        use_case="codebase_analysis",
-        platform="custom",
     )
-    state["workload_profile"] = workload_profile
-    state["codebase_metadata"] = {
-        "project_path": resolved_project_path,
-        "project_name": project_name,
-        "languages": scan_result.get("languages", []),
-        "build_system": scan_result.get("build_system", "unknown"),
-        "kernel_count": len(analysis.get("kernels", [])) if analysis else 0,
-        "ml_models": scan_result.get("ml_models", []),
-        "scan_summary": {
-            "total_lines": scan_result.get("total_lines", 0),
-            "source_file_count": len(scan_result.get("source_files", [])),
-            "dependencies": scan_result.get("dependencies", [])[:50],
-        },
-    }
+    # Preserve the converter's pre-built workload_profile from the agent
+    # path — the agent may have enriched it beyond what
+    # codebase_to_soc_state computes from the bare analysis.
+    if data.get("workload_profile"):
+        state["workload_profile"] = data["workload_profile"]
+
+    # Preserve the legacy `assess --save-session` semantics so existing
+    # /architect-* skill consumers and tests don't see a behavior shift:
+    # use_case stays "codebase_analysis" (the new inferred-by-kernel-type
+    # behavior is reserved for `branes codebase design`), and the
+    # scan-derived total_lines lands on codebase_metadata.
+    state["use_case"] = "codebase_analysis"
+    scan_result = data.get("scan_result", {}) or {}
+    if "total_lines" in scan_result:
+        state.setdefault("codebase_metadata", {}).setdefault("scan_summary", {})["total_lines"] = (
+            scan_result["total_lines"]
+        )
 
     store = SessionStore()
-    session_id = store.save(state)
-    return session_id
+    return store.save(state)
+
+
+@codebase.command("design")
+@click.argument("project_path", type=click.Path(exists=True, file_okay=False))
+@click.option("--power", type=float, default=None, help="Max power in watts")
+@click.option("--latency", type=float, default=None, help="Max latency in milliseconds")
+@click.option("--area", type=float, default=None, help="Max die area in mm²")
+@click.option("--cost", type=float, default=None, help="Max cost in USD")
+@click.pass_context
+def codebase_design(
+    ctx,
+    project_path: str,
+    power: float | None,
+    latency: float | None,
+    area: float | None,
+    cost: float | None,
+):
+    """Build a SoC design session from a codebase scan + analysis (issue #37).
+
+    Runs scan → analyze → codebase_to_soc_state → save session → render plan
+    review snapshot. The output is a saved session that the architect can
+    inspect with `branes session show`, drill into via /architect-drill, or
+    feed into the optimizer via `branes design`.
+
+    \\b
+    Examples:
+      branes codebase design /path/to/drone_app
+      branes codebase design . --power 5 --latency 33
+      branes codebase design . --power 15 --area 100 --cost 50
+    """
+    from embodied_ai_architect.codebase.converter import codebase_to_soc_state
+    from embodied_ai_architect.codebase.scanner import CodebaseScanner
+    from embodied_ai_architect.codebase.analyzer import CodeAnalyzer
+    from embodied_ai_architect.graphs.session_store import SessionStore
+    from embodied_ai_architect.graphs.soc_state import DesignConstraints
+    from embodied_ai_architect.graphs.review import (
+        build_review_snapshot,
+        render_plan_review_rich,
+    )
+    from embodied_ai_architect.graphs.planner import PlannerNode
+    from embodied_ai_architect.graphs.specialists import create_default_dispatcher
+    from embodied_ai_architect.llm.client import LLMClient
+
+    json_output = ctx.obj.get("json", False)
+
+    try:
+        # 1. Scan
+        project_root = Path(project_path).resolve()
+        if not json_output:
+            console.print(f"[cyan]Scanning[/cyan] {project_path} ...")
+        scanner = CodebaseScanner()
+        scan_result = scanner.scan(project_root)
+
+        # 2. Analyze (uses LLM)
+        if not json_output:
+            console.print("[cyan]Analyzing[/cyan] (this calls the LLM) ...")
+        llm = LLMClient()
+        analyzer = CodeAnalyzer(llm)
+        analysis = analyzer.analyze(scan_result, project_root)
+
+        # 3. Build constraints from CLI options
+        constraint_kwargs = {}
+        if power is not None:
+            constraint_kwargs["max_power_watts"] = power
+        if latency is not None:
+            constraint_kwargs["max_latency_ms"] = latency
+        if area is not None:
+            constraint_kwargs["max_area_mm2"] = area
+        if cost is not None:
+            constraint_kwargs["max_cost_usd"] = cost
+        constraints = DesignConstraints(**constraint_kwargs) if constraint_kwargs else None
+
+        # 4. Bridge: codebase → SoCDesignState
+        state = codebase_to_soc_state(
+            analysis,
+            constraints=constraints,
+            project_path=project_path,
+        )
+
+        # 5. Run the default planner so we have a task graph for the
+        #    plan review snapshot.
+        planner = PlannerNode(llm=llm)
+        try:
+            plan_updates = planner(state)
+            state = {**state, **plan_updates}
+        except Exception as plan_err:
+            # If planner fails (e.g. LLM unavailable), persist the state
+            # anyway — the workload_profile is the valuable bit.
+            if not json_output:
+                console.print(f"[yellow]Planner skipped:[/yellow] {plan_err}")
+
+        # 6. Save (must complete successfully — anything below this line
+        # is presentation only and must not flip success → failure for the
+        # caller, otherwise users will rerun and create duplicate sessions).
+        store = SessionStore()
+        session_id = store.save(state)
+
+    except Exception as e:
+        if json_output:
+            click.echo(json.dumps({"status": "error", "error": str(e)}))
+        else:
+            console.print(f"\n[bold red]Error:[/bold red] {e}")
+        ctx.exit(1)
+        return
+
+    # 7. Render plan review — wrapped in its own try so a rendering bug
+    # cannot turn an already-persisted session into an exit-1 failure
+    # (CodeRabbit PR #88).
+    try:
+        if not json_output:
+            console.print(f"\n[bold green]Session saved:[/bold green] {session_id}")
+            console.print(f"  Goal:        {state.get('goal', '')}")
+            console.print(f"  Use case:    {state.get('use_case', '')}")
+            wp = state.get("workload_profile", {})
+            console.print(
+                f"  Workload:    {wp.get('workload_count', 0)} kernels, "
+                f"{wp.get('total_estimated_gflops', 0):.1f} GFLOPS, "
+                f"{wp.get('total_estimated_memory_mb', 0):.1f} MB"
+            )
+
+            if state.get("task_graph", {}).get("nodes"):
+                dispatcher = create_default_dispatcher()
+                snapshot = build_review_snapshot(state, sorted(dispatcher._agents.keys()))
+                console.print()
+                console.print(render_plan_review_rich(snapshot))
+
+            console.print(
+                "\n[dim]Inspect with: [cyan]branes session show " f"{session_id}[/cyan][/dim]"
+            )
+            console.print("[dim]Or drill in: [cyan]/architect-drill[/cyan] in chat[/dim]")
+
+        if json_output:
+            click.echo(
+                json.dumps(
+                    {
+                        "session_id": session_id,
+                        "goal": state.get("goal", ""),
+                        "use_case": state.get("use_case", ""),
+                        "workload_profile": state.get("workload_profile", {}),
+                        "kernel_count": len(analysis.kernels),
+                    },
+                    indent=2,
+                    default=str,
+                )
+            )
+    except Exception as render_err:
+        # Session is already saved — surface the error but exit 0.
+        if not json_output:
+            console.print(
+                f"\n[yellow]Session saved as {session_id} but rendering "
+                f"failed:[/yellow] {render_err}"
+            )
 
 
 @codebase.command("qualify")

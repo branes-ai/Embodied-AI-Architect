@@ -450,7 +450,8 @@ class TestCodebaseTools:
         from embodied_ai_architect.llm.codebase_tools import get_codebase_tool_definitions
 
         tools = get_codebase_tool_definitions()
-        assert len(tools) == 3
+        # 4 tools after issue #37 added design_from_codebase
+        assert len(tools) == 4
 
         for tool in tools:
             assert "name" in tool
@@ -463,7 +464,12 @@ class TestCodebaseTools:
 
         tools = get_codebase_tool_definitions()
         names = {t["name"] for t in tools}
-        assert names == {"scan_project", "analyze_codebase", "assess_codebase_on_hardware"}
+        assert names == {
+            "scan_project",
+            "analyze_codebase",
+            "assess_codebase_on_hardware",
+            "design_from_codebase",  # issue #37
+        }
 
     def test_scan_project_executor(self):
         from embodied_ai_architect.llm.codebase_tools import create_codebase_tool_executors
@@ -582,3 +588,200 @@ class TestCodebaseSessionCreation:
         workload = loaded["workload_profile"]["workloads"][0]
         assert workload["source_file"] == "src/perception/detect.py"
         assert workload["line_range"] == [45, 120]
+
+
+# ---------------------------------------------------------------------------
+# Issue #37: Codebase → SoCDesignState bridge
+# ---------------------------------------------------------------------------
+
+
+class TestCodebaseToSoCState:
+    """The new codebase_to_soc_state() / codebase_data_to_soc_state() bridge."""
+
+    def _make_analysis(self, kernel_type: str = "ml_inference") -> "object":
+        from embodied_ai_architect.codebase.models import (
+            CodebaseAnalysisResult,
+            ComputeKernel,
+        )
+
+        return CodebaseAnalysisResult(
+            project_name="test_drone_app",
+            languages=["python"],
+            build_system="pip",
+            dependencies=["torch", "ultralytics", "numpy"],
+            ml_models=[{"name": "yolov8.pt", "framework": "pytorch"}],
+            kernels=[
+                ComputeKernel(
+                    name="yolo_detection",
+                    source_file="perception/detect.py",
+                    line_range=(10, 80),
+                    kernel_type=kernel_type,
+                    estimated_ops_per_invocation=8.4e9,
+                    frameworks=["pytorch"],
+                ),
+                ComputeKernel(
+                    name="object_tracker",
+                    source_file="perception/track.py",
+                    line_range=(5, 60),
+                    kernel_type=kernel_type,
+                    frameworks=["numpy"],
+                ),
+            ],
+            summary="Drone perception pipeline with YOLO and tracker",
+        )
+
+    def test_returns_populated_soc_state(self, tmp_path):
+        from embodied_ai_architect.codebase.converter import codebase_to_soc_state
+
+        analysis = self._make_analysis()
+        state = codebase_to_soc_state(analysis, project_path=str(tmp_path))
+
+        # Workload profile populated by the converter
+        wp = state["workload_profile"]
+        assert wp["source"] == "codebase_analysis"
+        assert wp["workload_count"] == 2
+        assert wp["total_estimated_gflops"] > 0
+        # use_case stays canonical (CodeRabbit PR #88) — the dominant kernel
+        # type is preserved separately on metadata for downstream consumers.
+        assert state["use_case"] == "codebase_analysis"
+
+    def test_goal_includes_project_name_and_summary(self, tmp_path):
+        from embodied_ai_architect.codebase.converter import codebase_to_soc_state
+
+        analysis = self._make_analysis()
+        state = codebase_to_soc_state(analysis, project_path=str(tmp_path))
+        goal = state["goal"]
+        assert "test_drone_app" in goal
+        assert "ml_inference" in goal
+        assert "Drone perception" in goal
+
+    def test_dominant_kernel_type_recorded_on_metadata(self, tmp_path):
+        from embodied_ai_architect.codebase.converter import codebase_to_soc_state
+
+        analysis = self._make_analysis(kernel_type="signal_processing")
+        state = codebase_to_soc_state(analysis, project_path=str(tmp_path))
+        # use_case is canonical, but the dominant kernel type is preserved
+        # so a future consumer can branch on it without us minting
+        # unrecognized labels
+        assert state["use_case"] == "codebase_analysis"
+        assert state["codebase_metadata"]["dominant_kernel_type"] == "signal_processing"
+
+    def test_dominant_kernel_type_default_when_no_kernels(self, tmp_path):
+        from embodied_ai_architect.codebase.converter import codebase_to_soc_state
+        from embodied_ai_architect.codebase.models import CodebaseAnalysisResult
+
+        analysis = CodebaseAnalysisResult(project_name="empty")
+        state = codebase_to_soc_state(analysis, project_path=str(tmp_path))
+        assert state["use_case"] == "codebase_analysis"
+        assert state["codebase_metadata"]["dominant_kernel_type"] == "general_compute"
+
+    def test_codebase_metadata_carries_project_path(self, tmp_path):
+        from embodied_ai_architect.codebase.converter import codebase_to_soc_state
+
+        analysis = self._make_analysis()
+        state = codebase_to_soc_state(analysis, project_path=str(tmp_path))
+        meta = state["codebase_metadata"]
+        # Path is absolute (resolved) so /architect-drill source: works
+        assert Path(meta["project_path"]).is_absolute()
+        assert meta["project_name"] == "test_drone_app"
+        assert meta["build_system"] == "pip"
+        assert meta["kernel_count"] == 2
+        assert "torch" in meta["scan_summary"]["dependencies"]
+
+    def test_constraints_propagated(self, tmp_path):
+        from embodied_ai_architect.codebase.converter import codebase_to_soc_state
+        from embodied_ai_architect.graphs.soc_state import DesignConstraints
+
+        analysis = self._make_analysis()
+        constraints = DesignConstraints(
+            max_power_watts=5.0,
+            max_latency_ms=33.3,
+            max_area_mm2=100.0,
+        )
+        state = codebase_to_soc_state(analysis, constraints=constraints, project_path=str(tmp_path))
+        assert state["constraints"]["max_power_watts"] == 5.0
+        assert state["constraints"]["max_latency_ms"] == 33.3
+        assert state["constraints"]["max_area_mm2"] == 100.0
+
+    def test_dict_helper_accepts_payload(self, tmp_path):
+        """codebase_data_to_soc_state accepts plain dict payloads from the agent."""
+        from embodied_ai_architect.codebase.converter import codebase_data_to_soc_state
+
+        analysis_data = {
+            "project_name": "data_test",
+            "kernels": [
+                {
+                    "name": "k1",
+                    "source_file": "k1.py",
+                    "line_range": [1, 10],
+                    "kernel_type": "ml_inference",
+                    "estimated_ops_per_invocation": 5e9,
+                    "frameworks": ["pytorch"],
+                }
+            ],
+        }
+        scan_data = {
+            "languages": ["python"],
+            "build_system": "pip",
+            "dependencies": ["torch"],
+        }
+        state = codebase_data_to_soc_state(
+            analysis_data=analysis_data,
+            scan_data=scan_data,
+            project_path=str(tmp_path),
+        )
+        assert state["use_case"] == "codebase_analysis"
+        assert state["workload_profile"]["workload_count"] == 1
+        assert state["codebase_metadata"]["build_system"] == "pip"
+        assert state["codebase_metadata"]["dominant_kernel_type"] == "ml_inference"
+
+    def test_dict_helper_backfills_from_scan_when_analysis_dump_is_default(self, tmp_path):
+        """CodeRabbit PR #88: model_dump() of an empty CodebaseAnalysisResult
+        produces `[]` / `"unknown"` defaults. The merge must still backfill
+        from scan_data instead of treating the defaults as "set"."""
+        from embodied_ai_architect.codebase.converter import codebase_data_to_soc_state
+        from embodied_ai_architect.codebase.models import CodebaseAnalysisResult
+
+        # Simulate the agent path: an analysis dump that's mostly defaults
+        empty_analysis = CodebaseAnalysisResult(project_name="").model_dump()
+        # languages=[], build_system="unknown", source_files=[], etc. are
+        # already set on the dump — naive setdefault would skip the fallback
+        scan_data = {
+            "project_name": "real_project",
+            "languages": ["python", "cpp"],
+            "build_system": "cmake",
+            "dependencies": ["torch", "opencv-python"],
+            "ml_models": [{"name": "yolo.pt"}],
+            "source_files": [{"path": "main.py", "language": "python"}],
+        }
+        state = codebase_data_to_soc_state(
+            analysis_data=empty_analysis,
+            scan_data=scan_data,
+            project_path=str(tmp_path),
+        )
+        meta = state["codebase_metadata"]
+        # All scan fields successfully backfilled into the metadata
+        assert meta["project_name"] == "real_project"
+        assert "python" in meta["languages"]
+        assert "cpp" in meta["languages"]
+        assert meta["build_system"] == "cmake"
+        assert "torch" in meta["scan_summary"]["dependencies"]
+        assert meta["ml_models"]
+
+    def test_session_round_trips_state(self, tmp_path):
+        from embodied_ai_architect.codebase.converter import codebase_to_soc_state
+        from embodied_ai_architect.graphs.session_store import SessionStore
+
+        analysis = self._make_analysis()
+        state = codebase_to_soc_state(
+            analysis, project_path=str(tmp_path), session_id="soc_codebase37"
+        )
+        store = SessionStore(session_dir=tmp_path)
+        store.save(state)
+
+        loaded = store.load("soc_codebase37")
+        assert loaded is not None
+        assert loaded["use_case"] == "codebase_analysis"
+        assert loaded["workload_profile"]["workload_count"] == 2
+        assert loaded["codebase_metadata"]["project_name"] == "test_drone_app"
+        assert loaded["codebase_metadata"]["dominant_kernel_type"] == "ml_inference"
