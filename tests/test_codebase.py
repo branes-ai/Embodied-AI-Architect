@@ -641,8 +641,9 @@ class TestCodebaseToSoCState:
         assert wp["source"] == "codebase_analysis"
         assert wp["workload_count"] == 2
         assert wp["total_estimated_gflops"] > 0
-        # Use case inferred from dominant kernel type
-        assert state["use_case"] == "ml_inference_app"
+        # use_case stays canonical (CodeRabbit PR #88) — the dominant kernel
+        # type is preserved separately on metadata for downstream consumers.
+        assert state["use_case"] == "codebase_analysis"
 
     def test_goal_includes_project_name_and_summary(self, tmp_path):
         from embodied_ai_architect.codebase.converter import codebase_to_soc_state
@@ -654,20 +655,25 @@ class TestCodebaseToSoCState:
         assert "ml_inference" in goal
         assert "Drone perception" in goal
 
-    def test_use_case_inferred_for_signal_processing(self, tmp_path):
+    def test_dominant_kernel_type_recorded_on_metadata(self, tmp_path):
         from embodied_ai_architect.codebase.converter import codebase_to_soc_state
 
         analysis = self._make_analysis(kernel_type="signal_processing")
         state = codebase_to_soc_state(analysis, project_path=str(tmp_path))
-        assert state["use_case"] == "signal_processing_app"
+        # use_case is canonical, but the dominant kernel type is preserved
+        # so a future consumer can branch on it without us minting
+        # unrecognized labels
+        assert state["use_case"] == "codebase_analysis"
+        assert state["codebase_metadata"]["dominant_kernel_type"] == "signal_processing"
 
-    def test_use_case_default_when_no_kernels(self, tmp_path):
+    def test_dominant_kernel_type_default_when_no_kernels(self, tmp_path):
         from embodied_ai_architect.codebase.converter import codebase_to_soc_state
         from embodied_ai_architect.codebase.models import CodebaseAnalysisResult
 
         analysis = CodebaseAnalysisResult(project_name="empty")
         state = codebase_to_soc_state(analysis, project_path=str(tmp_path))
-        assert state["use_case"] == "application_analysis"
+        assert state["use_case"] == "codebase_analysis"
+        assert state["codebase_metadata"]["dominant_kernel_type"] == "general_compute"
 
     def test_codebase_metadata_carries_project_path(self, tmp_path):
         from embodied_ai_architect.codebase.converter import codebase_to_soc_state
@@ -724,9 +730,43 @@ class TestCodebaseToSoCState:
             scan_data=scan_data,
             project_path=str(tmp_path),
         )
-        assert state["use_case"] == "ml_inference_app"
+        assert state["use_case"] == "codebase_analysis"
         assert state["workload_profile"]["workload_count"] == 1
         assert state["codebase_metadata"]["build_system"] == "pip"
+        assert state["codebase_metadata"]["dominant_kernel_type"] == "ml_inference"
+
+    def test_dict_helper_backfills_from_scan_when_analysis_dump_is_default(self, tmp_path):
+        """CodeRabbit PR #88: model_dump() of an empty CodebaseAnalysisResult
+        produces `[]` / `"unknown"` defaults. The merge must still backfill
+        from scan_data instead of treating the defaults as "set"."""
+        from embodied_ai_architect.codebase.converter import codebase_data_to_soc_state
+        from embodied_ai_architect.codebase.models import CodebaseAnalysisResult
+
+        # Simulate the agent path: an analysis dump that's mostly defaults
+        empty_analysis = CodebaseAnalysisResult(project_name="").model_dump()
+        # languages=[], build_system="unknown", source_files=[], etc. are
+        # already set on the dump — naive setdefault would skip the fallback
+        scan_data = {
+            "project_name": "real_project",
+            "languages": ["python", "cpp"],
+            "build_system": "cmake",
+            "dependencies": ["torch", "opencv-python"],
+            "ml_models": [{"name": "yolo.pt"}],
+            "source_files": [{"path": "main.py", "language": "python"}],
+        }
+        state = codebase_data_to_soc_state(
+            analysis_data=empty_analysis,
+            scan_data=scan_data,
+            project_path=str(tmp_path),
+        )
+        meta = state["codebase_metadata"]
+        # All scan fields successfully backfilled into the metadata
+        assert meta["project_name"] == "real_project"
+        assert "python" in meta["languages"]
+        assert "cpp" in meta["languages"]
+        assert meta["build_system"] == "cmake"
+        assert "torch" in meta["scan_summary"]["dependencies"]
+        assert meta["ml_models"]
 
     def test_session_round_trips_state(self, tmp_path):
         from embodied_ai_architect.codebase.converter import codebase_to_soc_state
@@ -741,6 +781,7 @@ class TestCodebaseToSoCState:
 
         loaded = store.load("soc_codebase37")
         assert loaded is not None
-        assert loaded["use_case"] == "ml_inference_app"
+        assert loaded["use_case"] == "codebase_analysis"
         assert loaded["workload_profile"]["workload_count"] == 2
         assert loaded["codebase_metadata"]["project_name"] == "test_drone_app"
+        assert loaded["codebase_metadata"]["dominant_kernel_type"] == "ml_inference"

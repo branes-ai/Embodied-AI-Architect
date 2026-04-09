@@ -318,17 +318,18 @@ def codebase_design(
 
     try:
         # 1. Scan
+        project_root = Path(project_path).resolve()
         if not json_output:
             console.print(f"[cyan]Scanning[/cyan] {project_path} ...")
         scanner = CodebaseScanner()
-        scan_result = scanner.scan(Path(project_path))
+        scan_result = scanner.scan(project_root)
 
         # 2. Analyze (uses LLM)
         if not json_output:
             console.print("[cyan]Analyzing[/cyan] (this calls the LLM) ...")
         llm = LLMClient()
         analyzer = CodeAnalyzer(llm)
-        analysis = analyzer.analyze(scan_result, project_path=project_path)
+        analysis = analyzer.analyze(scan_result, project_root)
 
         # 3. Build constraints from CLI options
         constraint_kwargs = {}
@@ -361,11 +362,24 @@ def codebase_design(
             if not json_output:
                 console.print(f"[yellow]Planner skipped:[/yellow] {plan_err}")
 
-        # 6. Save
+        # 6. Save (must complete successfully — anything below this line
+        # is presentation only and must not flip success → failure for the
+        # caller, otherwise users will rerun and create duplicate sessions).
         store = SessionStore()
         session_id = store.save(state)
 
-        # 7. Render plan review (when planner succeeded)
+    except Exception as e:
+        if json_output:
+            click.echo(json.dumps({"status": "error", "error": str(e)}))
+        else:
+            console.print(f"\n[bold red]Error:[/bold red] {e}")
+        ctx.exit(1)
+        return
+
+    # 7. Render plan review — wrapped in its own try so a rendering bug
+    # cannot turn an already-persisted session into an exit-1 failure
+    # (CodeRabbit PR #88).
+    try:
         if not json_output:
             console.print(f"\n[bold green]Session saved:[/bold green] {session_id}")
             console.print(f"  Goal:        {state.get('goal', '')}")
@@ -402,13 +416,13 @@ def codebase_design(
                     default=str,
                 )
             )
-
-    except Exception as e:
-        if json_output:
-            click.echo(json.dumps({"status": "error", "error": str(e)}))
-        else:
-            console.print(f"\n[bold red]Error:[/bold red] {e}")
-        ctx.exit(1)
+    except Exception as render_err:
+        # Session is already saved — surface the error but exit 0.
+        if not json_output:
+            console.print(
+                f"\n[yellow]Session saved as {session_id} but rendering "
+                f"failed:[/yellow] {render_err}"
+            )
 
 
 @codebase.command("qualify")

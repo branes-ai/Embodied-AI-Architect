@@ -195,28 +195,23 @@ class CodebaseConverter:
 # Issue #37: Codebase → SoCDesignState bridge
 # ---------------------------------------------------------------------------
 
-# Map dominant kernel type → use_case label that the rest of the pipeline
-# (planner, qualifier, registry) recognizes.
-_KERNEL_TYPE_TO_USE_CASE: dict[str, str] = {
-    "ml_inference": "ml_inference_app",
-    "signal_processing": "signal_processing_app",
-    "image_processing": "image_processing_app",
-    "control_loop": "control_system",
-    "sensor_fusion": "sensor_fusion_app",
-    "io_bound": "io_pipeline",
-    "general_compute": "application_analysis",
-}
+# Canonical use_case for any session built from a codebase scan. The
+# planner / qualifier / registry recognize this string; downstream
+# consumers branch on it. The dominant-kernel-type signal is preserved
+# separately on `codebase_metadata.dominant_kernel_type` so a future
+# consumer can pick it up without us having to mint use_case labels that
+# aren't wired through (CodeRabbit PR #88).
+_CODEBASE_USE_CASE = "codebase_analysis"
 
 
-def _infer_use_case(analysis: CodebaseAnalysisResult) -> str:
-    """Pick a use_case label from the dominant kernel type in the analysis."""
+def _dominant_kernel_type(analysis: CodebaseAnalysisResult) -> str:
+    """Pick the dominant kernel type from the analysis (or 'general_compute')."""
     if not analysis.kernels:
-        return "application_analysis"
+        return "general_compute"
     counts: dict[str, int] = {}
     for kernel in analysis.kernels:
         counts[kernel.kernel_type] = counts.get(kernel.kernel_type, 0) + 1
-    dominant = max(counts, key=counts.get)
-    return _KERNEL_TYPE_TO_USE_CASE.get(dominant, "application_analysis")
+    return max(counts, key=counts.get)
 
 
 def _build_goal(analysis: CodebaseAnalysisResult) -> str:
@@ -269,13 +264,13 @@ def codebase_to_soc_state(
     converter = CodebaseConverter()
     workload_profile = converter.to_workload_profile(analysis)
 
-    use_case = _infer_use_case(analysis)
+    dominant_kernel_type = _dominant_kernel_type(analysis)
     goal = _build_goal(analysis)
 
     state = create_initial_soc_state(
         goal=goal,
         constraints=constraints,
-        use_case=use_case,
+        use_case=_CODEBASE_USE_CASE,  # canonical label recognized by planner / qualifier
         platform="custom",
         session_id=session_id,
     )
@@ -290,6 +285,7 @@ def codebase_to_soc_state(
         "build_system": analysis.build_system,
         "kernel_count": len(analysis.kernels),
         "ml_models": list(analysis.ml_models),
+        "dominant_kernel_type": dominant_kernel_type,
         "scan_summary": {
             "source_file_count": len(analysis.source_files),
             "dependencies": list(analysis.dependencies)[:50],
@@ -315,13 +311,31 @@ def codebase_data_to_soc_state(
     """
     merged = dict(analysis_data) if analysis_data else {}
     if scan_data:
-        merged.setdefault("project_name", scan_data.get("project_name", "application"))
-        merged.setdefault("languages", scan_data.get("languages", []))
-        merged.setdefault("build_system", scan_data.get("build_system", "unknown"))
-        if "source_files" not in merged and scan_data.get("source_files"):
-            merged["source_files"] = scan_data["source_files"]
-        merged.setdefault("ml_models", scan_data.get("ml_models", []))
-        merged.setdefault("dependencies", scan_data.get("dependencies", []))
+        # CodeRabbit PR #88: model_dump() of an empty CodebaseAnalysisResult
+        # produces `[]`, `"unknown"`, etc. as defaults — `setdefault` would
+        # then NOT backfill from scan_data. Only fall back to scan_data when
+        # the analysis value is empty/missing/unknown.
+        def _empty_or_default(value: Any, default_marker: Any = None) -> bool:
+            if value is None:
+                return True
+            if isinstance(value, (list, tuple, dict, str)) and not value:
+                return True
+            if value == default_marker:
+                return True
+            return False
+
+        if _empty_or_default(merged.get("project_name")):
+            merged["project_name"] = scan_data.get("project_name", "application")
+        if _empty_or_default(merged.get("languages")):
+            merged["languages"] = list(scan_data.get("languages", []))
+        if _empty_or_default(merged.get("build_system"), default_marker="unknown"):
+            merged["build_system"] = scan_data.get("build_system", "unknown")
+        if _empty_or_default(merged.get("source_files")):
+            merged["source_files"] = list(scan_data.get("source_files", []))
+        if _empty_or_default(merged.get("ml_models")):
+            merged["ml_models"] = list(scan_data.get("ml_models", []))
+        if _empty_or_default(merged.get("dependencies")):
+            merged["dependencies"] = list(scan_data.get("dependencies", []))
     merged.setdefault("project_name", "application")
     merged.setdefault("kernels", [])
     merged.setdefault("source_files", [])
