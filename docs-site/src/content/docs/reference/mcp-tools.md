@@ -336,8 +336,8 @@ Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "embodied-ai": {
-      "command": "embodied-ai",
+    "branes": {
+      "command": "branes",
       "args": ["mcp", "serve"]
     }
   }

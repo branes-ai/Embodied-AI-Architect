@@ -24,7 +24,7 @@ You'll learn how to:
 First, let's see how different YOLOv8 variants perform on your Jetson:
 
 ```bash
-embodied-ai compare yolov8n,yolov8s,yolov8m \
+branes compare yolov8n,yolov8s,yolov8m \
   --hardware jetson-orin-nano \
   --metric latency,fps,power
 ```
@@ -45,12 +45,12 @@ Verify YOLOv8n meets your requirements:
 
 ```bash
 # Check 30fps target (33ms)
-embodied-ai check-latency yolov8n \
+branes check-latency yolov8n \
   --hardware jetson-orin-nano \
   --target 33ms
 
 # Check power budget
-embodied-ai check-power yolov8n \
+branes check-power yolov8n \
   --hardware jetson-orin-nano \
   --budget 15W
 ```

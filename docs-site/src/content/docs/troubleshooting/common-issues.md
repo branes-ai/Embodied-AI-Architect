@@ -32,7 +32,7 @@ pip install -e ".[dev,remote,kubernetes]"
 **Solution**: For custom models, provide the model file directly:
 
 ```bash
-embodied-ai analyze ./my_model.pt --input-shape 1,3,640,640
+branes analyze ./my_model.pt --input-shape 1,3,640,640
 ```
 
 ### "Hardware not found"
@@ -42,7 +42,7 @@ embodied-ai analyze ./my_model.pt --input-shape 1,3,640,640
 **Solution**: List available hardware:
 
 ```bash
-embodied-ai chat
+branes chat
 > What hardware targets are available?
 ```
 
@@ -135,4 +135,4 @@ If you can't find a solution:
 3. Open a new issue with:
    - Full error message
    - Steps to reproduce
-   - System information (`embodied-ai --version`, Python version, OS)
+   - System information (`branes --version`, Python version, OS)

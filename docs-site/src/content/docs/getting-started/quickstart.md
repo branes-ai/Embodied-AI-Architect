@@ -10,7 +10,7 @@ This guide will walk you through analyzing a model and checking if it meets your
 Start by analyzing a PyTorch model:
 
 ```bash
-embodied-ai analyze yolov8n.pt
+branes analyze yolov8n.pt
 ```
 
 This outputs:
@@ -24,7 +24,7 @@ This outputs:
 See how the model performs on specific hardware:
 
 ```bash
-embodied-ai analyze yolov8n.pt --hardware jetson-orin-nano
+branes analyze yolov8n.pt --hardware jetson-orin-nano
 ```
 
 You'll get:
@@ -39,13 +39,13 @@ Check if your model meets deployment requirements:
 
 ```bash
 # Check latency target
-embodied-ai check-latency yolov8n --hardware jetson-orin-nano --target 33ms
+branes check-latency yolov8n --hardware jetson-orin-nano --target 33ms
 
 # Check power budget
-embodied-ai check-power yolov8n --hardware jetson-orin-nano --budget 15W
+branes check-power yolov8n --hardware jetson-orin-nano --budget 15W
 
 # Check memory limit
-embodied-ai check-memory yolov8n --hardware jetson-orin-nano --limit 4096MB
+branes check-memory yolov8n --hardware jetson-orin-nano --limit 4096MB
 ```
 
 Each command returns a clear verdict:
@@ -69,7 +69,7 @@ Suggestions:
 Find the best hardware for your model:
 
 ```bash
-embodied-ai compare yolov8n --hardware jetson-orin-nano,jetson-orin-agx,coral-edge-tpu
+branes compare yolov8n --hardware jetson-orin-nano,jetson-orin-agx,coral-edge-tpu
 ```
 
 Output:
@@ -91,7 +91,7 @@ For exploratory analysis, use the interactive chat:
 
 ```bash
 export ANTHROPIC_API_KEY=your-key-here
-embodied-ai chat
+branes chat
 ```
 
 Ask questions in natural language:

@@ -36,7 +36,7 @@ Choosing the right hardware is critical for edge AI deployments. Embodied AI Arc
 ### CLI
 
 ```bash
-embodied-ai compare yolov8n \
+branes compare yolov8n \
   --hardware jetson-orin-nano,jetson-orin-agx,coral-edge-tpu \
   --metric latency,power,cost
 ```
@@ -74,7 +74,7 @@ requirements with significant margin and lowest power/cost.
 For battery-powered systems, optimize for performance per watt:
 
 ```bash
-embodied-ai compare yolov8n --sort efficiency
+branes compare yolov8n --sort efficiency
 ```
 
 ### Cost vs Performance
@@ -82,7 +82,7 @@ embodied-ai compare yolov8n --sort efficiency
 For production deployments, consider $/performance:
 
 ```bash
-embodied-ai compare yolov8n --sort cost-performance
+branes compare yolov8n --sort cost-performance
 ```
 
 ### Flexibility vs Optimization
