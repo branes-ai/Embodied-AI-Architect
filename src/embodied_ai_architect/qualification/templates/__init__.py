@@ -3,34 +3,132 @@
 Each template encodes the engineering knowledge needed to refine a vague
 goal into a tangible, actionable specification for a specific platform domain.
 
-Templates are designed to show a progression of system complexity:
-- Drone: single compute node, battery-constrained, mostly perception + control
-- UGV: multi-sensor, indoor/outdoor, navigation + manipulation optional
-- Robot arm: dual-nervous-system architecture (conscious brain + peripheral
-  joint controllers), safety-critical cobot requirements
+Templates are loaded from `_questions.yaml` files in the platform data
+directories (issue #49). The YAML files contain the same question trees
+that were previously hard-coded in drone.py, ugv.py, and robot_arm.py —
+with the same conditional logic (depends_on), option descriptions, and
+rich implication mappings.
 
-New domains can be added by creating a module that exports TEMPLATE.
+New domains can be added by:
+  1. Creating a `_questions.yaml` in the appropriate platform category dir
+  2. OR calling `register_template()` at runtime
 """
 
 from __future__ import annotations
 
 import logging
-from typing import Optional
+from pathlib import Path
+from typing import Any, Optional
 
-from embodied_ai_architect.qualification.models import DomainTemplate
-
-from .drone import TEMPLATE as DRONE_TEMPLATE
-from .ugv import TEMPLATE as UGV_TEMPLATE
-from .robot_arm import TEMPLATE as ROBOT_ARM_TEMPLATE
+from embodied_ai_architect.qualification.models import (
+    DomainTemplate,
+    Question,
+    QuestionType,
+)
 
 logger = logging.getLogger(__name__)
 
-# Registry of all domain templates
-_TEMPLATES: dict[str, DomainTemplate] = {
-    DRONE_TEMPLATE.domain: DRONE_TEMPLATE,
-    UGV_TEMPLATE.domain: UGV_TEMPLATE,
-    ROBOT_ARM_TEMPLATE.domain: ROBOT_ARM_TEMPLATE,
+# ---------------------------------------------------------------------------
+# YAML → DomainTemplate loader
+# ---------------------------------------------------------------------------
+
+# Platform data directory — resolved relative to the package root.
+_DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent / "data" / "platforms"
+
+# Mapping from platform-category directory name to the domain identifier
+# that the qualifier knows (e.g., "aerial" → "drone"). Categories not in
+# this map use their directory name verbatim.
+_CATEGORY_TO_DOMAIN: dict[str, str] = {
+    "aerial": "drone",
+    "ground_wheeled": "ugv",
+    "ground_legged": "ugv",
+    "ground_tracked": "ugv",
+    "manipulation": "robot_arm",
+    "surgical": "robot_arm",
+    "lab": "robot_arm",
+    "veterinary": "robot_arm",
 }
+
+
+def _question_from_dict(d: dict[str, Any]) -> Question:
+    """Build a Question from a YAML dict.
+
+    Only passes non-None values so Pydantic defaults are respected for
+    optional fields (custom_prompt defaults to "" not None).
+    """
+    kwargs: dict[str, Any] = {
+        "id": d["id"],
+        "dimension": d.get("dimension", "platform"),
+        "text": d.get("text", ""),
+        "question_type": QuestionType(d.get("question_type", "single_choice")),
+        "options": d.get("options", []),
+        "option_descriptions": d.get("option_descriptions", {}),
+        "required": d.get("required", False),
+        "implications": d.get("implications", {}),
+        "allow_custom": d.get("allow_custom", False),
+    }
+    # Only set optional fields when they're actually present and non-None
+    # so the Pydantic model's defaults are used otherwise.
+    for key in (
+        "explanation",
+        "default",
+        "depends_on",
+        "depends_on_value",
+        "min_selections",
+        "custom_prompt",
+    ):
+        val = d.get(key)
+        if val is not None:
+            kwargs[key] = val
+
+    return Question(**kwargs)
+
+
+def _load_template_from_yaml(path: Path) -> Optional[DomainTemplate]:
+    """Load a DomainTemplate from a _questions.yaml file."""
+    try:
+        import yaml
+
+        with open(path) as f:
+            data = yaml.safe_load(f) or {}
+
+        questions = [_question_from_dict(qd) for qd in data.get("questions", [])]
+
+        return DomainTemplate(
+            domain=data.get("domain", path.parent.name),
+            display_name=data.get("display_name", ""),
+            description=data.get("description", ""),
+            keywords=data.get("keywords", []),
+            base_implications=data.get("base_implications", {}),
+            questions=questions,
+        )
+    except Exception as e:
+        logger.warning("Failed to load template from %s: %s", path, e)
+        return None
+
+
+def _discover_templates() -> dict[str, DomainTemplate]:
+    """Scan the data/platforms directory for _questions.yaml files and load them."""
+    templates: dict[str, DomainTemplate] = {}
+
+    if not _DATA_DIR.is_dir():
+        logger.debug("Platform data directory not found: %s", _DATA_DIR)
+        return templates
+
+    for questions_file in _DATA_DIR.rglob("_questions.yaml"):
+        tmpl = _load_template_from_yaml(questions_file)
+        if tmpl is not None:
+            templates[tmpl.domain] = tmpl
+            logger.debug("Loaded domain template '%s' from %s", tmpl.domain, questions_file)
+
+    return templates
+
+
+# ---------------------------------------------------------------------------
+# Module-level registry — populated from YAML at import time
+# ---------------------------------------------------------------------------
+
+_TEMPLATES: dict[str, DomainTemplate] = _discover_templates()
 
 
 def get_domain_template(domain: str) -> Optional[DomainTemplate]:
@@ -51,7 +149,7 @@ def get_all_templates() -> dict[str, DomainTemplate]:
 def detect_domain(goal_text: str) -> Optional[str]:
     """Detect the most likely domain from goal text keywords.
 
-    First checks hard-coded domain templates (drone, ugv, robot_arm).
+    First checks domain templates (loaded from _questions.yaml files).
     If no match, falls back to the platform registry for broader coverage.
 
     Returns the domain identifier or None if no match.
@@ -102,7 +200,7 @@ def detect_domain_with_context(goal_text: str) -> tuple[Optional[str], dict]:
         if matches and len(matches[0].matched_keywords) >= 2:
             top = matches[0]
             # Map platform category to closest domain template, or use category
-            domain = _map_category_to_domain(top.platform.category)
+            domain = _CATEGORY_TO_DOMAIN.get(top.platform.category, top.platform.category)
             context = {
                 "platform_id": top.platform_id,
                 "platform_name": top.platform.name,
@@ -133,31 +231,13 @@ def _detect_domain_from_registry(goal_text: str) -> Optional[str]:
         registry = PlatformRegistry()
         matches = registry.search(goal_text, top_k=1, min_score=0.3)
         if matches and len(matches[0].matched_keywords) >= 2:
-            return _map_category_to_domain(matches[0].platform.category)
+            return _CATEGORY_TO_DOMAIN.get(
+                matches[0].platform.category, matches[0].platform.category
+            )
     except Exception:
         # Registry unavailable or failed — degrade gracefully to no match
         logger.debug("Platform registry fallback failed", exc_info=True)
     return None
-
-
-def _map_category_to_domain(category: str) -> str:
-    """Map a platform registry category to the closest domain template.
-
-    If no domain template exists for the category, return the category
-    name itself — the qualifier will handle it as an unrecognized domain
-    and fall back to manual selection.
-    """
-    _CATEGORY_TO_DOMAIN = {
-        "aerial": "drone",
-        "ground_wheeled": "ugv",
-        "ground_legged": "ugv",
-        "ground_tracked": "ugv",
-        "manipulation": "robot_arm",
-        "surgical": "robot_arm",
-        "lab": "robot_arm",
-        "veterinary": "robot_arm",
-    }
-    return _CATEGORY_TO_DOMAIN.get(category, category)
 
 
 def register_template(template: DomainTemplate) -> None:
