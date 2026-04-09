@@ -1,0 +1,62 @@
+id: visual.depth_camera
+name: Depth Camera
+category: visual
+sensor_type: depth_camera
+description: Active depth sensor using structured light or time-of-flight
+aliases: []
+keywords:
+  identity:
+  - depth camera
+  - depth camera
+  descriptions:
+  - depth sensor
+  - rgbd
+  - structured light
+  - time of flight
+  - tof
+  - point cloud
+  application:
+  - 3d scanning
+  - gesture recognition
+  - body tracking
+  - face recognition
+  - indoor mapping
+  - obstacle detection
+  industry:
+  - range imaging
+  - depth map
+  - infrared projector
+  components:
+  - dot pattern
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 320
+    max: 1280
+    typical: 640
+  frame_rate_fps:
+    min: 15
+    max: 90
+    typical: 30
+  range_m:
+    min: 0.1
+    max: 10
+    typical: 4
+  power_watts:
+    min: 1.0
+    max: 5.0
+    typical: 2.5
+  cost_usd:
+    min: 50
+    max: 500
+    typical: 200
+reference_products:
+- id: intel_realsense_d455
+  name: Intel RealSense D455
+  vendor: Intel
+  cost_usd: 249

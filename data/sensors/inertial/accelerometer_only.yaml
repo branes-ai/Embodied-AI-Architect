@@ -1,0 +1,45 @@
+id: inertial.accelerometer_only
+name: Accelerometer
+category: inertial
+sensor_type: accelerometer_only
+description: Linear acceleration sensor for vibration and tilt
+aliases: []
+keywords:
+  identity:
+  - accelerometer
+  - accelerometer only
+  descriptions:
+  - accelerometer
+  - accel
+  - vibration
+  - tilt
+  - shock
+  - g force
+  application:
+  - mems
+  - piezoelectric
+  - capacitive
+  - piezoresistive
+  - seismic
+  - condition monitoring
+  industry:
+  - crash detection
+  - step counter
+  - free fall
+  components:
+  - impact
+classification:
+  modality: inertial
+  output_type: imu_data
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.0005
+    max: 0.05
+    typical: 0.002
+  cost_usd:
+    min: 0.5
+    max: 100
+    typical: 3

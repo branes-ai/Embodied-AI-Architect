@@ -1,0 +1,64 @@
+id: ranging.lidar_3d_spinning
+name: LiDAR 3D Spinning
+category: ranging
+sensor_type: lidar_3d_spinning
+description: Mechanical spinning LiDAR for 360-degree 3D point clouds
+aliases: []
+keywords:
+  identity:
+  - lidar 3d spinning
+  - lidar 3d spinning
+  descriptions:
+  - 3d lidar
+  - spinning lidar
+  - mechanical lidar
+  - velodyne
+  - ouster
+  - 360 degree
+  application:
+  - point cloud
+  - autonomous driving
+  - mapping
+  - localization
+  - slam
+  - multi beam
+  industry:
+  - vertical channels
+  - dual return
+  - high resolution
+  components:
+  - long range
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 50
+    max: 300
+    typical: 120
+  frame_rate_fps:
+    min: 10
+    max: 20
+    typical: 10
+  power_watts:
+    min: 8
+    max: 25
+    typical: 15
+  cost_usd:
+    min: 1000
+    max: 75000
+    typical: 6000
+reference_products:
+- id: velodyne_puck
+  name: Velodyne VLP-16 Puck
+  vendor: Velodyne
+  cost_usd: 4000
+  range_m: 100
+- id: ouster_os1_64
+  name: Ouster OS1-64
+  vendor: Ouster
+  cost_usd: 6000
+  range_m: 120

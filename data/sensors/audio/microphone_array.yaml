@@ -1,0 +1,45 @@
+id: audio.microphone_array
+name: Microphone Array
+category: audio
+sensor_type: microphone_array
+description: Multi-element array for beamforming and source localization
+aliases: []
+keywords:
+  identity:
+  - microphone array
+  - microphone array
+  descriptions:
+  - microphone array
+  - beamforming
+  - source localization
+  - direction of arrival
+  - doa
+  - far field
+  application:
+  - noise cancellation
+  - echo cancellation
+  - smart speaker
+  - voice assistant
+  - respeaker
+  - matrix
+  industry:
+  - spatial audio
+  - conference
+  - surveillance
+  components:
+  - acoustic camera
+classification:
+  modality: audio
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.1
+    max: 2
+    typical: 0.5
+  cost_usd:
+    min: 20
+    max: 500
+    typical: 80

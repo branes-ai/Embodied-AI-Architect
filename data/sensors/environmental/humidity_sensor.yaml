@@ -1,0 +1,44 @@
+id: environmental.humidity_sensor
+name: Humidity Sensor
+category: environmental
+sensor_type: humidity_sensor
+description: Relative humidity measurement
+aliases: []
+keywords:
+  identity:
+  - humidity sensor
+  - humidity sensor
+  descriptions:
+  - humidity
+  - relative humidity
+  - rh
+  - moisture
+  - dew point
+  - capacitive
+  application:
+  - resistive
+  - hygrometer
+  - sht40
+  - bme280
+  - weather
+  - hvac
+  industry:
+  - agriculture
+  - greenhouse
+  - cleanroom
+  components:
+  - environmental monitoring
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  accuracy:
+    typical: 2
+    unit: percent_rh
+  cost_usd:
+    min: 1
+    max: 30
+    typical: 5

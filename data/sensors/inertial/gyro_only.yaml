@@ -1,0 +1,45 @@
+id: inertial.gyro_only
+name: Gyroscope
+category: inertial
+sensor_type: gyro_only
+description: Single-axis or 3-axis angular rate sensor
+aliases: []
+keywords:
+  identity:
+  - gyroscope
+  - gyro only
+  descriptions:
+  - gyroscope
+  - angular rate
+  - rotation
+  - mems gyro
+  - ring laser
+  - fiber optic
+  application:
+  - fog
+  - tactical grade
+  - navigation grade
+  - rate sensor
+  - yaw rate
+  - stabilization
+  industry:
+  - optical gyro
+  - hemispherical resonator
+  - coriolis
+  components:
+  - bias stability
+classification:
+  modality: inertial
+  output_type: imu_data
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 5.0
+    typical: 0.1
+  cost_usd:
+    min: 1
+    max: 50000
+    typical: 20

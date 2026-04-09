@@ -1,0 +1,59 @@
+id: visual.thermal_camera
+name: Thermal Camera
+category: visual
+sensor_type: thermal_camera
+description: Infrared thermal imaging for heat detection and night vision
+aliases: []
+keywords:
+  identity:
+  - thermal camera
+  - thermal camera
+  descriptions:
+  - thermal imaging
+  - infrared
+  - lwir
+  - mwir
+  - flir
+  - heat detection
+  application:
+  - night vision
+  - temperature measurement
+  - thermography
+  - fever detection
+  - hot spot
+  - radiometric
+  industry:
+  - microbolometer
+  - uncooled
+  - vanadium oxide
+  components:
+  - amorphous silicon
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 80
+    max: 1024
+    typical: 320
+  frame_rate_fps:
+    min: 9
+    max: 60
+    typical: 30
+  power_watts:
+    min: 0.5
+    max: 3.0
+    typical: 1.0
+  cost_usd:
+    min: 200
+    max: 10000
+    typical: 2000
+reference_products:
+- id: flir_boson_640
+  name: FLIR Boson 640
+  vendor: Teledyne FLIR
+  cost_usd: 4000
+  resolution: 640x512

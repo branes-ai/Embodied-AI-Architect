@@ -1,0 +1,49 @@
+id: ranging.radar_2d
+name: Radar 2D
+category: ranging
+sensor_type: radar_2d
+description: 2D radar for speed and distance measurement
+aliases: []
+keywords:
+  identity:
+  - radar 2d
+  - radar 2d
+  descriptions:
+  - 2d radar
+  - doppler radar
+  - fmcw radar
+  - millimeter wave
+  - mmwave
+  - 77ghz
+  application:
+  - 24ghz
+  - speed measurement
+  - distance measurement
+  - automotive radar
+  - adas
+  - blind spot
+  industry:
+  - collision avoidance
+  - weather robust
+  - all weather
+  components:
+  - fog penetration
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 10
+    max: 250
+    typical: 100
+  power_watts:
+    min: 2
+    max: 10
+    typical: 5
+  cost_usd:
+    min: 50
+    max: 500
+    typical: 150

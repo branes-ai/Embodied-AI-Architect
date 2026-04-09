@@ -1,0 +1,74 @@
+id: visual.stereo_camera
+name: Stereo Camera
+category: visual
+sensor_type: stereo_camera
+description: Dual-lens camera system for depth estimation via stereo disparity
+aliases: []
+keywords:
+  identity:
+  - stereo camera
+  - stereo camera
+  descriptions:
+  - stereo vision
+  - depth estimation
+  - disparity map
+  - binocular
+  - 3d reconstruction
+  - point cloud
+  application:
+  - baseline
+  - rectification
+  - semi-global matching
+  - block matching
+  - obstacle avoidance
+  - slam
+  industry:
+  - visual odometry
+  - autonomous navigation
+  - structured light
+  components:
+  - passive stereo
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 640
+    max: 2208
+    typical: 1280
+  frame_rate_fps:
+    min: 15
+    max: 100
+    typical: 30
+  range_m:
+    min: 0.3
+    max: 20
+    typical: 10
+  power_watts:
+    min: 1.0
+    max: 5.0
+    typical: 2.5
+  weight_grams:
+    min: 50
+    max: 300
+    typical: 150
+  cost_usd:
+    min: 100
+    max: 1000
+    typical: 400
+reference_products:
+- id: stereolabs_zed2i
+  name: Stereolabs ZED 2i
+  vendor: Stereolabs
+  cost_usd: 449
+  resolution: 2208x1242
+  frame_rate_fps: 100
+- id: intel_realsense_d435
+  name: Intel RealSense D435
+  vendor: Intel
+  cost_usd: 179
+  resolution: 1280x720
+  frame_rate_fps: 90

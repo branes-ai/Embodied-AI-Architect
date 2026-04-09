@@ -1,0 +1,58 @@
+id: force.force_torque_6dof
+name: 6-DoF Force/Torque Sensor
+category: force
+sensor_type: force_torque_6dof
+description: Multi-axis force and torque measurement
+aliases: []
+keywords:
+  identity:
+  - 6-dof force/torque sensor
+  - force torque 6dof
+  descriptions:
+  - force torque
+  - 6 axis
+  - ft sensor
+  - ati
+  - robotiq
+  - force control
+  application:
+  - impedance control
+  - compliant manipulation
+  - assembly
+  - polishing
+  - grinding
+  - strain gauge
+  industry:
+  - wheatstone bridge
+  - overload protection
+  - tool changer
+  components:
+  - end effector
+classification:
+  modality: force
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 0
+    max: 0
+    typical: 0
+  power_watts:
+    min: 0.5
+    max: 5
+    typical: 2
+  cost_usd:
+    min: 1000
+    max: 15000
+    typical: 5000
+reference_products:
+- id: ati_nano17
+  name: ATI Nano17
+  vendor: ATI Industrial Automation
+  cost_usd: 5000
+- id: robotiq_ft300
+  name: Robotiq FT 300
+  vendor: Robotiq
+  cost_usd: 3500

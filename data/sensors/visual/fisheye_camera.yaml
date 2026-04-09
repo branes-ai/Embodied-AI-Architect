@@ -1,0 +1,53 @@
+id: visual.fisheye_camera
+name: Fisheye Camera
+category: visual
+sensor_type: fisheye_camera
+description: Ultra-wide-angle camera (>180 degree FOV) for surround-view
+aliases: []
+keywords:
+  identity:
+  - fisheye camera
+  - fisheye camera
+  descriptions:
+  - fisheye
+  - ultra wide angle
+  - surround view
+  - 360 degree
+  - panoramic
+  - equidistant projection
+  application:
+  - bird eye view
+  - parking assist
+  - adas
+  - distortion
+  - dewarping
+  - omnidirectional
+  industry:
+  - hemisphere
+  - barrel distortion
+  - calibration
+  components:
+  - peripheral vision
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  fov_degrees:
+    min: 150
+    max: 220
+    typical: 190
+  resolution:
+    min: 1280
+    max: 4096
+    typical: 1920
+  frame_rate_fps:
+    min: 15
+    max: 60
+    typical: 30
+  cost_usd:
+    min: 20
+    max: 300
+    typical: 80

@@ -1,0 +1,45 @@
+id: environmental.light_sensor
+name: Ambient Light Sensor
+category: environmental
+sensor_type: light_sensor
+description: Illuminance measurement for display and exposure control
+aliases: []
+keywords:
+  identity:
+  - ambient light sensor
+  - light sensor
+  descriptions:
+  - light sensor
+  - ambient light
+  - lux
+  - illuminance
+  - photodiode
+  - phototransistor
+  application:
+  - display brightness
+  - auto exposure
+  - daylight
+  - street lighting
+  - smart home
+  - energy saving
+  industry:
+  - tsl2561
+  - veml7700
+  - bh1750
+  components:
+  - spectral response
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.0001
+    max: 0.01
+    typical: 0.001
+  cost_usd:
+    min: 0.5
+    max: 10
+    typical: 2

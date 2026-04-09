@@ -1,0 +1,49 @@
+id: ranging.sonar
+name: Sonar
+category: ranging
+sensor_type: sonar
+description: Underwater acoustic ranging and imaging
+aliases: []
+keywords:
+  identity:
+  - sonar
+  - sonar
+  descriptions:
+  - sonar
+  - underwater
+  - acoustic
+  - echo sounder
+  - multibeam
+  - side scan
+  application:
+  - bathymetry
+  - fish finder
+  - submarine
+  - auv
+  - rov
+  - marine
+  industry:
+  - ocean
+  - seabed mapping
+  - transducer
+  components:
+  - hydroacoustic
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 1
+    max: 10000
+    typical: 100
+  power_watts:
+    min: 1
+    max: 100
+    typical: 20
+  cost_usd:
+    min: 100
+    max: 50000
+    typical: 3000
