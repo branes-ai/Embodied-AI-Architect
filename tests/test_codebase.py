@@ -951,16 +951,76 @@ class TestInferConstraints:
             ),
             self._kernel(
                 kernel_type="ml_inference",
-                estimated_ops_per_invocation=10e9,
+                estimated_ops_per_invocation=5e9,
+                invocation_frequency_hz=10.0,  # 5*10 = 50 GFLOPS → medium confidence
             ),
         )
         suggestions = infer_constraints(analysis)
-        kwargs = suggestions.to_design_constraints_kwargs()
-        assert "max_latency_ms" in kwargs
-        assert "max_power_watts" in kwargs
-        # Advisory keys excluded
-        assert "hardware_class" not in kwargs
-        assert "memory_bw_critical" not in kwargs
+        # Default min_confidence="high" → only the high-confidence latency
+        kwargs_high = suggestions.to_design_constraints_kwargs()
+        assert "max_latency_ms" in kwargs_high
+        assert "max_power_watts" not in kwargs_high  # power is medium-confidence
+        # Lowering the bar pulls in the medium-confidence power suggestion
+        kwargs_med = suggestions.to_design_constraints_kwargs(min_confidence="medium")
+        assert "max_latency_ms" in kwargs_med
+        assert "max_power_watts" in kwargs_med
+        # Advisory keys excluded at any confidence level
+        assert "hardware_class" not in kwargs_med
+        assert "memory_bw_critical" not in kwargs_med
+
+    def test_throughput_uses_invocation_frequency(self):
+        """CodeRabbit PR #89: total_gflops must scale by invocation frequency.
+
+        A 10 GFLOP/invocation kernel at 100Hz is 1000 GFLOPS, which crosses
+        the GPU threshold. With the bug, it stayed at 10 GFLOPS and only
+        triggered the NPU rule.
+        """
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        analysis = self._analysis(
+            self._kernel(
+                kernel_type="ml_inference",
+                estimated_ops_per_invocation=10e9,
+                invocation_frequency_hz=100.0,
+            )
+        )
+        suggestions = infer_constraints(analysis)
+        hw = next(c for c in suggestions.constraints if c.name == "hardware_class")
+        # 10 × 100 = 1000 GFLOPS → above GPU threshold (50)
+        assert hw.value == "gpu"
+
+    def test_single_hardware_class_winner(self):
+        """CodeRabbit PR #89: only one hardware_class entry is emitted even
+        when both ML and DSP heuristics fire on the same analysis."""
+        from embodied_ai_architect.codebase.converter import infer_constraints
+
+        # Construct a workload that triggers BOTH the ML rule (NPU) and
+        # the DSP rule (signal_processing at high frequency). Without the
+        # single-winner fix, two hardware_class entries would land in
+        # the list and one would silently win in to_dict().
+        analysis = self._analysis(
+            *[
+                self._kernel(
+                    name=f"ml_{i}",
+                    kernel_type="ml_inference",
+                    estimated_ops_per_invocation=2e9,
+                )
+                for i in range(4)
+            ],
+            self._kernel(
+                name="sp",
+                kernel_type="signal_processing",
+                invocation_frequency_hz=5000.0,
+            ),
+        )
+        suggestions = infer_constraints(analysis)
+        hw_entries = [c for c in suggestions.constraints if c.name == "hardware_class"]
+        assert len(hw_entries) == 1
+        # ML rule is high confidence — it must beat the medium-confidence DSP rule
+        assert hw_entries[0].confidence == "high"
+        assert hw_entries[0].value == "npu"
+        # to_dict() round-trips the single winner
+        assert suggestions.to_dict()["hardware_class"]["value"] == "npu"
 
     def test_to_design_constraints_kwargs_feeds_constructor(self):
         """The kwargs subset can be spread directly into a DesignConstraints."""

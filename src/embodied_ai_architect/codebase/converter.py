@@ -397,8 +397,19 @@ def _max_invocation_frequency_by_type(analysis: CodebaseAnalysisResult, kernel_t
 
 
 def _total_gflops(analysis: CodebaseAnalysisResult) -> float:
-    """Sum estimated_ops_per_invocation across kernels (in GFLOPS)."""
-    return sum(k.estimated_ops_per_invocation for k in analysis.kernels) / 1e9
+    """Aggregate compute throughput in GFLOPS (ops/sec ÷ 1e9).
+
+    `estimated_ops_per_invocation` is per-call, not per-second — multiplying
+    by `invocation_frequency_hz` gives the actual throughput. When the
+    frequency is unknown, fall back to 1 Hz (one invocation per second) as
+    a pessimistic floor so the kernel still contributes to the total
+    (CodeRabbit PR #89).
+    """
+    total_ops_per_sec = 0.0
+    for k in analysis.kernels:
+        rate = k.invocation_frequency_hz if k.invocation_frequency_hz > 0 else 1.0
+        total_ops_per_sec += k.estimated_ops_per_invocation * rate
+    return total_ops_per_sec / 1e9
 
 
 def infer_constraints(analysis: CodebaseAnalysisResult) -> SuggestedConstraints:
@@ -454,10 +465,21 @@ def infer_constraints(analysis: CodebaseAnalysisResult) -> SuggestedConstraints:
             )
         )
 
-    # --- 3. Hardware class hint from ML kernel share + GFLOPS ------------
+    # --- 3. Hardware class hint (single winner) --------------------------
+    # Score every candidate hardware class and emit ONE entry — issuing
+    # multiple `hardware_class` suggestions would silently collide in
+    # `to_dict()` (CodeRabbit PR #89). Score = (confidence_rank, share)
+    # so high-confidence rules beat medium ones, and ties break by
+    # kernel-type dominance.
     ml_share = shares.get("ml_inference", 0.0)
+    sp_freq = _max_invocation_frequency_by_type(analysis, "signal_processing")
+    sp_share = shares.get("signal_processing", 0.0)
+
+    _CONF_RANK = {"high": 3, "medium": 2, "low": 1}
+    hw_candidates: list[SuggestedConstraint] = []
+
     if ml_share > 0.5 and total_gflops >= _ML_GPU_GFLOPS_THRESHOLD:
-        suggestions.append(
+        hw_candidates.append(
             SuggestedConstraint(
                 name="hardware_class",
                 value="gpu",
@@ -469,7 +491,7 @@ def infer_constraints(analysis: CodebaseAnalysisResult) -> SuggestedConstraints:
             )
         )
     elif ml_share > 0.5 and total_gflops >= _ML_NPU_GFLOPS_THRESHOLD:
-        suggestions.append(
+        hw_candidates.append(
             SuggestedConstraint(
                 name="hardware_class",
                 value="npu",
@@ -481,11 +503,8 @@ def infer_constraints(analysis: CodebaseAnalysisResult) -> SuggestedConstraints:
             )
         )
 
-    # --- 4. DSP hint from high-frequency signal processing ---------------
-    sp_freq = _max_invocation_frequency_by_type(analysis, "signal_processing")
-    sp_share = shares.get("signal_processing", 0.0)
     if sp_share > 0.3 and sp_freq >= _SIGNAL_PROC_HIGH_FREQ_HZ:
-        suggestions.append(
+        hw_candidates.append(
             SuggestedConstraint(
                 name="hardware_class",
                 value="dsp",
@@ -495,6 +514,16 @@ def infer_constraints(analysis: CodebaseAnalysisResult) -> SuggestedConstraints:
                 ),
             )
         )
+
+    if hw_candidates:
+        winner = max(
+            hw_candidates,
+            key=lambda c: (
+                _CONF_RANK.get(c.confidence, 0),
+                ml_share if c.value in ("gpu", "npu") else sp_share,
+            ),
+        )
+        suggestions.append(winner)
 
     # --- 5. Memory bandwidth flag from I/O bound dominance ---------------
     io_share = shares.get("io_bound", 0.0)

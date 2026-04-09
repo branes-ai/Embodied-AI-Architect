@@ -125,12 +125,21 @@ class SuggestedConstraints(BaseModel):
             for c in self.constraints
         }
 
-    def to_design_constraints_kwargs(self) -> dict[str, float]:
-        """Return the high-confidence numeric suggestions as DesignConstraints kwargs.
+    def to_design_constraints_kwargs(
+        self,
+        min_confidence: str = "high",
+    ) -> dict[str, float]:
+        """Return numeric suggestions as DesignConstraints kwargs.
 
-        Only the canonical numeric fields are included so the output can be
-        spread directly into a DesignConstraints constructor. Advisory keys
-        like `hardware_class` and `memory_bw_critical` are excluded.
+        Only the canonical numeric fields (max_power_watts, max_latency_ms,
+        max_area_mm2, max_cost_usd) are included so the output can be
+        spread directly into a `DesignConstraints` constructor. Advisory
+        keys like `hardware_class` and `memory_bw_critical` are excluded.
+
+        Filters by `min_confidence` (default "high") so callers don't
+        silently propagate gut-feel guesses into binding design constraints
+        (CodeRabbit PR #89). Pass `min_confidence="low"` to opt into all
+        suggestions.
         """
         canonical = {
             "max_power_watts",
@@ -138,8 +147,12 @@ class SuggestedConstraints(BaseModel):
             "max_area_mm2",
             "max_cost_usd",
         }
+        rank = {"high": 3, "medium": 2, "low": 1}
+        threshold = rank.get(min_confidence, 3)
         return {
             c.name: float(c.value)
             for c in self.constraints
-            if c.name in canonical and isinstance(c.value, (int, float))
+            if c.name in canonical
+            and isinstance(c.value, (int, float))
+            and rank.get(c.confidence, 0) >= threshold
         }
