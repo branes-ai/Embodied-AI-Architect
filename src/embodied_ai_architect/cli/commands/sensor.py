@@ -42,27 +42,27 @@ def sensor_list(ctx, modality):
     if json_output:
         click.echo(
             json.dumps(
-                [{"id": s.id, "name": s.name, "modality": s.modality} for s in sensors], indent=2
+                [{"id": s.id, "name": s.name, "category": s.category} for s in sensors],
+                indent=2,
             )
         )
         return
 
     if not sensors:
-        msg = "Sensor registry not yet populated."
+        msg = "No sensors found."
         if modality:
             msg += f" (filtered by modality={modality})"
         console.print(f"[yellow]{msg}[/yellow]")
-        console.print("[dim]Sensor definitions will be added in Phase 2.[/dim]")
         return
 
     table = Table(title="Sensors", show_header=True)
     table.add_column("ID", style="cyan")
     table.add_column("Name")
-    table.add_column("Modality")
-    table.add_column("Vendor", style="dim")
+    table.add_column("Category")
+    table.add_column("Type", style="dim")
 
     for s in sensors:
-        table.add_row(s.id, s.name, s.modality, s.vendor)
+        table.add_row(s.id, s.name, s.category, s.sensor_type)
 
     console.print(table)
 
@@ -92,8 +92,8 @@ def sensor_show(ctx, sensor_id):
                 {
                     "id": s.id,
                     "name": s.name,
-                    "modality": s.modality,
-                    "vendor": s.vendor,
+                    "category": s.category,
+                    "sensor_type": s.sensor_type,
                     "description": s.description,
                     "attributes": s.attributes,
                 },
@@ -103,11 +103,13 @@ def sensor_show(ctx, sensor_id):
         return
 
     console.print(f"\n[bold cyan]{s.name}[/bold cyan]  ({s.id})")
-    console.print(f"  Modality: {s.modality}")
-    if s.vendor:
-        console.print(f"  Vendor:   {s.vendor}")
+    console.print(f"  Category:  {s.category}")
+    if s.sensor_type:
+        console.print(f"  Type:      {s.sensor_type}")
     if s.description:
         console.print(f"  {s.description}")
+    if s.aliases:
+        console.print(f"  Aliases:   {', '.join(s.aliases)}")
     if s.attributes:
         console.print("\n  [bold]Attributes[/bold]")
         for k, v in s.attributes.items():
@@ -128,23 +130,32 @@ def sensor_search(ctx, query):
     if json_output:
         click.echo(
             json.dumps(
-                [{"id": s.id, "name": s.name, "modality": s.modality} for s in results], indent=2
+                [
+                    {
+                        "id": r.sensor_id,
+                        "name": r.sensor.name,
+                        "category": r.sensor.category,
+                        "score": r.score,
+                    }
+                    for r in results
+                ],
+                indent=2,
             )
         )
         return
 
     if not results:
         console.print(f"[yellow]No sensors matching '{query}'.[/yellow]")
-        console.print("[dim]Sensor registry not yet populated (Phase 2).[/dim]")
         return
 
     table = Table(title=f"Search: {query}", show_header=True)
     table.add_column("ID", style="cyan")
     table.add_column("Name")
-    table.add_column("Modality")
+    table.add_column("Category")
+    table.add_column("Score", style="green")
 
-    for s in results:
-        table.add_row(s.id, s.name, s.modality)
+    for r in results:
+        table.add_row(r.sensor_id, r.sensor.name, r.sensor.category, f"{r.score:.3f}")
 
     console.print(table)
 
