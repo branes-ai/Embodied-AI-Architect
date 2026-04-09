@@ -144,6 +144,9 @@ class SoCDesignRunner:
         max_iterations: int = 20,
         session_id: Optional[str] = None,
         governance_dict: Optional[dict] = None,
+        rtl_enabled: bool = False,
+        rtl_area_feedback: bool = False,
+        enable_moo: bool = True,
     ) -> SoCDesignState:
         """Run a complete SoC design session (batch mode, no review).
 
@@ -155,6 +158,9 @@ class SoCDesignRunner:
             max_iterations: Maximum optimization iterations.
             session_id: Optional session identifier.
             governance_dict: Optional governance policy dict.
+            rtl_enabled: Enable KPU + floorplan + bandwidth + RTL pipeline.
+            rtl_area_feedback: Enable RTL→KPU area feedback loop (issue #31).
+            enable_moo: Schedule moo_explorer in default plan (default True).
 
         Returns:
             Final SoCDesignState after optimization completes.
@@ -167,6 +173,9 @@ class SoCDesignRunner:
             max_iterations=max_iterations,
             session_id=session_id,
             governance=governance_dict,
+            rtl_enabled=rtl_enabled,
+            rtl_area_feedback=rtl_area_feedback,
+            enable_moo=enable_moo,
         )
 
         graph = self._build_graph()

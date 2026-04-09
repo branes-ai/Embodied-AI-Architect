@@ -146,6 +146,43 @@ def session_show(ctx, session_id, latest, json_out):
             console.print(f"  {name:<12} margin: {margin_str:>8}  {verdict:<6}  {trend}")
         console.print()
 
+    # KPU configuration summary (issue #35): show the architect-facing
+    # micro-architecture knobs at a glance when rtl_enabled produced a
+    # kpu_config. Distinct from the convergence history below.
+    kpu_config = state.get("kpu_config", {})
+    if kpu_config:
+        ct = kpu_config.get("compute_tile", {}) or {}
+        mt = kpu_config.get("memory_tile", {}) or {}
+        noc = kpu_config.get("noc", {}) or {}
+        dram = kpu_config.get("dram", {}) or {}
+        console.print(
+            f"[bold]KPU Configuration[/bold] — {kpu_config.get('name', '?')} at "
+            f"{kpu_config.get('process_nm', '?')}nm"
+        )
+        console.print(
+            f"  Grid:        {kpu_config.get('array_rows', '?')} x "
+            f"{kpu_config.get('array_cols', '?')} checkerboard"
+        )
+        console.print(
+            f"  Systolic:    {ct.get('array_rows', '?')} x {ct.get('array_cols', '?')} "
+            f"@ {ct.get('frequency_mhz', '?')}MHz"
+        )
+        console.print(
+            f"  SRAM:        L1={ct.get('l1_size_bytes', 0) // 1024}KB | "
+            f"L2={ct.get('l2_size_bytes', 0) // 1024}KB | "
+            f"L3={mt.get('l3_tile_size_bytes', 0) // 1024}KB"
+        )
+        console.print(
+            f"  NoC:         {noc.get('topology', '?')}, "
+            f"{noc.get('link_width_bits', '?')}-bit, {noc.get('frequency_mhz', '?')}MHz"
+        )
+        console.print(
+            f"  DRAM:        {dram.get('technology', '?')}, "
+            f"{dram.get('num_controllers', '?')} controllers, "
+            f"{dram.get('capacity_gb', '?')}GB"
+        )
+        console.print()
+
     # KPU convergence history (issue #34): replay the inner-loop sequence
     # so the architect can see how the micro-architecture evolved.
     kpu_history = state.get("kpu_optimization_history", [])
