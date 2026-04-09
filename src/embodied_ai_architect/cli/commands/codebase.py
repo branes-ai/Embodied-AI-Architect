@@ -214,13 +214,33 @@ def codebase_assess(
                     "source-mapped operator breakdown[/dim]"
                 )
 
+        # Issue #39: when no explicit --hardware was given, run the
+        # workload-based recommender so the architect sees a ranked list
+        # of candidates instead of a generic assessment.
+        recommendations = []
+        if not target_hardware:
+            from embodied_ai_architect.codebase.recommender import recommend_hardware
+
+            workload_profile = result.data.get("workload_profile", {}) or {}
+            recommendations = recommend_hardware(
+                workload_profile,
+                top_k=5,
+                power_envelope_watts=power_budget or 0.0,
+            )
+
         if json_output:
             payload = dict(result.data)
             if session_id:
                 payload["session_id"] = session_id
+            if recommendations:
+                payload["recommendations"] = [r.to_dict() for r in recommendations]
             click.echo(json.dumps(payload, indent=2, default=str))
         else:
             _display_assessment_result(result.data, power_budget, latency_target)
+            if recommendations:
+                _display_hardware_recommendations(
+                    recommendations, result.data.get("workload_profile", {})
+                )
 
     except Exception as e:
         if json_output:
@@ -774,6 +794,44 @@ def _display_scan_result(result) -> None:
             f"\n[bold]Next step[/bold] — run LLM-powered analysis on this entry point:\n\n"
             f"  branes codebase analyze {project_path}\n"
         )
+
+
+def _display_hardware_recommendations(recommendations, workload_profile) -> None:
+    """Display ranked hardware recommendations (issue #39)."""
+    if not recommendations:
+        return
+
+    from embodied_ai_architect.codebase.recommender import classify_workload
+
+    archetype = classify_workload(workload_profile or {})
+    gflops = float((workload_profile or {}).get("total_estimated_gflops", 0.0) or 0.0)
+
+    console.print()
+    console.print(
+        f"[bold cyan]RECOMMENDED HARDWARE[/bold cyan] "
+        f"[dim](for {archetype} workload, {gflops:.1f} GFLOPS)[/dim]"
+    )
+    table = Table(show_header=True, border_style="cyan")
+    table.add_column("Rank", style="dim", width=4)
+    table.add_column("Hardware", style="cyan")
+    table.add_column("Vendor", style="dim")
+    table.add_column("Fit", justify="right")
+    table.add_column("Strengths", style="green")
+    table.add_column("Weaknesses", style="yellow")
+
+    for i, rec in enumerate(recommendations, start=1):
+        table.add_row(
+            str(i),
+            rec.name,
+            rec.vendor,
+            f"{rec.fit_score:.2f}",
+            ", ".join(rec.strengths[:3]) or "—",
+            ", ".join(rec.weaknesses[:2]) or "—",
+        )
+    console.print(table)
+    console.print(
+        "[dim]Pass [cyan]--hardware <id1>,<id2>[/cyan] to assess against " "specific targets[/dim]"
+    )
 
 
 def _display_suggested_constraints(suggestions) -> None:

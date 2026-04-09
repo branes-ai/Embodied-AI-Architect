@@ -239,6 +239,20 @@ def create_codebase_tool_executors() -> dict[str, Callable]:
                 workload_profile, target_hardware, power_budget_watts, latency_target_ms
             )
 
+            # Step 5: When no specific targets were requested, also call the
+            # workload-based recommender (issue #39) so the chat sees a
+            # ranked list of candidates.
+            recommendations: list[dict[str, Any]] = []
+            if not target_hardware:
+                from embodied_ai_architect.codebase.recommender import recommend_hardware
+
+                recs = recommend_hardware(
+                    workload_profile,
+                    top_k=5,
+                    power_envelope_watts=power_budget_watts or 0.0,
+                )
+                recommendations = [r.to_dict() for r in recs]
+
             output = {
                 "project": scan_result.project_name,
                 "languages": scan_result.languages,
@@ -247,6 +261,7 @@ def create_codebase_tool_executors() -> dict[str, Callable]:
                 "ml_models_found": len(analysis.ml_models),
                 "workload_profile": workload_profile,
                 "hardware_assessment": hw_results,
+                "recommendations": recommendations,
                 "summary": analysis.summary
                 or (
                     f"Analyzed {scan_result.project_name}: "

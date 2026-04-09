@@ -1046,3 +1046,257 @@ class TestInferConstraints:
         assert entry["value"] == 10.0
         assert entry["confidence"] == "high"
         assert "rationale" in entry
+
+
+# ---------------------------------------------------------------------------
+# Issue #39: Hardware target recommender
+# ---------------------------------------------------------------------------
+
+
+class TestClassifyWorkload:
+    """The workload archetype classifier."""
+
+    def _wp(self, *kernel_types):
+        """Build a workload_profile dict with the given kernel types."""
+        return {
+            "workloads": [{"kernel_type": kt} for kt in kernel_types],
+            "total_estimated_gflops": 0.0,
+            "total_estimated_memory_mb": 0.0,
+        }
+
+    def test_empty_returns_hybrid(self):
+        from embodied_ai_architect.codebase.recommender import classify_workload
+
+        assert classify_workload({"workloads": []}) == "hybrid"
+        assert classify_workload({}) == "hybrid"
+
+    def test_ml_dominant(self):
+        from embodied_ai_architect.codebase.recommender import classify_workload
+
+        wp = self._wp("ml_inference", "ml_inference", "ml_inference", "general_compute")
+        assert classify_workload(wp) == "ml_heavy"
+
+    def test_control_dominant(self):
+        from embodied_ai_architect.codebase.recommender import classify_workload
+
+        wp = self._wp("control_loop", "control_loop", "control_loop", "general_compute")
+        assert classify_workload(wp) == "control_heavy"
+
+    def test_signal_dominant(self):
+        from embodied_ai_architect.codebase.recommender import classify_workload
+
+        wp = self._wp("signal_processing", "signal_processing", "signal_processing", "io_bound")
+        assert classify_workload(wp) == "signal_heavy"
+
+    def test_io_dominant(self):
+        from embodied_ai_architect.codebase.recommender import classify_workload
+
+        wp = self._wp("io_bound", "io_bound", "io_bound", "general_compute")
+        assert classify_workload(wp) == "io_heavy"
+
+    def test_no_clear_winner_is_hybrid(self):
+        from embodied_ai_architect.codebase.recommender import classify_workload
+
+        # 50/50 split — no archetype clears the 60% threshold
+        wp = self._wp("ml_inference", "ml_inference", "control_loop", "control_loop")
+        assert classify_workload(wp) == "hybrid"
+
+
+class TestRecommendHardware:
+    """The hardware-vs-workload scoring layer."""
+
+    def _make_hw(
+        self,
+        hw_id: str,
+        name: str,
+        vendor: str,
+        peak_tops: float | None,
+        memory_gb: float | None,
+        tdp: float | None,
+        cost: float | None,
+        compute_paradigm: str = "cpu",
+        hardware_type: str = "embedded",
+        quantization=None,
+    ):
+        """Build a duck-typed HardwareEntry for testing without the full schema."""
+        from types import SimpleNamespace
+
+        return SimpleNamespace(
+            id=hw_id,
+            name=name,
+            vendor=vendor,
+            compute_paradigm=compute_paradigm,
+            hardware_type=hardware_type,
+            cost_usd=cost,
+            capabilities=SimpleNamespace(
+                peak_tops_int8=peak_tops,
+                memory_gb=memory_gb,
+                quantization_support=quantization or [],
+                int4_support=False,
+                sparse_acceleration=False,
+            ),
+            power=SimpleNamespace(tdp_watts=tdp),
+        )
+
+    def _ml_workload(self, gflops=10.0, memory_mb=50.0):
+        return {
+            "workloads": [
+                {"kernel_type": "ml_inference"},
+                {"kernel_type": "ml_inference"},
+                {"kernel_type": "ml_inference"},
+            ],
+            "total_estimated_gflops": gflops,
+            "total_estimated_memory_mb": memory_mb,
+        }
+
+    def _control_workload(self):
+        return {
+            "workloads": [
+                {"kernel_type": "control_loop"},
+                {"kernel_type": "control_loop"},
+                {"kernel_type": "control_loop"},
+            ],
+            "total_estimated_gflops": 0.5,
+            "total_estimated_memory_mb": 1.0,
+        }
+
+    def _candidates(self):
+        """A small fleet covering NPU, GPU, MCU, and DSP archetypes."""
+        return [
+            self._make_hw(
+                "jetson_orin_nx",
+                "Jetson Orin NX",
+                "NVIDIA",
+                peak_tops=100.0,
+                memory_gb=8.0,
+                tdp=15.0,
+                cost=400.0,
+                compute_paradigm="gpu",
+                hardware_type="dev_board",
+                quantization=["int8", "fp16"],
+            ),
+            self._make_hw(
+                "hailo8",
+                "Hailo-8",
+                "Hailo",
+                peak_tops=26.0,
+                memory_gb=2.0,
+                tdp=2.5,
+                cost=200.0,
+                compute_paradigm="npu",
+                hardware_type="accelerator",
+                quantization=["int8"],
+            ),
+            self._make_hw(
+                "stm32_f4",
+                "STM32 F4",
+                "STMicro",
+                peak_tops=None,
+                memory_gb=0.001,
+                tdp=0.5,
+                cost=10.0,
+                compute_paradigm="cpu",
+                hardware_type="mcu",
+            ),
+            self._make_hw(
+                "ti_c66",
+                "TI C66x DSP",
+                "TI",
+                peak_tops=None,
+                memory_gb=0.5,
+                tdp=3.0,
+                cost=80.0,
+                compute_paradigm="dsp",
+                hardware_type="dsp",
+            ),
+        ]
+
+    def test_returns_empty_when_no_candidates(self):
+        from embodied_ai_architect.codebase.recommender import recommend_hardware
+
+        recs = recommend_hardware(self._ml_workload(), candidates=[])
+        assert recs == []
+
+    def test_ml_heavy_ranks_npu_or_gpu_first(self):
+        """The headline assertion from the issue body."""
+        from embodied_ai_architect.codebase.recommender import recommend_hardware
+
+        recs = recommend_hardware(
+            self._ml_workload(gflops=8.4, memory_mb=50.0),
+            candidates=self._candidates(),
+            top_k=4,
+        )
+        assert len(recs) == 4
+        # Top result must be an ML accelerator (NPU or GPU paradigm)
+        top = recs[0]
+        assert top.id in ("hailo8", "jetson_orin_nx")
+
+    def test_control_heavy_does_not_top_with_gpu(self):
+        """A control-loop workload should not pick the 100 TOPS GPU first."""
+        from embodied_ai_architect.codebase.recommender import recommend_hardware
+
+        recs = recommend_hardware(
+            self._control_workload(),
+            candidates=self._candidates(),
+            top_k=4,
+        )
+        # MCU should rank ahead of the Jetson for tiny control workloads —
+        # cost + power both penalize the big accelerator
+        ids = [r.id for r in recs]
+        assert ids.index("stm32_f4") < ids.index("jetson_orin_nx")
+
+    def test_strengths_and_weaknesses_populated(self):
+        from embodied_ai_architect.codebase.recommender import recommend_hardware
+
+        recs = recommend_hardware(
+            self._ml_workload(),
+            candidates=self._candidates(),
+            top_k=4,
+        )
+        # Every recommendation has at least one strength or weakness
+        for r in recs:
+            assert r.strengths or r.weaknesses
+
+    def test_power_envelope_penalizes_over_budget(self):
+        """Hardware over the power envelope must score worse than under-budget HW."""
+        from embodied_ai_architect.codebase.recommender import recommend_hardware
+
+        # 5W envelope rules out the 15W Jetson
+        recs = recommend_hardware(
+            self._ml_workload(),
+            candidates=self._candidates(),
+            top_k=4,
+            power_envelope_watts=5.0,
+        )
+        ids = [r.id for r in recs]
+        # Hailo (2.5W) and MCU (0.5W) under budget; Jetson (15W) penalized
+        hailo_idx = ids.index("hailo8")
+        jetson_idx = ids.index("jetson_orin_nx")
+        assert hailo_idx < jetson_idx
+
+    def test_top_k_limits_results(self):
+        from embodied_ai_architect.codebase.recommender import recommend_hardware
+
+        recs = recommend_hardware(
+            self._ml_workload(),
+            candidates=self._candidates(),
+            top_k=2,
+        )
+        assert len(recs) == 2
+
+    def test_to_dict_serializable(self):
+        from embodied_ai_architect.codebase.recommender import recommend_hardware
+
+        recs = recommend_hardware(
+            self._ml_workload(),
+            candidates=self._candidates(),
+            top_k=1,
+        )
+        d = recs[0].to_dict()
+        assert "name" in d
+        assert "fit_score" in d
+        assert "strengths" in d
+        # Round-tripped through json without errors
+        import json as _json
+
+        _json.dumps(d)
