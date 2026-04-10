@@ -73,6 +73,11 @@ def spec_new(ctx, name: str, template: str | None, description: str | None):
 
         spec_obj = store.create(name, template=template, description=description)
 
+        # Sync to mission
+        from embodied_ai_architect.specs.mission_bridge import sync_spec_to_mission
+
+        sync_spec_to_mission(name, spec_obj.model_dump(exclude_none=True, mode="json"))
+
         if json_output:
             click.echo(json.dumps(spec_obj.model_dump(exclude_none=True, mode="json"), indent=2))
         else:
@@ -212,6 +217,11 @@ def spec_set(ctx, name: str, path: str, value: str, message: str | None, author:
 
         spec_obj = store.set_field(name, path, parsed_value, author=author, reason=message)
 
+        # Sync to mission
+        from embodied_ai_architect.specs.mission_bridge import sync_spec_to_mission
+
+        sync_spec_to_mission(name, spec_obj.model_dump(exclude_none=True, mode="json"))
+
         if json_output:
             click.echo(json.dumps(spec_obj.model_dump(exclude_none=True, mode="json"), indent=2))
         else:
@@ -247,6 +257,12 @@ def spec_delete(ctx, name: str, path: str, message: str | None, author: str):
 
         store = SpecStore()
         store.delete_field(name, path, author=author, reason=message)
+
+        # Sync to mission (re-read full spec after deletion)
+        spec_obj = store.get(name)
+        from embodied_ai_architect.specs.mission_bridge import sync_spec_to_mission
+
+        sync_spec_to_mission(name, spec_obj.model_dump(exclude_none=True, mode="json"))
 
         if json_output:
             click.echo(json.dumps({"status": "ok", "path": path}))
@@ -490,6 +506,11 @@ def spec_import(ctx, name: str, file_path: str, author: str):
             data = json.loads(path.read_text())
 
         spec_obj = store.import_spec(name, data, author=author, reason=f"Imported from {path.name}")
+
+        # Sync to mission
+        from embodied_ai_architect.specs.mission_bridge import sync_spec_to_mission
+
+        sync_spec_to_mission(name, spec_obj.model_dump(exclude_none=True, mode="json"))
 
         if json_output:
             click.echo(json.dumps(spec_obj.model_dump(exclude_none=True, mode="json"), indent=2))
