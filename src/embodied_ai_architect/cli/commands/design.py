@@ -681,7 +681,6 @@ def design_plan(
 
         mission.design_state = state
         mission.status = MissionStatus.DESIGNED
-        mission.touch()
         store.save(mission)
         console.print(f"[green]Mission '{mission.name}' updated → designed[/green]")
 
@@ -920,7 +919,6 @@ def design_qualify(ctx, goal, mission_id, domain, auto):
             if inputs.get("system_spec"):
                 mission.spec = inputs["system_spec"]
             mission.status = MissionStatus.QUALIFIED
-            mission.touch()
             store.save(mission)
             console.print(f"\n[green]Mission '{mission.name}' updated → qualified[/green]")
             console.print(f"[dim]Next: branes design plan --mission {mission.id}[/dim]")
@@ -932,7 +930,6 @@ def design_qualify(ctx, goal, mission_id, domain, auto):
         # Still save partial results to mission if present
         if mission and store:
             mission.goal = goal
-            mission.touch()
             store.save(mission)
 
 

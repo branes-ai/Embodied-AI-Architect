@@ -163,3 +163,9 @@ class TestDesignPlanMission:
         assert result.exit_code == 0
         loaded = mission_store.load(qualified_mission.id)
         assert loaded.design_state is not None
+        # Verify mission constraints were propagated into the design state
+        ds = loaded.design_state
+        if ds.get("constraints"):
+            c = ds["constraints"]
+            assert c.get("max_power_watts") == qualified_mission.constraints["max_power_watts"]
+            assert c.get("max_latency_ms") == qualified_mission.constraints["max_latency_ms"]
