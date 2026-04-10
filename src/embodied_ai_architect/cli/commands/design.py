@@ -483,7 +483,8 @@ def _save_pipeline(config: dict, path: Path) -> None:
 
 
 @design.command("plan")
-@click.argument("goal")
+@click.argument("goal", required=False, default=None)
+@click.option("--mission", "mission_id", help="Load goal/constraints from a mission")
 @click.option("--power", type=float, help="Max power budget in watts")
 @click.option("--latency", type=float, help="Max latency in ms")
 @click.option("--cost", type=float, help="Max BOM cost in USD")
@@ -493,7 +494,9 @@ def _save_pipeline(config: dict, path: Path) -> None:
 @click.option("--platform", default="", help="Platform type (e.g., drone, amr, quadruped)")
 @click.option("--static", is_flag=True, help="Use static demo plan instead of LLM")
 @click.pass_context
-def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platform, static):
+def design_plan(
+    ctx, goal, mission_id, power, latency, cost, area, process, use_case, platform, static
+):
     """Show the task plan the LLM generates for a design goal.
 
     Runs the planner to decompose a natural-language goal into a task graph
@@ -503,7 +506,7 @@ def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platfo
     \\b
     Examples:
       branes design plan "Drone perception SoC: YOLO at 30fps, <5W, <\\$30"
-      branes design plan "Robot arm vision: <10ms latency" --power 15 --latency 10
+      branes design plan --mission vineyard-sprayer
       branes design plan "Drone SoC" --static   # no API key needed
     """
     from embodied_ai_architect.graphs.soc_state import (
@@ -516,6 +519,46 @@ def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platfo
         render_plan_review_rich,
     )
     from embodied_ai_architect.graphs.specialists import create_default_dispatcher
+
+    # Load mission if specified
+    mission = None
+    if mission_id:
+        from embodied_ai_architect.mission.store import MissionStore
+
+        store = MissionStore()
+        mission = store.load(mission_id)
+        if not mission:
+            console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+            ctx.exit(1)
+            return
+        if not goal:
+            goal = mission.goal
+        if not goal:
+            console.print("[red]Mission has no goal. Set one with 'branes mission edit'.[/red]")
+            ctx.exit(1)
+            return
+        # Pull constraints from mission if not overridden by flags
+        mc = mission.constraints
+        if power is None and mc.get("max_power_watts") is not None:
+            power = mc["max_power_watts"]
+        if latency is None and mc.get("max_latency_ms") is not None:
+            latency = mc["max_latency_ms"]
+        if cost is None and mc.get("max_cost_usd") is not None:
+            cost = mc["max_cost_usd"]
+        if area is None and mc.get("max_area_mm2") is not None:
+            area = mc["max_area_mm2"]
+        if process is None and mc.get("target_process_nm") is not None:
+            process = mc["target_process_nm"]
+        if not use_case and mission.use_case:
+            use_case = mission.use_case
+        if not platform and mission.platform_id:
+            platform = mission.platform_id
+        console.print(f"[dim]Loaded mission: {mission.name} ({mission.id})[/dim]")
+
+    if not goal:
+        console.print("[red]Goal is required. Provide a goal argument or --mission.[/red]")
+        ctx.exit(1)
+        return
 
     # Build constraints
     constraint_kwargs = {}
@@ -632,6 +675,15 @@ def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platfo
 
     state = {**state, **plan_updates}
 
+    # Save plan to mission if we loaded one
+    if mission:
+        from embodied_ai_architect.mission.models import MissionStatus
+
+        mission.design_state = state
+        mission.status = MissionStatus.DESIGNED
+        store.save(mission)
+        console.print(f"[green]Mission '{mission.name}' updated → designed[/green]")
+
     # Display the plan review
     dispatcher = create_default_dispatcher()
     available_agents = dispatcher.registered_agents
@@ -675,7 +727,8 @@ def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platfo
 
 
 @design.command("qualify")
-@click.argument("goal")
+@click.argument("goal", required=False, default=None)
+@click.option("--mission", "mission_id", help="Read/write a mission entity")
 @click.option("--domain", "-d", help="Force a domain (drone, ugv, robot_arm)")
 @click.option(
     "--auto",
@@ -683,7 +736,7 @@ def design_plan(ctx, goal, power, latency, cost, area, process, use_case, platfo
     help="Auto-answer with defaults where possible (non-interactive)",
 )
 @click.pass_context
-def design_qualify(ctx, goal, domain, auto):
+def design_qualify(ctx, goal, mission_id, domain, auto):
     """Qualify a design goal through structured Q&A.
 
     Checks whether a goal is specific enough to produce meaningful design
@@ -692,11 +745,44 @@ def design_qualify(ctx, goal, domain, auto):
     \\b
     Examples:
       branes design qualify "drone perception SoC"
+      branes design qualify --mission vineyard-sprayer
       branes design qualify "cobot for assembly" --domain robot_arm
       branes design qualify "warehouse AMR" --auto
     """
     from embodied_ai_architect.qualification import GoalQualifier
     from embodied_ai_architect.qualification.qualifier import render_qualification_result
+
+    # Load or create mission if --mission is specified
+    mission = None
+    store = None
+    if mission_id:
+        from embodied_ai_architect.mission.models import Mission, MissionStatus
+        from embodied_ai_architect.mission.store import MissionStore
+
+        store = MissionStore()
+        mission = store.load(mission_id)
+        if not mission:
+            # Create new mission with this ID
+            mission = Mission(id=mission_id, name=mission_id)
+            if goal:
+                mission.goal = goal
+            store.save(mission)
+            console.print(f"[green]Created mission '{mission_id}'[/green]")
+        else:
+            console.print(f"[dim]Loaded mission: {mission.name} ({mission.id})[/dim]")
+        if not goal:
+            goal = mission.goal
+        if not goal:
+            console.print(
+                "[red]Goal is required. Provide a goal argument or set it on the mission.[/red]"
+            )
+            ctx.exit(1)
+            return
+
+    if not goal:
+        console.print("[red]Goal is required. Provide a goal argument or --mission.[/red]")
+        ctx.exit(1)
+        return
 
     qualifier = GoalQualifier()
     result = qualifier.assess(goal, domain=domain)
@@ -818,11 +904,33 @@ def design_qualify(ctx, goal, domain, auto):
 
     if result.is_tangible:
         _show_design_inputs(qualifier)
+        # Save qualification results to mission
+        if mission and store:
+            from embodied_ai_architect.mission.models import MissionStatus
+
+            inputs = qualifier.to_design_inputs()
+            mission.goal = inputs.get("goal", goal)
+            mission.platform_id = inputs.get("platform") or None
+            mission.use_case = inputs.get("use_case") or None
+            if inputs.get("constraints"):
+                mission.constraints = inputs["constraints"].model_dump(
+                    exclude_none=True, exclude_defaults=True
+                )
+            if inputs.get("system_spec"):
+                mission.spec = inputs["system_spec"]
+            mission.status = MissionStatus.QUALIFIED
+            store.save(mission)
+            console.print(f"\n[green]Mission '{mission.name}' updated → qualified[/green]")
+            console.print(f"[dim]Next: branes design plan --mission {mission.id}[/dim]")
     else:
         console.print("[yellow]Goal could not be fully qualified.[/yellow]")
         console.print(
             "[dim]Missing: " + ", ".join(result.qualification.missing_dimensions) + "[/dim]"
         )
+        # Still save partial results to mission if present
+        if mission and store:
+            mission.goal = goal
+            store.save(mission)
 
 
 def _show_platform_context(qualifier, console) -> None:
