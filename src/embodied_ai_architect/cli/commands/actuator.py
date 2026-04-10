@@ -203,39 +203,46 @@ def actuator_select(ctx, mission_id, actuator_ids):
     from embodied_ai_architect.actuators import ActuatorRegistry
     from embodied_ai_architect.mission.store import MissionStore
 
+    json_output = ctx.obj.get("json", False)
     store = MissionStore()
     mission = store.load(mission_id)
     if not mission:
-        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        if json_output:
+            click.echo(json.dumps({"error": f"Mission '{mission_id}' not found"}))
+        else:
+            console.print(f"[red]Mission '{mission_id}' not found.[/red]")
         ctx.exit(1)
         return
 
     registry = ActuatorRegistry()
     added = []
+    skipped = []
     for aid in actuator_ids:
         a = registry.get(aid)
         if not a:
-            console.print(f"[yellow]Actuator '{aid}' not found in registry, skipping.[/yellow]")
+            skipped.append(aid)
+            if not json_output:
+                console.print(f"[yellow]Actuator '{aid}' not found in registry, skipping.[/yellow]")
             continue
         if aid not in mission.selected_actuators:
             mission.selected_actuators.append(aid)
             added.append(aid)
-        else:
+        elif not json_output:
             console.print(f"[dim]Actuator '{aid}' already selected.[/dim]")
 
     if added:
         store.save(mission)
-        json_output = ctx.obj.get("json", False)
-        if json_output:
-            click.echo(json.dumps({"added": added, "total": mission.selected_actuators}))
-        else:
-            console.print(
-                f"[green]Added {len(added)} actuator(s) to mission '{mission.name}':[/green]"
-            )
-            for aid in added:
-                a = registry.get(aid)
-                console.print(f"  + {aid} ({a.name if a else '?'})")
-            console.print(f"\n[dim]Total selected: {len(mission.selected_actuators)}[/dim]")
+
+    if json_output:
+        click.echo(
+            json.dumps({"added": added, "skipped": skipped, "total": mission.selected_actuators})
+        )
+    elif added:
+        console.print(f"[green]Added {len(added)} actuator(s) to mission '{mission.name}':[/green]")
+        for aid in added:
+            a = registry.get(aid)
+            console.print(f"  + {aid} ({a.name if a else '?'})")
+        console.print(f"\n[dim]Total selected: {len(mission.selected_actuators)}[/dim]")
 
 
 @actuator.command("compare")

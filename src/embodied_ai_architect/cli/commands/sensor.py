@@ -202,39 +202,46 @@ def sensor_select(ctx, mission_id, sensor_ids):
     from embodied_ai_architect.mission.store import MissionStore
     from embodied_ai_architect.sensors import SensorRegistry
 
+    json_output = ctx.obj.get("json", False)
     store = MissionStore()
     mission = store.load(mission_id)
     if not mission:
-        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        if json_output:
+            click.echo(json.dumps({"error": f"Mission '{mission_id}' not found"}))
+        else:
+            console.print(f"[red]Mission '{mission_id}' not found.[/red]")
         ctx.exit(1)
         return
 
     registry = SensorRegistry()
     added = []
+    skipped = []
     for sid in sensor_ids:
         s = registry.get(sid)
         if not s:
-            console.print(f"[yellow]Sensor '{sid}' not found in registry, skipping.[/yellow]")
+            skipped.append(sid)
+            if not json_output:
+                console.print(f"[yellow]Sensor '{sid}' not found in registry, skipping.[/yellow]")
             continue
         if sid not in mission.selected_sensors:
             mission.selected_sensors.append(sid)
             added.append(sid)
-        else:
+        elif not json_output:
             console.print(f"[dim]Sensor '{sid}' already selected.[/dim]")
 
     if added:
         store.save(mission)
-        json_output = ctx.obj.get("json", False)
-        if json_output:
-            click.echo(json.dumps({"added": added, "total": mission.selected_sensors}))
-        else:
-            console.print(
-                f"[green]Added {len(added)} sensor(s) to mission '{mission.name}':[/green]"
-            )
-            for sid in added:
-                s = registry.get(sid)
-                console.print(f"  + {sid} ({s.name if s else '?'})")
-            console.print(f"\n[dim]Total selected: {len(mission.selected_sensors)}[/dim]")
+
+    if json_output:
+        click.echo(
+            json.dumps({"added": added, "skipped": skipped, "total": mission.selected_sensors})
+        )
+    elif added:
+        console.print(f"[green]Added {len(added)} sensor(s) to mission '{mission.name}':[/green]")
+        for sid in added:
+            s = registry.get(sid)
+            console.print(f"  + {sid} ({s.name if s else '?'})")
+        console.print(f"\n[dim]Total selected: {len(mission.selected_sensors)}[/dim]")
 
 
 @sensor.command("compare")
