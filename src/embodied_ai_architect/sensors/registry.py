@@ -117,7 +117,7 @@ class SensorRegistry:
             try:
                 with open(fpath, encoding="utf-8") as fh:
                     data = yaml.safe_load(fh)
-                if not data or "id" not in data:
+                if not isinstance(data, dict) or "id" not in data:
                     continue
                 sensor = SensorDefinition(
                     id=data["id"],
