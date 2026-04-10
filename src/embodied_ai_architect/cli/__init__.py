@@ -3,6 +3,10 @@
 Human-friendly command-line interface for the Embodied AI Architect system.
 """
 
+from __future__ import annotations
+
+from collections import OrderedDict
+
 import click
 from rich.console import Console
 from rich.panel import Panel
@@ -12,8 +16,83 @@ from embodied_ai_architect import __version__
 # Initialize rich console for beautiful output
 console = Console()
 
+# ── Command groups for help display ──────────────────────────────────
+# Each key is a section header; each value is a list of command names.
+# Commands not listed here appear under "Other".
 
-@click.group()
+COMMAND_SECTIONS: OrderedDict[str, list[str]] = OrderedDict(
+    [
+        (
+            "Lifecycle",
+            [
+                "mission",
+                "design",
+                "select",
+                "synthesize",
+                "analyze-system",
+                "optimize",
+                "validate",
+                "report",
+            ],
+        ),
+        (
+            "Catalog",
+            ["platform", "sensor", "actuator", "model", "zoo"],
+        ),
+        (
+            "Analysis & Benchmarking",
+            ["analyze", "benchmark", "swap", "mcp", "codebase", "testbench"],
+        ),
+        (
+            "Infrastructure",
+            ["api", "session", "spec", "config", "secrets", "backends", "chat"],
+        ),
+        (
+            "Deployment",
+            ["deploy", "pipeline", "workflow", "demo"],
+        ),
+    ]
+)
+
+
+class GroupedGroup(click.Group):
+    """Click Group that displays commands organized by section."""
+
+    def format_commands(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        commands = []
+        for subcommand in self.list_commands(ctx):
+            cmd = self.commands.get(subcommand)
+            if cmd is None or cmd.hidden:
+                continue
+            help_text = cmd.get_short_help_str(limit=formatter.width)
+            commands.append((subcommand, help_text))
+
+        if not commands:
+            return
+
+        # Build a lookup: command_name → (name, help_text)
+        cmd_lookup: dict[str, tuple[str, str]] = {name: (name, help_) for name, help_ in commands}
+        shown: set[str] = set()
+
+        for section, cmd_names in COMMAND_SECTIONS.items():
+            section_cmds = []
+            for name in cmd_names:
+                if name in cmd_lookup:
+                    section_cmds.append(cmd_lookup[name])
+                    shown.add(name)
+
+            if section_cmds:
+                with formatter.section(section):
+                    formatter.write_dl(section_cmds)
+
+        # Any commands not in a section go under "Other"
+        other = [(n, h) for n, h in commands if n not in shown]
+        if other:
+            with formatter.section("Other"):
+                formatter.write_dl(other)
+
+
+@click.group(cls=GroupedGroup)
 @click.version_option(version=__version__, prog_name="branes")
 @click.option(
     "-v",
@@ -24,15 +103,16 @@ console = Console()
 @click.option("--json", is_flag=True, help="Output in JSON format")
 @click.option("--quiet", is_flag=True, help="Minimal output")
 @click.pass_context
-def cli(ctx, verbose, json, quiet):
+def cli(ctx: click.Context, verbose: int, json: bool, quiet: bool) -> None:
     """Branes Embodied AI Platform - Design environment for Embodied AI systems.
 
     \b
     Examples:
-      branes workflow run my_model.pt
-      branes analyze my_model.pt
-      branes benchmark my_model.pt --backend kubernetes
-      branes report view --latest
+      branes mission new "my-drone" --goal "Drone perception SoC"
+      branes design qualify --mission my-drone --auto
+      branes design plan --mission my-drone --static
+      branes select sensor my-drone visual.rgb_camera
+      branes sensor search "stereo camera for VIO"
     """
     # Store settings in context for subcommands
     ctx.ensure_object(dict)
@@ -50,7 +130,7 @@ def cli(ctx, verbose, json, quiet):
         )
 
 
-def main():
+def main() -> None:
     """Entry point for the CLI."""
     # Import subcommands
     from embodied_ai_architect.cli.commands import workflow
