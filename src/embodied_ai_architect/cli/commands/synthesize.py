@@ -35,14 +35,16 @@ def synthesize_system(ctx, mission_id):
     """
     from embodied_ai_architect.mission.store import MissionStore
 
+    json_output = ctx.obj.get("json", False)
     store = MissionStore()
     mission = store.load(mission_id)
     if not mission:
-        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        if json_output:
+            click.echo(json.dumps({"error": f"Mission '{mission_id}' not found"}))
+        else:
+            console.print(f"[red]Mission '{mission_id}' not found.[/red]")
         ctx.exit(1)
         return
-
-    json_output = ctx.obj.get("json", False)
     summary = {
         "mission": mission.name,
         "sensors": mission.selected_sensors,
@@ -90,14 +92,16 @@ def synthesize_architecture(ctx, mission_id):
     """
     from embodied_ai_architect.mission.store import MissionStore
 
+    json_output = ctx.obj.get("json", False)
     store = MissionStore()
     mission = store.load(mission_id)
     if not mission:
-        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        if json_output:
+            click.echo(json.dumps({"error": f"Mission '{mission_id}' not found"}))
+        else:
+            console.print(f"[red]Mission '{mission_id}' not found.[/red]")
         ctx.exit(1)
         return
-
-    json_output = ctx.obj.get("json", False)
 
     # Generate a simple Mermaid diagram from selected components
     lines = ["graph TD"]

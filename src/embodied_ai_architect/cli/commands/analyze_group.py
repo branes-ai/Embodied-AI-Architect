@@ -1,7 +1,7 @@
 """Lifecycle command group: analyze mission subsystems (issue #67).
 
-Groups analysis commands by subsystem. The original `branes analyze model.pt`
-command is preserved as `branes analyze model model.pt`.
+Groups analysis commands by subsystem. Registered as `branes analyze-system`
+to coexist with the original `branes analyze` model analysis command.
 """
 
 import click
