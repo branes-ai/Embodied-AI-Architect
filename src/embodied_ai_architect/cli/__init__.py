@@ -80,6 +80,9 @@ def main():
     from embodied_ai_architect.cli.commands import sensor as sensor_cmd
     from embodied_ai_architect.cli.commands import actuator as actuator_cmd
     from embodied_ai_architect.cli.commands import validate as validate_cmd
+    from embodied_ai_architect.cli.commands import select as select_cmd
+    from embodied_ai_architect.cli.commands import synthesize as synthesize_cmd
+    from embodied_ai_architect.cli.commands import analyze_group
 
     # Register command groups
     cli.add_command(workflow.workflow)
@@ -109,6 +112,9 @@ def main():
     cli.add_command(sensor_cmd.sensor)
     cli.add_command(actuator_cmd.actuator)
     cli.add_command(validate_cmd.validate)
+    cli.add_command(select_cmd.select)
+    cli.add_command(synthesize_cmd.synthesize)
+    cli.add_command(analyze_group.analyze_lifecycle, "analyze-system")
 
     # Run CLI
     cli(obj={})
