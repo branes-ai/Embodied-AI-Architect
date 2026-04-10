@@ -1,14 +1,19 @@
-"""Actuator registry and browsing (issue #55).
+"""Actuator registry with TF-IDF keyword matching (issues #55, #62).
 
-Stub package — the registry returns empty until Phase 2 populates it.
+Loads 80+ actuator definitions from data/actuators/ and provides ranked
+search for the `branes actuator` CLI and qualification pipeline.
 
 Usage:
     from embodied_ai_architect.actuators import ActuatorRegistry
 
     registry = ActuatorRegistry()
-    actuators = registry.list_actuators()  # [] until populated
+    results = registry.search("gripper for fragile objects")
 """
 
-from embodied_ai_architect.actuators.registry import ActuatorRegistry
+from embodied_ai_architect.actuators.registry import (
+    ActuatorDefinition,
+    ActuatorMatchResult,
+    ActuatorRegistry,
+)
 
-__all__ = ["ActuatorRegistry"]
+__all__ = ["ActuatorDefinition", "ActuatorMatchResult", "ActuatorRegistry"]
