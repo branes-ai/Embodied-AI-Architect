@@ -279,75 +279,47 @@ branes synthesize bom vineyard-sprayer           # bill of materials
 
 Verify the synthesized system meets all constraints.
 
-### Power analysis
+> **Note:** The `analyze-system` subcommands are stubs in the current release.
+> They show "Coming in a future release" and point to existing alternatives.
+> The examples below show the planned output format.
+
+### Power analysis (coming soon)
 
 ```bash
 branes analyze-system power vineyard-sprayer
+# Currently prints: Coming in a future release.
+# Alternative: branes mcp energy <model> <hardware>
 ```
 
-Expected output:
-```
-Power analysis for mission 'vineyard-sprayer':
-  Sensor subsystem:    3.1 W
-  Compute subsystem:   5.0 W
-  Actuator subsystem:  4.0 W
-  Total:              12.1 W
-  Budget:             15.0 W
-  Margin:              2.9 W (19.3%)
-  Verdict: PASS
-```
-
-### Latency analysis
+### Latency analysis (coming soon)
 
 ```bash
 branes analyze-system latency vineyard-sprayer
+# Currently prints: Coming in a future release.
+# Alternative: branes mcp latency <model> <hardware>
 ```
 
-Expected output:
-```
-Latency analysis for mission 'vineyard-sprayer':
-  Perception pipeline:  28 ms (sensor-to-detection)
-  Control loop:          5 ms (state-to-actuation)
-  End-to-end:           33 ms
-  Target:               33 ms
-  Verdict: PASS (marginal)
-```
-
-### Thermal analysis
-
-```bash
-branes analyze-system thermal vineyard-sprayer
-```
-
-### SWaP-C analysis
+### SWaP-C analysis (coming soon)
 
 ```bash
 branes analyze-system swap vineyard-sprayer
+# Currently prints: Coming in a future release.
+# Alternative: branes swap check --mission vineyard-sprayer
 ```
 
-### Safety analysis
+### Safety analysis (coming soon)
 
 ```bash
 branes analyze-system safety vineyard-sprayer
-```
-
-Expected output:
-```
-Safety analysis for mission 'vineyard-sprayer':
-  Failure modes identified: 7
-  Mitigations defined:      7/7
-  Safety level:             agricultural-outdoor
-  Critical paths:
-    - spray_controller: single-point failure -> add watchdog timer
-    - gnss_loss: degraded navigation -> fallback to VIO-only
-  Verdict: PASS (with recommendations)
+# Currently prints: Coming in a future release.
+# Alternative: branes validate safety vineyard-sprayer
 ```
 
 ## Summary
 
 The mission-driven workflow follows this lifecycle:
 
-```
+```text
 mission new        Define the system goal
     |
 design qualify     Derive constraints from the goal

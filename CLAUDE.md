@@ -89,12 +89,12 @@ It provides:
 # System synthesis and analysis
 .venv/bin/branes synthesize system vineyard-sprayer
 .venv/bin/branes synthesize architecture vineyard-sprayer
-.venv/bin/branes synthesize bom vineyard-sprayer
-.venv/bin/branes analyze-system power vineyard-sprayer
-.venv/bin/branes analyze-system latency vineyard-sprayer
-.venv/bin/branes analyze-system thermal vineyard-sprayer
-.venv/bin/branes analyze-system swap vineyard-sprayer
-.venv/bin/branes analyze-system safety vineyard-sprayer
+.venv/bin/branes synthesize bom vineyard-sprayer          # coming soon — use: swap bom
+.venv/bin/branes analyze-system power vineyard-sprayer     # coming soon — use: mcp energy
+.venv/bin/branes analyze-system latency vineyard-sprayer   # coming soon — use: mcp latency
+.venv/bin/branes analyze-system thermal vineyard-sprayer   # coming soon
+.venv/bin/branes analyze-system swap vineyard-sprayer      # coming soon — use: swap check
+.venv/bin/branes analyze-system safety vineyard-sprayer    # coming soon — use: validate safety
 
 # Start interactive chat session (requires ANTHROPIC_API_KEY)
 export ANTHROPIC_API_KEY=your-key-here
@@ -103,7 +103,7 @@ export ANTHROPIC_API_KEY=your-key-here
 
 ## CLI Commands
 
-The `branes` CLI has 26 command groups, organized by function:
+The `branes` CLI has 30 command groups, organized by function:
 
 **Mission-Driven Workflow:**
 - `mission` - Create and manage missions (new, list, show, edit, delete, refine, fork)
