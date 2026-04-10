@@ -2,7 +2,8 @@
 #
 # Each actuator definition file lives in data/actuators/<category>/<type>.yaml
 # (e.g., data/actuators/motor/brushless_dc.yaml) and follows this schema.
-# The ActuatorRegistry loads all YAML files and indexes them for search.
+# The ActuatorRegistry will load all YAML files and index them for search
+# once populated (Phase 3). Currently the registry is a stub.
 #
 # This schema mirrors the sensor YAML schema (data/sensors/schema.yaml) so
 # the two registries feel consistent to the architect.
@@ -311,14 +312,16 @@ reference_products:
       cost_usd: 350
       torque_nm: 0.128
       speed_rpm: 15000
-      interface: ["hall_effect", "encoder_incremental"]
+      protocol: ["pwm"]
+      feedback: ["hall_effect", "encoder_incremental"]
     - id: "dynamixel_xm430"
       name: "ROBOTIS Dynamixel XM430-W350"
       vendor: "ROBOTIS"
       cost_usd: 260
       torque_nm: 4.1
       speed_rpm: 46
-      interface: ["rs485", "ttl"]
+      protocol: ["rs485", "ttl"]
+      feedback: ["encoder_absolute"]
 
 
 # ── IMPLICATIONS ──────────────────────────────────────────────────────

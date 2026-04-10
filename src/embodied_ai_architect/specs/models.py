@@ -275,7 +275,7 @@ class ActuatorSpec(SpecBaseModel):
     )
     actuator_types: list[str] = Field(
         default_factory=list,
-        description="Actuator types (e.g., brushless_motor, servo, linear)",
+        description="Actuator types (e.g., brushless_dc, servo, linear_actuator)",
     )
 
 
