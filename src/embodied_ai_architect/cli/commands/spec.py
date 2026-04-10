@@ -258,6 +258,12 @@ def spec_delete(ctx, name: str, path: str, message: str | None, author: str):
         store = SpecStore()
         store.delete_field(name, path, author=author, reason=message)
 
+        # Sync to mission (re-read full spec after deletion)
+        spec_obj = store.get(name)
+        from embodied_ai_architect.specs.mission_bridge import sync_spec_to_mission
+
+        sync_spec_to_mission(name, spec_obj.model_dump(exclude_none=True, mode="json"))
+
         if json_output:
             click.echo(json.dumps({"status": "ok", "path": path}))
         else:

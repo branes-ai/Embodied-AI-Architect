@@ -15,12 +15,17 @@ from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
+# Keys managed by constraint extraction — cleared on each sync to avoid stale values
+_MANAGED_CONSTRAINT_KEYS = {"max_power_watts", "max_latency_ms"}
 
-def sync_spec_to_mission(spec_name: str, spec_data: dict[str, Any]) -> None:
+
+def sync_spec_to_mission(spec_name: str, spec_data: dict[str, Any]) -> bool:
     """Sync a spec's current state to its corresponding Mission.
 
     Creates the mission if it doesn't exist. Updates mission.spec with
     the full spec data (model_dump output from SystemSpec).
+
+    Returns True on success, False on failure.
     """
     try:
         from embodied_ai_architect.mission.models import Mission
@@ -44,22 +49,37 @@ def sync_spec_to_mission(spec_name: str, spec_data: dict[str, Any]) -> None:
 
         store.save(mission)
         logger.debug("Synced spec '%s' to mission", spec_name)
+        return True
     except Exception:
         # Sync is best-effort — never block spec operations
         logger.debug("Failed to sync spec to mission", exc_info=True)
+        return False
 
 
 def _sync_constraints(mission: Any, spec_data: dict[str, Any]) -> None:
-    """Extract constraint-like fields from spec into mission.constraints."""
-    constraints: dict[str, Any] = dict(mission.constraints or {})
+    """Extract constraint-like fields from spec into mission.constraints.
+
+    Clears managed keys first so deleted spec fields don't leave stale
+    constraint values.
+    """
+    # Preserve non-managed keys, clear managed ones
+    constraints: dict[str, Any] = {
+        k: v for k, v in (mission.constraints or {}).items() if k not in _MANAGED_CONSTRAINT_KEYS
+    }
 
     # Power constraints
     power = spec_data.get("power") or {}
     if isinstance(power, dict):
         if power.get("power_budget_watts") is not None:
             constraints["max_power_watts"] = power["power_budget_watts"]
-        if power.get("compute_power_watts") is not None:
-            constraints.setdefault("max_power_watts", power["compute_power_watts"])
+        elif power.get("compute_power_watts") is not None:
+            constraints["max_power_watts"] = power["compute_power_watts"]
+
+    # Compute constraints (fallback for power)
+    compute = spec_data.get("compute") or {}
+    if isinstance(compute, dict):
+        if "max_power_watts" not in constraints and compute.get("max_tdp_watts") is not None:
+            constraints["max_power_watts"] = compute["max_tdp_watts"]
 
     # Perception latency
     perception = spec_data.get("perception") or {}
@@ -67,14 +87,7 @@ def _sync_constraints(mission: Any, spec_data: dict[str, Any]) -> None:
         if perception.get("max_latency_ms") is not None:
             constraints["max_latency_ms"] = perception["max_latency_ms"]
 
-    # Compute constraints
-    compute = spec_data.get("compute") or {}
-    if isinstance(compute, dict):
-        if compute.get("max_tdp_watts") is not None:
-            constraints.setdefault("max_power_watts", compute["max_tdp_watts"])
-
-    if constraints:
-        mission.constraints = constraints
+    mission.constraints = constraints
 
 
 def load_spec_from_mission(mission_id: str) -> Optional[dict[str, Any]]:
@@ -101,21 +114,22 @@ def migrate_specs_to_missions() -> list[str]:
     For each spec in SpecStore that doesn't have a corresponding mission,
     create one and sync the spec data.
 
-    Returns list of migrated spec names.
+    Returns list of successfully migrated spec names.
     """
     try:
         from embodied_ai_architect.specs.store import SpecStore
 
         spec_store = SpecStore()
-        specs = spec_store.list_specs()
+        index = spec_store.list_specs()
+        spec_names = list(index.get("specs", {}).keys()) if isinstance(index, dict) else []
         migrated = []
 
-        for name in specs.get("specs", {}):
+        for name in spec_names:
             try:
                 spec_obj = spec_store.get(name)
                 spec_data = spec_obj.model_dump(exclude_none=True, mode="json")
-                sync_spec_to_mission(name, spec_data)
-                migrated.append(name)
+                if sync_spec_to_mission(name, spec_data):
+                    migrated.append(name)
             except Exception:
                 logger.warning("Failed to migrate spec '%s' to mission", name, exc_info=True)
 
