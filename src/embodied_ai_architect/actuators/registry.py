@@ -11,26 +11,16 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
-# Actuator type categories — used by `branes actuator categories`
-ACTUATOR_TYPES = [
-    "brushless_motor",
-    "stepper_motor",
-    "servo",
-    "linear_actuator",
-    "hydraulic_cylinder",
-    "pneumatic_cylinder",
-    "piezoelectric",
-    "voice_coil",
-    "solenoid",
+# Actuator categories from taxonomy.yaml — used by `branes actuator categories`
+ACTUATOR_CATEGORIES = [
+    "motor",
+    "hydraulic",
+    "pneumatic",
     "gripper",
-    "vacuum_gripper",
-    "magnetic_gripper",
-    "wheel_drive",
-    "track_drive",
-    "propeller",
-    "gimbal",
-    "led_illuminator",
-    "speaker",
+    "locomotion",
+    "fluid",
+    "display",
+    "specialty",
 ]
 
 
@@ -84,5 +74,5 @@ class ActuatorRegistry:
         return [a for _, a in scored[:top_k]]
 
     def categories(self) -> list[str]:
-        """List available actuator type categories."""
-        return list(ACTUATOR_TYPES)
+        """List available actuator categories."""
+        return list(ACTUATOR_CATEGORIES)

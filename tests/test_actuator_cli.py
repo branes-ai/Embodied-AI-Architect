@@ -37,9 +37,9 @@ class TestActuatorCategories:
     def test_lists_types(self):
         result = CliRunner().invoke(actuator, ["categories"], obj={})
         assert result.exit_code == 0
-        assert "brushless_motor" in result.output
-        assert "servo" in result.output
+        assert "motor" in result.output
         assert "gripper" in result.output
+        assert "locomotion" in result.output
 
 
 class TestActuatorRegistry:
@@ -48,9 +48,9 @@ class TestActuatorRegistry:
 
     def test_categories_not_empty(self):
         cats = ActuatorRegistry().categories()
-        assert len(cats) >= 10
-        assert "brushless_motor" in cats
-        assert "servo" in cats
+        assert len(cats) == 8  # matches taxonomy.yaml top-level categories
+        assert "motor" in cats
+        assert "gripper" in cats
 
     def test_search_empty(self):
         assert ActuatorRegistry().search("anything") == []

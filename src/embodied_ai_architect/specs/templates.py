@@ -100,7 +100,7 @@ def _drone_perception(name: str) -> SystemSpec:
             control_rate_hz=400.0,
             max_speed_mps=15.0,
             payload_kg=0.5,
-            actuator_types=["brushless_motor"],
+            actuator_types=["brushless_dc"],
         ),
         comms=CommsSpec(
             protocols=["wifi", "mavlink"],
@@ -265,7 +265,7 @@ def _amr_warehouse(name: str) -> SystemSpec:
             control_rate_hz=50.0,
             max_speed_mps=2.0,
             payload_kg=50.0,
-            actuator_types=["brushless_motor"],
+            actuator_types=["brushless_dc"],
         ),
         comms=CommsSpec(
             protocols=["wifi", "5g"],
