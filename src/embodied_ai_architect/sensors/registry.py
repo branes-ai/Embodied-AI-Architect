@@ -17,12 +17,14 @@ from __future__ import annotations
 
 import logging
 import math
-import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
 
 from pydantic import BaseModel, Field
+
+from embodied_ai_architect.search_utils import bigrams as _bigrams
+from embodied_ai_architect.search_utils import tokenize as _tokenize
 
 logger = logging.getLogger(__name__)
 
@@ -40,91 +42,6 @@ MODALITIES = [
     "audio",
     "biological",
 ]
-
-# Shared stop-words (same set as platforms/registry.py)
-_STOP_WORDS = frozenset(
-    {
-        "a",
-        "an",
-        "and",
-        "are",
-        "as",
-        "at",
-        "be",
-        "by",
-        "for",
-        "from",
-        "has",
-        "have",
-        "in",
-        "is",
-        "it",
-        "its",
-        "of",
-        "on",
-        "or",
-        "that",
-        "the",
-        "to",
-        "was",
-        "were",
-        "will",
-        "with",
-        "not",
-        "but",
-        "can",
-        "do",
-        "if",
-        "no",
-        "so",
-        "up",
-        "out",
-        "all",
-        "one",
-        "two",
-        "our",
-        "new",
-        "use",
-        "also",
-        "than",
-        "very",
-        "just",
-        "about",
-        "into",
-        "over",
-        "such",
-        "only",
-        "other",
-        "some",
-        "may",
-        "each",
-        "any",
-        "most",
-        "more",
-        "both",
-        "which",
-        "their",
-        "these",
-        "this",
-        "those",
-        "been",
-        "being",
-        "would",
-        "could",
-        "should",
-    }
-)
-
-
-def _tokenize(text: str) -> list[str]:
-    """Split text into lowercased tokens, filtering stop words."""
-    words = re.findall(r"[a-z0-9]+", text.lower())
-    return [w for w in words if len(w) > 1 and w not in _STOP_WORDS]
-
-
-def _bigrams(tokens: list[str]) -> list[str]:
-    """Generate bigrams from a token list."""
-    return [f"{tokens[i]} {tokens[i + 1]}" for i in range(len(tokens) - 1)]
 
 
 class SensorDefinition(BaseModel):
@@ -272,8 +189,10 @@ class SensorRegistry:
         scores: dict[str, float] = {}
         matched_kws: dict[str, list[str]] = {}
 
-        # Phase 1: phrase matching
+        # Phase 1: phrase matching (multi-token keys only to avoid double-counting)
         for kw_phrase, sids in self._keyword_index.items():
+            if " " not in kw_phrase:
+                continue
             if kw_phrase in query_lower:
                 weight = self._idf.get(kw_phrase, 1.0)
                 word_count = len(kw_phrase.split())
@@ -339,9 +258,13 @@ class SensorRegistry:
         """List sensors in a specific category."""
         return self.list_sensors(modality=category)
 
-    def categories(self) -> list[str]:
+    def list_categories(self) -> list[str]:
         """List available sensor modality categories."""
         return list(MODALITIES)
+
+    def categories(self) -> list[str]:
+        """List available sensor modality categories."""
+        return self.list_categories()
 
     @property
     def sensor_count(self) -> int:

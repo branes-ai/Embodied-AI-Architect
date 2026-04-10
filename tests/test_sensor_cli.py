@@ -12,15 +12,15 @@ class TestSensorList:
         assert result.exit_code == 0
         assert "Sensors" in result.output
 
-    def test_with_modality_filter(self):
+    def test_with_category_filter(self):
         runner = CliRunner()
-        result = runner.invoke(sensor, ["list", "--modality", "ranging"], obj={})
+        result = runner.invoke(sensor, ["list", "--category", "ranging"], obj={})
         assert result.exit_code == 0
         assert "ranging" in result.output
 
-    def test_nonexistent_modality_empty(self):
+    def test_nonexistent_category_empty(self):
         runner = CliRunner()
-        result = runner.invoke(sensor, ["list", "--modality", "nonexistent"], obj={})
+        result = runner.invoke(sensor, ["list", "--category", "nonexistent"], obj={})
         assert result.exit_code == 0
         assert "No sensors found" in result.output
 

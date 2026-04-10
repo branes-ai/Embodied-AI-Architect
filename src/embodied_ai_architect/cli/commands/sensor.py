@@ -1,7 +1,7 @@
-"""Sensor browsing CLI commands (issue #54).
+"""Sensor browsing CLI commands (issues #54, #59).
 
-Read-only commands for browsing the sensor registry. Initially backed
-by an empty registry; Phase 2 will populate it.
+Read-only commands for browsing the sensor registry backed by 80+
+sensor YAML definitions with TF-IDF keyword search.
 """
 
 import json
@@ -20,7 +20,7 @@ def sensor():
     \\b
     Examples:
       branes sensor list
-      branes sensor list --modality lidar
+      branes sensor list --category visual
       branes sensor show <sensor_id>
       branes sensor search "stereo camera 30fps"
       branes sensor categories
@@ -29,14 +29,19 @@ def sensor():
 
 
 @sensor.command("list")
-@click.option("--modality", type=str, default=None, help="Filter by modality (camera, lidar, ...)")
+@click.option(
+    "--category",
+    type=str,
+    default=None,
+    help="Filter by category (visual, ranging, inertial, ...)",
+)
 @click.pass_context
-def sensor_list(ctx, modality):
+def sensor_list(ctx, category):
     """List all sensors in the registry."""
     from embodied_ai_architect.sensors import SensorRegistry
 
     registry = SensorRegistry()
-    sensors = registry.list_sensors(modality=modality)
+    sensors = registry.list_sensors(modality=category)
 
     json_output = ctx.obj.get("json", False)
     if json_output:
@@ -50,8 +55,8 @@ def sensor_list(ctx, modality):
 
     if not sensors:
         msg = "No sensors found."
-        if modality:
-            msg += f" (filtered by modality={modality})"
+        if category:
+            msg += f" (filtered by category={category})"
         console.print(f"[yellow]{msg}[/yellow]")
         return
 
@@ -83,7 +88,6 @@ def sensor_show(ctx, sensor_id):
             click.echo(json.dumps({"error": f"Sensor '{sensor_id}' not found"}))
         else:
             console.print(f"[red]Sensor '{sensor_id}' not found.[/red]")
-            console.print("[dim]Sensor registry not yet populated (Phase 2).[/dim]")
         ctx.exit(1)
         return
     if json_output:
@@ -163,7 +167,7 @@ def sensor_search(ctx, query):
 @sensor.command("categories")
 @click.pass_context
 def sensor_categories(ctx):
-    """List sensor modality categories."""
+    """List sensor categories."""
     from embodied_ai_architect.sensors import SensorRegistry
 
     registry = SensorRegistry()
@@ -174,7 +178,7 @@ def sensor_categories(ctx):
         click.echo(json.dumps(cats, indent=2))
         return
 
-    console.print("\n[bold]Sensor Modality Categories[/bold]\n")
+    console.print("\n[bold]Sensor Categories[/bold]\n")
     for cat in cats:
         console.print(f"  {cat}")
     console.print(f"\n[dim]{len(cats)} categories available[/dim]")
