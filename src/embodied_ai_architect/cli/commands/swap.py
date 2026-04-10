@@ -364,6 +364,7 @@ def bom(
 
 @swap.command()
 @_common_soc_options
+@click.option("--mission", "mission_id", default=None, help="Load constraints from a mission")
 @click.option("--max-weight", type=float, default=None, help="Weight budget (grams)")
 @click.option("--max-volume", type=float, default=None, help="Volume budget (cm³)")
 @click.option("--max-power", type=float, default=None, help="Power budget (watts)")
@@ -384,6 +385,7 @@ def check(
     layer_count,
     connectors,
     ambient_temp,
+    mission_id,
     max_weight,
     max_volume,
     max_power,
@@ -393,20 +395,23 @@ def check(
     json_out,
 ):
     """Scorecard against SWaP-C budgets. Exit code 1 if FAIL."""
+    from embodied_ai_architect.cli.commands._utils import load_mission_constraints
     from embodied_ai_architect.graphs.swap_report import assess_design_point
 
-    # Build constraints from explicit flags
-    constraints: dict[str, float] = {}
+    mission, merged = load_mission_constraints(
+        mission_id, max_power, max_latency, max_cost, area=None
+    )
+    if mission_id and not mission:
+        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        ctx.exit(1)
+        return
+
+    # Build constraints: mission values first, then explicit flags override
+    constraints: dict[str, float] = dict(merged)
     if max_weight is not None:
         constraints["max_weight_grams"] = max_weight
     if max_volume is not None:
         constraints["max_volume_cm3"] = max_volume
-    if max_power is not None:
-        constraints["max_power_watts"] = max_power
-    if max_cost is not None:
-        constraints["max_cost_usd"] = max_cost
-    if max_latency is not None:
-        constraints["max_latency_ms"] = max_latency
 
     # Merge spec budgets (explicit flags take precedence)
     if spec_name:
@@ -514,7 +519,8 @@ def check(
 
 
 @swap.command()
-@click.option("--goal", "-g", required=True, help="Design goal description")
+@click.option("--mission", "mission_id", default=None, help="Load constraints from a mission")
+@click.option("--goal", "-g", required=False, default=None, help="Design goal description")
 @click.option("--power", "-p", type=float, default=None, help="Max power (W)")
 @click.option("--latency", "-l", type=float, default=None, help="Max latency (ms)")
 @click.option("--cost", "-c", type=float, default=None, help="Max cost (USD)")
@@ -534,6 +540,7 @@ def check(
 @click.pass_context
 def explore(
     ctx,
+    mission_id,
     goal,
     power,
     latency,
@@ -548,24 +555,30 @@ def explore(
     json_out,
 ):
     """6-objective design space exploration with SWaP-C."""
+    from embodied_ai_architect.cli.commands._utils import load_mission_constraints
     from embodied_ai_architect.graphs.moo.design_space import create_swap_design_space
     from embodied_ai_architect.graphs.moo.engine import OptimizationConfig, OptimizationEngine
     from embodied_ai_architect.graphs.moo.evaluator import SWaPCEvaluator
     from embodied_ai_architect.graphs.moo.map_elites import MAPElitesConfig
 
-    constraints: dict[str, Any] = {}
-    if power is not None:
-        constraints["max_power_watts"] = power
-    if latency is not None:
-        constraints["max_latency_ms"] = latency
-    if cost is not None:
-        constraints["max_cost_usd"] = cost
-    if area is not None:
-        constraints["max_area_mm2"] = area
+    mission, merged = load_mission_constraints(mission_id, power, latency, cost, area)
+    if mission_id and not mission:
+        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        ctx.exit(1)
+        return
+
+    constraints: dict[str, Any] = dict(merged)
     if weight is not None:
         constraints["max_weight_grams"] = weight
     if volume is not None:
         constraints["max_volume_cm3"] = volume
+
+    if mission and not goal:
+        goal = getattr(mission, "goal", None) or "design exploration"
+    if not goal:
+        console.print("[red]--goal is required (or use --mission).[/red]")
+        ctx.exit(1)
+        return
 
     if spec_name:
         spec_budgets = _read_spec_budgets(spec_name)
@@ -1037,6 +1050,7 @@ def _get_design_space_variables() -> list[dict[str, Any]]:
 
 @swap.command()
 @_common_soc_options
+@click.option("--mission", "mission_id", default=None, help="Load constraints from a mission")
 @click.option(
     "--profile",
     type=str,
@@ -1058,12 +1072,20 @@ def score(
     layer_count,
     connectors,
     ambient_temp,
+    mission_id,
     profile,
     json_out,
 ):
     """Weighted Figure-of-Merit score for a single design point."""
+    from embodied_ai_architect.cli.commands._utils import load_mission_constraints
     from embodied_ai_architect.graphs.swap_analysis import compute_fom_score
     from embodied_ai_architect.graphs.swap_profiles import get_profile
+
+    mission, merged = load_mission_constraints(mission_id, power, area=area, process=process)
+    if mission_id and not mission:
+        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        ctx.exit(1)
+        return
 
     prof = get_profile(profile)
     evaluator_fn = _make_evaluator_fn(
@@ -1200,6 +1222,7 @@ def rank(ctx, profile, method, top, json_out):
 
 @swap.command()
 @_common_soc_options
+@click.option("--mission", "mission_id", default=None, help="Load constraints from a mission")
 @click.option(
     "--mode",
     type=click.Choice(["tornado", "taguchi"], case_sensitive=False),
@@ -1224,11 +1247,20 @@ def sensitivity(
     layer_count,
     connectors,
     ambient_temp,
+    mission_id,
     mode,
     objective,
     json_out,
 ):
     """Tornado or Taguchi L18 sensitivity analysis."""
+    from embodied_ai_architect.cli.commands._utils import load_mission_constraints
+
+    mission, merged = load_mission_constraints(mission_id, power, area=area, process=process)
+    if mission_id and not mission:
+        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        ctx.exit(1)
+        return
+
     evaluator_fn = _make_evaluator_fn(
         process, package, cooling, enclosure, prod_volume, layer_count, connectors, ambient_temp
     )
@@ -1387,6 +1419,7 @@ def sweep(
 
 @swap.command()
 @_common_soc_options
+@click.option("--mission", "mission_id", default=None, help="Load constraints from a mission")
 @click.option("--max-weight", type=float, default=None, help="Weight budget (grams)")
 @click.option("--max-volume", type=float, default=None, help="Volume budget (cm\u00b3)")
 @click.option("--max-power", type=float, default=None, help="Power budget (watts)")
@@ -1413,6 +1446,7 @@ def budget(
     layer_count,
     connectors,
     ambient_temp,
+    mission_id,
     max_weight,
     max_volume,
     max_power,
@@ -1423,14 +1457,33 @@ def budget(
     json_out,
 ):
     """Monte Carlo probabilistic budget feasibility analysis."""
+    from embodied_ai_architect.cli.commands._utils import load_mission_constraints
     from embodied_ai_architect.graphs.swap_analysis import monte_carlo_feasibility
+
+    mission, merged = load_mission_constraints(mission_id, max_power, cost=max_cost, area=None)
+    if mission_id and not mission:
+        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        ctx.exit(1)
+        return
 
     evaluator_fn = _make_evaluator_fn(
         process, package, cooling, enclosure, prod_volume, layer_count, connectors, ambient_temp
     )
     base_params = {"area": area, "power": power}
 
+    # Start with mission constraints mapped to budget keys
     budgets: dict[str, float] = {}
+    budget_key_map = {
+        "max_weight_grams": "weight_grams",
+        "max_volume_cm3": "volume_cm3",
+        "max_power_watts": "power_watts",
+        "max_cost_usd": "cost_usd",
+    }
+    for mk, bk in budget_key_map.items():
+        if mk in merged:
+            budgets[bk] = merged[mk]
+
+    # Explicit flags override mission values
     if max_weight is not None:
         budgets["weight_grams"] = max_weight
     if max_volume is not None:
