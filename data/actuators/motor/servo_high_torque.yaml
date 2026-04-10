@@ -1,0 +1,104 @@
+id: motor.servo_high_torque
+name: High-Torque Servo Actuator
+category: motor
+actuator_type: servo
+description: Industrial servo motor with harmonic or cycloidal reducer for very high torque density. Designed
+  for humanoid and heavy-duty robot joints.
+aliases:
+- robot joint actuator
+- harmonic drive servo
+- quasi-direct-drive actuator
+keywords:
+  identity:
+  - high torque servo
+  - joint actuator
+  - quasi-direct drive
+  descriptions:
+  - high torque density actuator
+  - integrated robot joint
+  - compact joint module
+  application:
+  - humanoid robot
+  - quadruped leg
+  - exoskeleton
+  - heavy-duty arm
+  - legged robot
+  industry:
+  - robotics
+  - prosthetics
+  - defense
+  - research
+  components:
+  - harmonic drive
+  - cycloidal reducer
+  - torque sensor
+  - BLDC motor
+  related:
+  - torque density
+  - backdrivability
+  - impedance control
+  - compliant actuation
+classification:
+  motion_type: rotary
+  control_type: torque
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 10
+    max: 500
+    typical: 80
+  speed_rpm:
+    min: 0
+    max: 200
+    typical: 30
+  control_rate_hz:
+    min: 1000
+    max: 10000
+    typical: 2000
+  efficiency_percent:
+    min: 60
+    max: 85
+    typical: 75
+  peak_power_watts:
+    min: 100
+    max: 5000
+    typical: 800
+  continuous_power_watts:
+    min: 50
+    max: 2000
+    typical: 300
+  weight_grams:
+    min: 200
+    max: 10000
+    typical: 1500
+  cost_usd:
+    min: 200
+    max: 15000
+    typical: 2000
+interface:
+  protocol:
+  - can
+  - ethercat
+  - rs485
+  voltage_v:
+    min: 24
+    max: 48
+    typical: 48
+  current_a:
+    min: 2
+    max: 60
+    typical: 15
+  feedback:
+  - encoder_absolute
+  - strain_gauge
+reference_products:
+- id: unitree_a1
+  name: Unitree A1 Motor
+  vendor: Unitree
+  cost_usd: 300
+  torque_nm: 33.5
+  speed_rpm: 225

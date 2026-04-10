@@ -1,0 +1,90 @@
+id: fluid.pump
+name: Centrifugal Pump
+category: fluid
+actuator_type: pump
+description: Rotary pump that uses an impeller to move fluids by centrifugal force. Suitable for continuous
+  high-flow, low-pressure applications like cooling loops and irrigation.
+aliases:
+- centrifugal pump
+- impeller pump
+- water pump
+keywords:
+  identity:
+  - centrifugal pump
+  - impeller pump
+  - water pump
+  descriptions:
+  - rotary fluid pump
+  - high flow pump
+  - continuous flow pump
+  application:
+  - cooling system
+  - irrigation
+  - water transfer
+  - HVAC
+  - fountain
+  - aquarium
+  industry:
+  - HVAC
+  - agriculture
+  - industrial
+  - marine
+  - data center
+  components:
+  - impeller
+  - volute casing
+  - shaft seal
+  - motor
+  related:
+  - pump curve
+  - head pressure
+  - cavitation
+  - NPSH
+classification:
+  motion_type: fluid_flow
+  control_type: velocity
+  environment:
+  - indoor
+  - outdoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 5
+    max: 5000
+    typical: 100
+  continuous_power_watts:
+    min: 2
+    max: 3000
+    typical: 50
+  weight_grams:
+    min: 50
+    max: 20000
+    typical: 500
+  cost_usd:
+    min: 5
+    max: 2000
+    typical: 50
+  lifetime_hours:
+    min: 5000
+    max: 100000
+    typical: 30000
+interface:
+  protocol:
+  - pwm
+  - analog
+  voltage_v:
+    min: 5
+    max: 240
+    typical: 12
+  current_a:
+    min: 0.2
+    max: 20
+    typical: 3
+  feedback:
+  - none
+reference_products:
+- id: grundfos_magna3
+  name: Grundfos MAGNA3 Circulator
+  vendor: Grundfos
+  cost_usd: 800

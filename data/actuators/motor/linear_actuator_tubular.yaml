@@ -1,0 +1,103 @@
+id: motor.linear_actuator_tubular
+name: Tubular Linear Motor
+category: motor
+actuator_type: linear_actuator
+description: Direct-drive tubular linear motor with no mechanical transmission. Provides high speed, zero
+  backlash, and maintenance-free operation for packaging, semiconductor, and pick-and-place machines.
+aliases:
+- shaft motor
+- direct-drive linear motor
+- linear servo
+keywords:
+  identity:
+  - tubular linear motor
+  - shaft motor
+  - ironless linear motor
+  descriptions:
+  - direct-drive linear actuator
+  - zero-backlash linear drive
+  - cogging-free linear
+  application:
+  - pick-and-place
+  - semiconductor handler
+  - packaging machine
+  - injection mold ejector
+  - textile loom
+  industry:
+  - semiconductor
+  - packaging
+  - manufacturing
+  - textile
+  components:
+  - forcer coil
+  - magnetic rod
+  - linear encoder
+  - bearing guide
+  related:
+  - force constant
+  - continuous force
+  - duty cycle
+  - thermal time constant
+classification:
+  motion_type: linear
+  control_type: position
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 5
+    max: 2000
+    typical: 200
+  speed_mps:
+    min: 0.01
+    max: 5.0
+    typical: 1.0
+  stroke_mm:
+    min: 10
+    max: 2000
+    typical: 300
+  position_accuracy_um:
+    min: 0.5
+    max: 50
+    typical: 5
+  peak_power_watts:
+    min: 10
+    max: 2000
+    typical: 200
+  continuous_power_watts:
+    min: 5
+    max: 1000
+    typical: 100
+  weight_grams:
+    min: 100
+    max: 10000
+    typical: 1000
+  cost_usd:
+    min: 300
+    max: 15000
+    typical: 2000
+interface:
+  protocol:
+  - ethercat
+  - analog
+  voltage_v:
+    min: 24
+    max: 400
+    typical: 48
+  current_a:
+    min: 0.5
+    max: 30
+    typical: 5
+  feedback:
+  - encoder_incremental
+  - encoder_absolute
+reference_products:
+- id: linmot_ps01_37x120
+  name: LinMot PS01-37x120
+  vendor: LinMot
+  cost_usd: 1200
+  force_n: 255
+  stroke_mm: 680

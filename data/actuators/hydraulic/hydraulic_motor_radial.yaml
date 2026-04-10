@@ -1,0 +1,89 @@
+id: hydraulic.hydraulic_motor_radial
+name: Radial Piston Hydraulic Motor
+category: hydraulic
+actuator_type: hydraulic_motor
+description: High-displacement radial piston motor for ultra-low speed, ultra-high torque applications
+  such as heavy winches and conveyor drives.
+aliases:
+- radial piston motor
+- cam-ring motor
+- low speed high torque motor
+keywords:
+  identity:
+  - radial piston motor
+  - LSHT motor
+  - cam-ring hydraulic motor
+  descriptions:
+  - ultra-high torque motor
+  - direct drive hydraulic motor
+  - low speed motor
+  application:
+  - heavy winch
+  - conveyor drive
+  - tunnel boring
+  - mining crusher
+  - ship capstan
+  industry:
+  - mining
+  - marine
+  - construction
+  - oil and gas
+  components:
+  - radial pistons
+  - cam ring
+  - distribution valve
+  - shaft
+  related:
+  - specific displacement
+  - starting torque
+  - mechanical efficiency
+classification:
+  motion_type: rotary
+  control_type: torque
+  environment:
+  - outdoor
+  - hazardous
+  - underwater
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 500
+    max: 100000
+    typical: 10000
+  speed_rpm:
+    min: 0
+    max: 200
+    typical: 30
+  efficiency_percent:
+    min: 85
+    max: 97
+    typical: 93
+  peak_power_watts:
+    min: 5000
+    max: 500000
+    typical: 50000
+  weight_grams:
+    min: 10000
+    max: 1000000
+    typical: 80000
+  cost_usd:
+    min: 2000
+    max: 100000
+    typical: 15000
+interface:
+  protocol:
+  - analog
+  - can
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - encoder_incremental
+reference_products:
+- id: hagglunds_cbm
+  name: Hagglunds CBM Motor
+  vendor: Bosch Rexroth
+  cost_usd: 25000
+  torque_nm: 50000

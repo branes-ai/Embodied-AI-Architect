@@ -1,0 +1,85 @@
+id: pneumatic.pneumatic_valve_proportional
+name: Pneumatic Proportional Valve
+category: pneumatic
+actuator_type: pneumatic_valve
+description: Continuously variable pneumatic valve for precise pressure or flow regulation. Enables proportional
+  control of pneumatic cylinders and soft grippers.
+aliases:
+- proportional air valve
+- pneumatic pressure regulator
+- ITV
+keywords:
+  identity:
+  - proportional pneumatic valve
+  - electro-pneumatic regulator
+  - ITV
+  descriptions:
+  - variable pressure valve
+  - analog pressure control
+  - proportional flow valve
+  application:
+  - pressure regulation
+  - soft gripper inflation
+  - force control
+  - tension control
+  - cushion control
+  industry:
+  - manufacturing
+  - robotics
+  - medical devices
+  - packaging
+  components:
+  - piezo valve
+  - proportional solenoid
+  - pressure sensor
+  - controller
+  related:
+  - pressure setpoint
+  - flow linearity
+  - hysteresis
+  - repeatability
+classification:
+  motion_type: fluid_flow
+  control_type: proportional
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: false
+attributes:
+  response_time_ms:
+    min: 5
+    max: 100
+    typical: 20
+  peak_power_watts:
+    min: 1
+    max: 20
+    typical: 5
+  weight_grams:
+    min: 50
+    max: 1000
+    typical: 200
+  cost_usd:
+    min: 50
+    max: 2000
+    typical: 300
+interface:
+  protocol:
+  - analog
+  - rs485
+  - ethernet_ip
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  current_a:
+    min: 0.05
+    max: 0.5
+    typical: 0.15
+  feedback:
+  - none
+reference_products:
+- id: smc_itv2050
+  name: SMC ITV2050 E/P Regulator
+  vendor: SMC
+  cost_usd: 250

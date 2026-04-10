@@ -1,0 +1,88 @@
+id: display.oled_display
+name: OLED Display Module
+category: display
+actuator_type: oled_display
+description: Organic LED display module for status information, menus, and data visualization on embedded
+  systems and robots.
+aliases:
+- OLED screen
+- OLED panel
+- micro display
+keywords:
+  identity:
+  - OLED display
+  - OLED screen
+  - OLED module
+  descriptions:
+  - self-emissive display
+  - thin film display
+  - embedded display
+  - organic display
+  application:
+  - robot HMI
+  - drone status display
+  - wearable display
+  - instrument panel
+  - IoT display
+  industry:
+  - robotics
+  - consumer electronics
+  - medical devices
+  - IoT
+  components:
+  - OLED panel
+  - driver IC
+  - flex cable
+  - cover glass
+  related:
+  - pixel density
+  - contrast ratio
+  - burn-in
+  - refresh rate
+classification:
+  motion_type: display_output
+  control_type: on_off
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 0.05
+    max: 10
+    typical: 0.5
+  continuous_power_watts:
+    min: 0.02
+    max: 5
+    typical: 0.3
+  weight_grams:
+    min: 2
+    max: 200
+    typical: 10
+  cost_usd:
+    min: 3
+    max: 200
+    typical: 15
+  lifetime_hours:
+    min: 10000
+    max: 50000
+    typical: 30000
+interface:
+  protocol:
+  - i2c
+  - spi
+  voltage_v:
+    min: 3.3
+    max: 5
+    typical: 3.3
+  current_a:
+    min: 0.01
+    max: 0.5
+    typical: 0.05
+  feedback:
+  - none
+reference_products:
+- id: solomon_ssd1306
+  name: SSD1306 0.96" OLED Module
+  vendor: Solomon Systech
+  cost_usd: 5

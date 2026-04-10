@@ -1,0 +1,143 @@
+id: motor.brushless_dc
+name: Brushless DC Motor
+category: motor
+actuator_type: brushless_dc
+description: Electronically commutated motor with permanent magnets on the rotor and stator windings driven
+  by an ESC. High efficiency, long lifespan, and excellent power-to-weight ratio make it the dominant
+  choice for drone propulsion, robot joints, and precision drives.
+aliases:
+- BLDC motor
+- EC motor
+- electronically commutated motor
+keywords:
+  identity:
+  - brushless dc motor
+  - BLDC
+  - EC motor
+  - outrunner
+  - inrunner
+  descriptions:
+  - electric motor
+  - rotary actuator
+  - high efficiency motor
+  - permanent magnet motor
+  - sensorless motor
+  application:
+  - drone propulsion
+  - robot joint
+  - CNC spindle
+  - conveyor drive
+  - gimbal motor
+  - electric vehicle
+  - fan drive
+  industry:
+  - robotics
+  - aerospace
+  - automotive
+  - manufacturing
+  - consumer electronics
+  components:
+  - permanent magnet
+  - hall sensor
+  - encoder
+  - esc
+  - stator winding
+  related:
+  - field-oriented control
+  - back-emf
+  - sinusoidal commutation
+  - trapezoidal drive
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 0.01
+    max: 50.0
+    typical: 0.5
+  speed_rpm:
+    min: 0
+    max: 100000
+    typical: 5000
+  efficiency_percent:
+    min: 80
+    max: 95
+    typical: 90
+  peak_power_watts:
+    min: 5
+    max: 5000
+    typical: 200
+  continuous_power_watts:
+    min: 2
+    max: 3000
+    typical: 100
+  weight_grams:
+    min: 10
+    max: 5000
+    typical: 150
+  cost_usd:
+    min: 10
+    max: 2000
+    typical: 80
+  response_time_ms:
+    min: 0.1
+    max: 5
+    typical: 1
+  lifetime_hours:
+    min: 10000
+    max: 100000
+    typical: 30000
+interface:
+  protocol:
+  - pwm
+  - can
+  - step_dir
+  voltage_v:
+    min: 7
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.5
+    max: 80
+    typical: 10
+  feedback:
+  - hall_effect
+  - encoder_incremental
+  - back_emf
+reference_products:
+- id: tmotor_mn5212
+  name: T-Motor MN5212
+  vendor: T-Motor
+  cost_usd: 90
+  torque_nm: 2.5
+  speed_rpm: 340
+  protocol:
+  - pwm
+  feedback:
+  - back_emf
+- id: hobbywing_x9
+  name: Hobbywing X9 Plus
+  vendor: Hobbywing
+  cost_usd: 180
+  torque_nm: 5.0
+  speed_rpm: 170
+  protocol:
+  - pwm
+  - can
+  feedback:
+  - back_emf
+- id: cyber_gear_m8
+  name: Xiaomi Cyber Gear M8
+  vendor: Xiaomi
+  cost_usd: 120
+  torque_nm: 12.0
+  speed_rpm: 320
+  protocol:
+  - can
+  feedback:
+  - encoder_absolute

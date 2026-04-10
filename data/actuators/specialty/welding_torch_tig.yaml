@@ -1,0 +1,88 @@
+id: specialty.welding_torch_tig
+name: TIG Welding Torch
+category: specialty
+actuator_type: welding_torch
+description: Gas tungsten arc welding (GTAW/TIG) torch for high-quality, precise welds on thin materials
+  and exotic alloys. Non-consumable tungsten electrode.
+aliases:
+- TIG torch
+- GTAW torch
+- argon welding torch
+keywords:
+  identity:
+  - TIG welding torch
+  - GTAW torch
+  - tungsten arc torch
+  descriptions:
+  - precision welding tool
+  - thin material welding
+  - non-consumable electrode welder
+  application:
+  - aerospace welding
+  - pipe root pass
+  - stainless steel welding
+  - aluminum welding
+  - titanium welding
+  industry:
+  - aerospace
+  - nuclear
+  - food processing
+  - pharmaceutical
+  - art
+  components:
+  - tungsten electrode
+  - ceramic cup
+  - collet
+  - gas lens
+  - filler wire feeder
+  related:
+  - arc frequency
+  - pulse welding
+  - post-flow
+  - electrode preparation
+classification:
+  motion_type: display_output
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 500
+    max: 20000
+    typical: 5000
+  continuous_power_watts:
+    min: 200
+    max: 15000
+    typical: 3000
+  weight_grams:
+    min: 200
+    max: 3000
+    typical: 800
+  cost_usd:
+    min: 50
+    max: 5000
+    typical: 500
+  lifetime_hours:
+    min: 2000
+    max: 30000
+    typical: 10000
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 10
+    max: 35
+    typical: 18
+  current_a:
+    min: 5
+    max: 350
+    typical: 150
+  feedback:
+  - none
+reference_products:
+- id: miller_dynasty_280
+  name: Miller Dynasty 280 DX Torch
+  vendor: Miller Electric
+  cost_usd: 400

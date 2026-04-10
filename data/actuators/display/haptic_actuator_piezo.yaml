@@ -1,0 +1,81 @@
+id: display.haptic_actuator_piezo
+name: Piezo Haptic Actuator
+category: display
+actuator_type: haptic_actuator
+description: Piezoelectric haptic transducer producing sharp, localized tactile feedback with very low
+  latency. Preferred for touchscreens and precision teleoperation.
+aliases:
+- piezo haptic
+- piezoelectric vibrator
+- ultra-thin haptic
+keywords:
+  identity:
+  - piezo haptic actuator
+  - piezoelectric transducer
+  - thin haptic
+  descriptions:
+  - sharp tactile feedback
+  - low-latency haptic
+  - surface haptic transducer
+  application:
+  - touchscreen feedback
+  - surgical instrument feedback
+  - stylus haptics
+  - braille display
+  industry:
+  - consumer electronics
+  - medical
+  - accessibility
+  - VR/AR
+  components:
+  - piezo ceramic
+  - flex PCB
+  - driver IC
+  - adhesive layer
+  related:
+  - resonance frequency
+  - displacement
+  - waveform shaping
+classification:
+  motion_type: vibration
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 0.01
+    max: 5
+    typical: 0.5
+  peak_power_watts:
+    min: 0.01
+    max: 2
+    typical: 0.2
+  weight_grams:
+    min: 0.2
+    max: 10
+    typical: 1
+  cost_usd:
+    min: 1
+    max: 50
+    typical: 5
+  response_time_ms:
+    min: 0.1
+    max: 2
+    typical: 0.5
+interface:
+  protocol:
+  - spi
+  - i2c
+  voltage_v:
+    min: 3.3
+    max: 200
+    typical: 60
+  feedback:
+  - none
+reference_products:
+- id: tdk_powerhap
+  name: TDK PowerHap 2.5G
+  vendor: TDK
+  cost_usd: 8

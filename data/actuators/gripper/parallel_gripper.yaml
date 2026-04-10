@@ -1,0 +1,109 @@
+id: gripper.parallel_gripper
+name: Parallel Jaw Gripper
+category: gripper
+actuator_type: parallel_gripper
+description: Two-finger gripper with parallel jaw motion for grasping prismatic and cylindrical objects.
+  The workhorse of industrial bin picking and machine tending.
+aliases:
+- 2-jaw gripper
+- parallel gripper
+- two-finger gripper
+keywords:
+  identity:
+  - parallel gripper
+  - two-finger gripper
+  - 2-jaw gripper
+  descriptions:
+  - parallel jaw end-effector
+  - electric gripper
+  - pneumatic gripper
+  - adaptive gripper
+  application:
+  - bin picking
+  - machine tending
+  - assembly
+  - palletizing
+  - part transfer
+  - quality inspection
+  industry:
+  - manufacturing
+  - automotive
+  - electronics
+  - logistics
+  components:
+  - jaw fingers
+  - linear guide
+  - force sensor
+  - proximity sensor
+  related:
+  - grip force
+  - stroke per finger
+  - finger compliance
+  - part centering
+classification:
+  motion_type: gripping
+  control_type: force
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 5
+    max: 1000
+    typical: 100
+  stroke_mm:
+    min: 5
+    max: 200
+    typical: 85
+  payload_kg:
+    min: 0.1
+    max: 20
+    typical: 2
+  peak_power_watts:
+    min: 5
+    max: 100
+    typical: 20
+  weight_grams:
+    min: 100
+    max: 3000
+    typical: 900
+  cost_usd:
+    min: 200
+    max: 5000
+    typical: 1500
+  response_time_ms:
+    min: 50
+    max: 500
+    typical: 150
+interface:
+  protocol:
+  - modbus
+  - ethernet_ip
+  - rs485
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  current_a:
+    min: 0.5
+    max: 5
+    typical: 1.5
+  feedback:
+  - encoder_absolute
+  - strain_gauge
+reference_products:
+- id: robotiq_2f85
+  name: Robotiq 2F-85 Adaptive Gripper
+  vendor: Robotiq
+  cost_usd: 3500
+  force_n: 235
+  stroke_mm: 85
+  payload_kg: 5
+- id: onrobot_rg2ft
+  name: OnRobot RG2-FT
+  vendor: OnRobot
+  cost_usd: 4500
+  force_n: 40
+  stroke_mm: 110

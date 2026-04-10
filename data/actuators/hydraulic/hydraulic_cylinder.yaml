@@ -1,0 +1,104 @@
+id: hydraulic.hydraulic_cylinder
+name: Hydraulic Cylinder
+category: hydraulic
+actuator_type: hydraulic_cylinder
+description: Linear actuator that uses pressurized hydraulic fluid to produce high force over a defined
+  stroke. Dominant in construction, mining, and heavy industrial equipment.
+aliases:
+- hydraulic ram
+- hydraulic jack
+- hydraulic piston
+keywords:
+  identity:
+  - hydraulic cylinder
+  - hydraulic ram
+  - hydraulic piston
+  descriptions:
+  - fluid power cylinder
+  - high force linear actuator
+  - double-acting cylinder
+  - single-acting cylinder
+  application:
+  - excavator arm
+  - press brake
+  - dump truck
+  - crane boom
+  - injection molder
+  - material handling
+  industry:
+  - construction
+  - mining
+  - manufacturing
+  - agriculture
+  - marine
+  components:
+  - piston rod
+  - cylinder barrel
+  - seals
+  - hydraulic oil
+  - cushion valve
+  related:
+  - pascal's law
+  - cylinder bore
+  - rod diameter
+  - working pressure
+classification:
+  motion_type: linear
+  control_type: force
+  environment:
+  - outdoor
+  - indoor
+  - hazardous
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 1000
+    max: 5000000
+    typical: 100000
+  speed_mps:
+    min: 0.01
+    max: 1.0
+    typical: 0.1
+  stroke_mm:
+    min: 50
+    max: 5000
+    typical: 500
+  peak_power_watts:
+    min: 500
+    max: 500000
+    typical: 20000
+  continuous_power_watts:
+    min: 200
+    max: 200000
+    typical: 10000
+  weight_grams:
+    min: 2000
+    max: 500000
+    typical: 20000
+  cost_usd:
+    min: 100
+    max: 50000
+    typical: 2000
+  lifetime_hours:
+    min: 5000
+    max: 50000
+    typical: 15000
+interface:
+  protocol:
+  - analog
+  - can
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  feedback:
+  - potentiometer
+  - encoder_incremental
+reference_products:
+- id: parker_hma
+  name: Parker HMA Heavy-Duty Cylinder
+  vendor: Parker Hannifin
+  cost_usd: 2500
+  force_n: 200000
+  stroke_mm: 600

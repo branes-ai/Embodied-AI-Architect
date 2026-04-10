@@ -1,0 +1,90 @@
+id: gripper.soft_gripper
+name: Soft Gripper
+category: gripper
+actuator_type: soft_gripper
+description: Compliant gripper made from elastomeric or fabric materials that conforms to object shape.
+  Gentle on delicate items like food, produce, and baked goods. Powered by pneumatic inflation or tendon
+  actuation.
+aliases:
+- flexible gripper
+- elastomeric gripper
+- compliant gripper
+keywords:
+  identity:
+  - soft gripper
+  - flexible gripper
+  - elastomeric gripper
+  descriptions:
+  - compliant end-effector
+  - inflatable gripper
+  - shape-conforming gripper
+  - gentle gripper
+  application:
+  - food handling
+  - produce picking
+  - bakery
+  - irregular object gripping
+  - bin picking delicate parts
+  industry:
+  - food processing
+  - agriculture
+  - consumer goods
+  - e-commerce
+  components:
+  - silicone body
+  - pneumatic channel
+  - tendon cable
+  - fabric sheath
+  related:
+  - compliance
+  - form closure
+  - force distribution
+  - soft robotics
+classification:
+  motion_type: gripping
+  control_type: pressure
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 0.5
+    max: 50
+    typical: 10
+  payload_kg:
+    min: 0.01
+    max: 5
+    typical: 0.5
+  peak_power_watts:
+    min: 1
+    max: 30
+    typical: 5
+  weight_grams:
+    min: 20
+    max: 500
+    typical: 100
+  cost_usd:
+    min: 50
+    max: 3000
+    typical: 500
+  response_time_ms:
+    min: 100
+    max: 2000
+    typical: 500
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - none
+reference_products:
+- id: soft_robotics_mgrip
+  name: Soft Robotics mGrip
+  vendor: Soft Robotics
+  cost_usd: 2000
+  payload_kg: 2.0

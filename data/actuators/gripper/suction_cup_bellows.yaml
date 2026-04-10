@@ -1,0 +1,80 @@
+id: gripper.suction_cup_bellows
+name: Bellows Suction Cup
+category: gripper
+actuator_type: suction_cup
+description: Multi-fold bellows suction cup that conforms to curved and uneven surfaces. Better adaptability
+  than flat cups at the expense of lift force.
+aliases:
+- bellows cup
+- multi-fold suction cup
+- flexible suction pad
+keywords:
+  identity:
+  - bellows suction cup
+  - multi-fold cup
+  - flexible vacuum pad
+  descriptions:
+  - curved surface gripper
+  - conformable suction cup
+  - height-compensating cup
+  application:
+  - curved panel handling
+  - bag picking
+  - fruit picking
+  - random bin picking
+  - blister pack handling
+  industry:
+  - food processing
+  - packaging
+  - logistics
+  - automotive
+  components:
+  - bellows body
+  - vacuum fitting
+  - filter screen
+  related:
+  - level compensation
+  - surface conformity
+  - cup material durometer
+classification:
+  motion_type: gripping
+  control_type: on_off
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 0.5
+    max: 200
+    typical: 15
+  payload_kg:
+    min: 0.01
+    max: 20
+    typical: 1.5
+  peak_power_watts:
+    min: 1
+    max: 30
+    typical: 5
+  weight_grams:
+    min: 3
+    max: 200
+    typical: 15
+  cost_usd:
+    min: 2
+    max: 100
+    typical: 10
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - none
+reference_products:
+- id: piab_b75
+  name: Piab B75 Bellows Cup
+  vendor: Piab
+  cost_usd: 12
