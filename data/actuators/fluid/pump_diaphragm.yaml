@@ -1,0 +1,84 @@
+id: fluid.pump_diaphragm
+name: Diaphragm Pump
+category: fluid
+actuator_type: pump
+description: Positive-displacement pump using a flexible diaphragm to move fluid. Self-priming, can run
+  dry, and handles abrasive or viscous fluids. Common in chemical dosing and air-operated applications.
+aliases:
+- membrane pump
+- AODD pump
+- air-operated diaphragm pump
+keywords:
+  identity:
+  - diaphragm pump
+  - membrane pump
+  - AODD pump
+  descriptions:
+  - self-priming pump
+  - dry-run safe pump
+  - pulsating pump
+  application:
+  - chemical dosing
+  - wastewater transfer
+  - paint circulation
+  - food transfer
+  - mining slurry
+  industry:
+  - chemical
+  - water treatment
+  - food processing
+  - mining
+  - pharmaceutical
+  components:
+  - diaphragm
+  - check valves
+  - air motor
+  - manifold
+  related:
+  - pulsation dampener
+  - stroke frequency
+  - displacement volume
+classification:
+  motion_type: fluid_flow
+  control_type: velocity
+  environment:
+  - indoor
+  - outdoor
+  - hazardous
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 5
+    max: 5000
+    typical: 200
+  continuous_power_watts:
+    min: 2
+    max: 3000
+    typical: 100
+  weight_grams:
+    min: 200
+    max: 50000
+    typical: 3000
+  cost_usd:
+    min: 30
+    max: 10000
+    typical: 500
+  lifetime_hours:
+    min: 2000
+    max: 30000
+    typical: 10000
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  feedback:
+  - none
+reference_products:
+- id: wilden_pro_flo
+  name: Wilden Pro-Flo AODD Pump
+  vendor: Wilden (PSG Dover)
+  cost_usd: 1500

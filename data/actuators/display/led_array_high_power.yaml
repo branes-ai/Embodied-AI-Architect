@@ -1,0 +1,85 @@
+id: display.led_array_high_power
+name: High-Power LED Module
+category: display
+actuator_type: led_array
+description: High-intensity LED module for illumination, machine vision lighting, and LiDAR reference.
+  Includes thermal management and driver electronics.
+aliases:
+- high power LED
+- illumination LED
+- machine vision light
+keywords:
+  identity:
+  - high power LED module
+  - illumination LED
+  - machine vision light
+  descriptions:
+  - high intensity light source
+  - structured illumination
+  - vision lighting
+  application:
+  - machine vision illumination
+  - headlamp
+  - searchlight
+  - agricultural grow light
+  - UV curing
+  industry:
+  - manufacturing
+  - automotive
+  - agriculture
+  - medical
+  components:
+  - LED die
+  - heatsink
+  - lens
+  - constant current driver
+  related:
+  - luminous flux
+  - CRI
+  - beam angle
+  - thermal derating
+classification:
+  motion_type: display_output
+  control_type: proportional
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 1
+    max: 500
+    typical: 30
+  continuous_power_watts:
+    min: 0.5
+    max: 300
+    typical: 20
+  weight_grams:
+    min: 10
+    max: 2000
+    typical: 100
+  cost_usd:
+    min: 5
+    max: 500
+    typical: 30
+  lifetime_hours:
+    min: 20000
+    max: 100000
+    typical: 50000
+interface:
+  protocol:
+  - pwm
+  - analog
+  - i2c
+  voltage_v:
+    min: 5
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.1
+    max: 20
+    typical: 1
+  feedback:
+  - none
+reference_products: []

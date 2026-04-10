@@ -1,0 +1,108 @@
+id: pneumatic.pneumatic_cylinder
+name: Pneumatic Cylinder
+category: pneumatic
+actuator_type: pneumatic_cylinder
+description: Linear actuator powered by compressed air. Fast, clean, and lightweight. Ideal for pick-and-place,
+  clamping, sorting, and packaging lines where speed matters more than precise position control.
+aliases:
+- air cylinder
+- pneumatic ram
+- pneumatic piston
+keywords:
+  identity:
+  - pneumatic cylinder
+  - air cylinder
+  - pneumatic actuator
+  descriptions:
+  - compressed air actuator
+  - fast linear actuator
+  - clean actuator
+  - double-acting pneumatic
+  application:
+  - pick-and-place
+  - clamping
+  - sorting
+  - packaging
+  - material handling
+  - part ejection
+  industry:
+  - manufacturing
+  - packaging
+  - food processing
+  - automotive assembly
+  - pharmaceutical
+  components:
+  - piston
+  - barrel
+  - air seals
+  - cushion
+  - magnetic ring
+  related:
+  - bore size
+  - stroke length
+  - air consumption
+  - cylinder force
+classification:
+  motion_type: linear
+  control_type: on_off
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 10
+    max: 50000
+    typical: 500
+  speed_mps:
+    min: 0.05
+    max: 3.0
+    typical: 0.5
+  stroke_mm:
+    min: 5
+    max: 2000
+    typical: 100
+  peak_power_watts:
+    min: 5
+    max: 2000
+    typical: 100
+  weight_grams:
+    min: 20
+    max: 10000
+    typical: 300
+  cost_usd:
+    min: 10
+    max: 1000
+    typical: 60
+  response_time_ms:
+    min: 10
+    max: 200
+    typical: 30
+  lifetime_hours:
+    min: 10000
+    max: 100000
+    typical: 30000
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  feedback:
+  - hall_effect
+  - none
+reference_products:
+- id: festo_dsbc
+  name: Festo DSBC Standard Cylinder
+  vendor: Festo
+  cost_usd: 80
+  force_n: 1250
+  stroke_mm: 200
+- id: smc_cq2
+  name: SMC CQ2 Compact Cylinder
+  vendor: SMC
+  cost_usd: 35
+  force_n: 200
+  stroke_mm: 50

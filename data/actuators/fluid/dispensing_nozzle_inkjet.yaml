@@ -1,0 +1,80 @@
+id: fluid.dispensing_nozzle_inkjet
+name: Inkjet Print Head
+category: fluid
+actuator_type: dispensing_nozzle
+description: Multi-nozzle piezo or thermal inkjet head for high-speed micro-droplet deposition. Used in
+  industrial printing, 3D printing, and biofabrication.
+aliases:
+- inkjet head
+- print head
+- drop-on-demand head
+keywords:
+  identity:
+  - inkjet print head
+  - piezo inkjet
+  - drop-on-demand head
+  descriptions:
+  - micro-droplet dispenser
+  - multi-nozzle head
+  - digital printing head
+  application:
+  - industrial printing
+  - 3D material jetting
+  - bioprinting
+  - PCB legend printing
+  - textile printing
+  industry:
+  - printing
+  - 3D printing
+  - electronics
+  - biotechnology
+  components:
+  - piezo element
+  - nozzle plate
+  - ink channel
+  - waveform controller
+  related:
+  - drop volume
+  - nozzle count
+  - jet frequency
+  - waveform tuning
+classification:
+  motion_type: fluid_flow
+  control_type: on_off
+  environment:
+  - indoor
+  - cleanroom
+  reversible: false
+  backdrivable: false
+attributes:
+  response_time_ms:
+    min: 0.01
+    max: 1
+    typical: 0.05
+  peak_power_watts:
+    min: 5
+    max: 100
+    typical: 20
+  weight_grams:
+    min: 50
+    max: 1000
+    typical: 200
+  cost_usd:
+    min: 200
+    max: 20000
+    typical: 2000
+interface:
+  protocol:
+  - spi
+  - ethernet_ip
+  voltage_v:
+    min: 12
+    max: 42
+    typical: 24
+  feedback:
+  - none
+reference_products:
+- id: xaar_2002
+  name: Xaar 2002 GS40K
+  vendor: Xaar
+  cost_usd: 5000

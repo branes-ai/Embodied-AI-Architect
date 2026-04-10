@@ -1,0 +1,93 @@
+id: display.speaker
+name: Speaker / Audio Transducer
+category: display
+actuator_type: speaker
+description: Electromechanical transducer that converts electrical signals into sound. Used for alarms,
+  voice feedback, navigation cues, and human-robot interaction on autonomous systems.
+aliases:
+- loudspeaker
+- audio transducer
+- buzzer
+- horn
+keywords:
+  identity:
+  - speaker
+  - loudspeaker
+  - audio transducer
+  - buzzer
+  descriptions:
+  - sound output device
+  - audio actuator
+  - acoustic transducer
+  - alarm sounder
+  application:
+  - voice feedback
+  - alarm signal
+  - navigation audio
+  - human-robot interaction
+  - public address
+  industry:
+  - robotics
+  - automotive
+  - consumer electronics
+  - building automation
+  components:
+  - voice coil
+  - diaphragm
+  - magnet
+  - amplifier
+  - enclosure
+  related:
+  - SPL
+  - frequency response
+  - impedance
+  - THD
+classification:
+  motion_type: vibration
+  control_type: proportional
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 0.1
+    max: 200
+    typical: 5
+  continuous_power_watts:
+    min: 0.05
+    max: 100
+    typical: 3
+  weight_grams:
+    min: 2
+    max: 5000
+    typical: 50
+  cost_usd:
+    min: 0.5
+    max: 200
+    typical: 5
+  lifetime_hours:
+    min: 10000
+    max: 100000
+    typical: 50000
+interface:
+  protocol:
+  - analog
+  - i2c
+  - pwm
+  voltage_v:
+    min: 3.3
+    max: 48
+    typical: 5
+  current_a:
+    min: 0.01
+    max: 10
+    typical: 0.5
+  feedback:
+  - none
+reference_products:
+- id: murata_pklcs1212e
+  name: Murata PKLCS1212E4001
+  vendor: Murata
+  cost_usd: 2

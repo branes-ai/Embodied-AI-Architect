@@ -1,0 +1,120 @@
+id: motor.linear_actuator
+name: Electric Linear Actuator
+category: motor
+actuator_type: linear_actuator
+description: Motor-driven linear motion device using a lead screw, ball screw, or belt drive to convert
+  rotary motion to straight-line force and displacement. Used in adjustable furniture, industrial automation,
+  and solar tracking.
+aliases:
+- electric cylinder
+- linear drive
+- electric ram
+keywords:
+  identity:
+  - electric linear actuator
+  - linear drive
+  - electric cylinder
+  descriptions:
+  - linear motion device
+  - push-pull actuator
+  - screw-driven actuator
+  - ball screw actuator
+  application:
+  - adjustable desk
+  - hospital bed
+  - solar tracker
+  - gate opener
+  - industrial press
+  - agricultural equipment
+  industry:
+  - furniture
+  - medical
+  - solar energy
+  - agriculture
+  - manufacturing
+  components:
+  - lead screw
+  - ball screw
+  - limit switch
+  - dc motor
+  - encoder
+  related:
+  - stroke length
+  - duty cycle
+  - self-locking
+  - dynamic load
+classification:
+  motion_type: linear
+  control_type: position
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 50
+    max: 20000
+    typical: 1500
+  speed_mps:
+    min: 0.002
+    max: 0.15
+    typical: 0.03
+  stroke_mm:
+    min: 25
+    max: 1000
+    typical: 200
+  position_accuracy_um:
+    min: 50
+    max: 5000
+    typical: 500
+  peak_power_watts:
+    min: 10
+    max: 1000
+    typical: 100
+  continuous_power_watts:
+    min: 5
+    max: 500
+    typical: 50
+  weight_grams:
+    min: 100
+    max: 10000
+    typical: 1500
+  cost_usd:
+    min: 20
+    max: 2000
+    typical: 150
+  lifetime_hours:
+    min: 2000
+    max: 30000
+    typical: 10000
+interface:
+  protocol:
+  - pwm
+  - analog
+  - rs485
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.5
+    max: 20
+    typical: 4
+  feedback:
+  - potentiometer
+  - encoder_incremental
+  - hall_effect
+reference_products:
+- id: tolomatic_erd
+  name: Tolomatic ERD Electric Cylinder
+  vendor: Tolomatic
+  cost_usd: 800
+  force_n: 8900
+  stroke_mm: 300
+- id: festo_dgea
+  name: Festo DGEA Mini Actuator
+  vendor: Festo
+  cost_usd: 350
+  force_n: 800
+  stroke_mm: 100

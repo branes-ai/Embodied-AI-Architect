@@ -1,0 +1,97 @@
+id: motor.brushless_dc_gimbal
+name: Gimbal Brushless Motor
+category: motor
+actuator_type: brushless_dc
+description: Low-kv, high-pole-count BLDC motor optimized for smooth, precise camera gimbal stabilization.
+  Direct-drive with no gearbox.
+aliases:
+- gimbal motor
+- BGC motor
+- stabilizer motor
+keywords:
+  identity:
+  - gimbal motor
+  - stabilizer motor
+  - BGC motor
+  - low kv BLDC
+  descriptions:
+  - smooth rotation motor
+  - direct drive gimbal
+  - camera stabilization motor
+  application:
+  - camera gimbal
+  - antenna tracker
+  - sensor stabilization
+  - drone gimbal
+  - telescope pointing
+  industry:
+  - cinematography
+  - drone
+  - defense
+  - astronomy
+  components:
+  - high pole count stator
+  - neodymium magnets
+  - AS5048 encoder
+  - BGC controller
+  related:
+  - gimbal PID
+  - smooth tracking
+  - low cogging torque
+classification:
+  motion_type: rotary
+  control_type: position
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 0.01
+    max: 2.0
+    typical: 0.2
+  speed_rpm:
+    min: 0
+    max: 200
+    typical: 30
+  peak_power_watts:
+    min: 1
+    max: 50
+    typical: 10
+  continuous_power_watts:
+    min: 0.5
+    max: 30
+    typical: 5
+  weight_grams:
+    min: 10
+    max: 300
+    typical: 60
+  cost_usd:
+    min: 5
+    max: 100
+    typical: 20
+  response_time_ms:
+    min: 0.5
+    max: 5
+    typical: 1
+interface:
+  protocol:
+  - pwm
+  voltage_v:
+    min: 7.4
+    max: 24
+    typical: 12
+  current_a:
+    min: 0.1
+    max: 3
+    typical: 0.5
+  feedback:
+  - encoder_absolute
+  - hall_effect
+reference_products:
+- id: ipower_gbm5208
+  name: iPower GBM5208-150T
+  vendor: iFlight
+  cost_usd: 25
+  torque_nm: 0.3

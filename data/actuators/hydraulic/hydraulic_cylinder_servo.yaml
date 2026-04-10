@@ -1,0 +1,98 @@
+id: hydraulic.hydraulic_cylinder_servo
+name: Servo Hydraulic Cylinder
+category: hydraulic
+actuator_type: hydraulic_cylinder
+description: Hydraulic cylinder with integrated servo valve and position transducer for closed-loop, high-bandwidth
+  position/force control. Used in fatigue testing, flight simulators, and precision presses.
+aliases:
+- servo hydraulic actuator
+- electrohydraulic actuator
+- servo cylinder
+keywords:
+  identity:
+  - servo hydraulic cylinder
+  - electrohydraulic actuator
+  - servo cylinder
+  descriptions:
+  - closed-loop hydraulic actuator
+  - precision hydraulic cylinder
+  - high-bandwidth hydraulic
+  application:
+  - fatigue testing machine
+  - flight simulator
+  - shake table
+  - precision press
+  - active suspension
+  industry:
+  - testing
+  - simulation
+  - aerospace
+  - automotive R&D
+  components:
+  - servo valve
+  - LVDT
+  - cylinder
+  - accumulator
+  - controller
+  related:
+  - frequency response
+  - dynamic stiffness
+  - servo loop
+  - dither
+classification:
+  motion_type: linear
+  control_type: position
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 1000
+    max: 2000000
+    typical: 50000
+  speed_mps:
+    min: 0.01
+    max: 2.0
+    typical: 0.3
+  stroke_mm:
+    min: 25
+    max: 3000
+    typical: 250
+  position_accuracy_um:
+    min: 1
+    max: 100
+    typical: 10
+  control_rate_hz:
+    min: 100
+    max: 5000
+    typical: 1000
+  peak_power_watts:
+    min: 1000
+    max: 500000
+    typical: 30000
+  weight_grams:
+    min: 5000
+    max: 500000
+    typical: 30000
+  cost_usd:
+    min: 2000
+    max: 200000
+    typical: 20000
+interface:
+  protocol:
+  - analog
+  - ethercat
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - encoder_incremental
+  - potentiometer
+reference_products:
+- id: mts_243
+  name: MTS 243 Servo Hydraulic Actuator
+  vendor: MTS Systems
+  cost_usd: 30000
+  force_n: 100000

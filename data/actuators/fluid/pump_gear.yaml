@@ -1,0 +1,82 @@
+id: fluid.pump_gear
+name: Gear Pump
+category: fluid
+actuator_type: pump
+description: Positive-displacement pump using meshing gears to transfer fluid. Delivers precise, pulsation-free
+  flow at high pressures. Common in lubrication, fuel delivery, and chemical dosing.
+aliases:
+- gear pump
+- positive displacement pump
+- metering pump
+keywords:
+  identity:
+  - gear pump
+  - external gear pump
+  - internal gear pump
+  descriptions:
+  - positive displacement pump
+  - high pressure pump
+  - metering pump
+  application:
+  - lubrication system
+  - fuel transfer
+  - chemical dosing
+  - hydraulic power unit
+  - adhesive dispensing
+  industry:
+  - manufacturing
+  - chemical
+  - oil and gas
+  - automotive
+  components:
+  - gear pair
+  - housing
+  - shaft seal
+  - relief valve
+  related:
+  - displacement
+  - volumetric efficiency
+  - viscosity range
+classification:
+  motion_type: fluid_flow
+  control_type: velocity
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 10
+    max: 10000
+    typical: 200
+  continuous_power_watts:
+    min: 5
+    max: 5000
+    typical: 100
+  weight_grams:
+    min: 100
+    max: 30000
+    typical: 2000
+  cost_usd:
+    min: 30
+    max: 5000
+    typical: 300
+  lifetime_hours:
+    min: 5000
+    max: 50000
+    typical: 20000
+interface:
+  protocol:
+  - analog
+  - can
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.5
+    max: 30
+    typical: 5
+  feedback:
+  - none
+reference_products: []

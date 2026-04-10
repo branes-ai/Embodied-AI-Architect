@@ -1,0 +1,80 @@
+id: hydraulic.hydraulic_cylinder_compact
+name: Compact Hydraulic Cylinder
+category: hydraulic
+actuator_type: hydraulic_cylinder
+description: Short-stroke, high-force hydraulic cylinder for clamping, pressing, and fixture applications
+  in tight spaces.
+aliases:
+- compact cylinder
+- pancake cylinder
+- short stroke hydraulic
+keywords:
+  identity:
+  - compact hydraulic cylinder
+  - pancake cylinder
+  - block cylinder
+  descriptions:
+  - short stroke actuator
+  - clamping cylinder
+  - compact force actuator
+  application:
+  - fixture clamping
+  - die pressing
+  - workholding
+  - automation clamping
+  industry:
+  - manufacturing
+  - metalworking
+  - automotive assembly
+  components:
+  - piston
+  - seals
+  - proximity sensor
+  - cylinder block
+  related:
+  - clamping force
+  - bore size
+  - mounting flange
+classification:
+  motion_type: linear
+  control_type: force
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 500
+    max: 500000
+    typical: 30000
+  speed_mps:
+    min: 0.005
+    max: 0.3
+    typical: 0.05
+  stroke_mm:
+    min: 5
+    max: 200
+    typical: 50
+  peak_power_watts:
+    min: 100
+    max: 50000
+    typical: 3000
+  weight_grams:
+    min: 500
+    max: 50000
+    typical: 5000
+  cost_usd:
+    min: 50
+    max: 5000
+    typical: 500
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  feedback:
+  - potentiometer
+  - none
+reference_products: []

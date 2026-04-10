@@ -1,0 +1,95 @@
+id: specialty.laser_cutter
+name: Laser Cutter Head
+category: specialty
+actuator_type: laser_cutter
+description: Focused laser beam delivery system for cutting, engraving, and marking materials. Includes
+  CO2, fiber, and diode laser types with beam focusing optics and assist gas delivery.
+aliases:
+- laser head
+- laser engraver
+- laser cutting module
+keywords:
+  identity:
+  - laser cutter
+  - laser engraver
+  - laser cutting head
+  descriptions:
+  - focused beam cutter
+  - non-contact cutting tool
+  - thermal cutting head
+  application:
+  - sheet metal cutting
+  - acrylic engraving
+  - PCB depaneling
+  - textile cutting
+  - wood engraving
+  industry:
+  - manufacturing
+  - signage
+  - electronics
+  - jewelry
+  - prototyping
+  components:
+  - laser source
+  - focusing lens
+  - nozzle
+  - assist gas valve
+  - beam expander
+  related:
+  - beam quality
+  - kerf width
+  - focal length
+  - cutting speed
+classification:
+  motion_type: display_output
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 5
+    max: 30000
+    typical: 500
+  continuous_power_watts:
+    min: 2
+    max: 20000
+    typical: 300
+  position_accuracy_um:
+    min: 5
+    max: 200
+    typical: 25
+  weight_grams:
+    min: 200
+    max: 20000
+    typical: 3000
+  cost_usd:
+    min: 200
+    max: 100000
+    typical: 5000
+  lifetime_hours:
+    min: 5000
+    max: 100000
+    typical: 20000
+interface:
+  protocol:
+  - analog
+  - ethernet_ip
+  - rs485
+  voltage_v:
+    min: 24
+    max: 400
+    typical: 48
+  current_a:
+    min: 1
+    max: 100
+    typical: 15
+  feedback:
+  - none
+reference_products:
+- id: ipg_ylr_500
+  name: IPG YLR-500 Fiber Laser
+  vendor: IPG Photonics
+  cost_usd: 25000
+  peak_power_watts: 500

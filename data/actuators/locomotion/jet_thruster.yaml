@@ -1,0 +1,90 @@
+id: locomotion.jet_thruster
+name: Jet Thruster
+category: locomotion
+actuator_type: jet_thruster
+description: Miniature jet engine or electric ducted fan producing high thrust for jet-powered UAVs, model
+  aircraft, and experimental platforms.
+aliases:
+- EDF
+- electric ducted fan
+- micro jet engine
+- turbine thruster
+keywords:
+  identity:
+  - jet thruster
+  - EDF
+  - electric ducted fan
+  - micro turbine
+  descriptions:
+  - high-speed thrust actuator
+  - ducted fan propulsion
+  - jet propulsion
+  application:
+  - jet UAV
+  - model jet aircraft
+  - high-speed drone
+  - cruise missile
+  - VTOL transition
+  industry:
+  - aerospace
+  - defense
+  - hobby aviation
+  - research
+  components:
+  - impeller
+  - duct
+  - stator vanes
+  - BLDC motor
+  - turbine wheel
+  related:
+  - specific thrust
+  - bypass ratio
+  - spool-up time
+  - exhaust velocity
+classification:
+  motion_type: linear
+  control_type: velocity
+  environment:
+  - outdoor
+  reversible: false
+  backdrivable: false
+attributes:
+  force_n:
+    min: 5
+    max: 5000
+    typical: 50
+  peak_power_watts:
+    min: 50
+    max: 100000
+    typical: 2000
+  continuous_power_watts:
+    min: 20
+    max: 50000
+    typical: 1000
+  weight_grams:
+    min: 30
+    max: 20000
+    typical: 300
+  cost_usd:
+    min: 30
+    max: 20000
+    typical: 200
+  response_time_ms:
+    min: 50
+    max: 5000
+    typical: 500
+interface:
+  protocol:
+  - pwm
+  - can
+  voltage_v:
+    min: 12
+    max: 60
+    typical: 44
+  current_a:
+    min: 2
+    max: 200
+    typical: 40
+  feedback:
+  - back_emf
+reference_products: []

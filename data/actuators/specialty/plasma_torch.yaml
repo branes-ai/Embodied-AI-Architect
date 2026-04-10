@@ -1,0 +1,90 @@
+id: specialty.plasma_torch
+name: Plasma Cutting Torch
+category: specialty
+actuator_type: plasma_torch
+description: Thermal cutting tool that uses a focused plasma arc to cut electrically conductive metals.
+  Fast and effective on steel, stainless, and aluminum at thicknesses up to 50mm.
+aliases:
+- plasma cutter
+- plasma arc torch
+- CNC plasma head
+keywords:
+  identity:
+  - plasma torch
+  - plasma cutter
+  - plasma arc torch
+  descriptions:
+  - ionized gas cutting tool
+  - metal cutting torch
+  - thermal arc cutter
+  application:
+  - steel plate cutting
+  - structural steel fabrication
+  - HVAC ductwork
+  - shipbuilding
+  - automotive repair
+  industry:
+  - metalworking
+  - construction
+  - shipbuilding
+  - automotive
+  components:
+  - electrode
+  - nozzle
+  - swirl ring
+  - shield cup
+  - plasma gas supply
+  related:
+  - arc voltage
+  - pierce height
+  - cutting speed
+  - kerf width
+classification:
+  motion_type: display_output
+  control_type: proportional
+  environment:
+  - indoor
+  - outdoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 2000
+    max: 100000
+    typical: 15000
+  continuous_power_watts:
+    min: 1000
+    max: 80000
+    typical: 10000
+  weight_grams:
+    min: 500
+    max: 10000
+    typical: 2000
+  cost_usd:
+    min: 500
+    max: 50000
+    typical: 5000
+  lifetime_hours:
+    min: 200
+    max: 5000
+    typical: 1000
+interface:
+  protocol:
+  - analog
+  - can
+  voltage_v:
+    min: 100
+    max: 400
+    typical: 200
+  current_a:
+    min: 10
+    max: 400
+    typical: 80
+  feedback:
+  - none
+reference_products:
+- id: hypertherm_powermax45
+  name: Hypertherm Powermax45 XP
+  vendor: Hypertherm
+  cost_usd: 2500
+  peak_power_watts: 6750

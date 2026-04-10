@@ -1,0 +1,83 @@
+id: pneumatic.pneumatic_cylinder_rodless
+name: Rodless Pneumatic Cylinder
+category: pneumatic
+actuator_type: pneumatic_cylinder
+description: Pneumatic actuator where the carriage rides along the cylinder body without an extending
+  rod. Enables long strokes in compact packages.
+aliases:
+- rodless cylinder
+- magnetic couple cylinder
+- band cylinder
+keywords:
+  identity:
+  - rodless pneumatic cylinder
+  - band cylinder
+  - magnetic couple cylinder
+  descriptions:
+  - long stroke pneumatic
+  - compact travel actuator
+  - guided pneumatic slide
+  application:
+  - transfer line
+  - gantry pick-and-place
+  - conveyor divert
+  - door operator
+  - palletizer
+  industry:
+  - manufacturing
+  - packaging
+  - logistics
+  - automotive
+  components:
+  - magnetic piston
+  - sealing band
+  - guide rail
+  - carriage
+  related:
+  - installation length
+  - load capacity
+  - guide accuracy
+classification:
+  motion_type: linear
+  control_type: on_off
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 50
+    max: 20000
+    typical: 800
+  speed_mps:
+    min: 0.1
+    max: 3.0
+    typical: 1.0
+  stroke_mm:
+    min: 100
+    max: 6000
+    typical: 1000
+  weight_grams:
+    min: 200
+    max: 20000
+    typical: 2000
+  cost_usd:
+    min: 100
+    max: 3000
+    typical: 400
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - hall_effect
+  - none
+reference_products:
+- id: festo_dgc
+  name: Festo DGC Rodless Cylinder
+  vendor: Festo
+  cost_usd: 450
+  stroke_mm: 1500

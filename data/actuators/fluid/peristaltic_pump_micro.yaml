@@ -1,0 +1,83 @@
+id: fluid.peristaltic_pump_micro
+name: Micro Peristaltic Pump
+category: fluid
+actuator_type: peristaltic_pump
+description: Miniaturized peristaltic pump for micro-liter dosing in diagnostics, lab-on-chip, and point-of-care
+  devices.
+aliases:
+- micro dosing pump
+- miniature peristaltic
+- lab pump
+keywords:
+  identity:
+  - micro peristaltic pump
+  - miniature roller pump
+  - micro dosing pump
+  descriptions:
+  - microliter pump
+  - precision dosing pump
+  - compact fluid pump
+  application:
+  - point-of-care diagnostics
+  - lab-on-chip
+  - drug delivery
+  - sample preparation
+  - reagent dispensing
+  industry:
+  - medical diagnostics
+  - biotechnology
+  - pharmaceutical
+  - research
+  components:
+  - micro motor
+  - silicone tubing
+  - mini rollers
+  - controller PCB
+  related:
+  - microliter accuracy
+  - tube degradation
+  - priming volume
+classification:
+  motion_type: fluid_flow
+  control_type: velocity
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 0.1
+    max: 5
+    typical: 1
+  continuous_power_watts:
+    min: 0.05
+    max: 3
+    typical: 0.5
+  weight_grams:
+    min: 5
+    max: 200
+    typical: 30
+  cost_usd:
+    min: 10
+    max: 500
+    typical: 50
+interface:
+  protocol:
+  - pwm
+  - i2c
+  voltage_v:
+    min: 3.3
+    max: 12
+    typical: 5
+  current_a:
+    min: 0.01
+    max: 0.5
+    typical: 0.1
+  feedback:
+  - none
+reference_products:
+- id: knf_nf300
+  name: KNF NF300 Micro Pump
+  vendor: KNF
+  cost_usd: 80

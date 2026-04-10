@@ -1,0 +1,93 @@
+id: locomotion.propeller_large
+name: Heavy-Lift Propulsion System
+category: locomotion
+actuator_type: propeller
+description: Large diameter motor-propeller assembly for heavy-lift drones, cargo UAVs, and eVTOL aircraft.
+  Typically 24-40 inch props with coaxial or single configurations.
+aliases:
+- heavy-lift rotor
+- cargo drone motor
+- large prop drive
+keywords:
+  identity:
+  - heavy-lift propeller
+  - large rotor
+  - cargo drone propulsion
+  descriptions:
+  - high thrust motor
+  - large diameter prop
+  - heavy lift UAV drive
+  application:
+  - cargo drone
+  - eVTOL
+  - agricultural spray drone
+  - heavy-lift multirotor
+  - aerial survey platform
+  industry:
+  - aerospace
+  - delivery
+  - agriculture
+  - defense
+  - inspection
+  components:
+  - high-torque BLDC
+  - carbon fiber propeller
+  - ESC
+  - vibration damper
+  related:
+  - thrust-to-weight
+  - disc loading
+  - blade element theory
+  - tip speed
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 2
+    max: 100
+    typical: 20
+  speed_rpm:
+    min: 0
+    max: 5000
+    typical: 1500
+  peak_power_watts:
+    min: 500
+    max: 50000
+    typical: 5000
+  continuous_power_watts:
+    min: 200
+    max: 30000
+    typical: 3000
+  weight_grams:
+    min: 500
+    max: 15000
+    typical: 2000
+  cost_usd:
+    min: 200
+    max: 10000
+    typical: 1000
+interface:
+  protocol:
+  - can
+  - pwm
+  voltage_v:
+    min: 22
+    max: 60
+    typical: 48
+  current_a:
+    min: 5
+    max: 200
+    typical: 50
+  feedback:
+  - back_emf
+reference_products:
+- id: tmotor_u15ii_kv100
+  name: T-Motor U15II KV100
+  vendor: T-Motor
+  cost_usd: 450
+  peak_power_watts: 6000

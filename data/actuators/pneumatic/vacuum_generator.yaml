@@ -1,0 +1,84 @@
+id: pneumatic.vacuum_generator
+name: Vacuum Generator
+category: pneumatic
+actuator_type: vacuum_generator
+description: Venturi-based device that converts compressed air into vacuum for suction gripping and material
+  handling. Compact, no moving parts, and very fast response.
+aliases:
+- vacuum ejector
+- venturi pump
+- vacuum pump pneumatic
+keywords:
+  identity:
+  - vacuum generator
+  - vacuum ejector
+  - venturi pump
+  descriptions:
+  - suction generator
+  - venturi vacuum device
+  - inline vacuum
+  - multi-stage ejector
+  application:
+  - suction gripping
+  - pick-and-place
+  - sheet handling
+  - label placement
+  - PCB handling
+  industry:
+  - packaging
+  - electronics
+  - automotive
+  - food processing
+  components:
+  - venturi nozzle
+  - silencer
+  - vacuum filter
+  - check valve
+  related:
+  - vacuum level
+  - suction flow
+  - evacuation time
+  - energy saving
+classification:
+  motion_type: fluid_flow
+  control_type: on_off
+  environment:
+  - indoor
+  - cleanroom
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 2
+    max: 50
+    typical: 10
+  weight_grams:
+    min: 10
+    max: 500
+    typical: 50
+  cost_usd:
+    min: 15
+    max: 500
+    typical: 80
+  response_time_ms:
+    min: 10
+    max: 200
+    typical: 50
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - none
+reference_products:
+- id: smc_zx
+  name: SMC ZX Vacuum Ejector
+  vendor: SMC
+  cost_usd: 60
+- id: schmalz_ecbpm
+  name: Schmalz ECBPMi Compact Ejector
+  vendor: Schmalz
+  cost_usd: 150

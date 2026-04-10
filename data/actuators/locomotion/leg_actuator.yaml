@@ -1,0 +1,108 @@
+id: locomotion.leg_actuator
+name: Legged Robot Joint Actuator
+category: locomotion
+actuator_type: leg_actuator
+description: High-bandwidth quasi-direct-drive or geared actuator module designed for legged robot hip,
+  knee, and ankle joints. Emphasizes torque density, backdrivability, and impact tolerance.
+aliases:
+- leg joint motor
+- walking actuator
+- quadruped joint
+keywords:
+  identity:
+  - leg actuator
+  - legged robot joint
+  - walking robot motor
+  descriptions:
+  - dynamic locomotion actuator
+  - impact-tolerant joint
+  - compliant leg motor
+  application:
+  - quadruped robot
+  - bipedal robot
+  - hexapod
+  - exoskeleton leg
+  - dynamic walking
+  industry:
+  - robotics
+  - defense
+  - research
+  - prosthetics
+  components:
+  - BLDC motor
+  - planetary gearbox
+  - torque sensor
+  - encoder
+  - bearing assembly
+  related:
+  - impedance control
+  - ground reaction force
+  - joint compliance
+  - proprioception
+classification:
+  motion_type: rotary
+  control_type: torque
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 5
+    max: 200
+    typical: 40
+  speed_rpm:
+    min: 0
+    max: 400
+    typical: 100
+  control_rate_hz:
+    min: 500
+    max: 10000
+    typical: 2000
+  peak_power_watts:
+    min: 50
+    max: 5000
+    typical: 500
+  continuous_power_watts:
+    min: 20
+    max: 2000
+    typical: 200
+  weight_grams:
+    min: 100
+    max: 5000
+    typical: 800
+  cost_usd:
+    min: 100
+    max: 5000
+    typical: 500
+  response_time_ms:
+    min: 0.1
+    max: 2
+    typical: 0.5
+interface:
+  protocol:
+  - can
+  - ethercat
+  voltage_v:
+    min: 24
+    max: 48
+    typical: 48
+  current_a:
+    min: 2
+    max: 50
+    typical: 12
+  feedback:
+  - encoder_absolute
+  - strain_gauge
+reference_products:
+- id: unitree_go_m8010
+  name: Unitree Go M8010-6
+  vendor: Unitree
+  cost_usd: 280
+  torque_nm: 23.7
+- id: mit_mini_cheetah_motor
+  name: MIT Mini Cheetah Actuator
+  vendor: MIT (open-source design)
+  cost_usd: 250
+  torque_nm: 17

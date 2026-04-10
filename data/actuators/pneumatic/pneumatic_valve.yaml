@@ -1,0 +1,97 @@
+id: pneumatic.pneumatic_valve
+name: Pneumatic Solenoid Valve
+category: pneumatic
+actuator_type: pneumatic_valve
+description: Electrically operated valve that controls compressed air flow to pneumatic actuators. Available
+  as 3/2-way, 5/2-way, and 5/3-way configurations.
+aliases:
+- air valve
+- solenoid valve
+- directional air valve
+keywords:
+  identity:
+  - pneumatic solenoid valve
+  - air valve
+  - directional air valve
+  descriptions:
+  - compressed air valve
+  - pilot valve
+  - manifold valve
+  - spool valve pneumatic
+  application:
+  - cylinder control
+  - blow-off
+  - air logic
+  - gripper control
+  - valve island
+  industry:
+  - manufacturing
+  - packaging
+  - food processing
+  - automotive
+  components:
+  - solenoid coil
+  - spool
+  - seals
+  - exhaust muffler
+  related:
+  - flow rate
+  - switching time
+  - Cv value
+  - valve island
+classification:
+  motion_type: fluid_flow
+  control_type: on_off
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  response_time_ms:
+    min: 5
+    max: 50
+    typical: 15
+  peak_power_watts:
+    min: 1
+    max: 10
+    typical: 3
+  continuous_power_watts:
+    min: 0.5
+    max: 5
+    typical: 2
+  weight_grams:
+    min: 10
+    max: 500
+    typical: 50
+  cost_usd:
+    min: 10
+    max: 500
+    typical: 40
+  lifetime_hours:
+    min: 50000
+    max: 500000
+    typical: 100000
+interface:
+  protocol:
+  - analog
+  - can
+  - ethernet_ip
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  current_a:
+    min: 0.05
+    max: 0.5
+    typical: 0.1
+  feedback:
+  - none
+reference_products:
+- id: festo_vuvg
+  name: Festo VUVG Solenoid Valve
+  vendor: Festo
+  cost_usd: 50
+- id: smc_sy3000
+  name: SMC SY3000 Solenoid Valve
+  vendor: SMC
+  cost_usd: 30

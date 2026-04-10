@@ -1,0 +1,86 @@
+id: specialty.laser_cutter_co2
+name: CO2 Laser Tube
+category: specialty
+actuator_type: laser_cutter
+description: 'Gas discharge CO2 laser for cutting and engraving non-metallic materials: wood, acrylic,
+  fabric, leather, and paper. 10.6 um wavelength.'
+aliases:
+- CO2 laser
+- gas laser cutter
+- infrared laser tube
+keywords:
+  identity:
+  - CO2 laser tube
+  - gas laser
+  - 10.6 micron laser
+  descriptions:
+  - infrared cutting laser
+  - non-metal laser cutter
+  - sealed tube laser
+  application:
+  - acrylic cutting
+  - wood engraving
+  - fabric cutting
+  - rubber cutting
+  - paper cutting
+  industry:
+  - signage
+  - craft
+  - textile
+  - packaging
+  - prototyping
+  components:
+  - gas tube
+  - mirror
+  - lens
+  - power supply
+  - water cooling
+  related:
+  - beam mode
+  - tube life
+  - water cooling
+  - mirror alignment
+classification:
+  motion_type: display_output
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 20
+    max: 300
+    typical: 80
+  continuous_power_watts:
+    min: 10
+    max: 250
+    typical: 60
+  weight_grams:
+    min: 500
+    max: 10000
+    typical: 3000
+  cost_usd:
+    min: 50
+    max: 3000
+    typical: 300
+  lifetime_hours:
+    min: 1000
+    max: 10000
+    typical: 4000
+interface:
+  protocol:
+  - pwm
+  - analog
+  voltage_v:
+    min: 20000
+    max: 35000
+    typical: 25000
+  feedback:
+  - none
+reference_products:
+- id: reci_w2
+  name: RECI W2 90W CO2 Laser Tube
+  vendor: RECI
+  cost_usd: 200
+  peak_power_watts: 90

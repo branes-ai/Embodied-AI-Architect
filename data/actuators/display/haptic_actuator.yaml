@@ -1,0 +1,95 @@
+id: display.haptic_actuator
+name: Haptic Feedback Actuator
+category: display
+actuator_type: haptic_actuator
+description: Vibrotactile or force-feedback actuator for conveying tactile information to operators. Used
+  in teleoperation, VR controllers, wearable devices, and human-robot interfaces.
+aliases:
+- vibration motor
+- haptic engine
+- tactile actuator
+- ERM motor
+keywords:
+  identity:
+  - haptic actuator
+  - vibration motor
+  - tactile feedback
+  - ERM
+  - LRA
+  descriptions:
+  - vibrotactile transducer
+  - force feedback device
+  - touch feedback actuator
+  application:
+  - teleoperation feedback
+  - VR controller
+  - wearable alert
+  - automotive touchscreen
+  - surgical haptics
+  industry:
+  - consumer electronics
+  - medical
+  - automotive
+  - VR/AR
+  - robotics
+  components:
+  - eccentric mass
+  - linear resonant actuator
+  - piezo element
+  - driver IC
+  related:
+  - vibration frequency
+  - haptic waveform
+  - latency
+  - localized feedback
+classification:
+  motion_type: vibration
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 0.1
+    max: 10
+    typical: 1
+  peak_power_watts:
+    min: 0.05
+    max: 5
+    typical: 0.5
+  continuous_power_watts:
+    min: 0.02
+    max: 3
+    typical: 0.3
+  weight_grams:
+    min: 0.5
+    max: 50
+    typical: 3
+  cost_usd:
+    min: 0.5
+    max: 30
+    typical: 2
+  response_time_ms:
+    min: 1
+    max: 20
+    typical: 5
+interface:
+  protocol:
+  - pwm
+  - i2c
+  voltage_v:
+    min: 1.8
+    max: 5
+    typical: 3.3
+  current_a:
+    min: 0.01
+    max: 0.5
+    typical: 0.1
+  feedback:
+  - none
+reference_products:
+- id: ti_drv2605l
+  name: TI DRV2605L Haptic Driver + LRA
+  vendor: Texas Instruments
+  cost_usd: 3

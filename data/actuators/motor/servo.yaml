@@ -1,0 +1,162 @@
+id: motor.servo
+name: Servo Motor
+category: motor
+actuator_type: servo
+description: Closed-loop motor with integrated controller, encoder, and gearbox for precise position/velocity/torque
+  control. The standard actuator for industrial robots, cobots, and high-performance articulated systems.
+aliases:
+- servo drive
+- AC servo
+- servo actuator
+keywords:
+  identity:
+  - servo motor
+  - servo drive
+  - AC servo
+  - PMSM servo
+  descriptions:
+  - closed-loop actuator
+  - position-controlled motor
+  - torque-controlled motor
+  - precision actuator
+  application:
+  - robot arm joint
+  - cobot joint
+  - CNC axis
+  - semiconductor handling
+  - packaging machine
+  - pick-and-place
+  industry:
+  - robotics
+  - manufacturing
+  - semiconductor
+  - packaging
+  - aerospace
+  components:
+  - PMSM motor
+  - absolute encoder
+  - servo driver
+  - brake
+  - harmonic gear
+  related:
+  - field-oriented control
+  - cascaded PID
+  - trajectory interpolation
+  - EtherCAT motion
+classification:
+  motion_type: rotary
+  control_type: position
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: false
+attributes:
+  torque_nm:
+    min: 0.05
+    max: 500
+    typical: 5.0
+  speed_rpm:
+    min: 0
+    max: 10000
+    typical: 3000
+  position_accuracy_um:
+    min: 1
+    max: 100
+    typical: 10
+  repeatability_um:
+    min: 0.5
+    max: 50
+    typical: 5
+  control_rate_hz:
+    min: 1000
+    max: 20000
+    typical: 4000
+  efficiency_percent:
+    min: 85
+    max: 97
+    typical: 92
+  peak_power_watts:
+    min: 50
+    max: 10000
+    typical: 750
+  continuous_power_watts:
+    min: 20
+    max: 5000
+    typical: 400
+  weight_grams:
+    min: 100
+    max: 30000
+    typical: 2000
+  cost_usd:
+    min: 100
+    max: 10000
+    typical: 500
+  response_time_ms:
+    min: 0.1
+    max: 2
+    typical: 0.5
+  lifetime_hours:
+    min: 20000
+    max: 100000
+    typical: 40000
+interface:
+  protocol:
+  - ethercat
+  - can
+  - profinet
+  - rs485
+  voltage_v:
+    min: 24
+    max: 400
+    typical: 48
+  current_a:
+    min: 1
+    max: 100
+    typical: 10
+  feedback:
+  - encoder_absolute
+  - resolver
+reference_products:
+- id: maxon_ec_i_40
+  name: maxon EC-i 40
+  vendor: maxon
+  cost_usd: 350
+  torque_nm: 0.128
+  speed_rpm: 15000
+  protocol:
+  - pwm
+  feedback:
+  - hall_effect
+  - encoder_incremental
+- id: faulhaber_2237
+  name: Faulhaber 2237 CXR
+  vendor: Faulhaber
+  cost_usd: 420
+  torque_nm: 0.012
+  speed_rpm: 11000
+  protocol:
+  - pwm
+  feedback:
+  - encoder_incremental
+- id: dynamixel_xm430
+  name: ROBOTIS Dynamixel XM430-W350
+  vendor: ROBOTIS
+  cost_usd: 260
+  torque_nm: 4.1
+  speed_rpm: 46
+  protocol:
+  - rs485
+  - ttl
+  feedback:
+  - encoder_absolute
+- id: robstride_03
+  name: Robstride 03 Mini
+  vendor: Robstride
+  cost_usd: 180
+  torque_nm: 12.0
+  speed_rpm: 320
+  protocol:
+  - can
+  feedback:
+  - encoder_absolute
