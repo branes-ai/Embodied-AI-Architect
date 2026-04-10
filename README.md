@@ -4,13 +4,49 @@ A design environment for creating and evaluating autonomous agents, with hardwar
 
 ## Features
 
+- **Mission-Driven Workflow**: Define a mission, qualify goals, select sensors/actuators, synthesize and analyze a complete system
+- **Sensor & Actuator Selection**: Search, compare, budget, and fusion analysis for system components
+- **System Synthesis**: Generate system architectures and bills of materials from mission specifications
+- **System Analysis**: Power, latency, thermal, SWaP-C, and safety analysis of synthesized systems
 - **Model Analysis**: Analyze PyTorch model structure and compute requirements
 - **Hardware Profiling**: Recommendations for edge/cloud deployment
 - **Multi-Hardware Benchmarking**: Local CPU, remote SSH, Kubernetes backends
 - **Interactive Chat**: Claude-powered architect for design decisions
 - **SoC Optimization**: LangGraph-based RTL optimization loop (experimental)
 
-## Quick Start
+## Mission Workflow Quick Start
+
+The mission-driven workflow is the primary way to design an embodied AI system:
+
+```bash
+# 1. Create a mission
+branes mission new vineyard-sprayer --goal "Autonomous vineyard spraying drone"
+
+# 2. Qualify design goals and constraints
+branes design qualify --mission vineyard-sprayer --auto
+
+# 3. Select sensors and actuators
+branes sensor search "stereo camera for VIO"
+branes sensor select vineyard-sprayer visual.stereo_camera
+branes actuator search "pump for spraying"
+branes actuator select vineyard-sprayer fluid.sprayer
+
+# 4. Analyze sensor budget and fusion
+branes sensor budget vineyard-sprayer
+branes sensor fusion vineyard-sprayer
+
+# 5. Generate a design plan and synthesize the system
+branes design plan --mission vineyard-sprayer --static
+branes synthesize system vineyard-sprayer
+
+# 6. Run system-level analysis
+branes analyze-system power vineyard-sprayer
+branes analyze-system swap vineyard-sprayer
+```
+
+See [docs/quickstart-mission.md](docs/quickstart-mission.md) for a complete walkthrough.
+
+## Installation
 
 ### Automated Setup (Recommended)
 

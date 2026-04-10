@@ -8,9 +8,11 @@ Embodied AI Architect is a design environment for creating, evaluating, optimizi
 to imbue a device or system with intelligence and/or autonomy. 
 
 It provides:
+- Mission-driven workflow: define a mission, qualify goals, select components, synthesize a system
 - Application architecture analysis and characterization
 - Transformational analysis, sensor data acquisition, signal conditioning, signal processing, DNN inference, state estimation, actuation
 - DNN and Linear Algebra Computational Graph extraction, analysis, characterization and estimation
+- Sensor and actuator selection, budgeting, and fusion analysis
 - Model analysis and benchmarking across different hardware targets
 - Hardware profiling with recommendations for edge/cloud deployment
 - Pre-silicon Knowledge Processing Unit SoC hardware targets to leapfrog COTS designs and enable new use-cases
@@ -66,6 +68,34 @@ It provides:
 .venv/bin/branes swap score --area 50 --power 5 --process 28 --profile drone
 .venv/bin/branes swap sensitivity --area 50 --power 5 --process 28 --mode tornado
 
+# Mission-driven workflow
+.venv/bin/branes mission new vineyard-sprayer --goal "Autonomous vineyard spraying drone"
+.venv/bin/branes mission list
+.venv/bin/branes mission show vineyard-sprayer
+.venv/bin/branes design qualify --mission vineyard-sprayer --auto
+.venv/bin/branes design plan --mission vineyard-sprayer --static
+
+# Sensor and actuator selection
+.venv/bin/branes sensor search "stereo camera for VIO"
+.venv/bin/branes sensor select vineyard-sprayer visual.stereo_camera
+.venv/bin/branes sensor compare vineyard-sprayer
+.venv/bin/branes sensor budget vineyard-sprayer
+.venv/bin/branes sensor fusion vineyard-sprayer
+.venv/bin/branes actuator search "pump for spraying"
+.venv/bin/branes actuator select vineyard-sprayer fluid.sprayer
+.venv/bin/branes actuator compare vineyard-sprayer
+.venv/bin/branes actuator budget vineyard-sprayer
+
+# System synthesis and analysis
+.venv/bin/branes synthesize system vineyard-sprayer
+.venv/bin/branes synthesize architecture vineyard-sprayer
+.venv/bin/branes synthesize bom vineyard-sprayer          # coming soon — use: swap bom
+.venv/bin/branes analyze-system power vineyard-sprayer     # coming soon — use: mcp energy
+.venv/bin/branes analyze-system latency vineyard-sprayer   # coming soon — use: mcp latency
+.venv/bin/branes analyze-system thermal vineyard-sprayer   # coming soon
+.venv/bin/branes analyze-system swap vineyard-sprayer      # coming soon — use: swap check
+.venv/bin/branes analyze-system safety vineyard-sprayer    # coming soon — use: validate safety
+
 # Start interactive chat session (requires ANTHROPIC_API_KEY)
 export ANTHROPIC_API_KEY=your-key-here
 .venv/bin/branes chat
@@ -73,7 +103,15 @@ export ANTHROPIC_API_KEY=your-key-here
 
 ## CLI Commands
 
-The `branes` CLI has 20 command groups, organized by function:
+The `branes` CLI has 30 command groups, organized by function:
+
+**Mission-Driven Workflow:**
+- `mission` - Create and manage missions (new, list, show, edit, delete, refine, fork)
+- `select` - Select components for a mission (sensor, actuator, compute, model)
+- `sensor` - Sensor selection and analysis (select, compare, budget, fusion, search)
+- `actuator` - Actuator selection and analysis (select, compare, budget, control-rate, search)
+- `synthesize` - Synthesize system designs (system, architecture, bom)
+- `analyze-system` - System-level analysis (power, latency, thermal, swap, safety)
 
 **Analysis & Benchmarking:**
 - `analyze` - Analyze model architecture and complexity
@@ -83,7 +121,7 @@ The `branes` CLI has 20 command groups, organized by function:
 
 **Optimization & Design:**
 - `optimize` - Multi-objective design space optimization
-- `design` - Design perception pipelines from requirements
+- `design` - Design perception pipelines from requirements; qualify and plan from missions
 - `swap` - System-level SWaP-C analysis (score, rank, sensitivity, sweep, budget)
 - `spec` - Manage system specifications with versioning and provenance
 
@@ -108,6 +146,18 @@ The `branes` CLI has 20 command groups, organized by function:
 ## Architecture
 
 ### Core System (`src/embodied_ai_architect/`)
+
+**Mission Entity**: The `Mission` is the top-level design artifact that drives the workflow.
+A mission captures the system goal, constraints, selected sensors/actuators, compute targets,
+and models. The mission-driven workflow follows this lifecycle:
+
+```
+mission new → design qualify → sensor/actuator select → sensor budget/fusion
+           → design plan → synthesize system → analyze-system (power/latency/thermal/swap/safety)
+```
+
+Each step enriches the mission state, enabling downstream stages to make informed decisions
+about component selection, system synthesis, and feasibility analysis.
 
 **Orchestrator Pattern**: The `Orchestrator` class coordinates agent execution in a pipeline:
 1. ModelAnalyzer → analyzes PyTorch model structure
