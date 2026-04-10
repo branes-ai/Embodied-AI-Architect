@@ -1,0 +1,351 @@
+# Actuator Definition Schema — field reference for actuator YAML files.
+#
+# Each actuator definition file lives in data/actuators/<category>/<type>.yaml
+# (e.g., data/actuators/motor/brushless_dc.yaml) and follows this schema.
+# The ActuatorRegistry loads all YAML files and indexes them for search.
+#
+# This schema mirrors the sensor YAML schema (data/sensors/schema.yaml) so
+# the two registries feel consistent to the architect.
+#
+# Issue #60, Epic #51 Phase 2 Step 2.4
+# =====================================================================
+
+# ── IDENTITY ──────────────────────────────────────────────────────────
+# Required fields that uniquely identify the actuator.
+
+id:
+  type: string
+  required: true
+  description: >
+    Unique identifier in dot notation: <category>.<type>
+    Example: motor.brushless_dc, gripper.parallel_gripper
+  example: "motor.brushless_dc"
+
+name:
+  type: string
+  required: true
+  description: "Human-readable display name"
+  example: "Brushless DC Motor"
+
+category:
+  type: string
+  required: true
+  description: >
+    Top-level actuator category from taxonomy.yaml:
+    motor, hydraulic, pneumatic, gripper, locomotion, fluid, display, specialty
+  example: "motor"
+
+actuator_type:
+  type: string
+  required: true
+  description: "Specific actuator type within the category (from taxonomy.yaml types list)"
+  example: "brushless_dc"
+
+description:
+  type: string
+  required: false
+  description: "One-paragraph description of the actuator's purpose and typical deployment"
+  example: "Electronically commutated motor with high efficiency and long lifespan..."
+
+aliases:
+  type: list[string]
+  required: false
+  description: "Alternative names for search matching"
+  example: ["BLDC motor", "EC motor", "electronically commutated motor"]
+
+
+# ── KEYWORDS ──────────────────────────────────────────────────────────
+# Keyword groups for TF-IDF search matching (same structure as sensors).
+
+keywords:
+  type: object
+  required: false
+  description: "Keyword groups for fuzzy matching"
+  fields:
+    identity:
+      description: "Names and aliases"
+      example: ["brushless dc motor", "BLDC", "EC motor"]
+    descriptions:
+      description: "Descriptive phrases"
+      example: ["electric motor", "rotary actuator", "high efficiency motor"]
+    application:
+      description: "Common use cases"
+      example: ["drone propulsion", "robot joint", "CNC spindle", "conveyor drive"]
+    industry:
+      description: "Target industries"
+      example: ["robotics", "aerospace", "automotive", "manufacturing"]
+    components:
+      description: "Key components or technologies"
+      example: ["permanent magnet", "hall sensor", "encoder", "esc"]
+    related:
+      description: "Related concepts"
+      example: ["servo control", "field-oriented control", "back-emf"]
+
+
+# ── CLASSIFICATION ────────────────────────────────────────────────────
+# Axes for filtering and matching.
+
+classification:
+  type: object
+  required: false
+  description: "Classification axes for filtering"
+  fields:
+    motion_type:
+      type: string
+      description: >
+        Type of motion produced: rotary, linear, gripping, fluid_flow,
+        vibration, display_output
+      example: "rotary"
+    control_type:
+      type: string
+      description: >
+        Control method: position, velocity, torque, force, pressure,
+        on_off, proportional
+      example: "velocity"
+    environment:
+      type: list[string]
+      description: >
+        Suitable operating environments: indoor, outdoor, underwater,
+        space, cleanroom, hazardous, high_temp
+      example: ["indoor", "outdoor"]
+    reversible:
+      type: boolean
+      description: "Whether the actuator can reverse direction"
+      example: true
+    backdrivable:
+      type: boolean
+      description: "Whether external force can drive the actuator (important for safety)"
+      example: true
+
+
+# ── ATTRIBUTES ────────────────────────────────────────────────────────
+# Quantitative specifications. Each attribute has min/max/typical.
+
+attributes:
+  type: object
+  required: false
+  description: "Quantitative specifications with min/max/typical ranges"
+  fields:
+    torque_nm:
+      description: "Output torque (for rotary actuators)"
+      unit: "newton-meters"
+      example: { min: 0.01, max: 10.0, typical: 0.5 }
+    force_n:
+      description: "Output force (for linear actuators and grippers)"
+      unit: "newtons"
+      example: { min: 1, max: 500, typical: 50 }
+    speed_rpm:
+      description: "Rotational speed (for rotary actuators)"
+      unit: "revolutions per minute"
+      example: { min: 0, max: 10000, typical: 3000 }
+    speed_mps:
+      description: "Linear speed (for linear actuators)"
+      unit: "meters per second"
+      example: { min: 0.001, max: 1.0, typical: 0.1 }
+    stroke_mm:
+      description: "Travel distance (for linear actuators and grippers)"
+      unit: "millimeters"
+      example: { min: 10, max: 500, typical: 100 }
+    payload_kg:
+      description: "Maximum payload capacity"
+      unit: "kilograms"
+      example: { min: 0.1, max: 50, typical: 5 }
+    control_rate_hz:
+      description: "Control loop update frequency"
+      unit: "hertz"
+      example: { min: 50, max: 10000, typical: 1000 }
+    position_accuracy_um:
+      description: "Positioning accuracy"
+      unit: "micrometers"
+      example: { min: 1, max: 1000, typical: 50 }
+    repeatability_um:
+      description: "Positioning repeatability"
+      unit: "micrometers"
+      example: { min: 1, max: 500, typical: 20 }
+    efficiency_percent:
+      description: "Electromechanical efficiency"
+      unit: "percent"
+      example: { min: 50, max: 95, typical: 85 }
+    peak_power_watts:
+      description: "Peak power consumption"
+      unit: "watts"
+      example: { min: 1, max: 5000, typical: 100 }
+    continuous_power_watts:
+      description: "Continuous power consumption"
+      unit: "watts"
+      example: { min: 0.5, max: 2000, typical: 50 }
+    weight_grams:
+      description: "Actuator weight"
+      unit: "grams"
+      example: { min: 5, max: 50000, typical: 500 }
+    cost_usd:
+      description: "Approximate unit cost"
+      unit: "USD"
+      example: { min: 5, max: 10000, typical: 200 }
+    response_time_ms:
+      description: "Time from command to motion start"
+      unit: "milliseconds"
+      example: { min: 0.1, max: 100, typical: 5 }
+    lifetime_hours:
+      description: "Expected operating lifetime"
+      unit: "hours"
+      example: { min: 1000, max: 100000, typical: 20000 }
+
+
+# ── INTERFACE ─────────────────────────────────────────────────────────
+# Electrical and communication interface specifications.
+
+interface:
+  type: object
+  required: false
+  description: "Electrical and communication interface"
+  fields:
+    protocol:
+      type: list[string]
+      description: >
+        Control/communication protocols: can, ethercat, profinet, pwm,
+        step_dir, rs485, modbus, usb, i2c, spi, analog, ethernet_ip
+      example: ["can", "pwm"]
+    voltage_v:
+      type: object
+      description: "Operating voltage range"
+      example: { min: 12, max: 48, typical: 24 }
+    current_a:
+      type: object
+      description: "Operating current range"
+      example: { min: 0.5, max: 20, typical: 5 }
+    connector:
+      type: string
+      description: "Physical connector type"
+      example: "XT60"
+    feedback:
+      type: list[string]
+      description: >
+        Position/velocity feedback mechanisms: encoder_incremental,
+        encoder_absolute, hall_effect, potentiometer, resolver,
+        back_emf, strain_gauge, load_cell, none
+      example: ["encoder_incremental", "hall_effect"]
+
+
+# ── ENVIRONMENTAL ─────────────────────────────────────────────────────
+# Operating environment specifications.
+
+environmental:
+  type: object
+  required: false
+  description: "Environmental operating specifications"
+  fields:
+    ip_rating:
+      type: string
+      description: "Ingress protection rating"
+      example: "IP54"
+    operating_temp_c:
+      type: object
+      description: "Operating temperature range"
+      example: { min: -10, max: 50 }
+    storage_temp_c:
+      type: object
+      description: "Storage temperature range"
+      example: { min: -40, max: 85 }
+    vibration_g:
+      type: number
+      description: "Maximum sustained vibration tolerance"
+      example: 5.0
+    shock_g:
+      type: number
+      description: "Maximum shock tolerance"
+      example: 50
+    noise_db:
+      type: number
+      description: "Acoustic noise level during operation"
+      example: 45
+
+
+# ── SAFETY ────────────────────────────────────────────────────────────
+# Safety-related specifications (actuators interact with the physical world).
+
+safety:
+  type: object
+  required: false
+  description: "Safety specifications and compliance"
+  fields:
+    safety_level:
+      type: string
+      description: >
+        Safety integrity level: none, ple_a through ple_e (ISO 13849),
+        sil_1 through sil_3 (IEC 61508)
+      example: "ple_d"
+    has_brake:
+      type: boolean
+      description: "Whether the actuator has an integrated holding brake"
+      example: true
+    fail_safe_mode:
+      type: string
+      description: >
+        Behavior on power loss or fault: brake, coast, lock, retract,
+        release, none
+      example: "brake"
+    max_pinch_force_n:
+      type: number
+      description: "Maximum force in a pinch-point scenario (for grippers/joints)"
+      example: 150
+    compliance:
+      type: list[string]
+      description: "Safety standards compliance"
+      example: ["ISO 13849", "IEC 61508", "ISO 10218"]
+
+
+# ── REFERENCE PRODUCTS ────────────────────────────────────────────────
+# Real products that implement this actuator type (populated in Phase 3).
+
+reference_products:
+  type: list[object]
+  required: false
+  description: >
+    Real-world products that implement this actuator type. Each entry has
+    id, name, vendor, and product-specific attribute values.
+  example:
+    - id: "maxon_ec_i_40"
+      name: "maxon EC-i 40"
+      vendor: "maxon"
+      cost_usd: 350
+      torque_nm: 0.128
+      speed_rpm: 15000
+      interface: ["hall_effect", "encoder_incremental"]
+    - id: "dynamixel_xm430"
+      name: "ROBOTIS Dynamixel XM430-W350"
+      vendor: "ROBOTIS"
+      cost_usd: 260
+      torque_nm: 4.1
+      speed_rpm: 46
+      interface: ["rs485", "ttl"]
+
+
+# ── IMPLICATIONS ──────────────────────────────────────────────────────
+# What this actuator implies for the design pipeline.
+
+implications:
+  type: object
+  required: false
+  description: >
+    Design implications when this actuator is selected. Maps to fields
+    on the SoCDesignState spec, same structure as sensor implications.
+  fields:
+    compute_load:
+      description: "Estimated compute load for control (GFLOPS)"
+      example: 0.5
+    control_bandwidth_hz:
+      description: "Required control loop bandwidth"
+      example: 1000
+    interface_requirements:
+      type: list[string]
+      description: "Hardware interfaces the SoC must provide"
+      example: ["can", "pwm_out", "encoder_in"]
+    processing_pipeline:
+      type: list[string]
+      description: "Processing stages needed (trajectory planning, PID, etc.)"
+      example: ["trajectory_planning", "pid_control", "current_control", "commutation"]
+    power_supply_requirements:
+      type: object
+      description: "Power supply specifications the system must provide"
+      example: { voltage_v: 48, peak_current_a: 20, continuous_current_a: 10 }

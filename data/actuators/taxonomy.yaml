@@ -1,0 +1,82 @@
+# Actuator Taxonomy — category hierarchy for the actuator registry.
+#
+# Each top-level key is an actuator category. Under each category are the
+# specific actuator types that can be instantiated as YAML definition files.
+#
+# This taxonomy was designed alongside the sensor registry taxonomy
+# (data/sensors/taxonomy.yaml) so the two can cross-reference: a platform's
+# implications.actuators list references these category names, and the
+# actuator definitions reference platform categories they're typically
+# deployed on.
+#
+# Issue #60, Epic #51 Phase 2 Step 2.4
+
+motor:
+  description: "Electric motors converting electrical energy to rotary or linear motion"
+  types:
+    - brushless_dc
+    - brushed_dc
+    - stepper
+    - servo
+    - linear_actuator
+    - voice_coil
+
+hydraulic:
+  description: "Fluid-power actuators using pressurized hydraulic fluid"
+  types:
+    - hydraulic_cylinder
+    - hydraulic_motor
+    - hydraulic_valve
+
+pneumatic:
+  description: "Compressed-air actuators for rapid, lightweight motion"
+  types:
+    - pneumatic_cylinder
+    - pneumatic_valve
+    - vacuum_generator
+
+gripper:
+  description: "End-effectors for grasping, holding, and manipulating objects"
+  types:
+    - parallel_gripper
+    - suction_cup
+    - magnetic_gripper
+    - soft_gripper
+    - multi_finger_hand
+    - vacuum_gripper
+
+locomotion:
+  description: "Actuators that produce platform-level movement and propulsion"
+  types:
+    - wheel_motor
+    - propeller
+    - jet_thruster
+    - leg_actuator
+    - track_drive
+    - omnidirectional_wheel
+
+fluid:
+  description: "Pumps and dispensing actuators for fluid transfer and delivery"
+  types:
+    - pump
+    - peristaltic_pump
+    - syringe_pump
+    - dispensing_nozzle
+    - sprayer
+
+display:
+  description: "Output devices for visual, auditory, and haptic feedback"
+  types:
+    - led_array
+    - oled_display
+    - projector
+    - speaker
+    - haptic_actuator
+
+specialty:
+  description: "Task-specific actuators for industrial fabrication and processing"
+  types:
+    - laser_cutter
+    - plasma_torch
+    - welding_torch
+    - paint_sprayer
