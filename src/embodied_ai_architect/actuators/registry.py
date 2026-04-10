@@ -244,7 +244,7 @@ class ActuatorRegistry:
             for aid, score in scores.items()
             if score >= min_score
         ]
-        results.sort(key=lambda r: r.score, reverse=True)
+        results.sort(key=lambda r: (-r.score, r.actuator_id))
         return results[:top_k]
 
     def get(self, actuator_id: str) -> Optional[ActuatorDefinition]:

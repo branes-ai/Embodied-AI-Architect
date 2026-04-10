@@ -244,7 +244,7 @@ class SensorRegistry:
             for sid, score in scores.items()
             if score >= min_score
         ]
-        results.sort(key=lambda r: r.score, reverse=True)
+        results.sort(key=lambda r: (-r.score, r.sensor_id))
         return results[:top_k]
 
     def get(self, sensor_id: str) -> Optional[SensorDefinition]:
