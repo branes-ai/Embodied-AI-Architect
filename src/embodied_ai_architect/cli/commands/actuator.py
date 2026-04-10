@@ -10,17 +10,9 @@ import click
 from rich.console import Console
 from rich.table import Table
 
+from embodied_ai_architect.cli.commands._utils import get_attr_typical as _get_attr_typical
+
 console = Console()
-
-
-def _get_attr_typical(attributes: dict, key: str) -> float | None:
-    """Extract the typical value from a min/max/typical attribute dict."""
-    val = attributes.get(key)
-    if isinstance(val, dict):
-        return val.get("typical")
-    if isinstance(val, (int, float)):
-        return float(val)
-    return None
 
 
 @click.group()
@@ -426,11 +418,11 @@ def actuator_control_rate(ctx, actuator_id):
         return
 
     console.print(f"\n[bold cyan]{a.name}[/bold cyan]  ({a.id})")
-    if rate:
+    if rate is not None and rate > 0:
         console.print(f"  Control rate:   {rate:.0f} Hz ({1000/rate:.1f} ms loop period)")
     else:
         console.print("  Control rate:   [dim]not specified[/dim]")
-    if response:
+    if response is not None:
         console.print(f"  Response time:  {response:.1f} ms")
     else:
         console.print("  Response time:  [dim]not specified[/dim]")

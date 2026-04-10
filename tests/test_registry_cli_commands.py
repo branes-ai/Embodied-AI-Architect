@@ -190,6 +190,19 @@ class TestActuatorSelect:
         reloaded = store.load(mission.id)
         assert "motor.brushless_dc" in reloaded.selected_actuators
 
+    def test_select_nonexistent_mission(self, empty_mission):
+        runner = CliRunner()
+        result = runner.invoke(actuator, ["select", "nonexistent", "motor.brushless_dc"], obj={})
+        assert result.exit_code != 0
+        assert "not found" in result.output
+
+    def test_select_nonexistent_actuator(self, empty_mission):
+        mission, _ = empty_mission
+        runner = CliRunner()
+        result = runner.invoke(actuator, ["select", mission.id, "nonexistent.actuator"], obj={})
+        assert result.exit_code == 0
+        assert "not found in registry" in result.output
+
 
 class TestActuatorBudget:
     def test_budget_with_actuators(self, mission_with_actuators):
@@ -198,6 +211,16 @@ class TestActuatorBudget:
         result = runner.invoke(actuator, ["budget", mission.id], obj={})
         assert result.exit_code == 0
         assert "TOTAL" in result.output
+
+    def test_budget_json(self, mission_with_actuators):
+        mission, _ = mission_with_actuators
+        runner = CliRunner()
+        result = runner.invoke(actuator, ["budget", mission.id], obj={"json": True})
+        assert result.exit_code == 0
+        data = json.loads(result.output)
+        assert "total_power_watts" in data
+        assert "total_weight_grams" in data
+        assert "total_cost_usd" in data
 
     def test_budget_no_actuators(self, empty_mission):
         mission, _ = empty_mission

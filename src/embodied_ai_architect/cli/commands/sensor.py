@@ -10,17 +10,9 @@ import click
 from rich.console import Console
 from rich.table import Table
 
+from embodied_ai_architect.cli.commands._utils import get_attr_typical as _get_attr_typical
+
 console = Console()
-
-
-def _get_attr_typical(attributes: dict, key: str) -> float | None:
-    """Extract the typical value from a min/max/typical attribute dict."""
-    val = attributes.get(key)
-    if isinstance(val, dict):
-        return val.get("typical")
-    if isinstance(val, (int, float)):
-        return float(val)
-    return None
 
 
 @click.group()
