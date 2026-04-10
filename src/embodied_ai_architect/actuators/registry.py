@@ -158,6 +158,12 @@ class ActuatorRegistry:
                 seen.add(kw_lower)
                 self._keyword_index.setdefault(kw_lower, set()).add(aid)
 
+            for alias in actuator.aliases:
+                alias_lower = alias.lower().strip()
+                if alias_lower and alias_lower not in seen:
+                    seen.add(alias_lower)
+                    self._keyword_index.setdefault(alias_lower, set()).add(aid)
+
             for text in [actuator.name, actuator.description]:
                 for word in _tokenize(text):
                     self._keyword_index.setdefault(word, set()).add(aid)
