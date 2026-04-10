@@ -1,7 +1,7 @@
-"""Sensor browsing CLI commands (issue #54).
+"""Sensor browsing CLI commands (issues #54, #59).
 
-Read-only commands for browsing the sensor registry. Initially backed
-by an empty registry; Phase 2 will populate it.
+Read-only commands for browsing the sensor registry backed by 80+
+sensor YAML definitions with TF-IDF keyword search.
 """
 
 import json
@@ -20,7 +20,7 @@ def sensor():
     \\b
     Examples:
       branes sensor list
-      branes sensor list --modality lidar
+      branes sensor list --category visual
       branes sensor show <sensor_id>
       branes sensor search "stereo camera 30fps"
       branes sensor categories
@@ -29,40 +29,45 @@ def sensor():
 
 
 @sensor.command("list")
-@click.option("--modality", type=str, default=None, help="Filter by modality (camera, lidar, ...)")
+@click.option(
+    "--category",
+    type=str,
+    default=None,
+    help="Filter by category (visual, ranging, inertial, ...)",
+)
 @click.pass_context
-def sensor_list(ctx, modality):
+def sensor_list(ctx, category):
     """List all sensors in the registry."""
     from embodied_ai_architect.sensors import SensorRegistry
 
     registry = SensorRegistry()
-    sensors = registry.list_sensors(modality=modality)
+    sensors = registry.list_sensors(modality=category)
 
     json_output = ctx.obj.get("json", False)
     if json_output:
         click.echo(
             json.dumps(
-                [{"id": s.id, "name": s.name, "modality": s.modality} for s in sensors], indent=2
+                [{"id": s.id, "name": s.name, "category": s.category} for s in sensors],
+                indent=2,
             )
         )
         return
 
     if not sensors:
-        msg = "Sensor registry not yet populated."
-        if modality:
-            msg += f" (filtered by modality={modality})"
+        msg = "No sensors found."
+        if category:
+            msg += f" (filtered by category={category})"
         console.print(f"[yellow]{msg}[/yellow]")
-        console.print("[dim]Sensor definitions will be added in Phase 2.[/dim]")
         return
 
     table = Table(title="Sensors", show_header=True)
     table.add_column("ID", style="cyan")
     table.add_column("Name")
-    table.add_column("Modality")
-    table.add_column("Vendor", style="dim")
+    table.add_column("Category")
+    table.add_column("Type", style="dim")
 
     for s in sensors:
-        table.add_row(s.id, s.name, s.modality, s.vendor)
+        table.add_row(s.id, s.name, s.category, s.sensor_type)
 
     console.print(table)
 
@@ -83,7 +88,6 @@ def sensor_show(ctx, sensor_id):
             click.echo(json.dumps({"error": f"Sensor '{sensor_id}' not found"}))
         else:
             console.print(f"[red]Sensor '{sensor_id}' not found.[/red]")
-            console.print("[dim]Sensor registry not yet populated (Phase 2).[/dim]")
         ctx.exit(1)
         return
     if json_output:
@@ -92,8 +96,8 @@ def sensor_show(ctx, sensor_id):
                 {
                     "id": s.id,
                     "name": s.name,
-                    "modality": s.modality,
-                    "vendor": s.vendor,
+                    "category": s.category,
+                    "sensor_type": s.sensor_type,
                     "description": s.description,
                     "attributes": s.attributes,
                 },
@@ -103,11 +107,13 @@ def sensor_show(ctx, sensor_id):
         return
 
     console.print(f"\n[bold cyan]{s.name}[/bold cyan]  ({s.id})")
-    console.print(f"  Modality: {s.modality}")
-    if s.vendor:
-        console.print(f"  Vendor:   {s.vendor}")
+    console.print(f"  Category:  {s.category}")
+    if s.sensor_type:
+        console.print(f"  Type:      {s.sensor_type}")
     if s.description:
         console.print(f"  {s.description}")
+    if s.aliases:
+        console.print(f"  Aliases:   {', '.join(s.aliases)}")
     if s.attributes:
         console.print("\n  [bold]Attributes[/bold]")
         for k, v in s.attributes.items():
@@ -128,23 +134,32 @@ def sensor_search(ctx, query):
     if json_output:
         click.echo(
             json.dumps(
-                [{"id": s.id, "name": s.name, "modality": s.modality} for s in results], indent=2
+                [
+                    {
+                        "id": r.sensor_id,
+                        "name": r.sensor.name,
+                        "category": r.sensor.category,
+                        "score": r.score,
+                    }
+                    for r in results
+                ],
+                indent=2,
             )
         )
         return
 
     if not results:
         console.print(f"[yellow]No sensors matching '{query}'.[/yellow]")
-        console.print("[dim]Sensor registry not yet populated (Phase 2).[/dim]")
         return
 
     table = Table(title=f"Search: {query}", show_header=True)
     table.add_column("ID", style="cyan")
     table.add_column("Name")
-    table.add_column("Modality")
+    table.add_column("Category")
+    table.add_column("Score", style="green")
 
-    for s in results:
-        table.add_row(s.id, s.name, s.modality)
+    for r in results:
+        table.add_row(r.sensor_id, r.sensor.name, r.sensor.category, f"{r.score:.3f}")
 
     console.print(table)
 
@@ -152,7 +167,7 @@ def sensor_search(ctx, query):
 @sensor.command("categories")
 @click.pass_context
 def sensor_categories(ctx):
-    """List sensor modality categories."""
+    """List sensor categories."""
     from embodied_ai_architect.sensors import SensorRegistry
 
     registry = SensorRegistry()
@@ -163,7 +178,7 @@ def sensor_categories(ctx):
         click.echo(json.dumps(cats, indent=2))
         return
 
-    console.print("\n[bold]Sensor Modality Categories[/bold]\n")
+    console.print("\n[bold]Sensor Categories[/bold]\n")
     for cat in cats:
         console.print(f"  {cat}")
     console.print(f"\n[dim]{len(cats)} categories available[/dim]")

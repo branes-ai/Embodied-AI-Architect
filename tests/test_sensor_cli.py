@@ -1,24 +1,35 @@
-"""Tests for the branes sensor CLI command group (issue #54)."""
+"""Tests for the branes sensor CLI command group (issues #54, #59)."""
 
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands.sensor import sensor
-from embodied_ai_architect.sensors.registry import SensorRegistry
 
 
 class TestSensorList:
-    def test_empty_registry(self):
+    def test_lists_sensors(self):
         runner = CliRunner()
         result = runner.invoke(sensor, ["list"], obj={})
         assert result.exit_code == 0
-        assert "not yet populated" in result.output
+        assert "Sensors" in result.output
 
-    def test_with_modality_filter(self):
+    def test_with_category_filter(self):
         runner = CliRunner()
-        result = runner.invoke(sensor, ["list", "--modality", "ranging"], obj={})
+        result = runner.invoke(sensor, ["list", "--category", "ranging"], obj={})
         assert result.exit_code == 0
-        assert "not yet populated" in result.output
         assert "ranging" in result.output
+
+    def test_nonexistent_category_empty(self):
+        runner = CliRunner()
+        result = runner.invoke(sensor, ["list", "--category", "nonexistent"], obj={})
+        assert result.exit_code == 0
+        assert "No sensors found" in result.output
+
+    def test_json_output(self):
+        runner = CliRunner()
+        result = runner.invoke(sensor, ["list"], obj={"json": True})
+        assert result.exit_code == 0
+        assert '"id"' in result.output
+        assert '"name"' in result.output
 
 
 class TestSensorShow:
@@ -28,13 +39,45 @@ class TestSensorShow:
         assert result.exit_code != 0
         assert "not found" in result.output
 
+    def test_show_known_sensor(self):
+        runner = CliRunner()
+        result = runner.invoke(sensor, ["show", "visual.rgb_camera"], obj={})
+        assert result.exit_code == 0
+        assert "RGB Camera" in result.output
+
+    def test_show_json(self):
+        runner = CliRunner()
+        result = runner.invoke(sensor, ["show", "visual.rgb_camera"], obj={"json": True})
+        assert result.exit_code == 0
+        assert '"id"' in result.output
+        assert "visual.rgb_camera" in result.output
+
+    def test_not_found_json(self):
+        runner = CliRunner()
+        result = runner.invoke(sensor, ["show", "nonexistent_id"], obj={"json": True})
+        assert result.exit_code != 0
+        assert '"error"' in result.output
+
 
 class TestSensorSearch:
-    def test_empty_results(self):
+    def test_search_finds_results(self):
         runner = CliRunner()
         result = runner.invoke(sensor, ["search", "stereo camera"], obj={})
         assert result.exit_code == 0
+        assert "stereo" in result.output.lower()
+
+    def test_search_no_results(self):
+        runner = CliRunner()
+        result = runner.invoke(sensor, ["search", "qqzzxx"], obj={})
+        assert result.exit_code == 0
         assert "No sensors matching" in result.output
+
+    def test_search_json(self):
+        runner = CliRunner()
+        result = runner.invoke(sensor, ["search", "lidar"], obj={"json": True})
+        assert result.exit_code == 0
+        assert '"id"' in result.output
+        assert '"score"' in result.output
 
 
 class TestSensorCategories:
@@ -47,23 +90,8 @@ class TestSensorCategories:
         assert "inertial" in result.output
         assert "audio" in result.output
 
-
-class TestSensorRegistry:
-    def test_empty_by_default(self):
-        registry = SensorRegistry()
-        assert registry.list_sensors() == []
-
-    def test_categories_not_empty(self):
-        registry = SensorRegistry()
-        cats = registry.categories()
-        assert len(cats) == 8  # matches taxonomy.yaml top-level categories
-        assert "visual" in cats
-        assert "ranging" in cats
-
-    def test_search_empty(self):
-        registry = SensorRegistry()
-        assert registry.search("anything") == []
-
-    def test_get_returns_none(self):
-        registry = SensorRegistry()
-        assert registry.get("nonexistent") is None
+    def test_categories_json(self):
+        runner = CliRunner()
+        result = runner.invoke(sensor, ["categories"], obj={"json": True})
+        assert result.exit_code == 0
+        assert '"visual"' in result.output

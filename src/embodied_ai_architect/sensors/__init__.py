@@ -1,15 +1,19 @@
-"""Sensor registry and browsing (issue #54).
+"""Sensor registry with TF-IDF keyword matching (issues #54, #59).
 
-Stub package — the registry returns empty until Phase 2 populates it
-with sensor definitions from the embodied-schemas catalog.
+Loads 80+ sensor definitions from data/sensors/ and provides ranked
+search for the `branes sensor` CLI and qualification pipeline.
 
 Usage:
     from embodied_ai_architect.sensors import SensorRegistry
 
     registry = SensorRegistry()
-    sensors = registry.list_sensors()  # [] until populated
+    results = registry.search("stereo camera for VIO")
 """
 
-from embodied_ai_architect.sensors.registry import SensorRegistry
+from embodied_ai_architect.sensors.registry import (
+    SensorDefinition,
+    SensorMatchResult,
+    SensorRegistry,
+)
 
-__all__ = ["SensorRegistry"]
+__all__ = ["SensorDefinition", "SensorMatchResult", "SensorRegistry"]

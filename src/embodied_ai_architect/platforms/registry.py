@@ -10,10 +10,12 @@ from __future__ import annotations
 
 import logging
 import math
-import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
+
+from embodied_ai_architect.search_utils import bigrams as _bigrams
+from embodied_ai_architect.search_utils import tokenize as _tokenize
 
 logger = logging.getLogger(__name__)
 
@@ -284,129 +286,3 @@ class PlatformRegistry:
     @property
     def data_dir(self) -> Path:
         return self._data_dir
-
-
-_STOP_WORDS = frozenset(
-    {
-        "a",
-        "an",
-        "the",
-        "is",
-        "it",
-        "in",
-        "on",
-        "at",
-        "to",
-        "of",
-        "or",
-        "and",
-        "for",
-        "by",
-        "as",
-        "if",
-        "be",
-        "do",
-        "no",
-        "so",
-        "up",
-        "we",
-        "my",
-        "he",
-        "us",
-        "am",
-        "are",
-        "was",
-        "has",
-        "had",
-        "not",
-        "but",
-        "can",
-        "all",
-        "its",
-        "our",
-        "out",
-        "own",
-        "say",
-        "she",
-        "too",
-        "use",
-        "her",
-        "him",
-        "his",
-        "how",
-        "man",
-        "new",
-        "now",
-        "old",
-        "see",
-        "way",
-        "who",
-        "did",
-        "get",
-        "let",
-        "may",
-        "run",
-        "set",
-        "try",
-        "via",
-        "with",
-        "from",
-        "that",
-        "this",
-        "they",
-        "been",
-        "have",
-        "each",
-        "make",
-        "like",
-        "just",
-        "over",
-        "such",
-        "take",
-        "than",
-        "them",
-        "very",
-        "some",
-        "what",
-        "when",
-        "will",
-        "more",
-        "also",
-        "into",
-        "only",
-        "come",
-        "made",
-        "find",
-        "here",
-        "know",
-        "look",
-        "many",
-        "then",
-        "well",
-        "back",
-        "been",
-        "much",
-        "must",
-        "need",
-        "next",
-    }
-)
-
-
-def _tokenize(text: str) -> list[str]:
-    """Split text into lowercase word tokens, filtering stop words."""
-    return [
-        w
-        for w in re.findall(r"[a-z0-9]+(?:[-_][a-z0-9]+)*", text.lower())
-        if len(w) > 1 and w not in _STOP_WORDS
-    ]
-
-
-def _bigrams(tokens: list[str]) -> list[str]:
-    """Generate space-joined bigrams from token list."""
-    return [f"{tokens[i]} {tokens[i + 1]}" for i in range(len(tokens) - 1)]
-
-
-def _trigrams(tokens: list[str]) -> list[str]:
-    """Generate space-joined trigrams from token list."""
-    return [f"{tokens[i]} {tokens[i + 1]} {tokens[i + 2]}" for i in range(len(tokens) - 2)]
