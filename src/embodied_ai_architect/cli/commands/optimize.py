@@ -25,7 +25,8 @@ def optimize():
 
 
 @optimize.command()
-@click.option("--goal", "-g", required=True, help="Design goal description")
+@click.option("--mission", "mission_id", default=None, help="Load constraints from a mission")
+@click.option("--goal", "-g", required=False, default=None, help="Design goal description")
 @click.option("--power", "-p", type=float, default=None, help="Power budget (watts)")
 @click.option("--latency", "-l", type=float, default=None, help="Latency target (ms)")
 @click.option("--cost", "-c", type=float, default=None, help="Cost budget (USD)")
@@ -37,22 +38,27 @@ def optimize():
 @click.option("--workers", type=int, default=8, help="Thread pool size")
 @click.option("--json-output", "json_out", is_flag=True, help="Output raw JSON")
 @click.pass_context
-def explore(ctx, goal, power, latency, cost, area, fast, layers, workers, json_out):
+def explore(ctx, mission_id, goal, power, latency, cost, area, fast, layers, workers, json_out):
     """Explore the design space with multi-objective optimization."""
+    from embodied_ai_architect.cli.commands._utils import load_mission_constraints
     from embodied_ai_architect.graphs.moo.design_space import create_soc_design_space
     from embodied_ai_architect.graphs.moo.evaluator import DesignEvaluator
     from embodied_ai_architect.graphs.moo.engine import OptimizationConfig, OptimizationEngine
     from embodied_ai_architect.graphs.moo.map_elites import MAPElitesConfig
 
-    constraints = {}
-    if power is not None:
-        constraints["max_power_watts"] = power
-    if latency is not None:
-        constraints["max_latency_ms"] = latency
-    if cost is not None:
-        constraints["max_cost_usd"] = cost
-    if area is not None:
-        constraints["max_area_mm2"] = area
+    mission, merged = load_mission_constraints(mission_id, power, latency, cost, area)
+    if mission_id and not mission:
+        console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+        ctx.exit(1)
+        return
+    if mission and not goal:
+        goal = mission.goal or "design exploration"
+    if not goal:
+        console.print("[red]--goal is required (or use --mission).[/red]")
+        ctx.exit(1)
+        return
+
+    constraints = merged
 
     ds = create_soc_design_space(constraints)
     evaluator = DesignEvaluator(

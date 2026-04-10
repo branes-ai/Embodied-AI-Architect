@@ -244,8 +244,9 @@ def get_specs(ctx, hardware_id):
 
 
 @mcp.command("analyze")
-@click.argument("model_name")
-@click.argument("hardware_name")
+@click.argument("model_name", required=False, default=None)
+@click.argument("hardware_name", required=False, default=None)
+@click.option("--mission", "mission_id", default=None, help="Load model/hardware from a mission")
 @click.option("--batch", type=int, default=1, show_default=True, help="Batch size")
 @click.option(
     "--precision",
@@ -256,8 +257,31 @@ def get_specs(ctx, hardware_id):
 )
 @click.option("--thermal", type=str, default=None, help="Thermal profile (e.g. '15W')")
 @click.pass_context
-def analyze_model(ctx, model_name, hardware_name, batch, precision, thermal):
+def analyze_model(ctx, model_name, hardware_name, mission_id, batch, precision, thermal):
     """Run full roofline + energy + memory analysis."""
+    if mission_id:
+        from embodied_ai_architect.mission.store import MissionStore
+
+        store = MissionStore()
+        mission = store.load(mission_id)
+        if not mission:
+            console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+            ctx.exit(1)
+            return
+        if not model_name:
+            models = getattr(mission, "selected_models", None) or []
+            if models:
+                model_name = models[0]
+        if not hardware_name:
+            compute = getattr(mission, "selected_compute", None) or []
+            if compute:
+                hardware_name = compute[0]
+
+    if not model_name or not hardware_name:
+        console.print("[red]model_name and hardware_name are required (or use --mission).[/red]")
+        ctx.exit(1)
+        return
+
     json_output = ctx.obj.get("json", False)
     args = {
         "model_name": model_name,
@@ -347,8 +371,9 @@ def analyze_model(ctx, model_name, hardware_name, batch, precision, thermal):
 
 
 @mcp.command("latency")
-@click.argument("model_name")
-@click.argument("hardware_name")
+@click.argument("model_name", required=False, default=None)
+@click.argument("hardware_name", required=False, default=None)
+@click.option("--mission", "mission_id", default=None, help="Load model/hardware from a mission")
 @click.option("--batch", type=int, default=1, show_default=True)
 @click.option(
     "--precision",
@@ -359,8 +384,31 @@ def analyze_model(ctx, model_name, hardware_name, batch, precision, thermal):
 )
 @click.option("--thermal", type=str, default=None, help="Thermal profile (e.g. '15W')")
 @click.pass_context
-def estimate_latency(ctx, model_name, hardware_name, batch, precision, thermal):
+def estimate_latency(ctx, model_name, hardware_name, mission_id, batch, precision, thermal):
     """Predict inference latency using roofline model."""
+    if mission_id:
+        from embodied_ai_architect.mission.store import MissionStore
+
+        store = MissionStore()
+        mission = store.load(mission_id)
+        if not mission:
+            console.print(f"[red]Mission '{mission_id}' not found.[/red]")
+            ctx.exit(1)
+            return
+        if not model_name:
+            models = getattr(mission, "selected_models", None) or []
+            if models:
+                model_name = models[0]
+        if not hardware_name:
+            compute = getattr(mission, "selected_compute", None) or []
+            if compute:
+                hardware_name = compute[0]
+
+    if not model_name or not hardware_name:
+        console.print("[red]model_name and hardware_name are required (or use --mission).[/red]")
+        ctx.exit(1)
+        return
+
     json_output = ctx.obj.get("json", False)
     args = {
         "model_name": model_name,
