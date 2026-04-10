@@ -3,8 +3,8 @@ name: Soft Gripper
 category: gripper
 actuator_type: soft_gripper
 description: Compliant gripper made from elastomeric or fabric materials that conforms to object shape.
-  Gentle on delicate items like food, produce, and baked goods. Powered by pneumatic inflation or tendon
-  actuation.
+  Ideal for handling fragile and delicate objects like food, produce, glassware, and baked goods.
+  Powered by pneumatic inflation or tendon actuation.
 aliases:
 - flexible gripper
 - elastomeric gripper
@@ -19,12 +19,16 @@ keywords:
   - inflatable gripper
   - shape-conforming gripper
   - gentle gripper
+  - fragile objects gripper
+  - delicate object manipulator
   application:
   - food handling
   - produce picking
   - bakery
   - irregular object gripping
   - bin picking delicate parts
+  - fragile object handling
+  - gentle manipulation
   industry:
   - food processing
   - agriculture

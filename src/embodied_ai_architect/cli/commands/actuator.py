@@ -1,7 +1,7 @@
-"""Actuator browsing CLI commands (issue #55).
+"""Actuator browsing CLI commands (issues #55, #62).
 
-Read-only commands for browsing the actuator registry. Mirrors the
-sensor CLI from issue #54. Initially backed by an empty registry.
+Read-only commands for browsing the actuator registry backed by 80+
+actuator YAML definitions with TF-IDF keyword search.
 """
 
 import json
@@ -20,7 +20,7 @@ def actuator():
     \\b
     Examples:
       branes actuator list
-      branes actuator list --type servo
+      branes actuator list --category motor
       branes actuator show <actuator_id>
       branes actuator search "brushless motor 100W"
       branes actuator categories
@@ -29,41 +29,45 @@ def actuator():
 
 
 @actuator.command("list")
-@click.option("--type", "actuator_type", type=str, default=None, help="Filter by type")
+@click.option(
+    "--category",
+    type=str,
+    default=None,
+    help="Filter by category (motor, gripper, locomotion, ...)",
+)
 @click.pass_context
-def actuator_list(ctx, actuator_type):
+def actuator_list(ctx, category):
     """List all actuators in the registry."""
     from embodied_ai_architect.actuators import ActuatorRegistry
 
     registry = ActuatorRegistry()
-    actuators = registry.list_actuators(actuator_type=actuator_type)
+    actuators = registry.list_actuators(category=category)
 
     json_output = ctx.obj.get("json", False)
     if json_output:
         click.echo(
             json.dumps(
-                [{"id": a.id, "name": a.name, "type": a.actuator_type} for a in actuators],
+                [{"id": a.id, "name": a.name, "category": a.category} for a in actuators],
                 indent=2,
             )
         )
         return
 
     if not actuators:
-        msg = "Actuator registry not yet populated."
-        if actuator_type:
-            msg += f" (filtered by type={actuator_type})"
+        msg = "No actuators found."
+        if category:
+            msg += f" (filtered by category={category})"
         console.print(f"[yellow]{msg}[/yellow]")
-        console.print("[dim]Actuator definitions will be added in Phase 2.[/dim]")
         return
 
     table = Table(title="Actuators", show_header=True)
     table.add_column("ID", style="cyan")
     table.add_column("Name")
-    table.add_column("Type")
-    table.add_column("Vendor", style="dim")
+    table.add_column("Category")
+    table.add_column("Type", style="dim")
 
     for a in actuators:
-        table.add_row(a.id, a.name, a.actuator_type, a.vendor)
+        table.add_row(a.id, a.name, a.category, a.actuator_type)
 
     console.print(table)
 
@@ -84,20 +88,33 @@ def actuator_show(ctx, actuator_id):
             click.echo(json.dumps({"error": f"Actuator '{actuator_id}' not found"}))
         else:
             console.print(f"[red]Actuator '{actuator_id}' not found.[/red]")
-            console.print("[dim]Actuator registry not yet populated (Phase 2).[/dim]")
         ctx.exit(1)
         return
 
     if json_output:
-        click.echo(json.dumps(a.model_dump(), indent=2))
+        click.echo(
+            json.dumps(
+                {
+                    "id": a.id,
+                    "name": a.name,
+                    "category": a.category,
+                    "actuator_type": a.actuator_type,
+                    "description": a.description,
+                    "attributes": a.attributes,
+                },
+                indent=2,
+            )
+        )
         return
 
     console.print(f"\n[bold cyan]{a.name}[/bold cyan]  ({a.id})")
-    console.print(f"  Type:   {a.actuator_type}")
-    if a.vendor:
-        console.print(f"  Vendor: {a.vendor}")
+    console.print(f"  Category:  {a.category}")
+    if a.actuator_type:
+        console.print(f"  Type:      {a.actuator_type}")
     if a.description:
         console.print(f"  {a.description}")
+    if a.aliases:
+        console.print(f"  Aliases:   {', '.join(a.aliases)}")
     if a.attributes:
         console.print("\n  [bold]Attributes[/bold]")
         for k, v in a.attributes.items():
@@ -118,7 +135,15 @@ def actuator_search(ctx, query):
     if json_output:
         click.echo(
             json.dumps(
-                [{"id": a.id, "name": a.name, "type": a.actuator_type} for a in results],
+                [
+                    {
+                        "id": r.actuator_id,
+                        "name": r.actuator.name,
+                        "category": r.actuator.category,
+                        "score": r.score,
+                    }
+                    for r in results
+                ],
                 indent=2,
             )
         )
@@ -126,16 +151,16 @@ def actuator_search(ctx, query):
 
     if not results:
         console.print(f"[yellow]No actuators matching '{query}'.[/yellow]")
-        console.print("[dim]Actuator registry not yet populated (Phase 2).[/dim]")
         return
 
     table = Table(title=f"Search: {query}", show_header=True)
     table.add_column("ID", style="cyan")
     table.add_column("Name")
-    table.add_column("Type")
+    table.add_column("Category")
+    table.add_column("Score", style="green")
 
-    for a in results:
-        table.add_row(a.id, a.name, a.actuator_type)
+    for r in results:
+        table.add_row(r.actuator_id, r.actuator.name, r.actuator.category, f"{r.score:.3f}")
 
     console.print(table)
 
@@ -143,7 +168,7 @@ def actuator_search(ctx, query):
 @actuator.command("categories")
 @click.pass_context
 def actuator_categories(ctx):
-    """List actuator type categories."""
+    """List actuator categories."""
     from embodied_ai_architect.actuators import ActuatorRegistry
 
     registry = ActuatorRegistry()
@@ -154,7 +179,7 @@ def actuator_categories(ctx):
         click.echo(json.dumps(cats, indent=2))
         return
 
-    console.print("\n[bold]Actuator Type Categories[/bold]\n")
+    console.print("\n[bold]Actuator Categories[/bold]\n")
     for cat in cats:
         console.print(f"  {cat}")
     console.print(f"\n[dim]{len(cats)} categories available[/dim]")

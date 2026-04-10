@@ -117,7 +117,7 @@ class SensorRegistry:
             try:
                 with open(fpath, encoding="utf-8") as fh:
                     data = yaml.safe_load(fh)
-                if not data or "id" not in data:
+                if not isinstance(data, dict) or "id" not in data:
                     continue
                 sensor = SensorDefinition(
                     id=data["id"],
@@ -157,6 +157,12 @@ class SensorRegistry:
                     continue
                 seen.add(kw_lower)
                 self._keyword_index.setdefault(kw_lower, set()).add(sid)
+
+            for alias in sensor.aliases:
+                alias_lower = alias.lower().strip()
+                if alias_lower and alias_lower not in seen:
+                    seen.add(alias_lower)
+                    self._keyword_index.setdefault(alias_lower, set()).add(sid)
 
             for text in [sensor.name, sensor.description]:
                 for word in _tokenize(text):
@@ -238,7 +244,7 @@ class SensorRegistry:
             for sid, score in scores.items()
             if score >= min_score
         ]
-        results.sort(key=lambda r: r.score, reverse=True)
+        results.sort(key=lambda r: (-r.score, r.sensor_id))
         return results[:top_k]
 
     def get(self, sensor_id: str) -> Optional[SensorDefinition]:
