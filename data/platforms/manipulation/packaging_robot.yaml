@@ -10,21 +10,65 @@ keywords:
   - packaging robot
   - packaging robot
   - manipulation packaging robot
+  - smart packaging robot
+  - packaging robot platform
+  - automated packaging robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - packaging robot system
   - autonomous packaging robot
+  - system for packaging robot applications
+  - manipulation platform using packaging robot technology
+  - intelligent packaging robot solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - packaging robot
   - manipulation automation
+  - packaging robot automation
+  - real-time packaging robot
+  - packaging robot monitoring
+  - packaging robot detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - polishing
   industry:
   - manipulation
   - packaging robot
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - packaging
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

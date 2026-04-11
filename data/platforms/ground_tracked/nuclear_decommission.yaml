@@ -10,22 +10,68 @@ keywords:
   - nuclear decommission
   - nuclear decommission
   - ground_tracked nuclear decommission
+  - ground tracked nuclear decommission
+  - smart nuclear decommission
+  - nuclear decommission platform
+  - automated nuclear decommission
+  - robotic nuclear decommission
+  - tracked robot
+  - tracked vehicle
+  - crawler robot
+  - tracked platform
+  - UGV
+  - unmanned ground vehicle
   descriptions:
   - nuclear decommission system
   - autonomous nuclear decommission
+  - system for nuclear decommission applications
+  - ground tracked platform using nuclear decommission technology
+  - intelligent nuclear decommission solution
+  - tracked ground robot for challenging terrain operations
+  - unmanned tracked vehicle for hazardous environment tasks
   application:
   - nuclear decommission
   - ground_tracked automation
+  - nuclear decommission automation
+  - real-time nuclear decommission
+  - nuclear decommission monitoring
+  - nuclear decommission detection
+  - rough terrain navigation
+  - bomb disposal
+  - mine clearance
+  - pipeline inspection
+  - agricultural tillage
+  - demolition
+  - hazmat response
+  - military reconnaissance
   industry:
   - ground_tracked
   - nuclear decommission
+  - defense
+  - mining
+  - agriculture
+  - construction
+  - public safety
+  - EOD
   components:
   - lidar
   - imu
   - gps
+  - track assembly
+  - drive sprocket
+  - idler wheel
+  - track tensioner
+  - robotic arm
+  - manipulator
   related:
   - ground_tracked
   - nuclear
+  - terrain mobility
+  - slip compensation
+  - skid steering
+  - payload capacity
+  - rugged design
+  - all-terrain
 classification:
   locomotion: ground.tracked
   manipulation: none

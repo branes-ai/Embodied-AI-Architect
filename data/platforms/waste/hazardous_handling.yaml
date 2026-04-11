@@ -10,21 +10,62 @@ keywords:
   - hazardous handling
   - hazardous handling
   - waste hazardous handling
+  - smart hazardous handling
+  - hazardous handling platform
+  - automated hazardous handling
+  - waste robot
+  - recycling robot
+  - trash sorting robot
+  - waste management platform
+  - refuse handling robot
   descriptions:
   - hazardous handling system
   - autonomous hazardous handling
+  - system for hazardous handling applications
+  - waste platform using hazardous handling technology
+  - intelligent hazardous handling solution
+  - autonomous waste sorting and recycling platform
+  - robot for automated waste handling and material recovery
   application:
   - hazardous handling
   - waste automation
+  - hazardous handling automation
+  - real-time hazardous handling
+  - hazardous handling monitoring
+  - hazardous handling detection
+  - waste sorting
+  - recycling
+  - material recovery
+  - trash collection
+  - contamination detection
+  - bin emptying
+  - litter picking
+  - compaction
   industry:
   - waste
   - hazardous handling
+  - waste management
+  - circular economy
+  - environmental services
+  - sanitation
   components:
   - camera
   - hyperspectral
+  - gripper
+  - conveyor belt
+  - NIR sensor
+  - air jet
+  - compactor
+  - bin lifter
   related:
   - waste
   - hazardous
+  - material classification
+  - contamination rate
+  - MRF
+  - single stream
+  - diversion rate
+  - tipping floor
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

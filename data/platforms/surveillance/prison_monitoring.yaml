@@ -10,20 +10,64 @@ keywords:
   - prison monitoring
   - prison monitoring
   - surveillance prison monitoring
+  - smart prison monitoring
+  - prison monitoring platform
+  - automated prison monitoring
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - prison monitoring system
   - autonomous prison monitoring
+  - system for prison monitoring applications
+  - surveillance platform using prison monitoring technology
+  - intelligent prison monitoring solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - prison monitoring
   - surveillance automation
+  - prison monitoring automation
+  - real-time prison monitoring
+  - prison monitoring detection
+  - prison monitoring analysis
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - prison monitoring
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - prison
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

@@ -10,22 +10,66 @@ keywords:
   - loitering munition
   - loitering munition
   - military loitering munition
+  - smart loitering munition
+  - loitering munition platform
+  - automated loitering munition
+  - military robot
+  - tactical robot
+  - defense platform
+  - combat robot
+  - military UGV
+  - MULE
   descriptions:
   - loitering munition system
   - autonomous loitering munition
+  - system for loitering munition applications
+  - military platform using loitering munition technology
+  - intelligent loitering munition solution
+  - military-grade autonomous platform for tactical operations
+  - defense robot for reconnaissance and force protection
   application:
   - loitering munition
   - military automation
+  - loitering munition automation
+  - real-time loitering munition
+  - loitering munition monitoring
+  - loitering munition detection
+  - reconnaissance
+  - ISR
+  - bomb disposal
+  - EOD
+  - logistics resupply
+  - perimeter security
+  - CBRN detection
+  - mine clearance
   industry:
   - military
   - loitering munition
+  - defense
+  - homeland security
+  - intelligence
+  - force protection
+  - C4ISR
+  - special operations
   components:
   - imu
   - gps
   - eo_ir
+  - ruggedized enclosure
+  - encrypted radio
+  - FLIR camera
+  - NBC sensor
+  - ballistic armor
+  - weapons mount
   related:
   - military
   - loitering
+  - MIL-STD
+  - ITAR
+  - C2 system
+  - tactical network
+  - STANAG
+  - blue force tracking
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

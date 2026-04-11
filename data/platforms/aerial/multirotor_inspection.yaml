@@ -10,22 +10,69 @@ keywords:
   - multirotor inspection
   - multirotor inspection
   - aerial multirotor inspection
+  - smart multirotor inspection
+  - multirotor inspection platform
+  - automated multirotor inspection
+  - robotic multirotor inspection
+  - multirotor inspection robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - quadcopter
+  - RPAS
+  - remotely piloted aircraft
   descriptions:
   - multirotor inspection system
   - autonomous multirotor inspection
+  - system for multirotor inspection applications
+  - aerial platform using multirotor inspection technology
+  - intelligent multirotor inspection solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
   application:
   - multirotor inspection
   - aerial automation
+  - multirotor inspection automation
+  - real-time multirotor inspection
+  - multirotor inspection monitoring
+  - multirotor inspection detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
   industry:
   - aerial
   - multirotor inspection
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
   components:
   - imu
   - gps
   - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
   related:
   - aerial
   - multirotor
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

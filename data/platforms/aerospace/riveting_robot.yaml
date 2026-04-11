@@ -10,21 +10,65 @@ keywords:
   - riveting robot
   - riveting robot
   - aerospace riveting robot
+  - smart riveting robot
+  - riveting robot platform
+  - automated riveting robot
+  - spacecraft
+  - satellite
+  - launch vehicle
+  - space system
+  - orbital platform
+  - space robot
   descriptions:
   - riveting robot system
   - autonomous riveting robot
+  - system for riveting robot applications
+  - aerospace platform using riveting robot technology
+  - intelligent riveting robot solution
+  - space-grade autonomous system for orbital operations
+  - radiation-hardened platform for space missions
   application:
   - riveting robot
   - aerospace automation
+  - riveting robot automation
+  - real-time riveting robot
+  - riveting robot monitoring
+  - riveting robot detection
+  - orbital maneuvering
+  - satellite servicing
+  - space debris removal
+  - on-orbit assembly
+  - Earth observation
+  - deep space exploration
+  - space station maintenance
+  - rendezvous and docking
   industry:
   - aerospace
   - riveting robot
+  - space industry
+  - defense aerospace
+  - satellite communications
+  - space exploration
+  - NewSpace
+  - launch services
   components:
   - force_torque
   - laser_tracker
+  - star tracker
+  - reaction wheel
+  - sun sensor
+  - radiation-hardened processor
+  - solar panel
+  - thruster
   related:
   - aerospace
   - riveting
+  - orbital mechanics
+  - space radiation
+  - thermal vacuum
+  - microgravity
+  - debris tracking
+  - TLE
 classification:
   locomotion: stationary.gantry
   manipulation: none

@@ -10,22 +10,68 @@ keywords:
   - security patrol
   - security patrol
   - ground_wheeled security patrol
+  - ground wheeled security patrol
+  - smart security patrol
+  - security patrol platform
+  - automated security patrol
+  - robotic security patrol
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - security patrol system
   - autonomous security patrol
+  - system for security patrol applications
+  - ground wheeled platform using security patrol technology
+  - intelligent security patrol solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - security patrol
   - ground_wheeled automation
+  - security patrol automation
+  - real-time security patrol
+  - security patrol monitoring
+  - security patrol detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - security patrol
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - security
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

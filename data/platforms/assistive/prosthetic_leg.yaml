@@ -10,21 +10,67 @@ keywords:
   - prosthetic leg
   - prosthetic leg
   - assistive prosthetic leg
+  - smart prosthetic leg
+  - prosthetic leg platform
+  - automated prosthetic leg
+  - robotic prosthetic leg
+  - prosthetic leg robot
+  - assistive robot
+  - companion robot
+  - care robot
+  - mobility aid
+  - rehabilitation robot
+  - service robot
   descriptions:
   - prosthetic leg system
   - autonomous prosthetic leg
+  - system for prosthetic leg applications
+  - assistive platform using prosthetic leg technology
+  - intelligent prosthetic leg solution
+  - robot system that assists people with daily activities
+  - assistive platform for mobility or cognitive support
   application:
   - prosthetic leg
   - assistive automation
+  - prosthetic leg automation
+  - real-time prosthetic leg
+  - prosthetic leg monitoring
+  - prosthetic leg detection
+  - mobility assistance
+  - daily living support
+  - rehabilitation therapy
+  - companionship
+  - medication reminder
+  - fall detection
+  - gait assistance
+  - object fetching
   industry:
   - assistive
   - prosthetic leg
+  - assistive technology
+  - healthcare robotics
+  - elder care
+  - rehabilitation
+  - disability services
+  - social robotics
   components:
   - imu
   - emg
+  - force sensor
+  - voice interface
+  - touch screen
+  - proximity sensor
+  - speaker
+  - microphone array
   related:
   - assistive
   - prosthetic
+  - human-robot interaction
+  - HRI
+  - accessibility
+  - universal design
+  - adaptive interface
+  - gesture recognition
 classification:
   locomotion: wearable.limb_attached
   manipulation: none

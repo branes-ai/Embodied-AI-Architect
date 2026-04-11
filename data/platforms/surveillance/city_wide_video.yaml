@@ -10,20 +10,64 @@ keywords:
   - city wide video
   - city wide video
   - surveillance city wide video
+  - smart city wide video
+  - city wide video platform
+  - automated city wide video
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - city wide video system
   - autonomous city wide video
+  - system for city wide video applications
+  - surveillance platform using city wide video technology
+  - intelligent city wide video solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - city wide video
   - surveillance automation
+  - city wide video automation
+  - real-time city wide video
+  - city wide video monitoring
+  - city wide video detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - city wide video
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - city
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

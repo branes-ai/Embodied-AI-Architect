@@ -10,20 +10,64 @@ keywords:
   - parking occupancy
   - parking occupancy
   - surveillance parking occupancy
+  - smart parking occupancy
+  - parking occupancy platform
+  - automated parking occupancy
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - parking occupancy system
   - autonomous parking occupancy
+  - system for parking occupancy applications
+  - surveillance platform using parking occupancy technology
+  - intelligent parking occupancy solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - parking occupancy
   - surveillance automation
+  - parking occupancy automation
+  - real-time parking occupancy
+  - parking occupancy monitoring
+  - parking occupancy detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - parking occupancy
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - parking
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

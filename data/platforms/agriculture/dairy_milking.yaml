@@ -10,22 +10,66 @@ keywords:
   - dairy milking
   - dairy milking
   - agriculture dairy milking
+  - smart dairy milking
+  - dairy milking platform
+  - automated dairy milking
+  - agribot
+  - farm robot
+  - agricultural robot
+  - precision agriculture system
+  - smart farming platform
+  - agri-tech robot
   descriptions:
   - dairy milking system
   - autonomous dairy milking
+  - system for dairy milking applications
+  - agriculture platform using dairy milking technology
+  - intelligent dairy milking solution
+  - autonomous platform for precision agriculture tasks
+  - farm robot for automated crop management and monitoring
   application:
   - dairy milking
   - agriculture automation
+  - dairy milking automation
+  - real-time dairy milking
+  - dairy milking monitoring
+  - dairy milking detection
+  - crop monitoring
+  - weed detection
+  - precision spraying
+  - yield estimation
+  - soil analysis
+  - planting
+  - harvesting
+  - fruit picking
   industry:
   - agriculture
   - dairy milking
+  - precision agriculture
+  - smart farming
+  - agri-tech
+  - horticulture
+  - viticulture
+  - organic farming
   components:
   - gps
   - imu
   - camera
+  - multispectral camera
+  - NDVI sensor
+  - RTK GPS
+  - spray nozzle
+  - soil moisture sensor
+  - weather station
   related:
   - agriculture
   - dairy
+  - NDVI
+  - vegetation index
+  - variable rate application
+  - site-specific management
+  - crop health
+  - field mapping
 classification:
   locomotion: ground.wheeled
   manipulation: none

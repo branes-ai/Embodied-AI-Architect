@@ -10,22 +10,68 @@ keywords:
   - restaurant service
   - restaurant service
   - ground_wheeled restaurant service
+  - ground wheeled restaurant service
+  - smart restaurant service
+  - restaurant service platform
+  - automated restaurant service
+  - robotic restaurant service
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - restaurant service system
   - autonomous restaurant service
+  - system for restaurant service applications
+  - ground wheeled platform using restaurant service technology
+  - intelligent restaurant service solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - restaurant service
   - ground_wheeled automation
+  - restaurant service automation
+  - real-time restaurant service
+  - restaurant service monitoring
+  - restaurant service detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - restaurant service
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - restaurant
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

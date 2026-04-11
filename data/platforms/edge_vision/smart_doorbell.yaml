@@ -10,20 +10,64 @@ keywords:
   - smart doorbell
   - smart doorbell
   - edge_vision smart doorbell
+  - edge vision smart doorbell
+  - smart doorbell platform
+  - automated smart doorbell
+  - edge vision system
+  - smart camera
+  - AI camera
+  - vision appliance
+  - edge AI device
+  - intelligent camera
   descriptions:
   - smart doorbell system
   - autonomous smart doorbell
+  - system for smart doorbell applications
+  - edge vision platform using smart doorbell technology
+  - intelligent smart doorbell solution
+  - edge-deployed vision system with on-device AI inference
+  - smart camera platform for real-time video analytics
   application:
   - smart doorbell
   - edge_vision automation
+  - smart doorbell automation
+  - real-time smart doorbell
+  - smart doorbell monitoring
+  - smart doorbell detection
+  - video analytics
+  - object detection
+  - people counting
+  - face recognition
+  - license plate recognition
+  - anomaly detection
+  - behavior analysis
+  - occupancy monitoring
   industry:
   - edge_vision
   - smart doorbell
+  - computer vision
+  - edge computing
+  - security
+  - retail
+  - smart city
+  - transportation
   components:
   - camera
+  - CMOS sensor
+  - ISP
+  - NPU
+  - AI accelerator
+  - lens
+  - IR LED
   related:
   - edge_vision
   - smart
+  - inference at edge
+  - model optimization
+  - TensorRT
+  - OpenVINO
+  - ONNX
+  - INT8 quantization
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

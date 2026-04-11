@@ -10,22 +10,66 @@ keywords:
   - irrigation robot
   - irrigation robot
   - agriculture irrigation robot
+  - smart irrigation robot
+  - irrigation robot platform
+  - automated irrigation robot
+  - agribot
+  - farm robot
+  - agricultural robot
+  - precision agriculture system
+  - smart farming platform
+  - agri-tech robot
   descriptions:
   - irrigation robot system
   - autonomous irrigation robot
+  - system for irrigation robot applications
+  - agriculture platform using irrigation robot technology
+  - intelligent irrigation robot solution
+  - autonomous platform for precision agriculture tasks
+  - farm robot for automated crop management and monitoring
   application:
   - irrigation robot
   - agriculture automation
+  - irrigation robot automation
+  - real-time irrigation robot
+  - irrigation robot monitoring
+  - irrigation robot detection
+  - crop monitoring
+  - weed detection
+  - precision spraying
+  - yield estimation
+  - soil analysis
+  - planting
+  - harvesting
+  - fruit picking
   industry:
   - agriculture
   - irrigation robot
+  - precision agriculture
+  - smart farming
+  - agri-tech
+  - horticulture
+  - viticulture
+  - organic farming
   components:
   - gps
   - imu
   - camera
+  - multispectral camera
+  - NDVI sensor
+  - RTK GPS
+  - spray nozzle
+  - soil moisture sensor
+  - weather station
   related:
   - agriculture
   - irrigation
+  - NDVI
+  - vegetation index
+  - variable rate application
+  - site-specific management
+  - crop health
+  - field mapping
 classification:
   locomotion: ground.wheeled
   manipulation: none

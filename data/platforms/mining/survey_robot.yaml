@@ -10,22 +10,65 @@ keywords:
   - survey robot
   - survey robot
   - mining survey robot
+  - smart survey robot
+  - survey robot platform
+  - automated survey robot
+  - mining robot
+  - mine automation system
+  - autonomous mining vehicle
+  - underground mining robot
+  - mining drone
   descriptions:
   - survey robot system
   - autonomous survey robot
+  - system for survey robot applications
+  - mining platform using survey robot technology
+  - intelligent survey robot solution
+  - autonomous mining platform for underground or surface operations
+  - robot for mine inspection and extraction support
   application:
   - survey robot
   - mining automation
+  - survey robot automation
+  - real-time survey robot
+  - survey robot monitoring
+  - survey robot detection
+  - ore extraction
+  - tunnel inspection
+  - drilling
+  - blasting support
+  - conveyor monitoring
+  - ventilation monitoring
+  - geotechnical survey
+  - rock bolting
   industry:
   - mining
   - survey robot
+  - quarrying
+  - tunneling
+  - mineral processing
+  - underground mining
+  - open pit mining
+  - geotechnical
   components:
   - lidar
   - gas_detector
   - camera
+  - rock drill
+  - gas sensor
+  - proximity detection
+  - collision avoidance system
+  - ruggedized chassis
+  - dust filter
   related:
   - mining
   - survey
+  - mine safety
+  - MSHA compliance
+  - stope planning
+  - ore body modeling
+  - fleet management
+  - machine guidance
 classification:
   locomotion: ground.tracked
   manipulation: none

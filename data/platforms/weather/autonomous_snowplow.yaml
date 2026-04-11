@@ -10,22 +10,64 @@ keywords:
   - autonomous snowplow
   - autonomous snowplow
   - weather autonomous snowplow
+  - smart autonomous snowplow
+  - autonomous snowplow platform
+  - weather station
+  - meteorological platform
+  - weather monitoring system
+  - atmospheric sensor
+  - weather drone
   descriptions:
   - autonomous snowplow system
   - autonomous autonomous snowplow
+  - system for autonomous snowplow applications
+  - weather platform using autonomous snowplow technology
+  - intelligent autonomous snowplow solution
+  - autonomous weather monitoring and sensing platform
+  - meteorological system for real-time atmospheric data collection
   application:
   - autonomous snowplow
   - weather automation
+  - autonomous snowplow automation
+  - real-time autonomous snowplow
+  - autonomous snowplow monitoring
+  - autonomous snowplow detection
+  - weather monitoring
+  - atmospheric profiling
+  - storm tracking
+  - precipitation measurement
+  - wind measurement
+  - temperature monitoring
+  - humidity sensing
+  - air quality monitoring
   industry:
   - weather
   - autonomous snowplow
+  - meteorology
+  - aviation weather
+  - agriculture weather
+  - marine weather
+  - renewable energy
+  - climate research
   components:
   - gps
   - lidar
   - camera
+  - anemometer
+  - rain gauge
+  - barometer
+  - hygrometer
+  - thermometer
+  - ceilometer
   related:
   - weather
   - autonomous
+  - METAR
+  - SYNOP
+  - forecast model
+  - data assimilation
+  - WMO standards
+  - automatic weather station
 classification:
   locomotion: ground.wheeled
   manipulation: none

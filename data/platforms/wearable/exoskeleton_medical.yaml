@@ -10,21 +10,63 @@ keywords:
   - exoskeleton medical
   - exoskeleton medical
   - wearable exoskeleton medical
+  - smart exoskeleton medical
+  - exoskeleton medical platform
+  - automated exoskeleton medical
+  - wearable robot
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - exoskeleton medical system
   - autonomous exoskeleton medical
+  - system for exoskeleton medical applications
+  - wearable platform using exoskeleton medical technology
+  - intelligent exoskeleton medical solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - exoskeleton medical
   - wearable automation
+  - exoskeleton medical automation
+  - real-time exoskeleton medical
+  - exoskeleton medical monitoring
+  - exoskeleton medical detection
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - exoskeleton medical
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - exoskeleton
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

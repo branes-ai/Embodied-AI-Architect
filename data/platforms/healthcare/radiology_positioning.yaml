@@ -10,21 +10,63 @@ keywords:
   - radiology positioning
   - radiology positioning
   - healthcare radiology positioning
+  - smart radiology positioning
+  - radiology positioning platform
+  - automated radiology positioning
+  - healthcare robot
+  - medical robot
+  - hospital robot
+  - clinical robot
+  - health-tech platform
   descriptions:
   - radiology positioning system
   - autonomous radiology positioning
+  - system for radiology positioning applications
+  - healthcare platform using radiology positioning technology
+  - intelligent radiology positioning solution
+  - robot platform for healthcare delivery and clinical support
+  - medical automation system for hospital environments
   application:
   - radiology positioning
   - healthcare automation
+  - radiology positioning automation
+  - real-time radiology positioning
+  - radiology positioning monitoring
+  - radiology positioning detection
+  - patient monitoring
+  - telemedicine
+  - medication dispensing
+  - surgical assistance
+  - disinfection
+  - specimen transport
+  - rehabilitation
+  - vital signs monitoring
   industry:
   - healthcare
   - radiology positioning
+  - hospital
+  - clinical
+  - medical devices
+  - pharma
+  - health-tech
   components:
   - lidar
   - camera
+  - UV-C lamp
+  - vital signs sensor
+  - touch screen
+  - antimicrobial surface
+  - medical-grade enclosure
+  - sterile interface
   related:
   - healthcare
   - radiology
+  - HIPAA
+  - FDA clearance
+  - clinical workflow
+  - EHR integration
+  - patient safety
+  - infection control
 classification:
   locomotion: ground.wheeled
   manipulation: none

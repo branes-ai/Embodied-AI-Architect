@@ -10,21 +10,64 @@ keywords:
   - vaccination robot
   - vaccination robot
   - veterinary vaccination robot
+  - smart vaccination robot
+  - vaccination robot platform
+  - automated vaccination robot
+  - veterinary robot
+  - animal care robot
+  - livestock robot
+  - animal health platform
+  - vet-tech robot
   descriptions:
   - vaccination robot system
   - autonomous vaccination robot
+  - system for vaccination robot applications
+  - veterinary platform using vaccination robot technology
+  - intelligent vaccination robot solution
+  - automated platform for animal health monitoring and care
+  - robot for livestock management and veterinary tasks
   application:
   - vaccination robot
   - veterinary automation
+  - vaccination robot automation
+  - real-time vaccination robot
+  - vaccination robot monitoring
+  - vaccination robot detection
+  - animal health monitoring
+  - automated milking
+  - livestock sorting
+  - medication delivery
+  - herd management
+  - animal tracking
+  - reproductive monitoring
+  - weight monitoring
   industry:
   - veterinary
   - vaccination robot
+  - veterinary medicine
+  - animal husbandry
+  - dairy farming
+  - livestock management
+  - poultry
+  - aquaculture
   components:
   - camera
   - ultrasound
+  - RFID reader
+  - temperature sensor
+  - weighing platform
+  - teat cup
+  - sorting gate
+  - feed dispenser
   related:
   - veterinary
   - vaccination
+  - herd management software
+  - animal welfare
+  - lameness detection
+  - body condition score
+  - estrus detection
+  - mastitis detection
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

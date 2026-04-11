@@ -10,22 +10,65 @@ keywords:
   - rebar tying
   - rebar tying
   - construction rebar tying
+  - smart rebar tying
+  - rebar tying platform
+  - automated rebar tying
+  - construction robot
+  - building robot
+  - construction automation system
+  - autonomous construction vehicle
+  - construction drone
   descriptions:
   - rebar tying system
   - autonomous rebar tying
+  - system for rebar tying applications
+  - construction platform using rebar tying technology
+  - intelligent rebar tying solution
+  - autonomous construction platform for building site operations
+  - robot system for automated construction tasks
   application:
   - rebar tying
   - construction automation
+  - rebar tying automation
+  - real-time rebar tying
+  - rebar tying monitoring
+  - rebar tying detection
+  - site survey
+  - progress monitoring
+  - bricklaying
+  - concrete pouring
+  - demolition
+  - excavation
+  - welding
+  - painting
   industry:
   - construction
   - rebar tying
+  - civil engineering
+  - architecture
+  - building
+  - infrastructure
+  - real estate development
+  - heavy industry
   components:
   - gps
   - lidar
   - imu
+  - total station
+  - laser scanner
+  - BIM integration
+  - hydraulic actuator
+  - concrete pump
+  - robotic arm
   related:
   - construction
   - rebar
+  - BIM
+  - digital twin
+  - site safety
+  - progress tracking
+  - point cloud
+  - as-built model
 classification:
   locomotion: stationary.gantry
   manipulation: none

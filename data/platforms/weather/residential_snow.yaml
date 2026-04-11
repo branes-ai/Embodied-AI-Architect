@@ -10,22 +10,65 @@ keywords:
   - residential snow
   - residential snow
   - weather residential snow
+  - smart residential snow
+  - residential snow platform
+  - automated residential snow
+  - weather station
+  - meteorological platform
+  - weather monitoring system
+  - atmospheric sensor
+  - weather drone
   descriptions:
   - residential snow system
   - autonomous residential snow
+  - system for residential snow applications
+  - weather platform using residential snow technology
+  - intelligent residential snow solution
+  - autonomous weather monitoring and sensing platform
+  - meteorological system for real-time atmospheric data collection
   application:
   - residential snow
   - weather automation
+  - residential snow automation
+  - real-time residential snow
+  - residential snow monitoring
+  - residential snow detection
+  - weather monitoring
+  - atmospheric profiling
+  - storm tracking
+  - precipitation measurement
+  - wind measurement
+  - temperature monitoring
+  - humidity sensing
+  - air quality monitoring
   industry:
   - weather
   - residential snow
+  - meteorology
+  - aviation weather
+  - agriculture weather
+  - marine weather
+  - renewable energy
+  - climate research
   components:
   - gps
   - lidar
   - camera
+  - anemometer
+  - rain gauge
+  - barometer
+  - hygrometer
+  - thermometer
+  - ceilometer
   related:
   - weather
   - residential
+  - METAR
+  - SYNOP
+  - forecast model
+  - data assimilation
+  - WMO standards
+  - automatic weather station
 classification:
   locomotion: ground.wheeled
   manipulation: none

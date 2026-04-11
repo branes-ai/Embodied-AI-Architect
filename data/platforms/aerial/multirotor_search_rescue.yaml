@@ -10,22 +10,69 @@ keywords:
   - multirotor search rescue
   - multirotor search rescue
   - aerial multirotor search rescue
+  - smart multirotor search rescue
+  - multirotor search rescue platform
+  - automated multirotor search rescue
+  - robotic multirotor search rescue
+  - multirotor search rescue robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - quadcopter
+  - RPAS
+  - remotely piloted aircraft
   descriptions:
   - multirotor search rescue system
   - autonomous multirotor search rescue
+  - system for multirotor search rescue applications
+  - aerial platform using multirotor search rescue technology
+  - intelligent multirotor search rescue solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
   application:
   - multirotor search rescue
   - aerial automation
+  - multirotor search rescue automation
+  - real-time multirotor search rescue
+  - multirotor search rescue monitoring
+  - multirotor search rescue detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
   industry:
   - aerial
   - multirotor search rescue
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
   components:
   - imu
   - gps
   - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
   related:
   - aerial
   - multirotor
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

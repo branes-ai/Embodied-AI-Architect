@@ -10,20 +10,65 @@ keywords:
   - industrial quality
   - industrial quality
   - edge_vision industrial quality
+  - edge vision industrial quality
+  - smart industrial quality
+  - industrial quality platform
+  - automated industrial quality
+  - edge vision system
+  - smart camera
+  - AI camera
+  - vision appliance
+  - edge AI device
+  - intelligent camera
   descriptions:
   - industrial quality system
   - autonomous industrial quality
+  - system for industrial quality applications
+  - edge vision platform using industrial quality technology
+  - intelligent industrial quality solution
+  - edge-deployed vision system with on-device AI inference
+  - smart camera platform for real-time video analytics
   application:
   - industrial quality
   - edge_vision automation
+  - industrial quality automation
+  - real-time industrial quality
+  - industrial quality monitoring
+  - industrial quality detection
+  - video analytics
+  - object detection
+  - people counting
+  - face recognition
+  - license plate recognition
+  - anomaly detection
+  - behavior analysis
+  - occupancy monitoring
   industry:
   - edge_vision
   - industrial quality
+  - computer vision
+  - edge computing
+  - security
+  - retail
+  - smart city
+  - transportation
   components:
   - camera
+  - CMOS sensor
+  - ISP
+  - NPU
+  - AI accelerator
+  - lens
+  - IR LED
   related:
   - edge_vision
   - industrial
+  - inference at edge
+  - model optimization
+  - TensorRT
+  - OpenVINO
+  - ONNX
+  - INT8 quantization
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

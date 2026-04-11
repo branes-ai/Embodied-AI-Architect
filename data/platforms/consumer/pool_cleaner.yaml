@@ -10,22 +10,68 @@ keywords:
   - pool cleaner
   - pool cleaner
   - consumer pool cleaner
+  - smart pool cleaner
+  - pool cleaner platform
+  - automated pool cleaner
+  - robotic pool cleaner
+  - pool cleaner robot
+  - consumer robot
+  - home robot
+  - personal robot
+  - household robot
+  - smart home device
+  - domestic robot
   descriptions:
   - pool cleaner system
   - autonomous pool cleaner
+  - system for pool cleaner applications
+  - consumer platform using pool cleaner technology
+  - intelligent pool cleaner solution
+  - consumer robotic device for everyday home use
+  - smart home robot with autonomous operation capabilities
   application:
   - pool cleaner
   - consumer automation
+  - pool cleaner automation
+  - real-time pool cleaner
+  - pool cleaner monitoring
+  - pool cleaner detection
+  - home cleaning
+  - lawn care
+  - pool cleaning
+  - entertainment
+  - home security
+  - pet care
+  - cooking assistance
+  - education
   industry:
   - consumer
   - pool cleaner
+  - consumer electronics
+  - home appliances
+  - smart home
+  - IoT
+  - consumer robotics
+  - home automation
   components:
   - lidar
   - camera
   - imu
+  - Wi-Fi module
+  - speaker
+  - microphone
+  - LED display
+  - rechargeable battery
+  - charging dock
   related:
   - consumer
   - pool
+  - app control
+  - voice assistant
+  - smart home integration
+  - OTA update
+  - user-friendly
+  - companion app
 classification:
   locomotion: ground.wheeled
   manipulation: none

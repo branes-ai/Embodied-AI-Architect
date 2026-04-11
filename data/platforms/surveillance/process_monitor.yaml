@@ -10,20 +10,64 @@ keywords:
   - process monitor
   - process monitor
   - surveillance process monitor
+  - smart process monitor
+  - process monitor platform
+  - automated process monitor
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - process monitor system
   - autonomous process monitor
+  - system for process monitor applications
+  - surveillance platform using process monitor technology
+  - intelligent process monitor solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - process monitor
   - surveillance automation
+  - process monitor automation
+  - real-time process monitor
+  - process monitor monitoring
+  - process monitor detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - process monitor
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - process
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

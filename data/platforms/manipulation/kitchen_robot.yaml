@@ -10,21 +10,65 @@ keywords:
   - kitchen robot
   - kitchen robot
   - manipulation kitchen robot
+  - smart kitchen robot
+  - kitchen robot platform
+  - automated kitchen robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - kitchen robot system
   - autonomous kitchen robot
+  - system for kitchen robot applications
+  - manipulation platform using kitchen robot technology
+  - intelligent kitchen robot solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - kitchen robot
   - manipulation automation
+  - kitchen robot automation
+  - real-time kitchen robot
+  - kitchen robot monitoring
+  - kitchen robot detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
   industry:
   - manipulation
   - kitchen robot
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - kitchen
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

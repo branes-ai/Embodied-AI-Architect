@@ -10,22 +10,66 @@ keywords:
   - livestock monitor
   - livestock monitor
   - agriculture livestock monitor
+  - smart livestock monitor
+  - livestock monitor platform
+  - automated livestock monitor
+  - agribot
+  - farm robot
+  - agricultural robot
+  - precision agriculture system
+  - smart farming platform
+  - agri-tech robot
   descriptions:
   - livestock monitor system
   - autonomous livestock monitor
+  - system for livestock monitor applications
+  - agriculture platform using livestock monitor technology
+  - intelligent livestock monitor solution
+  - autonomous platform for precision agriculture tasks
+  - farm robot for automated crop management and monitoring
   application:
   - livestock monitor
   - agriculture automation
+  - livestock monitor automation
+  - real-time livestock monitor
+  - livestock monitor monitoring
+  - livestock monitor detection
+  - crop monitoring
+  - weed detection
+  - precision spraying
+  - yield estimation
+  - soil analysis
+  - planting
+  - harvesting
+  - fruit picking
   industry:
   - agriculture
   - livestock monitor
+  - precision agriculture
+  - smart farming
+  - agri-tech
+  - horticulture
+  - viticulture
+  - organic farming
   components:
   - gps
   - imu
   - camera
+  - multispectral camera
+  - NDVI sensor
+  - RTK GPS
+  - spray nozzle
+  - soil moisture sensor
+  - weather station
   related:
   - agriculture
   - livestock
+  - NDVI
+  - vegetation index
+  - variable rate application
+  - site-specific management
+  - crop health
+  - field mapping
 classification:
   locomotion: ground.wheeled
   manipulation: none

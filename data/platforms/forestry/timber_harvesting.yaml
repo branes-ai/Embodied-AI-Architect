@@ -10,22 +10,63 @@ keywords:
   - timber harvesting
   - timber harvesting
   - forestry timber harvesting
+  - smart timber harvesting
+  - timber harvesting platform
+  - automated timber harvesting
+  - forestry robot
+  - timber robot
+  - logging robot
+  - forest management platform
+  - silviculture robot
   descriptions:
   - timber harvesting system
   - autonomous timber harvesting
+  - system for timber harvesting applications
+  - forestry platform using timber harvesting technology
+  - intelligent timber harvesting solution
+  - autonomous platform for forestry operations and monitoring
+  - robot for forest management and timber operations
   application:
   - timber harvesting
   - forestry automation
+  - timber harvesting automation
+  - real-time timber harvesting
+  - timber harvesting monitoring
+  - timber harvesting detection
+  - tree inventory
+  - reforestation
+  - fire monitoring
+  - pest detection
+  - trail maintenance
+  - wildlife monitoring
+  - tree health assessment
+  - canopy analysis
   industry:
   - forestry
   - timber harvesting
+  - logging
+  - conservation
+  - wildlife management
+  - fire prevention
+  - environmental services
   components:
   - gps
   - lidar
   - camera
+  - multispectral camera
+  - chainsaw attachment
+  - tree diameter sensor
+  - GPS/GNSS
+  - rugged chassis
   related:
   - forestry
   - timber
+  - DBH measurement
+  - canopy cover
+  - forest inventory
+  - timber volume
+  - species classification
+  - fire risk index
 classification:
   locomotion: ground.wheeled
   manipulation: none

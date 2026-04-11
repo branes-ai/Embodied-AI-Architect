@@ -10,22 +10,66 @@ keywords:
   - biosurveillance drone
   - biosurveillance drone
   - agriculture biosurveillance drone
+  - smart biosurveillance drone
+  - biosurveillance drone platform
+  - automated biosurveillance drone
+  - agribot
+  - farm robot
+  - agricultural robot
+  - precision agriculture system
+  - smart farming platform
+  - agri-tech robot
   descriptions:
   - biosurveillance drone system
   - autonomous biosurveillance drone
+  - system for biosurveillance drone applications
+  - agriculture platform using biosurveillance drone technology
+  - intelligent biosurveillance drone solution
+  - autonomous platform for precision agriculture tasks
+  - farm robot for automated crop management and monitoring
   application:
   - biosurveillance drone
   - agriculture automation
+  - biosurveillance drone automation
+  - real-time biosurveillance drone
+  - biosurveillance drone monitoring
+  - biosurveillance drone detection
+  - crop monitoring
+  - weed detection
+  - precision spraying
+  - yield estimation
+  - soil analysis
+  - planting
+  - harvesting
+  - fruit picking
   industry:
   - agriculture
   - biosurveillance drone
+  - precision agriculture
+  - smart farming
+  - agri-tech
+  - horticulture
+  - viticulture
+  - organic farming
   components:
   - gps
   - imu
   - camera
+  - multispectral camera
+  - NDVI sensor
+  - RTK GPS
+  - spray nozzle
+  - soil moisture sensor
+  - weather station
   related:
   - agriculture
   - biosurveillance
+  - NDVI
+  - vegetation index
+  - variable rate application
+  - site-specific management
+  - crop health
+  - field mapping
 classification:
   locomotion: ground.wheeled
   manipulation: none

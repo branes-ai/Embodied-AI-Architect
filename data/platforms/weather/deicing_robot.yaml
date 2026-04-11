@@ -10,22 +10,65 @@ keywords:
   - deicing robot
   - deicing robot
   - weather deicing robot
+  - smart deicing robot
+  - deicing robot platform
+  - automated deicing robot
+  - weather station
+  - meteorological platform
+  - weather monitoring system
+  - atmospheric sensor
+  - weather drone
   descriptions:
   - deicing robot system
   - autonomous deicing robot
+  - system for deicing robot applications
+  - weather platform using deicing robot technology
+  - intelligent deicing robot solution
+  - autonomous weather monitoring and sensing platform
+  - meteorological system for real-time atmospheric data collection
   application:
   - deicing robot
   - weather automation
+  - deicing robot automation
+  - real-time deicing robot
+  - deicing robot monitoring
+  - deicing robot detection
+  - weather monitoring
+  - atmospheric profiling
+  - storm tracking
+  - precipitation measurement
+  - wind measurement
+  - temperature monitoring
+  - humidity sensing
+  - air quality monitoring
   industry:
   - weather
   - deicing robot
+  - meteorology
+  - aviation weather
+  - agriculture weather
+  - marine weather
+  - renewable energy
+  - climate research
   components:
   - gps
   - lidar
   - camera
+  - anemometer
+  - rain gauge
+  - barometer
+  - hygrometer
+  - thermometer
+  - ceilometer
   related:
   - weather
   - deicing
+  - METAR
+  - SYNOP
+  - forecast model
+  - data assimilation
+  - WMO standards
+  - automatic weather station
 classification:
   locomotion: ground.wheeled
   manipulation: none

@@ -10,20 +10,64 @@ keywords:
   - loss prevention
   - loss prevention
   - surveillance loss prevention
+  - smart loss prevention
+  - loss prevention platform
+  - automated loss prevention
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - loss prevention system
   - autonomous loss prevention
+  - system for loss prevention applications
+  - surveillance platform using loss prevention technology
+  - intelligent loss prevention solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - loss prevention
   - surveillance automation
+  - loss prevention automation
+  - real-time loss prevention
+  - loss prevention monitoring
+  - loss prevention detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - loss prevention
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - loss
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

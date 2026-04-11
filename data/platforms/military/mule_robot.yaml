@@ -10,22 +10,66 @@ keywords:
   - mule robot
   - mule robot
   - military mule robot
+  - smart mule robot
+  - mule robot platform
+  - automated mule robot
+  - military robot
+  - tactical robot
+  - defense platform
+  - combat robot
+  - military UGV
+  - military drone
   descriptions:
   - mule robot system
   - autonomous mule robot
+  - system for mule robot applications
+  - military platform using mule robot technology
+  - intelligent mule robot solution
+  - military-grade autonomous platform for tactical operations
+  - defense robot for reconnaissance and force protection
   application:
   - mule robot
   - military automation
+  - mule robot automation
+  - real-time mule robot
+  - mule robot monitoring
+  - mule robot detection
+  - reconnaissance
+  - ISR
+  - bomb disposal
+  - EOD
+  - logistics resupply
+  - perimeter security
+  - CBRN detection
+  - mine clearance
   industry:
   - military
   - mule robot
+  - defense
+  - homeland security
+  - intelligence
+  - force protection
+  - C4ISR
+  - special operations
   components:
   - imu
   - gps
   - eo_ir
+  - ruggedized enclosure
+  - encrypted radio
+  - FLIR camera
+  - NBC sensor
+  - ballistic armor
+  - weapons mount
   related:
   - military
   - mule
+  - MIL-STD
+  - ITAR
+  - C2 system
+  - tactical network
+  - STANAG
+  - blue force tracking
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

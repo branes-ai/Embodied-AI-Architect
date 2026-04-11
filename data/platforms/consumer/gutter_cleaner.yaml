@@ -10,22 +10,68 @@ keywords:
   - gutter cleaner
   - gutter cleaner
   - consumer gutter cleaner
+  - smart gutter cleaner
+  - gutter cleaner platform
+  - automated gutter cleaner
+  - robotic gutter cleaner
+  - gutter cleaner robot
+  - consumer robot
+  - home robot
+  - personal robot
+  - household robot
+  - smart home device
+  - domestic robot
   descriptions:
   - gutter cleaner system
   - autonomous gutter cleaner
+  - system for gutter cleaner applications
+  - consumer platform using gutter cleaner technology
+  - intelligent gutter cleaner solution
+  - consumer robotic device for everyday home use
+  - smart home robot with autonomous operation capabilities
   application:
   - gutter cleaner
   - consumer automation
+  - gutter cleaner automation
+  - real-time gutter cleaner
+  - gutter cleaner monitoring
+  - gutter cleaner detection
+  - home cleaning
+  - lawn care
+  - pool cleaning
+  - entertainment
+  - home security
+  - pet care
+  - cooking assistance
+  - education
   industry:
   - consumer
   - gutter cleaner
+  - consumer electronics
+  - home appliances
+  - smart home
+  - IoT
+  - consumer robotics
+  - home automation
   components:
   - lidar
   - camera
   - imu
+  - Wi-Fi module
+  - speaker
+  - microphone
+  - LED display
+  - rechargeable battery
+  - charging dock
   related:
   - consumer
   - gutter
+  - app control
+  - voice assistant
+  - smart home integration
+  - OTA update
+  - user-friendly
+  - companion app
 classification:
   locomotion: ground.wheeled
   manipulation: none

@@ -10,22 +10,68 @@ keywords:
   - conveyor pick
   - conveyor pick
   - logistics conveyor pick
+  - smart conveyor pick
+  - conveyor pick platform
+  - automated conveyor pick
+  - robotic conveyor pick
+  - conveyor pick robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - conveyor pick system
   - autonomous conveyor pick
+  - system for conveyor pick applications
+  - logistics platform using conveyor pick technology
+  - intelligent conveyor pick solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - conveyor pick
   - logistics automation
+  - conveyor pick automation
+  - real-time conveyor pick
+  - conveyor pick monitoring
+  - conveyor pick detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - conveyor pick
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - conveyor
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

@@ -10,20 +10,65 @@ keywords:
   - baby monitor ai
   - baby monitor ai
   - edge_vision baby monitor ai
+  - edge vision baby monitor ai
+  - smart baby monitor ai
+  - baby monitor ai platform
+  - automated baby monitor ai
+  - edge vision system
+  - smart camera
+  - AI camera
+  - vision appliance
+  - edge AI device
+  - intelligent camera
   descriptions:
   - baby monitor ai system
   - autonomous baby monitor ai
+  - system for baby monitor ai applications
+  - edge vision platform using baby monitor ai technology
+  - intelligent baby monitor ai solution
+  - edge-deployed vision system with on-device AI inference
+  - smart camera platform for real-time video analytics
   application:
   - baby monitor ai
   - edge_vision automation
+  - baby monitor ai automation
+  - real-time baby monitor ai
+  - baby monitor ai monitoring
+  - baby monitor ai detection
+  - video analytics
+  - object detection
+  - people counting
+  - face recognition
+  - license plate recognition
+  - anomaly detection
+  - behavior analysis
+  - occupancy monitoring
   industry:
   - edge_vision
   - baby monitor ai
+  - computer vision
+  - edge computing
+  - security
+  - retail
+  - smart city
+  - transportation
   components:
   - camera
+  - CMOS sensor
+  - ISP
+  - NPU
+  - AI accelerator
+  - lens
+  - IR LED
   related:
   - edge_vision
   - baby
+  - inference at edge
+  - model optimization
+  - TensorRT
+  - OpenVINO
+  - ONNX
+  - INT8 quantization
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

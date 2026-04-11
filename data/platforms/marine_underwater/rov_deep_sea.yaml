@@ -10,22 +10,68 @@ keywords:
   - rov deep sea
   - rov deep sea
   - marine_underwater rov deep sea
+  - marine underwater rov deep sea
+  - smart rov deep sea
+  - rov deep sea platform
+  - automated rov deep sea
+  - robotic rov deep sea
+  - AUV
+  - autonomous underwater vehicle
+  - remotely operated vehicle
+  - submersible
+  - underwater drone
+  - subsea robot
   descriptions:
   - rov deep sea system
   - autonomous rov deep sea
+  - system for rov deep sea applications
+  - marine underwater platform using rov deep sea technology
+  - intelligent rov deep sea solution
+  - autonomous underwater vehicle for subsea inspection and survey
+  - remotely operated underwater robot for deep-sea operations
   application:
   - rov deep sea
   - marine_underwater automation
+  - rov deep sea automation
+  - real-time rov deep sea
+  - rov deep sea monitoring
+  - rov deep sea detection
+  - subsea inspection
+  - pipeline inspection
+  - hull inspection
+  - oceanographic survey
+  - mine countermeasures
+  - wreck exploration
+  - coral reef monitoring
+  - dam inspection
   industry:
   - marine_underwater
   - rov deep sea
+  - subsea
+  - offshore oil and gas
+  - oceanography
+  - marine archaeology
+  - defense
+  - aquaculture
   components:
   - imu
   - sonar
   - depth_sensor
+  - depth sensor
+  - DVL
+  - thruster
+  - pressure hull
+  - manipulator
+  - sample collector
   related:
   - marine_underwater
   - rov
+  - depth rating
+  - acoustic navigation
+  - USBL
+  - INS
+  - buoyancy control
+  - tether management
 classification:
   locomotion: marine.underwater
   manipulation: none

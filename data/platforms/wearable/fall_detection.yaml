@@ -10,21 +10,64 @@ keywords:
   - fall detection
   - fall detection
   - wearable fall detection
+  - smart fall detection
+  - fall detection platform
+  - automated fall detection
+  - wearable robot
+  - exoskeleton
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - fall detection system
   - autonomous fall detection
+  - system for fall detection applications
+  - wearable platform using fall detection technology
+  - intelligent fall detection solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - fall detection
   - wearable automation
+  - fall detection automation
+  - real-time fall detection
+  - fall detection monitoring
+  - fall detection analysis
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - fall detection
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - fall
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

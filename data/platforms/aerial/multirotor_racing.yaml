@@ -10,22 +10,69 @@ keywords:
   - multirotor racing
   - multirotor racing
   - aerial multirotor racing
+  - smart multirotor racing
+  - multirotor racing platform
+  - automated multirotor racing
+  - robotic multirotor racing
+  - multirotor racing robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - quadcopter
+  - RPAS
+  - remotely piloted aircraft
   descriptions:
   - multirotor racing system
   - autonomous multirotor racing
+  - system for multirotor racing applications
+  - aerial platform using multirotor racing technology
+  - intelligent multirotor racing solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
   application:
   - multirotor racing
   - aerial automation
+  - multirotor racing automation
+  - real-time multirotor racing
+  - multirotor racing monitoring
+  - multirotor racing detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
   industry:
   - aerial
   - multirotor racing
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
   components:
   - imu
   - gps
   - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
   related:
   - aerial
   - multirotor
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

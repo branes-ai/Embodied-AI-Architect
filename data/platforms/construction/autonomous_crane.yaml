@@ -10,22 +10,64 @@ keywords:
   - autonomous crane
   - autonomous crane
   - construction autonomous crane
+  - smart autonomous crane
+  - autonomous crane platform
+  - construction robot
+  - building robot
+  - construction automation system
+  - autonomous construction vehicle
+  - construction drone
   descriptions:
   - autonomous crane system
   - autonomous autonomous crane
+  - system for autonomous crane applications
+  - construction platform using autonomous crane technology
+  - intelligent autonomous crane solution
+  - autonomous construction platform for building site operations
+  - robot system for automated construction tasks
   application:
   - autonomous crane
   - construction automation
+  - autonomous crane automation
+  - real-time autonomous crane
+  - autonomous crane monitoring
+  - autonomous crane detection
+  - site survey
+  - progress monitoring
+  - bricklaying
+  - concrete pouring
+  - demolition
+  - excavation
+  - rebar tying
+  - welding
   industry:
   - construction
   - autonomous crane
+  - civil engineering
+  - architecture
+  - building
+  - infrastructure
+  - real estate development
+  - heavy industry
   components:
   - gps
   - lidar
   - imu
+  - total station
+  - laser scanner
+  - BIM integration
+  - hydraulic actuator
+  - concrete pump
+  - robotic arm
   related:
   - construction
   - autonomous
+  - BIM
+  - digital twin
+  - site safety
+  - progress tracking
+  - point cloud
+  - as-built model
 classification:
   locomotion: stationary.gantry
   manipulation: none

@@ -10,21 +10,64 @@ keywords:
   - meat processing
   - meat processing
   - food meat processing
+  - smart meat processing
+  - meat processing platform
+  - automated meat processing
+  - food robot
+  - food processing robot
+  - kitchen robot
+  - food service robot
+  - culinary automation system
   descriptions:
   - meat processing system
   - autonomous meat processing
+  - system for meat processing applications
+  - food platform using meat processing technology
+  - intelligent meat processing solution
+  - automated food preparation and handling platform
+  - robot for commercial kitchen or food processing operations
   application:
   - meat processing
   - food automation
+  - meat processing automation
+  - real-time meat processing
+  - meat processing monitoring
+  - meat processing detection
+  - food preparation
+  - cooking
+  - plating
+  - ingredient handling
+  - food sorting
+  - quality inspection
+  - food packaging
+  - food delivery
   industry:
   - food
   - meat processing
+  - food service
+  - food processing
+  - restaurant
+  - catering
+  - food manufacturing
+  - hospitality
   components:
   - camera
   - hyperspectral
+  - food-grade gripper
+  - temperature sensor
+  - weight scale
+  - conveyor belt
+  - dispensing nozzle
+  - heating element
   related:
   - food
   - meat
+  - food safety
+  - HACCP
+  - sanitation
+  - food-grade materials
+  - allergen handling
+  - portion control
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

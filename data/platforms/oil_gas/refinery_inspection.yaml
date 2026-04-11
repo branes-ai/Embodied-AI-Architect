@@ -10,22 +10,65 @@ keywords:
   - refinery inspection
   - refinery inspection
   - oil_gas refinery inspection
+  - oil gas refinery inspection
+  - smart refinery inspection
+  - refinery inspection platform
+  - automated refinery inspection
+  - oil and gas robot
+  - offshore robot
+  - refinery robot
+  - pipeline robot
+  - upstream automation platform
   descriptions:
   - refinery inspection system
   - autonomous refinery inspection
+  - system for refinery inspection applications
+  - oil gas platform using refinery inspection technology
+  - intelligent refinery inspection solution
+  - intrinsically safe robot for oil and gas operations
+  - autonomous platform for pipeline and refinery inspection
   application:
   - refinery inspection
   - oil_gas automation
+  - refinery inspection automation
+  - real-time refinery inspection
+  - refinery inspection monitoring
+  - refinery inspection detection
+  - pipeline inspection
+  - flare stack inspection
+  - tank inspection
+  - leak detection
+  - corrosion monitoring
+  - valve operation
+  - wellhead monitoring
+  - rig floor automation
   industry:
   - oil_gas
   - refinery inspection
+  - oil and gas
+  - petroleum
+  - upstream
+  - midstream
+  - downstream
+  - petrochemical
   components:
   - gas_detector
   - thermal_camera
   - ultrasonic
+  - ATEX-rated enclosure
+  - gas sensor
+  - thermal camera
+  - ultrasonic thickness gauge
+  - explosion-proof motor
   related:
   - oil_gas
   - refinery
+  - ATEX
+  - IECEx
+  - intrinsic safety
+  - hazardous area classification
+  - SIL rating
+  - process safety
 classification:
   locomotion: ground.wheeled
   manipulation: none

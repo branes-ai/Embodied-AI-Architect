@@ -10,22 +10,68 @@ keywords:
   - biped humanoid construction
   - biped humanoid construction
   - ground_legged biped humanoid construction
+  - ground legged biped humanoid construction
+  - smart biped humanoid construction
+  - biped humanoid construction platform
+  - automated biped humanoid construction
+  - robotic biped humanoid construction
+  - legged robot
+  - walking robot
+  - quadruped
+  - humanoid robot
+  - legged platform
+  - spot-like robot
   descriptions:
   - biped humanoid construction system
   - autonomous biped humanoid construction
+  - system for biped humanoid construction applications
+  - ground legged platform using biped humanoid construction technology
+  - intelligent biped humanoid construction solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
   application:
   - biped humanoid construction
   - ground_legged automation
+  - biped humanoid construction automation
+  - real-time biped humanoid construction
+  - biped humanoid construction monitoring
+  - biped humanoid construction detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
   industry:
   - ground_legged
   - biped humanoid construction
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
   components:
   - lidar
   - imu
   - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
   related:
   - ground_legged
   - biped
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
 classification:
   locomotion: ground.legged
   manipulation: none

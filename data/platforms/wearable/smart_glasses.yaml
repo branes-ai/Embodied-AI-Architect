@@ -10,21 +10,63 @@ keywords:
   - smart glasses
   - smart glasses
   - wearable smart glasses
+  - smart glasses platform
+  - automated smart glasses
+  - wearable robot
+  - exoskeleton
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - smart glasses system
   - autonomous smart glasses
+  - system for smart glasses applications
+  - wearable platform using smart glasses technology
+  - intelligent smart glasses solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - smart glasses
   - wearable automation
+  - smart glasses automation
+  - real-time smart glasses
+  - smart glasses monitoring
+  - smart glasses detection
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - smart glasses
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - smart
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

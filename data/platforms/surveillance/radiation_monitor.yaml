@@ -10,20 +10,64 @@ keywords:
   - radiation monitor
   - radiation monitor
   - surveillance radiation monitor
+  - smart radiation monitor
+  - radiation monitor platform
+  - automated radiation monitor
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - radiation monitor system
   - autonomous radiation monitor
+  - system for radiation monitor applications
+  - surveillance platform using radiation monitor technology
+  - intelligent radiation monitor solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - radiation monitor
   - surveillance automation
+  - radiation monitor automation
+  - real-time radiation monitor
+  - radiation monitor monitoring
+  - radiation monitor detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - radiation monitor
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - radiation
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

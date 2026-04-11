@@ -10,21 +10,64 @@ keywords:
   - hoof trimmer
   - hoof trimmer
   - veterinary hoof trimmer
+  - smart hoof trimmer
+  - hoof trimmer platform
+  - automated hoof trimmer
+  - veterinary robot
+  - animal care robot
+  - livestock robot
+  - animal health platform
+  - vet-tech robot
   descriptions:
   - hoof trimmer system
   - autonomous hoof trimmer
+  - system for hoof trimmer applications
+  - veterinary platform using hoof trimmer technology
+  - intelligent hoof trimmer solution
+  - automated platform for animal health monitoring and care
+  - robot for livestock management and veterinary tasks
   application:
   - hoof trimmer
   - veterinary automation
+  - hoof trimmer automation
+  - real-time hoof trimmer
+  - hoof trimmer monitoring
+  - hoof trimmer detection
+  - animal health monitoring
+  - automated milking
+  - livestock sorting
+  - medication delivery
+  - herd management
+  - animal tracking
+  - reproductive monitoring
+  - weight monitoring
   industry:
   - veterinary
   - hoof trimmer
+  - veterinary medicine
+  - animal husbandry
+  - dairy farming
+  - livestock management
+  - poultry
+  - aquaculture
   components:
   - camera
   - ultrasound
+  - RFID reader
+  - temperature sensor
+  - weighing platform
+  - teat cup
+  - sorting gate
+  - feed dispenser
   related:
   - veterinary
   - hoof
+  - herd management software
+  - animal welfare
+  - lameness detection
+  - body condition score
+  - estrus detection
+  - mastitis detection
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

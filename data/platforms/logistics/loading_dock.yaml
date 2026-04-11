@@ -10,22 +10,68 @@ keywords:
   - loading dock
   - loading dock
   - logistics loading dock
+  - smart loading dock
+  - loading dock platform
+  - automated loading dock
+  - robotic loading dock
+  - loading dock robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - loading dock system
   - autonomous loading dock
+  - system for loading dock applications
+  - logistics platform using loading dock technology
+  - intelligent loading dock solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - loading dock
   - logistics automation
+  - loading dock automation
+  - real-time loading dock
+  - loading dock monitoring
+  - loading dock detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - loading dock
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - loading
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

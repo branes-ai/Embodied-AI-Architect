@@ -10,22 +10,66 @@ keywords:
   - pet robot
   - pet robot
   - consumer pet robot
+  - smart pet robot
+  - pet robot platform
+  - automated pet robot
+  - consumer robot
+  - home robot
+  - personal robot
+  - household robot
+  - smart home device
+  - domestic robot
   descriptions:
   - pet robot system
   - autonomous pet robot
+  - system for pet robot applications
+  - consumer platform using pet robot technology
+  - intelligent pet robot solution
+  - consumer robotic device for everyday home use
+  - smart home robot with autonomous operation capabilities
   application:
   - pet robot
   - consumer automation
+  - pet robot automation
+  - real-time pet robot
+  - pet robot monitoring
+  - pet robot detection
+  - home cleaning
+  - lawn care
+  - pool cleaning
+  - entertainment
+  - home security
+  - pet care
+  - cooking assistance
+  - education
   industry:
   - consumer
   - pet robot
+  - consumer electronics
+  - home appliances
+  - smart home
+  - IoT
+  - consumer robotics
+  - home automation
   components:
   - lidar
   - camera
   - imu
+  - Wi-Fi module
+  - speaker
+  - microphone
+  - LED display
+  - rechargeable battery
+  - charging dock
   related:
   - consumer
   - pet
+  - app control
+  - voice assistant
+  - smart home integration
+  - OTA update
+  - user-friendly
+  - companion app
 classification:
   locomotion: ground.wheeled
   manipulation: none

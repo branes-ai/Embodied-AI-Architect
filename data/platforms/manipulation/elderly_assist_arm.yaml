@@ -10,21 +10,67 @@ keywords:
   - elderly assist arm
   - elderly assist arm
   - manipulation elderly assist arm
+  - smart elderly assist arm
+  - elderly assist arm platform
+  - automated elderly assist arm
+  - robotic elderly assist arm
+  - elderly assist arm robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - elderly assist arm system
   - autonomous elderly assist arm
+  - system for elderly assist arm applications
+  - manipulation platform using elderly assist arm technology
+  - intelligent elderly assist arm solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - elderly assist arm
   - manipulation automation
+  - elderly assist arm automation
+  - real-time elderly assist arm
+  - elderly assist arm monitoring
+  - elderly assist arm detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
   industry:
   - manipulation
   - elderly assist arm
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - elderly
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

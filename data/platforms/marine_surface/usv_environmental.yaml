@@ -10,22 +10,67 @@ keywords:
   - usv environmental
   - usv environmental
   - marine_surface usv environmental
+  - marine surface usv environmental
+  - smart usv environmental
+  - usv environmental platform
+  - automated usv environmental
+  - robotic usv environmental
+  - surface vessel
+  - unmanned surface vehicle
+  - autonomous boat
+  - surface drone
+  - marine surface robot
   descriptions:
   - usv environmental system
   - autonomous usv environmental
+  - system for usv environmental applications
+  - marine surface platform using usv environmental technology
+  - intelligent usv environmental solution
+  - unmanned surface vessel for autonomous maritime missions
+  - autonomous boat platform for survey and monitoring
   application:
   - usv environmental
   - marine_surface automation
+  - usv environmental automation
+  - real-time usv environmental
+  - usv environmental monitoring
+  - usv environmental detection
+  - hydrographic survey
+  - water quality monitoring
+  - harbor patrol
+  - search and rescue
+  - oil spill response
+  - coastal survey
+  - aquaculture monitoring
+  - cargo transport
   industry:
   - marine_surface
   - usv environmental
+  - maritime
+  - hydrography
+  - aquaculture
+  - port operations
+  - environmental services
+  - coast guard
   components:
   - gps
   - imu
   - radar
+  - hull
+  - propulsion motor
+  - GPS antenna
+  - AIS transponder
+  - weather station
+  - echo sounder
   related:
   - marine_surface
   - usv
+  - COLREGs
+  - collision avoidance
+  - waypoint navigation
+  - sea state
+  - station keeping
+  - autonomous docking
 classification:
   locomotion: marine.surface
   manipulation: none

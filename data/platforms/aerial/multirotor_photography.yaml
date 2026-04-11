@@ -10,22 +10,69 @@ keywords:
   - multirotor photography
   - multirotor photography
   - aerial multirotor photography
+  - smart multirotor photography
+  - multirotor photography platform
+  - automated multirotor photography
+  - robotic multirotor photography
+  - multirotor photography robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - quadcopter
+  - RPAS
+  - remotely piloted aircraft
   descriptions:
   - multirotor photography system
   - autonomous multirotor photography
+  - system for multirotor photography applications
+  - aerial platform using multirotor photography technology
+  - intelligent multirotor photography solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
   application:
   - multirotor photography
   - aerial automation
+  - multirotor photography automation
+  - real-time multirotor photography
+  - multirotor photography monitoring
+  - multirotor photography detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
   industry:
   - aerial
   - multirotor photography
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
   components:
   - imu
   - gps
   - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
   related:
   - aerial
   - multirotor
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

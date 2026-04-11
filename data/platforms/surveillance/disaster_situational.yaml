@@ -10,20 +10,64 @@ keywords:
   - disaster situational
   - disaster situational
   - surveillance disaster situational
+  - smart disaster situational
+  - disaster situational platform
+  - automated disaster situational
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - disaster situational system
   - autonomous disaster situational
+  - system for disaster situational applications
+  - surveillance platform using disaster situational technology
+  - intelligent disaster situational solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - disaster situational
   - surveillance automation
+  - disaster situational automation
+  - real-time disaster situational
+  - disaster situational monitoring
+  - disaster situational detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - disaster situational
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - disaster
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

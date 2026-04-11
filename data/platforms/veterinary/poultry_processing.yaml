@@ -10,21 +10,63 @@ keywords:
   - poultry processing
   - poultry processing
   - veterinary poultry processing
+  - smart poultry processing
+  - poultry processing platform
+  - automated poultry processing
+  - veterinary robot
+  - animal care robot
+  - livestock robot
+  - animal health platform
+  - vet-tech robot
   descriptions:
   - poultry processing system
   - autonomous poultry processing
+  - system for poultry processing applications
+  - veterinary platform using poultry processing technology
+  - intelligent poultry processing solution
+  - automated platform for animal health monitoring and care
+  - robot for livestock management and veterinary tasks
   application:
   - poultry processing
   - veterinary automation
+  - poultry processing automation
+  - real-time poultry processing
+  - poultry processing monitoring
+  - poultry processing detection
+  - animal health monitoring
+  - automated milking
+  - livestock sorting
+  - medication delivery
+  - herd management
+  - animal tracking
+  - reproductive monitoring
+  - weight monitoring
   industry:
   - veterinary
   - poultry processing
+  - veterinary medicine
+  - animal husbandry
+  - dairy farming
+  - livestock management
+  - aquaculture
   components:
   - camera
   - ultrasound
+  - RFID reader
+  - temperature sensor
+  - weighing platform
+  - teat cup
+  - sorting gate
+  - feed dispenser
   related:
   - veterinary
   - poultry
+  - herd management software
+  - animal welfare
+  - lameness detection
+  - body condition score
+  - estrus detection
+  - mastitis detection
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

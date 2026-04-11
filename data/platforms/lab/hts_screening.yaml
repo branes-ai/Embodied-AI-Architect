@@ -10,21 +10,67 @@ keywords:
   - hts screening
   - hts screening
   - lab hts screening
+  - smart hts screening
+  - hts screening platform
+  - automated hts screening
+  - robotic hts screening
+  - hts screening robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - hts screening system
   - autonomous hts screening
+  - system for hts screening applications
+  - lab platform using hts screening technology
+  - intelligent hts screening solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - hts screening
   - lab automation
+  - hts screening automation
+  - real-time hts screening
+  - hts screening monitoring
+  - hts screening detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - cell culture
   industry:
   - lab
   - hts screening
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - hts
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

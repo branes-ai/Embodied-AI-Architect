@@ -10,22 +10,65 @@ keywords:
   - bricklaying robot
   - bricklaying robot
   - construction bricklaying robot
+  - smart bricklaying robot
+  - bricklaying robot platform
+  - automated bricklaying robot
+  - construction robot
+  - building robot
+  - construction automation system
+  - autonomous construction vehicle
+  - construction drone
   descriptions:
   - bricklaying robot system
   - autonomous bricklaying robot
+  - system for bricklaying robot applications
+  - construction platform using bricklaying robot technology
+  - intelligent bricklaying robot solution
+  - autonomous construction platform for building site operations
+  - robot system for automated construction tasks
   application:
   - bricklaying robot
   - construction automation
+  - bricklaying robot automation
+  - real-time bricklaying robot
+  - bricklaying robot monitoring
+  - bricklaying robot detection
+  - site survey
+  - progress monitoring
+  - concrete pouring
+  - demolition
+  - excavation
+  - rebar tying
+  - welding
+  - painting
   industry:
   - construction
   - bricklaying robot
+  - civil engineering
+  - architecture
+  - building
+  - infrastructure
+  - real estate development
+  - heavy industry
   components:
   - gps
   - lidar
   - imu
+  - total station
+  - laser scanner
+  - BIM integration
+  - hydraulic actuator
+  - concrete pump
+  - robotic arm
   related:
   - construction
   - bricklaying
+  - BIM
+  - digital twin
+  - site safety
+  - progress tracking
+  - point cloud
+  - as-built model
 classification:
   locomotion: stationary.gantry
   manipulation: none

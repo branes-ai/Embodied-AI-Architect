@@ -10,21 +10,62 @@ keywords:
   - ewaste disassembly
   - ewaste disassembly
   - waste ewaste disassembly
+  - smart ewaste disassembly
+  - ewaste disassembly platform
+  - automated ewaste disassembly
+  - waste robot
+  - recycling robot
+  - trash sorting robot
+  - waste management platform
+  - refuse handling robot
   descriptions:
   - ewaste disassembly system
   - autonomous ewaste disassembly
+  - system for ewaste disassembly applications
+  - waste platform using ewaste disassembly technology
+  - intelligent ewaste disassembly solution
+  - autonomous waste sorting and recycling platform
+  - robot for automated waste handling and material recovery
   application:
   - ewaste disassembly
   - waste automation
+  - ewaste disassembly automation
+  - real-time ewaste disassembly
+  - ewaste disassembly monitoring
+  - ewaste disassembly detection
+  - waste sorting
+  - recycling
+  - material recovery
+  - trash collection
+  - contamination detection
+  - bin emptying
+  - litter picking
+  - compaction
   industry:
   - waste
   - ewaste disassembly
+  - waste management
+  - circular economy
+  - environmental services
+  - sanitation
   components:
   - camera
   - hyperspectral
+  - gripper
+  - conveyor belt
+  - NIR sensor
+  - air jet
+  - compactor
+  - bin lifter
   related:
   - waste
   - ewaste
+  - material classification
+  - contamination rate
+  - MRF
+  - single stream
+  - diversion rate
+  - tipping floor
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

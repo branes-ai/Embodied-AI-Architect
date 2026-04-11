@@ -10,22 +10,65 @@ keywords:
   - downhole inspection
   - downhole inspection
   - oil_gas downhole inspection
+  - oil gas downhole inspection
+  - smart downhole inspection
+  - downhole inspection platform
+  - automated downhole inspection
+  - oil and gas robot
+  - offshore robot
+  - refinery robot
+  - pipeline robot
+  - upstream automation platform
   descriptions:
   - downhole inspection system
   - autonomous downhole inspection
+  - system for downhole inspection applications
+  - oil gas platform using downhole inspection technology
+  - intelligent downhole inspection solution
+  - intrinsically safe robot for oil and gas operations
+  - autonomous platform for pipeline and refinery inspection
   application:
   - downhole inspection
   - oil_gas automation
+  - downhole inspection automation
+  - real-time downhole inspection
+  - downhole inspection monitoring
+  - downhole inspection detection
+  - pipeline inspection
+  - flare stack inspection
+  - tank inspection
+  - leak detection
+  - corrosion monitoring
+  - valve operation
+  - wellhead monitoring
+  - rig floor automation
   industry:
   - oil_gas
   - downhole inspection
+  - oil and gas
+  - petroleum
+  - upstream
+  - midstream
+  - downstream
+  - petrochemical
   components:
   - gas_detector
   - thermal_camera
   - ultrasonic
+  - ATEX-rated enclosure
+  - gas sensor
+  - thermal camera
+  - ultrasonic thickness gauge
+  - explosion-proof motor
   related:
   - oil_gas
   - downhole
+  - ATEX
+  - IECEx
+  - intrinsic safety
+  - hazardous area classification
+  - SIL rating
+  - process safety
 classification:
   locomotion: ground.wheeled
   manipulation: none

@@ -10,22 +10,67 @@ keywords:
   - hull cleaning
   - hull cleaning
   - marine hull cleaning
+  - smart hull cleaning
+  - hull cleaning platform
+  - automated hull cleaning
+  - robotic hull cleaning
+  - hull cleaning robot
+  - marine robot
+  - underwater robot
+  - aquatic robot
+  - maritime autonomous system
+  - ocean robot
   descriptions:
   - hull cleaning system
   - autonomous hull cleaning
+  - system for hull cleaning applications
+  - marine platform using hull cleaning technology
+  - intelligent hull cleaning solution
+  - autonomous marine platform for underwater or surface operations
+  - marine robot for inspection, survey, or environmental monitoring
   application:
   - hull cleaning
   - marine automation
+  - hull cleaning automation
+  - real-time hull cleaning
+  - hull cleaning monitoring
+  - hull cleaning detection
+  - underwater inspection
+  - hull inspection
+  - pipeline survey
+  - marine research
+  - fish farming
+  - port security
+  - environmental monitoring
+  - bathymetric survey
   industry:
   - marine
   - hull cleaning
+  - maritime
+  - offshore
+  - aquaculture
+  - naval
+  - ocean science
+  - port operations
   components:
   - gps
   - imu
   - sonar
+  - thruster
+  - depth sensor
+  - DVL
+  - acoustic modem
+  - pressure housing
+  - buoyancy module
   related:
   - marine
   - hull
+  - underwater navigation
+  - acoustic positioning
+  - USBL
+  - depth rating
+  - corrosion resistance
+  - marine grade
 classification:
   locomotion: marine.surface
   manipulation: none

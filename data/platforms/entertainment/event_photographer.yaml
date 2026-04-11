@@ -10,21 +10,65 @@ keywords:
   - event photographer
   - event photographer
   - entertainment event photographer
+  - smart event photographer
+  - event photographer platform
+  - automated event photographer
+  - entertainment robot
+  - show robot
+  - animatronic
+  - performance robot
+  - theme park robot
+  - interactive robot
   descriptions:
   - event photographer system
   - autonomous event photographer
+  - system for event photographer applications
+  - entertainment platform using event photographer technology
+  - intelligent event photographer solution
+  - robot platform for live entertainment and audience interaction
+  - automated performance system for events and shows
   application:
   - event photographer
   - entertainment automation
+  - event photographer automation
+  - real-time event photographer
+  - event photographer monitoring
+  - event photographer detection
+  - live performance
+  - audience interaction
+  - theme park attraction
+  - light show
+  - dance performance
+  - character performance
+  - interactive exhibit
+  - educational entertainment
   industry:
   - entertainment
   - event photographer
+  - theme parks
+  - events
+  - media production
+  - live events
+  - experiential marketing
+  - museum
   components:
   - camera
   - microphone
+  - LED array
+  - speaker system
+  - servo motor
+  - motion controller
+  - DMX controller
+  - fog machine
   related:
   - entertainment
   - event
+  - choreography
+  - synchronized motion
+  - show control
+  - audience engagement
+  - motion capture
+  - expressive movement
 classification:
   locomotion: ground.wheeled
   manipulation: none

@@ -10,22 +10,68 @@ keywords:
   - biped humanoid warehouse
   - biped humanoid warehouse
   - ground_legged biped humanoid warehouse
+  - ground legged biped humanoid warehouse
+  - smart biped humanoid warehouse
+  - biped humanoid warehouse platform
+  - automated biped humanoid warehouse
+  - robotic biped humanoid warehouse
+  - legged robot
+  - walking robot
+  - quadruped
+  - humanoid robot
+  - legged platform
+  - spot-like robot
   descriptions:
   - biped humanoid warehouse system
   - autonomous biped humanoid warehouse
+  - system for biped humanoid warehouse applications
+  - ground legged platform using biped humanoid warehouse technology
+  - intelligent biped humanoid warehouse solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
   application:
   - biped humanoid warehouse
   - ground_legged automation
+  - biped humanoid warehouse automation
+  - real-time biped humanoid warehouse
+  - biped humanoid warehouse monitoring
+  - biped humanoid warehouse detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
   industry:
   - ground_legged
   - biped humanoid warehouse
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
   components:
   - lidar
   - imu
   - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
   related:
   - ground_legged
   - biped
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
 classification:
   locomotion: ground.legged
   manipulation: none

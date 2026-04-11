@@ -10,22 +10,68 @@ keywords:
   - cleaning commercial
   - cleaning commercial
   - ground_wheeled cleaning commercial
+  - ground wheeled cleaning commercial
+  - smart cleaning commercial
+  - cleaning commercial platform
+  - automated cleaning commercial
+  - robotic cleaning commercial
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - cleaning commercial system
   - autonomous cleaning commercial
+  - system for cleaning commercial applications
+  - ground wheeled platform using cleaning commercial technology
+  - intelligent cleaning commercial solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - cleaning commercial
   - ground_wheeled automation
+  - cleaning commercial automation
+  - real-time cleaning commercial
+  - cleaning commercial monitoring
+  - cleaning commercial detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - cleaning commercial
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - cleaning
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

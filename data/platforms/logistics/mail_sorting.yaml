@@ -10,22 +10,68 @@ keywords:
   - mail sorting
   - mail sorting
   - logistics mail sorting
+  - smart mail sorting
+  - mail sorting platform
+  - automated mail sorting
+  - robotic mail sorting
+  - mail sorting robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - mail sorting system
   - autonomous mail sorting
+  - system for mail sorting applications
+  - logistics platform using mail sorting technology
+  - intelligent mail sorting solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - mail sorting
   - logistics automation
+  - mail sorting automation
+  - real-time mail sorting
+  - mail sorting monitoring
+  - mail sorting detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - mail sorting
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - mail
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

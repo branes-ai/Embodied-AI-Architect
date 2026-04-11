@@ -10,21 +10,63 @@ keywords:
   - telepresence medical
   - telepresence medical
   - healthcare telepresence medical
+  - smart telepresence medical
+  - telepresence medical platform
+  - automated telepresence medical
+  - healthcare robot
+  - medical robot
+  - hospital robot
+  - clinical robot
+  - health-tech platform
   descriptions:
   - telepresence medical system
   - autonomous telepresence medical
+  - system for telepresence medical applications
+  - healthcare platform using telepresence medical technology
+  - intelligent telepresence medical solution
+  - robot platform for healthcare delivery and clinical support
+  - medical automation system for hospital environments
   application:
   - telepresence medical
   - healthcare automation
+  - telepresence medical automation
+  - real-time telepresence medical
+  - telepresence medical monitoring
+  - telepresence medical detection
+  - patient monitoring
+  - telemedicine
+  - medication dispensing
+  - surgical assistance
+  - disinfection
+  - specimen transport
+  - rehabilitation
+  - vital signs monitoring
   industry:
   - healthcare
   - telepresence medical
+  - hospital
+  - clinical
+  - medical devices
+  - pharma
+  - health-tech
   components:
   - lidar
   - camera
+  - UV-C lamp
+  - vital signs sensor
+  - touch screen
+  - antimicrobial surface
+  - medical-grade enclosure
+  - sterile interface
   related:
   - healthcare
   - telepresence
+  - HIPAA
+  - FDA clearance
+  - clinical workflow
+  - EHR integration
+  - patient safety
+  - infection control
 classification:
   locomotion: ground.wheeled
   manipulation: none

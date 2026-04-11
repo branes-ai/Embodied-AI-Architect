@@ -10,21 +10,67 @@ keywords:
   - cell culture
   - cell culture
   - lab cell culture
+  - smart cell culture
+  - cell culture platform
+  - automated cell culture
+  - robotic cell culture
+  - cell culture robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - cell culture system
   - autonomous cell culture
+  - system for cell culture applications
+  - lab platform using cell culture technology
+  - intelligent cell culture solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - cell culture
   - lab automation
+  - cell culture automation
+  - real-time cell culture
+  - cell culture monitoring
+  - cell culture detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - assay preparation
   industry:
   - lab
   - cell culture
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - cell
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

@@ -10,21 +10,64 @@ keywords:
   - respiratory monitor
   - respiratory monitor
   - wearable respiratory monitor
+  - smart respiratory monitor
+  - respiratory monitor platform
+  - automated respiratory monitor
+  - wearable robot
+  - exoskeleton
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - respiratory monitor system
   - autonomous respiratory monitor
+  - system for respiratory monitor applications
+  - wearable platform using respiratory monitor technology
+  - intelligent respiratory monitor solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - respiratory monitor
   - wearable automation
+  - respiratory monitor automation
+  - real-time respiratory monitor
+  - respiratory monitor monitoring
+  - respiratory monitor detection
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - respiratory monitor
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - respiratory
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

@@ -10,21 +10,63 @@ keywords:
   - smart insulin pump
   - smart insulin pump
   - wearable smart insulin pump
+  - smart insulin pump platform
+  - automated smart insulin pump
+  - wearable robot
+  - exoskeleton
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - smart insulin pump system
   - autonomous smart insulin pump
+  - system for smart insulin pump applications
+  - wearable platform using smart insulin pump technology
+  - intelligent smart insulin pump solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - smart insulin pump
   - wearable automation
+  - smart insulin pump automation
+  - real-time smart insulin pump
+  - smart insulin pump monitoring
+  - smart insulin pump detection
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - smart insulin pump
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - smart
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

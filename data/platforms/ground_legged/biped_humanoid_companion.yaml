@@ -10,22 +10,68 @@ keywords:
   - biped humanoid companion
   - biped humanoid companion
   - ground_legged biped humanoid companion
+  - ground legged biped humanoid companion
+  - smart biped humanoid companion
+  - biped humanoid companion platform
+  - automated biped humanoid companion
+  - robotic biped humanoid companion
+  - legged robot
+  - walking robot
+  - quadruped
+  - humanoid robot
+  - legged platform
+  - spot-like robot
   descriptions:
   - biped humanoid companion system
   - autonomous biped humanoid companion
+  - system for biped humanoid companion applications
+  - ground legged platform using biped humanoid companion technology
+  - intelligent biped humanoid companion solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
   application:
   - biped humanoid companion
   - ground_legged automation
+  - biped humanoid companion automation
+  - real-time biped humanoid companion
+  - biped humanoid companion monitoring
+  - biped humanoid companion detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
   industry:
   - ground_legged
   - biped humanoid companion
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
   components:
   - lidar
   - imu
   - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
   related:
   - ground_legged
   - biped
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
 classification:
   locomotion: ground.legged
   manipulation: none

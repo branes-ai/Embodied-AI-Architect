@@ -10,20 +10,64 @@ keywords:
   - critical infrastructure
   - critical infrastructure
   - surveillance critical infrastructure
+  - smart critical infrastructure
+  - critical infrastructure platform
+  - automated critical infrastructure
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - critical infrastructure system
   - autonomous critical infrastructure
+  - system for critical infrastructure applications
+  - surveillance platform using critical infrastructure technology
+  - intelligent critical infrastructure solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - critical infrastructure
   - surveillance automation
+  - critical infrastructure automation
+  - real-time critical infrastructure
+  - critical infrastructure monitoring
+  - critical infrastructure detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - critical infrastructure
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - critical
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

@@ -10,21 +10,64 @@ keywords:
   - ar headset
   - ar headset
   - wearable ar headset
+  - smart ar headset
+  - ar headset platform
+  - automated ar headset
+  - wearable robot
+  - exoskeleton
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - ar headset system
   - autonomous ar headset
+  - system for ar headset applications
+  - wearable platform using ar headset technology
+  - intelligent ar headset solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - ar headset
   - wearable automation
+  - ar headset automation
+  - real-time ar headset
+  - ar headset monitoring
+  - ar headset detection
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - ar headset
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - ar
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

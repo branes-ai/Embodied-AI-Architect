@@ -10,21 +10,64 @@ keywords:
   - tremor monitor
   - tremor monitor
   - wearable tremor monitor
+  - smart tremor monitor
+  - tremor monitor platform
+  - automated tremor monitor
+  - wearable robot
+  - exoskeleton
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - tremor monitor system
   - autonomous tremor monitor
+  - system for tremor monitor applications
+  - wearable platform using tremor monitor technology
+  - intelligent tremor monitor solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - tremor monitor
   - wearable automation
+  - tremor monitor automation
+  - real-time tremor monitor
+  - tremor monitor monitoring
+  - tremor monitor detection
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - tremor monitor
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - tremor
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

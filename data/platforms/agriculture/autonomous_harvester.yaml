@@ -10,22 +10,65 @@ keywords:
   - autonomous harvester
   - autonomous harvester
   - agriculture autonomous harvester
+  - smart autonomous harvester
+  - autonomous harvester platform
+  - agribot
+  - farm robot
+  - agricultural robot
+  - precision agriculture system
+  - smart farming platform
+  - agri-tech robot
   descriptions:
   - autonomous harvester system
   - autonomous autonomous harvester
+  - system for autonomous harvester applications
+  - agriculture platform using autonomous harvester technology
+  - intelligent autonomous harvester solution
+  - autonomous platform for precision agriculture tasks
+  - farm robot for automated crop management and monitoring
   application:
   - autonomous harvester
   - agriculture automation
+  - autonomous harvester automation
+  - real-time autonomous harvester
+  - autonomous harvester monitoring
+  - autonomous harvester detection
+  - crop monitoring
+  - weed detection
+  - precision spraying
+  - yield estimation
+  - soil analysis
+  - planting
+  - harvesting
+  - fruit picking
   industry:
   - agriculture
   - autonomous harvester
+  - precision agriculture
+  - smart farming
+  - agri-tech
+  - horticulture
+  - viticulture
+  - organic farming
   components:
   - gps
   - imu
   - camera
+  - multispectral camera
+  - NDVI sensor
+  - RTK GPS
+  - spray nozzle
+  - soil moisture sensor
+  - weather station
   related:
   - agriculture
   - autonomous
+  - NDVI
+  - vegetation index
+  - variable rate application
+  - site-specific management
+  - crop health
+  - field mapping
 classification:
   locomotion: ground.wheeled
   manipulation: none

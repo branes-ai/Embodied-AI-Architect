@@ -10,22 +10,68 @@ keywords:
   - hospital logistics
   - hospital logistics
   - ground_wheeled hospital logistics
+  - ground wheeled hospital logistics
+  - smart hospital logistics
+  - hospital logistics platform
+  - automated hospital logistics
+  - robotic hospital logistics
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - hospital logistics system
   - autonomous hospital logistics
+  - system for hospital logistics applications
+  - ground wheeled platform using hospital logistics technology
+  - intelligent hospital logistics solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - hospital logistics
   - ground_wheeled automation
+  - hospital logistics automation
+  - real-time hospital logistics
+  - hospital logistics monitoring
+  - hospital logistics detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - hospital logistics
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - hospital
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

@@ -10,20 +10,64 @@ keywords:
   - ocean monitoring
   - ocean monitoring
   - surveillance ocean monitoring
+  - smart ocean monitoring
+  - ocean monitoring platform
+  - automated ocean monitoring
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - ocean monitoring system
   - autonomous ocean monitoring
+  - system for ocean monitoring applications
+  - surveillance platform using ocean monitoring technology
+  - intelligent ocean monitoring solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - ocean monitoring
   - surveillance automation
+  - ocean monitoring automation
+  - real-time ocean monitoring
+  - ocean monitoring detection
+  - ocean monitoring analysis
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - ocean monitoring
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - ocean
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

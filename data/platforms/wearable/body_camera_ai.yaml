@@ -10,21 +10,64 @@ keywords:
   - body camera ai
   - body camera ai
   - wearable body camera ai
+  - smart body camera ai
+  - body camera ai platform
+  - automated body camera ai
+  - wearable robot
+  - exoskeleton
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - body camera ai system
   - autonomous body camera ai
+  - system for body camera ai applications
+  - wearable platform using body camera ai technology
+  - intelligent body camera ai solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - body camera ai
   - wearable automation
+  - body camera ai automation
+  - real-time body camera ai
+  - body camera ai monitoring
+  - body camera ai detection
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - body camera ai
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - body
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

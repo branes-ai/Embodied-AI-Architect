@@ -10,22 +10,68 @@ keywords:
   - parcel sorter
   - parcel sorter
   - logistics parcel sorter
+  - smart parcel sorter
+  - parcel sorter platform
+  - automated parcel sorter
+  - robotic parcel sorter
+  - parcel sorter robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - parcel sorter system
   - autonomous parcel sorter
+  - system for parcel sorter applications
+  - logistics platform using parcel sorter technology
+  - intelligent parcel sorter solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - parcel sorter
   - logistics automation
+  - parcel sorter automation
+  - real-time parcel sorter
+  - parcel sorter monitoring
+  - parcel sorter detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - parcel sorter
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - parcel
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

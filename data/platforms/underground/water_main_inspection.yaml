@@ -10,22 +10,65 @@ keywords:
   - water main inspection
   - water main inspection
   - underground water main inspection
+  - smart water main inspection
+  - water main inspection platform
+  - automated water main inspection
+  - underground robot
+  - tunnel robot
+  - subterranean robot
+  - sewer robot
+  - pipe inspection robot
+  - cave exploration robot
   descriptions:
   - water main inspection system
   - autonomous water main inspection
+  - system for water main inspection applications
+  - underground platform using water main inspection technology
+  - intelligent water main inspection solution
+  - robot for inspecting underground infrastructure and tunnels
+  - autonomous platform for subterranean exploration and maintenance
   application:
   - water main inspection
   - underground automation
+  - water main inspection automation
+  - real-time water main inspection
+  - water main inspection monitoring
+  - water main inspection detection
+  - tunnel inspection
+  - pipe inspection
+  - sewer inspection
+  - utility mapping
+  - underground construction
+  - cable pulling
+  - confined space inspection
+  - structural assessment
   industry:
   - underground
   - water main inspection
+  - utilities
+  - tunneling
+  - civil infrastructure
+  - wastewater
+  - mining
   components:
   - lidar
   - camera
   - gas_detector
+  - crawler tracks
+  - LED lighting
+  - sonar
+  - gas sensor
+  - pipe gripper
+  - thickness gauge
   related:
   - underground
   - water
+  - CCTV inspection
+  - manhole entry
+  - confined space safety
+  - inflow and infiltration
+  - structural rating
+  - NASSCO PACP
 classification:
   locomotion: ground.wheeled
   manipulation: none

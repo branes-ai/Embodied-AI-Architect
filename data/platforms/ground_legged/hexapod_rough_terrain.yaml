@@ -10,22 +10,68 @@ keywords:
   - hexapod rough terrain
   - hexapod rough terrain
   - ground_legged hexapod rough terrain
+  - ground legged hexapod rough terrain
+  - smart hexapod rough terrain
+  - hexapod rough terrain platform
+  - automated hexapod rough terrain
+  - robotic hexapod rough terrain
+  - legged robot
+  - walking robot
+  - quadruped
+  - biped
+  - humanoid robot
+  - legged platform
   descriptions:
   - hexapod rough terrain system
   - autonomous hexapod rough terrain
+  - system for hexapod rough terrain applications
+  - ground legged platform using hexapod rough terrain technology
+  - intelligent hexapod rough terrain solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
   application:
   - hexapod rough terrain
   - ground_legged automation
+  - hexapod rough terrain automation
+  - real-time hexapod rough terrain
+  - hexapod rough terrain monitoring
+  - hexapod rough terrain detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
   industry:
   - ground_legged
   - hexapod rough terrain
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
   components:
   - lidar
   - imu
   - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
   related:
   - ground_legged
   - hexapod
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
 classification:
   locomotion: ground.legged
   manipulation: none

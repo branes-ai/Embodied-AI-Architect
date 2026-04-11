@@ -10,21 +10,67 @@ keywords:
   - compound management
   - compound management
   - lab compound management
+  - smart compound management
+  - compound management platform
+  - automated compound management
+  - robotic compound management
+  - compound management robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - compound management system
   - autonomous compound management
+  - system for compound management applications
+  - lab platform using compound management technology
+  - intelligent compound management solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - compound management
   - lab automation
+  - compound management automation
+  - real-time compound management
+  - compound management monitoring
+  - compound management detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - cell culture
+  - assay preparation
   industry:
   - lab
   - compound management
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - compound
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

@@ -10,22 +10,68 @@ keywords:
   - military ugv
   - military ugv
   - ground_tracked military ugv
+  - ground tracked military ugv
+  - smart military ugv
+  - military ugv platform
+  - automated military ugv
+  - robotic military ugv
+  - tracked robot
+  - tracked vehicle
+  - crawler robot
+  - tracked platform
+  - UGV
+  - unmanned ground vehicle
   descriptions:
   - military ugv system
   - autonomous military ugv
+  - system for military ugv applications
+  - ground tracked platform using military ugv technology
+  - intelligent military ugv solution
+  - tracked ground robot for challenging terrain operations
+  - unmanned tracked vehicle for hazardous environment tasks
   application:
   - military ugv
   - ground_tracked automation
+  - military ugv automation
+  - real-time military ugv
+  - military ugv monitoring
+  - military ugv detection
+  - rough terrain navigation
+  - bomb disposal
+  - mine clearance
+  - pipeline inspection
+  - agricultural tillage
+  - demolition
+  - hazmat response
+  - military reconnaissance
   industry:
   - ground_tracked
   - military ugv
+  - defense
+  - mining
+  - agriculture
+  - construction
+  - public safety
+  - EOD
   components:
   - lidar
   - imu
   - gps
+  - track assembly
+  - drive sprocket
+  - idler wheel
+  - track tensioner
+  - robotic arm
+  - manipulator
   related:
   - ground_tracked
   - military
+  - terrain mobility
+  - slip compensation
+  - skid steering
+  - payload capacity
+  - rugged design
+  - all-terrain
 classification:
   locomotion: ground.tracked
   manipulation: none

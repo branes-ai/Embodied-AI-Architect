@@ -10,21 +10,64 @@ keywords:
   - fabric cutting
   - fabric cutting
   - textile fabric cutting
+  - smart fabric cutting
+  - fabric cutting platform
+  - automated fabric cutting
+  - textile robot
+  - fabric handling robot
+  - garment robot
+  - sewing robot
+  - textile automation system
   descriptions:
   - fabric cutting system
   - autonomous fabric cutting
+  - system for fabric cutting applications
+  - textile platform using fabric cutting technology
+  - intelligent fabric cutting solution
+  - robot platform for automated textile handling and assembly
+  - automation system for garment manufacturing operations
   application:
   - fabric cutting
   - textile automation
+  - fabric cutting automation
+  - real-time fabric cutting
+  - fabric cutting monitoring
+  - fabric cutting detection
+  - sewing
+  - garment assembly
+  - quality inspection
+  - fabric handling
+  - pattern matching
+  - dyeing
+  - folding
+  - textile sorting
   industry:
   - textile
   - fabric cutting
+  - textile manufacturing
+  - apparel
+  - fashion
+  - garment
+  - upholstery
+  - technical textiles
   components:
   - camera
   - force_sensor
+  - fabric gripper
+  - sewing head
+  - cutting blade
+  - tension sensor
+  - color sensor
+  - pattern recognition camera
   related:
   - textile
   - fabric
+  - fabric deformation
+  - thread tension
+  - seam quality
+  - pattern nesting
+  - waste reduction
+  - lean manufacturing
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

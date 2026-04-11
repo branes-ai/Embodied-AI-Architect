@@ -10,21 +10,65 @@ keywords:
   - palletizing robot
   - palletizing robot
   - manipulation palletizing robot
+  - smart palletizing robot
+  - palletizing robot platform
+  - automated palletizing robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - palletizing robot system
   - autonomous palletizing robot
+  - system for palletizing robot applications
+  - manipulation platform using palletizing robot technology
+  - intelligent palletizing robot solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - palletizing robot
   - manipulation automation
+  - palletizing robot automation
+  - real-time palletizing robot
+  - palletizing robot monitoring
+  - palletizing robot detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - machine tending
+  - bin picking
+  - packaging
+  - polishing
   industry:
   - manipulation
   - palletizing robot
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - palletizing
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

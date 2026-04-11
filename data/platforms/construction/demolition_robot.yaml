@@ -10,22 +10,65 @@ keywords:
   - demolition robot
   - demolition robot
   - construction demolition robot
+  - smart demolition robot
+  - demolition robot platform
+  - automated demolition robot
+  - construction robot
+  - building robot
+  - construction automation system
+  - autonomous construction vehicle
+  - construction drone
   descriptions:
   - demolition robot system
   - autonomous demolition robot
+  - system for demolition robot applications
+  - construction platform using demolition robot technology
+  - intelligent demolition robot solution
+  - autonomous construction platform for building site operations
+  - robot system for automated construction tasks
   application:
   - demolition robot
   - construction automation
+  - demolition robot automation
+  - real-time demolition robot
+  - demolition robot monitoring
+  - demolition robot detection
+  - site survey
+  - progress monitoring
+  - bricklaying
+  - concrete pouring
+  - excavation
+  - rebar tying
+  - welding
+  - painting
   industry:
   - construction
   - demolition robot
+  - civil engineering
+  - architecture
+  - building
+  - infrastructure
+  - real estate development
+  - heavy industry
   components:
   - gps
   - lidar
   - imu
+  - total station
+  - laser scanner
+  - BIM integration
+  - hydraulic actuator
+  - concrete pump
+  - robotic arm
   related:
   - construction
   - demolition
+  - BIM
+  - digital twin
+  - site safety
+  - progress tracking
+  - point cloud
+  - as-built model
 classification:
   locomotion: stationary.gantry
   manipulation: none
