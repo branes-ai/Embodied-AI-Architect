@@ -10,22 +10,68 @@ keywords:
   - container handler
   - container handler
   - logistics container handler
+  - smart container handler
+  - container handler platform
+  - automated container handler
+  - robotic container handler
+  - container handler robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - container handler system
   - autonomous container handler
+  - system for container handler applications
+  - logistics platform using container handler technology
+  - intelligent container handler solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - container handler
   - logistics automation
+  - container handler automation
+  - real-time container handler
+  - container handler monitoring
+  - container handler detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - container handler
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - container
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

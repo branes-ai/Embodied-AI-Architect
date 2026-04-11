@@ -10,21 +10,64 @@ keywords:
   - ultrasound scanner
   - ultrasound scanner
   - veterinary ultrasound scanner
+  - smart ultrasound scanner
+  - ultrasound scanner platform
+  - automated ultrasound scanner
+  - veterinary robot
+  - animal care robot
+  - livestock robot
+  - animal health platform
+  - vet-tech robot
   descriptions:
   - ultrasound scanner system
   - autonomous ultrasound scanner
+  - system for ultrasound scanner applications
+  - veterinary platform using ultrasound scanner technology
+  - intelligent ultrasound scanner solution
+  - automated platform for animal health monitoring and care
+  - robot for livestock management and veterinary tasks
   application:
   - ultrasound scanner
   - veterinary automation
+  - ultrasound scanner automation
+  - real-time ultrasound scanner
+  - ultrasound scanner monitoring
+  - ultrasound scanner detection
+  - animal health monitoring
+  - automated milking
+  - livestock sorting
+  - medication delivery
+  - herd management
+  - animal tracking
+  - reproductive monitoring
+  - weight monitoring
   industry:
   - veterinary
   - ultrasound scanner
+  - veterinary medicine
+  - animal husbandry
+  - dairy farming
+  - livestock management
+  - poultry
+  - aquaculture
   components:
   - camera
   - ultrasound
+  - RFID reader
+  - temperature sensor
+  - weighing platform
+  - teat cup
+  - sorting gate
+  - feed dispenser
   related:
   - veterinary
   - ultrasound
+  - herd management software
+  - animal welfare
+  - lameness detection
+  - body condition score
+  - estrus detection
+  - mastitis detection
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

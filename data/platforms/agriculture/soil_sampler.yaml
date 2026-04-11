@@ -10,22 +10,66 @@ keywords:
   - soil sampler
   - soil sampler
   - agriculture soil sampler
+  - smart soil sampler
+  - soil sampler platform
+  - automated soil sampler
+  - agribot
+  - farm robot
+  - agricultural robot
+  - precision agriculture system
+  - smart farming platform
+  - agri-tech robot
   descriptions:
   - soil sampler system
   - autonomous soil sampler
+  - system for soil sampler applications
+  - agriculture platform using soil sampler technology
+  - intelligent soil sampler solution
+  - autonomous platform for precision agriculture tasks
+  - farm robot for automated crop management and monitoring
   application:
   - soil sampler
   - agriculture automation
+  - soil sampler automation
+  - real-time soil sampler
+  - soil sampler monitoring
+  - soil sampler detection
+  - crop monitoring
+  - weed detection
+  - precision spraying
+  - yield estimation
+  - soil analysis
+  - planting
+  - harvesting
+  - fruit picking
   industry:
   - agriculture
   - soil sampler
+  - precision agriculture
+  - smart farming
+  - agri-tech
+  - horticulture
+  - viticulture
+  - organic farming
   components:
   - gps
   - imu
   - camera
+  - multispectral camera
+  - NDVI sensor
+  - RTK GPS
+  - spray nozzle
+  - soil moisture sensor
+  - weather station
   related:
   - agriculture
   - soil
+  - NDVI
+  - vegetation index
+  - variable rate application
+  - site-specific management
+  - crop health
+  - field mapping
 classification:
   locomotion: ground.wheeled
   manipulation: none

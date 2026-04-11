@@ -10,22 +10,65 @@ keywords:
   - debris removal
   - debris removal
   - space debris removal
+  - smart debris removal
+  - debris removal platform
+  - automated debris removal
+  - space robot
+  - planetary rover
+  - orbital servicing robot
+  - space manipulator
+  - extraterrestrial robot
   descriptions:
   - debris removal system
   - autonomous debris removal
+  - system for debris removal applications
+  - space platform using debris removal technology
+  - intelligent debris removal solution
+  - space-rated robot for planetary or orbital missions
+  - autonomous rover for surface exploration and sample collection
   application:
   - debris removal
   - space automation
+  - debris removal automation
+  - real-time debris removal
+  - debris removal monitoring
+  - debris removal detection
+  - planetary exploration
+  - sample collection
+  - surface traverse
+  - satellite servicing
+  - orbital assembly
+  - lunar exploration
+  - Mars exploration
+  - regolith analysis
   industry:
   - space
   - debris removal
+  - space exploration
+  - planetary science
+  - NASA
+  - ESA
+  - commercial space
+  - lunar economy
   components:
   - imu
   - star_tracker
   - lidar
+  - rad-hard processor
+  - solar panel
+  - RTG
+  - rocker-bogie suspension
+  - spectrometer
+  - drill
   related:
   - space
   - debris
+  - planetary protection
+  - autonomous navigation
+  - sol planning
+  - terrain classification
+  - wheel slip
+  - thermal cycling
 classification:
   locomotion: space.orbital
   manipulation: none

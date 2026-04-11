@@ -10,22 +10,64 @@ keywords:
   - inventory drone
   - inventory drone
   - forestry inventory drone
+  - smart inventory drone
+  - inventory drone platform
+  - automated inventory drone
+  - forestry robot
+  - timber robot
+  - logging robot
+  - forest management platform
+  - silviculture robot
   descriptions:
   - inventory drone system
   - autonomous inventory drone
+  - system for inventory drone applications
+  - forestry platform using inventory drone technology
+  - intelligent inventory drone solution
+  - autonomous platform for forestry operations and monitoring
+  - robot for forest management and timber operations
   application:
   - inventory drone
   - forestry automation
+  - inventory drone automation
+  - real-time inventory drone
+  - inventory drone monitoring
+  - inventory drone detection
+  - tree inventory
+  - timber harvesting
+  - reforestation
+  - fire monitoring
+  - pest detection
+  - trail maintenance
+  - wildlife monitoring
+  - tree health assessment
   industry:
   - forestry
   - inventory drone
+  - timber
+  - logging
+  - conservation
+  - wildlife management
+  - fire prevention
+  - environmental services
   components:
   - gps
   - lidar
   - camera
+  - multispectral camera
+  - chainsaw attachment
+  - tree diameter sensor
+  - GPS/GNSS
+  - rugged chassis
   related:
   - forestry
   - inventory
+  - DBH measurement
+  - canopy cover
+  - forest inventory
+  - timber volume
+  - species classification
+  - fire risk index
 classification:
   locomotion: ground.wheeled
   manipulation: none

@@ -10,22 +10,68 @@ keywords:
   - forklift agv
   - forklift agv
   - ground_wheeled forklift agv
+  - ground wheeled forklift agv
+  - smart forklift agv
+  - forklift agv platform
+  - automated forklift agv
+  - robotic forklift agv
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - forklift agv system
   - autonomous forklift agv
+  - system for forklift agv applications
+  - ground wheeled platform using forklift agv technology
+  - intelligent forklift agv solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - forklift agv
   - ground_wheeled automation
+  - forklift agv automation
+  - real-time forklift agv
+  - forklift agv monitoring
+  - forklift agv detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - forklift agv
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - forklift
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

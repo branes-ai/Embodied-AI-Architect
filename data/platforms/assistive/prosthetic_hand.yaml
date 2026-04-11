@@ -10,21 +10,67 @@ keywords:
   - prosthetic hand
   - prosthetic hand
   - assistive prosthetic hand
+  - smart prosthetic hand
+  - prosthetic hand platform
+  - automated prosthetic hand
+  - robotic prosthetic hand
+  - prosthetic hand robot
+  - assistive robot
+  - companion robot
+  - care robot
+  - mobility aid
+  - rehabilitation robot
+  - service robot
   descriptions:
   - prosthetic hand system
   - autonomous prosthetic hand
+  - system for prosthetic hand applications
+  - assistive platform using prosthetic hand technology
+  - intelligent prosthetic hand solution
+  - robot system that assists people with daily activities
+  - assistive platform for mobility or cognitive support
   application:
   - prosthetic hand
   - assistive automation
+  - prosthetic hand automation
+  - real-time prosthetic hand
+  - prosthetic hand monitoring
+  - prosthetic hand detection
+  - mobility assistance
+  - daily living support
+  - rehabilitation therapy
+  - companionship
+  - medication reminder
+  - fall detection
+  - gait assistance
+  - object fetching
   industry:
   - assistive
   - prosthetic hand
+  - assistive technology
+  - healthcare robotics
+  - elder care
+  - rehabilitation
+  - disability services
+  - social robotics
   components:
   - imu
   - emg
+  - force sensor
+  - voice interface
+  - touch screen
+  - proximity sensor
+  - speaker
+  - microphone array
   related:
   - assistive
   - prosthetic
+  - human-robot interaction
+  - HRI
+  - accessibility
+  - universal design
+  - adaptive interface
+  - gesture recognition
 classification:
   locomotion: wearable.limb_attached
   manipulation: none

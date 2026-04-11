@@ -10,22 +10,66 @@ keywords:
   - swarm ground logistics
   - swarm ground logistics
   - military swarm ground logistics
+  - smart swarm ground logistics
+  - swarm ground logistics platform
+  - automated swarm ground logistics
+  - military robot
+  - tactical robot
+  - defense platform
+  - combat robot
+  - military UGV
+  - MULE
   descriptions:
   - swarm ground logistics system
   - autonomous swarm ground logistics
+  - system for swarm ground logistics applications
+  - military platform using swarm ground logistics technology
+  - intelligent swarm ground logistics solution
+  - military-grade autonomous platform for tactical operations
+  - defense robot for reconnaissance and force protection
   application:
   - swarm ground logistics
   - military automation
+  - swarm ground logistics automation
+  - real-time swarm ground logistics
+  - swarm ground logistics monitoring
+  - swarm ground logistics detection
+  - reconnaissance
+  - ISR
+  - bomb disposal
+  - EOD
+  - logistics resupply
+  - perimeter security
+  - CBRN detection
+  - mine clearance
   industry:
   - military
   - swarm ground logistics
+  - defense
+  - homeland security
+  - intelligence
+  - force protection
+  - C4ISR
+  - special operations
   components:
   - imu
   - gps
   - eo_ir
+  - ruggedized enclosure
+  - encrypted radio
+  - FLIR camera
+  - NBC sensor
+  - ballistic armor
+  - weapons mount
   related:
   - military
   - swarm
+  - MIL-STD
+  - ITAR
+  - C2 system
+  - tactical network
+  - STANAG
+  - blue force tracking
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

@@ -10,22 +10,68 @@ keywords:
   - fleet yard truck
   - fleet yard truck
   - logistics fleet yard truck
+  - smart fleet yard truck
+  - fleet yard truck platform
+  - automated fleet yard truck
+  - robotic fleet yard truck
+  - fleet yard truck robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - fleet yard truck system
   - autonomous fleet yard truck
+  - system for fleet yard truck applications
+  - logistics platform using fleet yard truck technology
+  - intelligent fleet yard truck solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - fleet yard truck
   - logistics automation
+  - fleet yard truck automation
+  - real-time fleet yard truck
+  - fleet yard truck monitoring
+  - fleet yard truck detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - fleet yard truck
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - fleet
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

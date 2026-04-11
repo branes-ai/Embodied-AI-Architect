@@ -10,21 +10,67 @@ keywords:
   - mass spec prep
   - mass spec prep
   - lab mass spec prep
+  - smart mass spec prep
+  - mass spec prep platform
+  - automated mass spec prep
+  - robotic mass spec prep
+  - mass spec prep robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - mass spec prep system
   - autonomous mass spec prep
+  - system for mass spec prep applications
+  - lab platform using mass spec prep technology
+  - intelligent mass spec prep solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - mass spec prep
   - lab automation
+  - mass spec prep automation
+  - real-time mass spec prep
+  - mass spec prep monitoring
+  - mass spec prep detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - cell culture
   industry:
   - lab
   - mass spec prep
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - mass
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

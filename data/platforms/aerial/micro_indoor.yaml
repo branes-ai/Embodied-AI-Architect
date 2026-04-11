@@ -10,22 +10,69 @@ keywords:
   - micro indoor
   - micro indoor
   - aerial micro indoor
+  - smart micro indoor
+  - micro indoor platform
+  - automated micro indoor
+  - robotic micro indoor
+  - micro indoor robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - multirotor
+  - quadcopter
+  - RPAS
   descriptions:
   - micro indoor system
   - autonomous micro indoor
+  - system for micro indoor applications
+  - aerial platform using micro indoor technology
+  - intelligent micro indoor solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
   application:
   - micro indoor
   - aerial automation
+  - micro indoor automation
+  - real-time micro indoor
+  - micro indoor monitoring
+  - micro indoor detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
   industry:
   - aerial
   - micro indoor
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
   components:
   - imu
   - gps
   - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
   related:
   - aerial
   - micro
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

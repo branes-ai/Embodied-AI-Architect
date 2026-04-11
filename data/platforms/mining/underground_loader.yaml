@@ -10,22 +10,65 @@ keywords:
   - underground loader
   - underground loader
   - mining underground loader
+  - smart underground loader
+  - underground loader platform
+  - automated underground loader
+  - mining robot
+  - mine automation system
+  - autonomous mining vehicle
+  - underground mining robot
+  - mining drone
   descriptions:
   - underground loader system
   - autonomous underground loader
+  - system for underground loader applications
+  - mining platform using underground loader technology
+  - intelligent underground loader solution
+  - autonomous mining platform for underground or surface operations
+  - robot for mine inspection and extraction support
   application:
   - underground loader
   - mining automation
+  - underground loader automation
+  - real-time underground loader
+  - underground loader monitoring
+  - underground loader detection
+  - ore extraction
+  - tunnel inspection
+  - drilling
+  - blasting support
+  - conveyor monitoring
+  - ventilation monitoring
+  - geotechnical survey
+  - rock bolting
   industry:
   - mining
   - underground loader
+  - quarrying
+  - tunneling
+  - mineral processing
+  - underground mining
+  - open pit mining
+  - geotechnical
   components:
   - lidar
   - gas_detector
   - camera
+  - rock drill
+  - gas sensor
+  - proximity detection
+  - collision avoidance system
+  - ruggedized chassis
+  - dust filter
   related:
   - mining
   - underground
+  - mine safety
+  - MSHA compliance
+  - stope planning
+  - ore body modeling
+  - fleet management
+  - machine guidance
 classification:
   locomotion: ground.tracked
   manipulation: none

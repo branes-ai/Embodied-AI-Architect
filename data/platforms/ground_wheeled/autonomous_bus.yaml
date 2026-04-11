@@ -10,22 +10,68 @@ keywords:
   - autonomous bus
   - autonomous bus
   - ground_wheeled autonomous bus
+  - ground wheeled autonomous bus
+  - smart autonomous bus
+  - autonomous bus platform
+  - robotic autonomous bus
+  - autonomous bus robot
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - autonomous bus system
   - autonomous autonomous bus
+  - system for autonomous bus applications
+  - ground wheeled platform using autonomous bus technology
+  - intelligent autonomous bus solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - autonomous bus
   - ground_wheeled automation
+  - autonomous bus automation
+  - real-time autonomous bus
+  - autonomous bus monitoring
+  - autonomous bus detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - autonomous bus
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - autonomous
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

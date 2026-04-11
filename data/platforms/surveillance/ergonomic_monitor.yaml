@@ -10,20 +10,64 @@ keywords:
   - ergonomic monitor
   - ergonomic monitor
   - surveillance ergonomic monitor
+  - smart ergonomic monitor
+  - ergonomic monitor platform
+  - automated ergonomic monitor
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - ergonomic monitor system
   - autonomous ergonomic monitor
+  - system for ergonomic monitor applications
+  - surveillance platform using ergonomic monitor technology
+  - intelligent ergonomic monitor solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - ergonomic monitor
   - surveillance automation
+  - ergonomic monitor automation
+  - real-time ergonomic monitor
+  - ergonomic monitor monitoring
+  - ergonomic monitor detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - ergonomic monitor
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - ergonomic
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

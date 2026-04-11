@@ -10,22 +10,68 @@ keywords:
   - sidewalk delivery
   - sidewalk delivery
   - ground_wheeled sidewalk delivery
+  - ground wheeled sidewalk delivery
+  - smart sidewalk delivery
+  - sidewalk delivery platform
+  - automated sidewalk delivery
+  - robotic sidewalk delivery
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - sidewalk delivery system
   - autonomous sidewalk delivery
+  - system for sidewalk delivery applications
+  - ground wheeled platform using sidewalk delivery technology
+  - intelligent sidewalk delivery solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - sidewalk delivery
   - ground_wheeled automation
+  - sidewalk delivery automation
+  - real-time sidewalk delivery
+  - sidewalk delivery monitoring
+  - sidewalk delivery detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - sidewalk delivery
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - sidewalk
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

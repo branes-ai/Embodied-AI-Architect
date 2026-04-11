@@ -10,21 +10,63 @@ keywords:
   - aquaculture sampling
   - aquaculture sampling
   - veterinary aquaculture sampling
+  - smart aquaculture sampling
+  - aquaculture sampling platform
+  - automated aquaculture sampling
+  - veterinary robot
+  - animal care robot
+  - livestock robot
+  - animal health platform
+  - vet-tech robot
   descriptions:
   - aquaculture sampling system
   - autonomous aquaculture sampling
+  - system for aquaculture sampling applications
+  - veterinary platform using aquaculture sampling technology
+  - intelligent aquaculture sampling solution
+  - automated platform for animal health monitoring and care
+  - robot for livestock management and veterinary tasks
   application:
   - aquaculture sampling
   - veterinary automation
+  - aquaculture sampling automation
+  - real-time aquaculture sampling
+  - aquaculture sampling monitoring
+  - aquaculture sampling detection
+  - animal health monitoring
+  - automated milking
+  - livestock sorting
+  - medication delivery
+  - herd management
+  - animal tracking
+  - reproductive monitoring
+  - weight monitoring
   industry:
   - veterinary
   - aquaculture sampling
+  - veterinary medicine
+  - animal husbandry
+  - dairy farming
+  - livestock management
+  - poultry
   components:
   - camera
   - ultrasound
+  - RFID reader
+  - temperature sensor
+  - weighing platform
+  - teat cup
+  - sorting gate
+  - feed dispenser
   related:
   - veterinary
   - aquaculture
+  - herd management software
+  - animal welfare
+  - lameness detection
+  - body condition score
+  - estrus detection
+  - mastitis detection
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

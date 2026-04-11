@@ -10,21 +10,63 @@ keywords:
   - patient transport
   - patient transport
   - healthcare patient transport
+  - smart patient transport
+  - patient transport platform
+  - automated patient transport
+  - healthcare robot
+  - medical robot
+  - hospital robot
+  - clinical robot
+  - health-tech platform
   descriptions:
   - patient transport system
   - autonomous patient transport
+  - system for patient transport applications
+  - healthcare platform using patient transport technology
+  - intelligent patient transport solution
+  - robot platform for healthcare delivery and clinical support
+  - medical automation system for hospital environments
   application:
   - patient transport
   - healthcare automation
+  - patient transport automation
+  - real-time patient transport
+  - patient transport monitoring
+  - patient transport detection
+  - patient monitoring
+  - telemedicine
+  - medication dispensing
+  - surgical assistance
+  - disinfection
+  - specimen transport
+  - rehabilitation
+  - vital signs monitoring
   industry:
   - healthcare
   - patient transport
+  - hospital
+  - clinical
+  - medical devices
+  - pharma
+  - health-tech
   components:
   - lidar
   - camera
+  - UV-C lamp
+  - vital signs sensor
+  - touch screen
+  - antimicrobial surface
+  - medical-grade enclosure
+  - sterile interface
   related:
   - healthcare
   - patient
+  - HIPAA
+  - FDA clearance
+  - clinical workflow
+  - EHR integration
+  - patient safety
+  - infection control
 classification:
   locomotion: ground.wheeled
   manipulation: none

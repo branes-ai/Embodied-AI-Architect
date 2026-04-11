@@ -10,22 +10,68 @@ keywords:
   - golf cart autonomous
   - golf cart autonomous
   - ground_wheeled golf cart autonomous
+  - ground wheeled golf cart autonomous
+  - smart golf cart autonomous
+  - golf cart autonomous platform
+  - robotic golf cart autonomous
+  - golf cart autonomous robot
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - golf cart autonomous system
   - autonomous golf cart autonomous
+  - system for golf cart autonomous applications
+  - ground wheeled platform using golf cart autonomous technology
+  - intelligent golf cart autonomous solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - golf cart autonomous
   - ground_wheeled automation
+  - golf cart autonomous automation
+  - real-time golf cart autonomous
+  - golf cart autonomous monitoring
+  - golf cart autonomous detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - golf cart autonomous
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - golf
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

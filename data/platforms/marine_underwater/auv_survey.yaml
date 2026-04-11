@@ -10,22 +10,68 @@ keywords:
   - auv survey
   - auv survey
   - marine_underwater auv survey
+  - marine underwater auv survey
+  - smart auv survey
+  - auv survey platform
+  - automated auv survey
+  - robotic auv survey
+  - autonomous underwater vehicle
+  - ROV
+  - remotely operated vehicle
+  - submersible
+  - underwater drone
+  - subsea robot
   descriptions:
   - auv survey system
   - autonomous auv survey
+  - system for auv survey applications
+  - marine underwater platform using auv survey technology
+  - intelligent auv survey solution
+  - autonomous underwater vehicle for subsea inspection and survey
+  - remotely operated underwater robot for deep-sea operations
   application:
   - auv survey
   - marine_underwater automation
+  - auv survey automation
+  - real-time auv survey
+  - auv survey monitoring
+  - auv survey detection
+  - subsea inspection
+  - pipeline inspection
+  - hull inspection
+  - oceanographic survey
+  - mine countermeasures
+  - wreck exploration
+  - coral reef monitoring
+  - dam inspection
   industry:
   - marine_underwater
   - auv survey
+  - subsea
+  - offshore oil and gas
+  - oceanography
+  - marine archaeology
+  - defense
+  - aquaculture
   components:
   - imu
   - sonar
   - depth_sensor
+  - depth sensor
+  - DVL
+  - thruster
+  - pressure hull
+  - manipulator
+  - sample collector
   related:
   - marine_underwater
   - auv
+  - depth rating
+  - acoustic navigation
+  - USBL
+  - INS
+  - buoyancy control
+  - tether management
 classification:
   locomotion: marine.underwater
   manipulation: none

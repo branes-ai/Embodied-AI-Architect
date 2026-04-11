@@ -10,22 +10,68 @@ keywords:
   - depalletizing
   - depalletizing
   - logistics depalletizing
+  - smart depalletizing
+  - depalletizing platform
+  - automated depalletizing
+  - robotic depalletizing
+  - depalletizing robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - depalletizing system
   - autonomous depalletizing
+  - system for depalletizing applications
+  - logistics platform using depalletizing technology
+  - intelligent depalletizing solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - depalletizing
   - logistics automation
+  - depalletizing automation
+  - real-time depalletizing
+  - depalletizing monitoring
+  - depalletizing detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - container unloading
+  - truck loading
+  - inventory management
+  - cycle counting
   industry:
   - logistics
   - depalletizing
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - depalletizing
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

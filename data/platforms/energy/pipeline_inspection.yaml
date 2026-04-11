@@ -10,21 +10,64 @@ keywords:
   - pipeline inspection
   - pipeline inspection
   - energy pipeline inspection
+  - smart pipeline inspection
+  - pipeline inspection platform
+  - automated pipeline inspection
+  - energy inspection robot
+  - power grid robot
+  - utility robot
+  - energy sector platform
+  - power plant robot
   descriptions:
   - pipeline inspection system
   - autonomous pipeline inspection
+  - system for pipeline inspection applications
+  - energy platform using pipeline inspection technology
+  - intelligent pipeline inspection solution
+  - autonomous inspection platform for energy infrastructure
+  - robot for power grid monitoring and maintenance
   application:
   - pipeline inspection
   - energy automation
+  - pipeline inspection automation
+  - real-time pipeline inspection
+  - pipeline inspection monitoring
+  - pipeline inspection detection
+  - power line inspection
+  - substation monitoring
+  - solar panel inspection
+  - wind turbine inspection
+  - transformer monitoring
+  - grid maintenance
+  - thermal inspection
+  - insulator inspection
   industry:
   - energy
   - pipeline inspection
+  - utilities
+  - power generation
+  - renewable energy
+  - oil and gas
+  - nuclear
+  - grid operations
   components:
   - thermal_camera
   - lidar
+  - thermal camera
+  - corona camera
+  - gas sensor
+  - current sensor
+  - partial discharge sensor
+  - UV camera
   related:
   - energy
   - pipeline
+  - SCADA
+  - grid reliability
+  - outage prevention
+  - predictive maintenance
+  - asset management
+  - condition monitoring
 classification:
   locomotion: ground.wheeled
   manipulation: none

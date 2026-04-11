@@ -10,22 +10,66 @@ keywords:
   - fruit picker
   - fruit picker
   - agriculture fruit picker
+  - smart fruit picker
+  - fruit picker platform
+  - automated fruit picker
+  - agribot
+  - farm robot
+  - agricultural robot
+  - precision agriculture system
+  - smart farming platform
+  - agri-tech robot
   descriptions:
   - fruit picker system
   - autonomous fruit picker
+  - system for fruit picker applications
+  - agriculture platform using fruit picker technology
+  - intelligent fruit picker solution
+  - autonomous platform for precision agriculture tasks
+  - farm robot for automated crop management and monitoring
   application:
   - fruit picker
   - agriculture automation
+  - fruit picker automation
+  - real-time fruit picker
+  - fruit picker monitoring
+  - fruit picker detection
+  - crop monitoring
+  - weed detection
+  - precision spraying
+  - yield estimation
+  - soil analysis
+  - planting
+  - harvesting
+  - fruit picking
   industry:
   - agriculture
   - fruit picker
+  - precision agriculture
+  - smart farming
+  - agri-tech
+  - horticulture
+  - viticulture
+  - organic farming
   components:
   - gps
   - imu
   - camera
+  - multispectral camera
+  - NDVI sensor
+  - RTK GPS
+  - spray nozzle
+  - soil moisture sensor
+  - weather station
   related:
   - agriculture
   - fruit
+  - NDVI
+  - vegetation index
+  - variable rate application
+  - site-specific management
+  - crop health
+  - field mapping
 classification:
   locomotion: ground.wheeled
   manipulation: none

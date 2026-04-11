@@ -10,21 +10,67 @@ keywords:
   - smt pick place
   - smt pick place
   - manipulation smt pick place
+  - smart smt pick place
+  - smt pick place platform
+  - automated smt pick place
+  - robotic smt pick place
+  - smt pick place robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - smt pick place system
   - autonomous smt pick place
+  - system for smt pick place applications
+  - manipulation platform using smt pick place technology
+  - intelligent smt pick place solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - smt pick place
   - manipulation automation
+  - smt pick place automation
+  - real-time smt pick place
+  - smt pick place monitoring
+  - smt pick place detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
   industry:
   - manipulation
   - smt pick place
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - smt
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

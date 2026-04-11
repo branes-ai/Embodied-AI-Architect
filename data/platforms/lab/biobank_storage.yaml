@@ -10,21 +10,67 @@ keywords:
   - biobank storage
   - biobank storage
   - lab biobank storage
+  - smart biobank storage
+  - biobank storage platform
+  - automated biobank storage
+  - robotic biobank storage
+  - biobank storage robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - biobank storage system
   - autonomous biobank storage
+  - system for biobank storage applications
+  - lab platform using biobank storage technology
+  - intelligent biobank storage solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - biobank storage
   - lab automation
+  - biobank storage automation
+  - real-time biobank storage
+  - biobank storage monitoring
+  - biobank storage detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - cell culture
   industry:
   - lab
   - biobank storage
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - biobank
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

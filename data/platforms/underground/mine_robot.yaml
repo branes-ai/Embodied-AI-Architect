@@ -10,22 +10,65 @@ keywords:
   - mine robot
   - mine robot
   - underground mine robot
+  - smart mine robot
+  - mine robot platform
+  - automated mine robot
+  - underground robot
+  - tunnel robot
+  - subterranean robot
+  - sewer robot
+  - pipe inspection robot
+  - cave exploration robot
   descriptions:
   - mine robot system
   - autonomous mine robot
+  - system for mine robot applications
+  - underground platform using mine robot technology
+  - intelligent mine robot solution
+  - robot for inspecting underground infrastructure and tunnels
+  - autonomous platform for subterranean exploration and maintenance
   application:
   - mine robot
   - underground automation
+  - mine robot automation
+  - real-time mine robot
+  - mine robot monitoring
+  - mine robot detection
+  - tunnel inspection
+  - pipe inspection
+  - sewer inspection
+  - utility mapping
+  - underground construction
+  - cable pulling
+  - confined space inspection
+  - structural assessment
   industry:
   - underground
   - mine robot
+  - utilities
+  - tunneling
+  - civil infrastructure
+  - wastewater
+  - mining
   components:
   - lidar
   - camera
   - gas_detector
+  - crawler tracks
+  - LED lighting
+  - sonar
+  - gas sensor
+  - pipe gripper
+  - thickness gauge
   related:
   - underground
   - mine
+  - CCTV inspection
+  - manhole entry
+  - confined space safety
+  - inflow and infiltration
+  - structural rating
+  - NASSCO PACP
 classification:
   locomotion: ground.wheeled
   manipulation: none

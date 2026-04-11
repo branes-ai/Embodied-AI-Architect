@@ -10,21 +10,67 @@ keywords:
   - sample prep
   - sample prep
   - lab sample prep
+  - smart sample prep
+  - sample prep platform
+  - automated sample prep
+  - robotic sample prep
+  - sample prep robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - sample prep system
   - autonomous sample prep
+  - system for sample prep applications
+  - lab platform using sample prep technology
+  - intelligent sample prep solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - sample prep
   - lab automation
+  - sample prep automation
+  - real-time sample prep
+  - sample prep monitoring
+  - sample prep detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - cell culture
   industry:
   - lab
   - sample prep
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - sample
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

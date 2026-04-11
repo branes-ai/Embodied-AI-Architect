@@ -10,21 +10,64 @@ keywords:
   - substation patrol
   - substation patrol
   - energy substation patrol
+  - smart substation patrol
+  - substation patrol platform
+  - automated substation patrol
+  - energy inspection robot
+  - power grid robot
+  - utility robot
+  - energy sector platform
+  - power plant robot
   descriptions:
   - substation patrol system
   - autonomous substation patrol
+  - system for substation patrol applications
+  - energy platform using substation patrol technology
+  - intelligent substation patrol solution
+  - autonomous inspection platform for energy infrastructure
+  - robot for power grid monitoring and maintenance
   application:
   - substation patrol
   - energy automation
+  - substation patrol automation
+  - real-time substation patrol
+  - substation patrol monitoring
+  - substation patrol detection
+  - power line inspection
+  - substation monitoring
+  - solar panel inspection
+  - wind turbine inspection
+  - transformer monitoring
+  - grid maintenance
+  - pipeline inspection
+  - thermal inspection
   industry:
   - energy
   - substation patrol
+  - utilities
+  - power generation
+  - renewable energy
+  - oil and gas
+  - nuclear
+  - grid operations
   components:
   - thermal_camera
   - lidar
+  - thermal camera
+  - corona camera
+  - gas sensor
+  - current sensor
+  - partial discharge sensor
+  - UV camera
   related:
   - energy
   - substation
+  - SCADA
+  - grid reliability
+  - outage prevention
+  - predictive maintenance
+  - asset management
+  - condition monitoring
 classification:
   locomotion: ground.wheeled
   manipulation: none

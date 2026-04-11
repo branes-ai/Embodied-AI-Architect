@@ -10,22 +10,68 @@ keywords:
   - quadruped military
   - quadruped military
   - ground_legged quadruped military
+  - ground legged quadruped military
+  - smart quadruped military
+  - quadruped military platform
+  - automated quadruped military
+  - robotic quadruped military
+  - legged robot
+  - walking robot
+  - biped
+  - humanoid robot
+  - legged platform
+  - spot-like robot
   descriptions:
   - quadruped military system
   - autonomous quadruped military
+  - system for quadruped military applications
+  - ground legged platform using quadruped military technology
+  - intelligent quadruped military solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
   application:
   - quadruped military
   - ground_legged automation
+  - quadruped military automation
+  - real-time quadruped military
+  - quadruped military monitoring
+  - quadruped military detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
   industry:
   - ground_legged
   - quadruped military
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
   components:
   - lidar
   - imu
   - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
   related:
   - ground_legged
   - quadruped
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
 classification:
   locomotion: ground.legged
   manipulation: none

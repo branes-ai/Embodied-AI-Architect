@@ -10,21 +10,67 @@ keywords:
   - delta pick place
   - delta pick place
   - manipulation delta pick place
+  - smart delta pick place
+  - delta pick place platform
+  - automated delta pick place
+  - robotic delta pick place
+  - delta pick place robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - delta pick place system
   - autonomous delta pick place
+  - system for delta pick place applications
+  - manipulation platform using delta pick place technology
+  - intelligent delta pick place solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - delta pick place
   - manipulation automation
+  - delta pick place automation
+  - real-time delta pick place
+  - delta pick place monitoring
+  - delta pick place detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
   industry:
   - manipulation
   - delta pick place
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - delta
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

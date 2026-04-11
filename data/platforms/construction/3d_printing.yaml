@@ -10,22 +10,65 @@ keywords:
   - 3d printing
   - 3d printing
   - construction 3d printing
+  - smart 3d printing
+  - 3d printing platform
+  - automated 3d printing
+  - construction robot
+  - building robot
+  - construction automation system
+  - autonomous construction vehicle
+  - construction drone
   descriptions:
   - 3d printing system
   - autonomous 3d printing
+  - system for 3d printing applications
+  - construction platform using 3d printing technology
+  - intelligent 3d printing solution
+  - autonomous construction platform for building site operations
+  - robot system for automated construction tasks
   application:
   - 3d printing
   - construction automation
+  - 3d printing automation
+  - real-time 3d printing
+  - 3d printing monitoring
+  - 3d printing detection
+  - site survey
+  - progress monitoring
+  - bricklaying
+  - concrete pouring
+  - demolition
+  - excavation
+  - rebar tying
+  - welding
   industry:
   - construction
   - 3d printing
+  - civil engineering
+  - architecture
+  - building
+  - infrastructure
+  - real estate development
+  - heavy industry
   components:
   - gps
   - lidar
   - imu
+  - total station
+  - laser scanner
+  - BIM integration
+  - hydraulic actuator
+  - concrete pump
+  - robotic arm
   related:
   - construction
   - 3d
+  - BIM
+  - digital twin
+  - site safety
+  - progress tracking
+  - point cloud
+  - as-built model
 classification:
   locomotion: stationary.gantry
   manipulation: none

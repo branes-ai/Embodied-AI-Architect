@@ -10,22 +10,68 @@ keywords:
   - swarm minesweep
   - swarm minesweep
   - marine_surface swarm minesweep
+  - marine surface swarm minesweep
+  - smart swarm minesweep
+  - swarm minesweep platform
+  - automated swarm minesweep
+  - robotic swarm minesweep
+  - surface vessel
+  - USV
+  - unmanned surface vehicle
+  - autonomous boat
+  - surface drone
+  - marine surface robot
   descriptions:
   - swarm minesweep system
   - autonomous swarm minesweep
+  - system for swarm minesweep applications
+  - marine surface platform using swarm minesweep technology
+  - intelligent swarm minesweep solution
+  - unmanned surface vessel for autonomous maritime missions
+  - autonomous boat platform for survey and monitoring
   application:
   - swarm minesweep
   - marine_surface automation
+  - swarm minesweep automation
+  - real-time swarm minesweep
+  - swarm minesweep monitoring
+  - swarm minesweep detection
+  - hydrographic survey
+  - water quality monitoring
+  - harbor patrol
+  - search and rescue
+  - oil spill response
+  - coastal survey
+  - aquaculture monitoring
+  - cargo transport
   industry:
   - marine_surface
   - swarm minesweep
+  - maritime
+  - hydrography
+  - aquaculture
+  - port operations
+  - environmental services
+  - coast guard
   components:
   - gps
   - imu
   - radar
+  - hull
+  - propulsion motor
+  - GPS antenna
+  - AIS transponder
+  - weather station
+  - echo sounder
   related:
   - marine_surface
   - swarm
+  - COLREGs
+  - collision avoidance
+  - waypoint navigation
+  - sea state
+  - station keeping
+  - autonomous docking
 classification:
   locomotion: marine.surface
   manipulation: none

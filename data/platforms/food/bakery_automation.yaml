@@ -10,21 +10,64 @@ keywords:
   - bakery automation
   - bakery automation
   - food bakery automation
+  - smart bakery automation
+  - bakery automation platform
+  - automated bakery automation
+  - food robot
+  - food processing robot
+  - kitchen robot
+  - food service robot
+  - culinary automation system
   descriptions:
   - bakery automation system
   - autonomous bakery automation
+  - system for bakery automation applications
+  - food platform using bakery automation technology
+  - intelligent bakery automation solution
+  - automated food preparation and handling platform
+  - robot for commercial kitchen or food processing operations
   application:
   - bakery automation
   - food automation
+  - bakery automation automation
+  - real-time bakery automation
+  - bakery automation monitoring
+  - bakery automation detection
+  - food preparation
+  - cooking
+  - plating
+  - ingredient handling
+  - food sorting
+  - quality inspection
+  - food packaging
+  - food delivery
   industry:
   - food
   - bakery automation
+  - food service
+  - food processing
+  - restaurant
+  - catering
+  - food manufacturing
+  - hospitality
   components:
   - camera
   - hyperspectral
+  - food-grade gripper
+  - temperature sensor
+  - weight scale
+  - conveyor belt
+  - dispensing nozzle
+  - heating element
   related:
   - food
   - bakery
+  - food safety
+  - HACCP
+  - sanitation
+  - food-grade materials
+  - allergen handling
+  - portion control
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

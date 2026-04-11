@@ -10,22 +10,68 @@ keywords:
   - e commerce fulfillment
   - e commerce fulfillment
   - logistics e commerce fulfillment
+  - smart e commerce fulfillment
+  - e commerce fulfillment platform
+  - automated e commerce fulfillment
+  - robotic e commerce fulfillment
+  - e commerce fulfillment robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - e commerce fulfillment system
   - autonomous e commerce fulfillment
+  - system for e commerce fulfillment applications
+  - logistics platform using e commerce fulfillment technology
+  - intelligent e commerce fulfillment solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - e commerce fulfillment
   - logistics automation
+  - e commerce fulfillment automation
+  - real-time e commerce fulfillment
+  - e commerce fulfillment monitoring
+  - e commerce fulfillment detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - e commerce fulfillment
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - e
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

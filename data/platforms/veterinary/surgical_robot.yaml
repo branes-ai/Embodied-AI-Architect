@@ -10,21 +10,64 @@ keywords:
   - surgical robot
   - surgical robot
   - veterinary surgical robot
+  - smart surgical robot
+  - surgical robot platform
+  - automated surgical robot
+  - veterinary robot
+  - animal care robot
+  - livestock robot
+  - animal health platform
+  - vet-tech robot
   descriptions:
   - surgical robot system
   - autonomous surgical robot
+  - system for surgical robot applications
+  - veterinary platform using surgical robot technology
+  - intelligent surgical robot solution
+  - automated platform for animal health monitoring and care
+  - robot for livestock management and veterinary tasks
   application:
   - surgical robot
   - veterinary automation
+  - surgical robot automation
+  - real-time surgical robot
+  - surgical robot monitoring
+  - surgical robot detection
+  - animal health monitoring
+  - automated milking
+  - livestock sorting
+  - medication delivery
+  - herd management
+  - animal tracking
+  - reproductive monitoring
+  - weight monitoring
   industry:
   - veterinary
   - surgical robot
+  - veterinary medicine
+  - animal husbandry
+  - dairy farming
+  - livestock management
+  - poultry
+  - aquaculture
   components:
   - camera
   - ultrasound
+  - RFID reader
+  - temperature sensor
+  - weighing platform
+  - teat cup
+  - sorting gate
+  - feed dispenser
   related:
   - veterinary
   - surgical
+  - herd management software
+  - animal welfare
+  - lameness detection
+  - body condition score
+  - estrus detection
+  - mastitis detection
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

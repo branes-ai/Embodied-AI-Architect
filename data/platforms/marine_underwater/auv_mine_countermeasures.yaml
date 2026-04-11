@@ -10,22 +10,68 @@ keywords:
   - auv mine countermeasures
   - auv mine countermeasures
   - marine_underwater auv mine countermeasures
+  - marine underwater auv mine countermeasures
+  - smart auv mine countermeasures
+  - auv mine countermeasures platform
+  - automated auv mine countermeasures
+  - robotic auv mine countermeasures
+  - autonomous underwater vehicle
+  - ROV
+  - remotely operated vehicle
+  - submersible
+  - underwater drone
+  - subsea robot
   descriptions:
   - auv mine countermeasures system
   - autonomous auv mine countermeasures
+  - system for auv mine countermeasures applications
+  - marine underwater platform using auv mine countermeasures technology
+  - intelligent auv mine countermeasures solution
+  - autonomous underwater vehicle for subsea inspection and survey
+  - remotely operated underwater robot for deep-sea operations
   application:
   - auv mine countermeasures
   - marine_underwater automation
+  - auv mine countermeasures automation
+  - real-time auv mine countermeasures
+  - auv mine countermeasures monitoring
+  - auv mine countermeasures detection
+  - subsea inspection
+  - pipeline inspection
+  - hull inspection
+  - oceanographic survey
+  - mine countermeasures
+  - wreck exploration
+  - coral reef monitoring
+  - dam inspection
   industry:
   - marine_underwater
   - auv mine countermeasures
+  - subsea
+  - offshore oil and gas
+  - oceanography
+  - marine archaeology
+  - defense
+  - aquaculture
   components:
   - imu
   - sonar
   - depth_sensor
+  - depth sensor
+  - DVL
+  - thruster
+  - pressure hull
+  - manipulator
+  - sample collector
   related:
   - marine_underwater
   - auv
+  - depth rating
+  - acoustic navigation
+  - USBL
+  - INS
+  - buoyancy control
+  - tether management
 classification:
   locomotion: marine.underwater
   manipulation: none

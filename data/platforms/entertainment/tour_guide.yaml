@@ -10,21 +10,65 @@ keywords:
   - tour guide
   - tour guide
   - entertainment tour guide
+  - smart tour guide
+  - tour guide platform
+  - automated tour guide
+  - entertainment robot
+  - show robot
+  - animatronic
+  - performance robot
+  - theme park robot
+  - interactive robot
   descriptions:
   - tour guide system
   - autonomous tour guide
+  - system for tour guide applications
+  - entertainment platform using tour guide technology
+  - intelligent tour guide solution
+  - robot platform for live entertainment and audience interaction
+  - automated performance system for events and shows
   application:
   - tour guide
   - entertainment automation
+  - tour guide automation
+  - real-time tour guide
+  - tour guide monitoring
+  - tour guide detection
+  - live performance
+  - audience interaction
+  - theme park attraction
+  - light show
+  - dance performance
+  - character performance
+  - interactive exhibit
+  - educational entertainment
   industry:
   - entertainment
   - tour guide
+  - theme parks
+  - events
+  - media production
+  - live events
+  - experiential marketing
+  - museum
   components:
   - camera
   - microphone
+  - LED array
+  - speaker system
+  - servo motor
+  - motion controller
+  - DMX controller
+  - fog machine
   related:
   - entertainment
   - tour
+  - choreography
+  - synchronized motion
+  - show control
+  - audience engagement
+  - motion capture
+  - expressive movement
 classification:
   locomotion: ground.wheeled
   manipulation: none

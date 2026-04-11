@@ -10,22 +10,68 @@ keywords:
   - window cleaner
   - window cleaner
   - consumer window cleaner
+  - smart window cleaner
+  - window cleaner platform
+  - automated window cleaner
+  - robotic window cleaner
+  - window cleaner robot
+  - consumer robot
+  - home robot
+  - personal robot
+  - household robot
+  - smart home device
+  - domestic robot
   descriptions:
   - window cleaner system
   - autonomous window cleaner
+  - system for window cleaner applications
+  - consumer platform using window cleaner technology
+  - intelligent window cleaner solution
+  - consumer robotic device for everyday home use
+  - smart home robot with autonomous operation capabilities
   application:
   - window cleaner
   - consumer automation
+  - window cleaner automation
+  - real-time window cleaner
+  - window cleaner monitoring
+  - window cleaner detection
+  - home cleaning
+  - lawn care
+  - pool cleaning
+  - entertainment
+  - home security
+  - pet care
+  - cooking assistance
+  - education
   industry:
   - consumer
   - window cleaner
+  - consumer electronics
+  - home appliances
+  - smart home
+  - IoT
+  - consumer robotics
+  - home automation
   components:
   - lidar
   - camera
   - imu
+  - Wi-Fi module
+  - speaker
+  - microphone
+  - LED display
+  - rechargeable battery
+  - charging dock
   related:
   - consumer
   - window
+  - app control
+  - voice assistant
+  - smart home integration
+  - OTA update
+  - user-friendly
+  - companion app
 classification:
   locomotion: ground.wheeled
   manipulation: none

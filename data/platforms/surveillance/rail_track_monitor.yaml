@@ -10,20 +10,64 @@ keywords:
   - rail track monitor
   - rail track monitor
   - surveillance rail track monitor
+  - smart rail track monitor
+  - rail track monitor platform
+  - automated rail track monitor
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - rail track monitor system
   - autonomous rail track monitor
+  - system for rail track monitor applications
+  - surveillance platform using rail track monitor technology
+  - intelligent rail track monitor solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - rail track monitor
   - surveillance automation
+  - rail track monitor automation
+  - real-time rail track monitor
+  - rail track monitor monitoring
+  - rail track monitor detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - rail track monitor
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - rail
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

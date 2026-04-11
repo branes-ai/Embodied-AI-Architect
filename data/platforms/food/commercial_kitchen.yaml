@@ -10,21 +10,64 @@ keywords:
   - commercial kitchen
   - commercial kitchen
   - food commercial kitchen
+  - smart commercial kitchen
+  - commercial kitchen platform
+  - automated commercial kitchen
+  - food robot
+  - food processing robot
+  - kitchen robot
+  - food service robot
+  - culinary automation system
   descriptions:
   - commercial kitchen system
   - autonomous commercial kitchen
+  - system for commercial kitchen applications
+  - food platform using commercial kitchen technology
+  - intelligent commercial kitchen solution
+  - automated food preparation and handling platform
+  - robot for commercial kitchen or food processing operations
   application:
   - commercial kitchen
   - food automation
+  - commercial kitchen automation
+  - real-time commercial kitchen
+  - commercial kitchen monitoring
+  - commercial kitchen detection
+  - food preparation
+  - cooking
+  - plating
+  - ingredient handling
+  - food sorting
+  - quality inspection
+  - food packaging
+  - food delivery
   industry:
   - food
   - commercial kitchen
+  - food service
+  - food processing
+  - restaurant
+  - catering
+  - food manufacturing
+  - hospitality
   components:
   - camera
   - hyperspectral
+  - food-grade gripper
+  - temperature sensor
+  - weight scale
+  - conveyor belt
+  - dispensing nozzle
+  - heating element
   related:
   - food
   - commercial
+  - food safety
+  - HACCP
+  - sanitation
+  - food-grade materials
+  - allergen handling
+  - portion control
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

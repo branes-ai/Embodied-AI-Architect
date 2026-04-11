@@ -10,20 +10,64 @@ keywords:
   - wildlife camera trap
   - wildlife camera trap
   - surveillance wildlife camera trap
+  - smart wildlife camera trap
+  - wildlife camera trap platform
+  - automated wildlife camera trap
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - wildlife camera trap system
   - autonomous wildlife camera trap
+  - system for wildlife camera trap applications
+  - surveillance platform using wildlife camera trap technology
+  - intelligent wildlife camera trap solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - wildlife camera trap
   - surveillance automation
+  - wildlife camera trap automation
+  - real-time wildlife camera trap
+  - wildlife camera trap monitoring
+  - wildlife camera trap detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - wildlife camera trap
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - wildlife
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

@@ -10,22 +10,67 @@ keywords:
   - firefighting robot
   - firefighting robot
   - ground_tracked firefighting robot
+  - ground tracked firefighting robot
+  - smart firefighting robot
+  - firefighting robot platform
+  - automated firefighting robot
+  - tracked robot
+  - tracked vehicle
+  - crawler robot
+  - tracked platform
+  - UGV
+  - unmanned ground vehicle
   descriptions:
   - firefighting robot system
   - autonomous firefighting robot
+  - system for firefighting robot applications
+  - ground tracked platform using firefighting robot technology
+  - intelligent firefighting robot solution
+  - tracked ground robot for challenging terrain operations
+  - unmanned tracked vehicle for hazardous environment tasks
   application:
   - firefighting robot
   - ground_tracked automation
+  - firefighting robot automation
+  - real-time firefighting robot
+  - firefighting robot monitoring
+  - firefighting robot detection
+  - rough terrain navigation
+  - bomb disposal
+  - mine clearance
+  - pipeline inspection
+  - agricultural tillage
+  - demolition
+  - hazmat response
+  - military reconnaissance
   industry:
   - ground_tracked
   - firefighting robot
+  - defense
+  - mining
+  - agriculture
+  - construction
+  - public safety
+  - EOD
   components:
   - lidar
   - imu
   - gps
+  - track assembly
+  - drive sprocket
+  - idler wheel
+  - track tensioner
+  - robotic arm
+  - manipulator
   related:
   - ground_tracked
   - firefighting
+  - terrain mobility
+  - slip compensation
+  - skid steering
+  - payload capacity
+  - rugged design
+  - all-terrain
 classification:
   locomotion: ground.tracked
   manipulation: none

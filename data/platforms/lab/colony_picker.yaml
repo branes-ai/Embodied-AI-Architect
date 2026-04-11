@@ -10,21 +10,67 @@ keywords:
   - colony picker
   - colony picker
   - lab colony picker
+  - smart colony picker
+  - colony picker platform
+  - automated colony picker
+  - robotic colony picker
+  - colony picker robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - colony picker system
   - autonomous colony picker
+  - system for colony picker applications
+  - lab platform using colony picker technology
+  - intelligent colony picker solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - colony picker
   - lab automation
+  - colony picker automation
+  - real-time colony picker
+  - colony picker monitoring
+  - colony picker detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - cell culture
   industry:
   - lab
   - colony picker
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - colony
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

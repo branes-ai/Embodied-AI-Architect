@@ -10,22 +10,69 @@ keywords:
   - vtol air taxi
   - vtol air taxi
   - aerial vtol air taxi
+  - smart vtol air taxi
+  - vtol air taxi platform
+  - automated vtol air taxi
+  - robotic vtol air taxi
+  - vtol air taxi robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - multirotor
+  - quadcopter
+  - RPAS
   descriptions:
   - vtol air taxi system
   - autonomous vtol air taxi
+  - system for vtol air taxi applications
+  - aerial platform using vtol air taxi technology
+  - intelligent vtol air taxi solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
   application:
   - vtol air taxi
   - aerial automation
+  - vtol air taxi automation
+  - real-time vtol air taxi
+  - vtol air taxi monitoring
+  - vtol air taxi detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
   industry:
   - aerial
   - vtol air taxi
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
   components:
   - imu
   - gps
   - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
   related:
   - aerial
   - vtol
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

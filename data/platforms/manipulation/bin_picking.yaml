@@ -10,21 +10,67 @@ keywords:
   - bin picking
   - bin picking
   - manipulation bin picking
+  - smart bin picking
+  - bin picking platform
+  - automated bin picking
+  - robotic bin picking
+  - bin picking robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - bin picking system
   - autonomous bin picking
+  - system for bin picking applications
+  - manipulation platform using bin picking technology
+  - intelligent bin picking solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - bin picking
   - manipulation automation
+  - bin picking automation
+  - real-time bin picking
+  - bin picking monitoring
+  - bin picking detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - packaging
+  - polishing
   industry:
   - manipulation
   - bin picking
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - bin
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

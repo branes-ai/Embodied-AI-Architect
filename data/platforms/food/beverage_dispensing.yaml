@@ -10,21 +10,64 @@ keywords:
   - beverage dispensing
   - beverage dispensing
   - food beverage dispensing
+  - smart beverage dispensing
+  - beverage dispensing platform
+  - automated beverage dispensing
+  - food robot
+  - food processing robot
+  - kitchen robot
+  - food service robot
+  - culinary automation system
   descriptions:
   - beverage dispensing system
   - autonomous beverage dispensing
+  - system for beverage dispensing applications
+  - food platform using beverage dispensing technology
+  - intelligent beverage dispensing solution
+  - automated food preparation and handling platform
+  - robot for commercial kitchen or food processing operations
   application:
   - beverage dispensing
   - food automation
+  - beverage dispensing automation
+  - real-time beverage dispensing
+  - beverage dispensing monitoring
+  - beverage dispensing detection
+  - food preparation
+  - cooking
+  - plating
+  - ingredient handling
+  - food sorting
+  - quality inspection
+  - food packaging
+  - food delivery
   industry:
   - food
   - beverage dispensing
+  - food service
+  - food processing
+  - restaurant
+  - catering
+  - food manufacturing
+  - hospitality
   components:
   - camera
   - hyperspectral
+  - food-grade gripper
+  - temperature sensor
+  - weight scale
+  - conveyor belt
+  - dispensing nozzle
+  - heating element
   related:
   - food
   - beverage
+  - food safety
+  - HACCP
+  - sanitation
+  - food-grade materials
+  - allergen handling
+  - portion control
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

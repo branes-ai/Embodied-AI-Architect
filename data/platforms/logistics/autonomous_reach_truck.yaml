@@ -10,22 +10,67 @@ keywords:
   - autonomous reach truck
   - autonomous reach truck
   - logistics autonomous reach truck
+  - smart autonomous reach truck
+  - autonomous reach truck platform
+  - robotic autonomous reach truck
+  - autonomous reach truck robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - autonomous reach truck system
   - autonomous autonomous reach truck
+  - system for autonomous reach truck applications
+  - logistics platform using autonomous reach truck technology
+  - intelligent autonomous reach truck solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - autonomous reach truck
   - logistics automation
+  - autonomous reach truck automation
+  - real-time autonomous reach truck
+  - autonomous reach truck monitoring
+  - autonomous reach truck detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - autonomous reach truck
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - autonomous
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

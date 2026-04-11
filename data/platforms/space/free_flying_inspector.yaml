@@ -10,22 +10,65 @@ keywords:
   - free flying inspector
   - free flying inspector
   - space free flying inspector
+  - smart free flying inspector
+  - free flying inspector platform
+  - automated free flying inspector
+  - space robot
+  - planetary rover
+  - orbital servicing robot
+  - space manipulator
+  - extraterrestrial robot
   descriptions:
   - free flying inspector system
   - autonomous free flying inspector
+  - system for free flying inspector applications
+  - space platform using free flying inspector technology
+  - intelligent free flying inspector solution
+  - space-rated robot for planetary or orbital missions
+  - autonomous rover for surface exploration and sample collection
   application:
   - free flying inspector
   - space automation
+  - free flying inspector automation
+  - real-time free flying inspector
+  - free flying inspector monitoring
+  - free flying inspector detection
+  - planetary exploration
+  - sample collection
+  - surface traverse
+  - satellite servicing
+  - orbital assembly
+  - debris removal
+  - lunar exploration
+  - Mars exploration
   industry:
   - space
   - free flying inspector
+  - space exploration
+  - planetary science
+  - NASA
+  - ESA
+  - commercial space
+  - lunar economy
   components:
   - imu
   - star_tracker
   - lidar
+  - rad-hard processor
+  - solar panel
+  - RTG
+  - rocker-bogie suspension
+  - spectrometer
+  - drill
   related:
   - space
   - free
+  - planetary protection
+  - autonomous navigation
+  - sol planning
+  - terrain classification
+  - wheel slip
+  - thermal cycling
 classification:
   locomotion: space.orbital
   manipulation: none

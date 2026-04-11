@@ -10,21 +10,63 @@ keywords:
   - pharmacy dispensing
   - pharmacy dispensing
   - healthcare pharmacy dispensing
+  - smart pharmacy dispensing
+  - pharmacy dispensing platform
+  - automated pharmacy dispensing
+  - healthcare robot
+  - medical robot
+  - hospital robot
+  - clinical robot
+  - health-tech platform
   descriptions:
   - pharmacy dispensing system
   - autonomous pharmacy dispensing
+  - system for pharmacy dispensing applications
+  - healthcare platform using pharmacy dispensing technology
+  - intelligent pharmacy dispensing solution
+  - robot platform for healthcare delivery and clinical support
+  - medical automation system for hospital environments
   application:
   - pharmacy dispensing
   - healthcare automation
+  - pharmacy dispensing automation
+  - real-time pharmacy dispensing
+  - pharmacy dispensing monitoring
+  - pharmacy dispensing detection
+  - patient monitoring
+  - telemedicine
+  - medication dispensing
+  - surgical assistance
+  - disinfection
+  - specimen transport
+  - rehabilitation
+  - vital signs monitoring
   industry:
   - healthcare
   - pharmacy dispensing
+  - hospital
+  - clinical
+  - medical devices
+  - pharma
+  - health-tech
   components:
   - lidar
   - camera
+  - UV-C lamp
+  - vital signs sensor
+  - touch screen
+  - antimicrobial surface
+  - medical-grade enclosure
+  - sterile interface
   related:
   - healthcare
   - pharmacy
+  - HIPAA
+  - FDA clearance
+  - clinical workflow
+  - EHR integration
+  - patient safety
+  - infection control
 classification:
   locomotion: ground.wheeled
   manipulation: none

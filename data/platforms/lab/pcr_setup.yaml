@@ -10,21 +10,67 @@ keywords:
   - pcr setup
   - pcr setup
   - lab pcr setup
+  - smart pcr setup
+  - pcr setup platform
+  - automated pcr setup
+  - robotic pcr setup
+  - pcr setup robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - pcr setup system
   - autonomous pcr setup
+  - system for pcr setup applications
+  - lab platform using pcr setup technology
+  - intelligent pcr setup solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - pcr setup
   - lab automation
+  - pcr setup automation
+  - real-time pcr setup
+  - pcr setup monitoring
+  - pcr setup detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - high-throughput screening
+  - compound management
+  - cell culture
+  - assay preparation
   industry:
   - lab
   - pcr setup
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - pcr
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

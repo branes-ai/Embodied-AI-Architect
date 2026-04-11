@@ -10,20 +10,64 @@ keywords:
   - facade inspection
   - facade inspection
   - surveillance facade inspection
+  - smart facade inspection
+  - facade inspection platform
+  - automated facade inspection
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - facade inspection system
   - autonomous facade inspection
+  - system for facade inspection applications
+  - surveillance platform using facade inspection technology
+  - intelligent facade inspection solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - facade inspection
   - surveillance automation
+  - facade inspection automation
+  - real-time facade inspection
+  - facade inspection monitoring
+  - facade inspection detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - facade inspection
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - facade
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

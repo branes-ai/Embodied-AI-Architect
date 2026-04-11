@@ -10,22 +10,67 @@ keywords:
   - offshore inspection
   - offshore inspection
   - marine offshore inspection
+  - smart offshore inspection
+  - offshore inspection platform
+  - automated offshore inspection
+  - robotic offshore inspection
+  - offshore inspection robot
+  - marine robot
+  - underwater robot
+  - aquatic robot
+  - maritime autonomous system
+  - ocean robot
   descriptions:
   - offshore inspection system
   - autonomous offshore inspection
+  - system for offshore inspection applications
+  - marine platform using offshore inspection technology
+  - intelligent offshore inspection solution
+  - autonomous marine platform for underwater or surface operations
+  - marine robot for inspection, survey, or environmental monitoring
   application:
   - offshore inspection
   - marine automation
+  - offshore inspection automation
+  - real-time offshore inspection
+  - offshore inspection monitoring
+  - offshore inspection detection
+  - underwater inspection
+  - hull inspection
+  - pipeline survey
+  - marine research
+  - fish farming
+  - port security
+  - environmental monitoring
+  - bathymetric survey
   industry:
   - marine
   - offshore inspection
+  - maritime
+  - aquaculture
+  - naval
+  - ocean science
+  - port operations
+  - subsea
   components:
   - gps
   - imu
   - sonar
+  - thruster
+  - depth sensor
+  - DVL
+  - acoustic modem
+  - pressure housing
+  - buoyancy module
   related:
   - marine
   - offshore
+  - underwater navigation
+  - acoustic positioning
+  - USBL
+  - depth rating
+  - corrosion resistance
+  - marine grade
 classification:
   locomotion: marine.surface
   manipulation: none

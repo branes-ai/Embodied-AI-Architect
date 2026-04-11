@@ -10,21 +10,67 @@ keywords:
   - histology prep
   - histology prep
   - lab histology prep
+  - smart histology prep
+  - histology prep platform
+  - automated histology prep
+  - robotic histology prep
+  - histology prep robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - histology prep system
   - autonomous histology prep
+  - system for histology prep applications
+  - lab platform using histology prep technology
+  - intelligent histology prep solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - histology prep
   - lab automation
+  - histology prep automation
+  - real-time histology prep
+  - histology prep monitoring
+  - histology prep detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - cell culture
   industry:
   - lab
   - histology prep
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - histology
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

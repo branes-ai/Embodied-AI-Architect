@@ -10,22 +10,68 @@ keywords:
   - high altitude pseudo satellite
   - high altitude pseudo satellite
   - aerial high altitude pseudo satellite
+  - high altitude pseudo satellite platform
+  - automated high altitude pseudo satellite
+  - robotic high altitude pseudo satellite
+  - high altitude pseudo satellite robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - multirotor
+  - quadcopter
+  - RPAS
   descriptions:
   - high altitude pseudo satellite system
   - autonomous high altitude pseudo satellite
+  - system for high altitude pseudo satellite applications
+  - aerial platform using high altitude pseudo satellite technology
+  - intelligent high altitude pseudo satellite solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
   application:
   - high altitude pseudo satellite
   - aerial automation
+  - high altitude pseudo satellite automation
+  - real-time high altitude pseudo satellite
+  - high altitude pseudo satellite monitoring
+  - high altitude pseudo satellite detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
   industry:
   - aerial
   - high altitude pseudo satellite
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
   components:
   - imu
   - gps
   - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
   related:
   - aerial
   - high
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

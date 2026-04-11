@@ -10,21 +10,63 @@ keywords:
   - exoskeleton industrial
   - exoskeleton industrial
   - wearable exoskeleton industrial
+  - smart exoskeleton industrial
+  - exoskeleton industrial platform
+  - automated exoskeleton industrial
+  - wearable robot
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - exoskeleton industrial system
   - autonomous exoskeleton industrial
+  - system for exoskeleton industrial applications
+  - wearable platform using exoskeleton industrial technology
+  - intelligent exoskeleton industrial solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - exoskeleton industrial
   - wearable automation
+  - exoskeleton industrial automation
+  - real-time exoskeleton industrial
+  - exoskeleton industrial monitoring
+  - exoskeleton industrial detection
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - exoskeleton industrial
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - exoskeleton
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

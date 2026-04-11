@@ -10,22 +10,66 @@ keywords:
   - swarm c uas
   - swarm c uas
   - military swarm c uas
+  - smart swarm c uas
+  - swarm c uas platform
+  - automated swarm c uas
+  - military robot
+  - tactical robot
+  - defense platform
+  - combat robot
+  - military UGV
+  - MULE
   descriptions:
   - swarm c uas system
   - autonomous swarm c uas
+  - system for swarm c uas applications
+  - military platform using swarm c uas technology
+  - intelligent swarm c uas solution
+  - military-grade autonomous platform for tactical operations
+  - defense robot for reconnaissance and force protection
   application:
   - swarm c uas
   - military automation
+  - swarm c uas automation
+  - real-time swarm c uas
+  - swarm c uas monitoring
+  - swarm c uas detection
+  - reconnaissance
+  - ISR
+  - bomb disposal
+  - EOD
+  - logistics resupply
+  - perimeter security
+  - CBRN detection
+  - mine clearance
   industry:
   - military
   - swarm c uas
+  - defense
+  - homeland security
+  - intelligence
+  - force protection
+  - C4ISR
+  - special operations
   components:
   - imu
   - gps
   - eo_ir
+  - ruggedized enclosure
+  - encrypted radio
+  - FLIR camera
+  - NBC sensor
+  - ballistic armor
+  - weapons mount
   related:
   - military
   - swarm
+  - MIL-STD
+  - ITAR
+  - C2 system
+  - tactical network
+  - STANAG
+  - blue force tracking
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

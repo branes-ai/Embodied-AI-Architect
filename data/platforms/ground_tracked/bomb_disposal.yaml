@@ -10,22 +10,68 @@ keywords:
   - bomb disposal
   - bomb disposal
   - ground_tracked bomb disposal
+  - ground tracked bomb disposal
+  - smart bomb disposal
+  - bomb disposal platform
+  - automated bomb disposal
+  - robotic bomb disposal
+  - tracked robot
+  - tracked vehicle
+  - crawler robot
+  - tracked platform
+  - UGV
+  - unmanned ground vehicle
   descriptions:
   - bomb disposal system
   - autonomous bomb disposal
+  - system for bomb disposal applications
+  - ground tracked platform using bomb disposal technology
+  - intelligent bomb disposal solution
+  - tracked ground robot for challenging terrain operations
+  - unmanned tracked vehicle for hazardous environment tasks
   application:
   - bomb disposal
   - ground_tracked automation
+  - bomb disposal automation
+  - real-time bomb disposal
+  - bomb disposal monitoring
+  - bomb disposal detection
+  - rough terrain navigation
+  - mine clearance
+  - pipeline inspection
+  - agricultural tillage
+  - demolition
+  - hazmat response
+  - military reconnaissance
+  - cargo transport
   industry:
   - ground_tracked
   - bomb disposal
+  - defense
+  - mining
+  - agriculture
+  - construction
+  - public safety
+  - EOD
   components:
   - lidar
   - imu
   - gps
+  - track assembly
+  - drive sprocket
+  - idler wheel
+  - track tensioner
+  - robotic arm
+  - manipulator
   related:
   - ground_tracked
   - bomb
+  - terrain mobility
+  - slip compensation
+  - skid steering
+  - payload capacity
+  - rugged design
+  - all-terrain
 classification:
   locomotion: ground.tracked
   manipulation: none

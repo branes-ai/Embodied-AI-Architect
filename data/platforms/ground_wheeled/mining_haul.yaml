@@ -10,22 +10,68 @@ keywords:
   - mining haul
   - mining haul
   - ground_wheeled mining haul
+  - ground wheeled mining haul
+  - smart mining haul
+  - mining haul platform
+  - automated mining haul
+  - robotic mining haul
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - mining haul system
   - autonomous mining haul
+  - system for mining haul applications
+  - ground wheeled platform using mining haul technology
+  - intelligent mining haul solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - mining haul
   - ground_wheeled automation
+  - mining haul automation
+  - real-time mining haul
+  - mining haul monitoring
+  - mining haul detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - mining haul
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - mining
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

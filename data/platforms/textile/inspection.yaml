@@ -10,21 +10,64 @@ keywords:
   - inspection
   - inspection
   - textile inspection
+  - smart inspection
+  - inspection platform
+  - automated inspection
+  - textile robot
+  - fabric handling robot
+  - garment robot
+  - sewing robot
+  - textile automation system
   descriptions:
   - inspection system
   - autonomous inspection
+  - system for inspection applications
+  - textile platform using inspection technology
+  - intelligent inspection solution
+  - robot platform for automated textile handling and assembly
+  - automation system for garment manufacturing operations
   application:
   - inspection
   - textile automation
+  - inspection automation
+  - real-time inspection
+  - inspection monitoring
+  - inspection detection
+  - fabric cutting
+  - sewing
+  - garment assembly
+  - quality inspection
+  - fabric handling
+  - pattern matching
+  - dyeing
+  - folding
   industry:
   - textile
   - inspection
+  - textile manufacturing
+  - apparel
+  - fashion
+  - garment
+  - upholstery
+  - technical textiles
   components:
   - camera
   - force_sensor
+  - fabric gripper
+  - sewing head
+  - cutting blade
+  - tension sensor
+  - color sensor
+  - pattern recognition camera
   related:
   - textile
   - inspection
+  - fabric deformation
+  - thread tension
+  - seam quality
+  - pattern nesting
+  - waste reduction
+  - lean manufacturing
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

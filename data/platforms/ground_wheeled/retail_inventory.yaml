@@ -10,22 +10,68 @@ keywords:
   - retail inventory
   - retail inventory
   - ground_wheeled retail inventory
+  - ground wheeled retail inventory
+  - smart retail inventory
+  - retail inventory platform
+  - automated retail inventory
+  - robotic retail inventory
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - retail inventory system
   - autonomous retail inventory
+  - system for retail inventory applications
+  - ground wheeled platform using retail inventory technology
+  - intelligent retail inventory solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - retail inventory
   - ground_wheeled automation
+  - retail inventory automation
+  - real-time retail inventory
+  - retail inventory monitoring
+  - retail inventory detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - retail inventory
+  - logistics
+  - warehousing
+  - manufacturing
+  - hospitality
+  - healthcare logistics
+  - e-commerce fulfillment
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - retail
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

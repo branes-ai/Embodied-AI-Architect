@@ -10,21 +10,67 @@ keywords:
   - mobile manipulator
   - mobile manipulator
   - manipulation mobile manipulator
+  - smart mobile manipulator
+  - mobile manipulator platform
+  - automated mobile manipulator
+  - robotic mobile manipulator
+  - mobile manipulator robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - mobile manipulator system
   - autonomous mobile manipulator
+  - system for mobile manipulator applications
+  - manipulation platform using mobile manipulator technology
+  - intelligent mobile manipulator solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - mobile manipulator
   - manipulation automation
+  - mobile manipulator automation
+  - real-time mobile manipulator
+  - mobile manipulator monitoring
+  - mobile manipulator detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
   industry:
   - manipulation
   - mobile manipulator
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - mobile
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

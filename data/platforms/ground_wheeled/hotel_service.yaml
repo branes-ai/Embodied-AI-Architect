@@ -10,22 +10,68 @@ keywords:
   - hotel service
   - hotel service
   - ground_wheeled hotel service
+  - ground wheeled hotel service
+  - smart hotel service
+  - hotel service platform
+  - automated hotel service
+  - robotic hotel service
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - hotel service system
   - autonomous hotel service
+  - system for hotel service applications
+  - ground wheeled platform using hotel service technology
+  - intelligent hotel service solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - hotel service
   - ground_wheeled automation
+  - hotel service automation
+  - real-time hotel service
+  - hotel service monitoring
+  - hotel service detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - hotel service
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - hotel
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

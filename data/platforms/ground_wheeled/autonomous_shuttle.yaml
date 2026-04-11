@@ -10,22 +10,68 @@ keywords:
   - autonomous shuttle
   - autonomous shuttle
   - ground_wheeled autonomous shuttle
+  - ground wheeled autonomous shuttle
+  - smart autonomous shuttle
+  - autonomous shuttle platform
+  - robotic autonomous shuttle
+  - autonomous shuttle robot
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - autonomous shuttle system
   - autonomous autonomous shuttle
+  - system for autonomous shuttle applications
+  - ground wheeled platform using autonomous shuttle technology
+  - intelligent autonomous shuttle solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - autonomous shuttle
   - ground_wheeled automation
+  - autonomous shuttle automation
+  - real-time autonomous shuttle
+  - autonomous shuttle monitoring
+  - autonomous shuttle detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - autonomous shuttle
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - autonomous
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

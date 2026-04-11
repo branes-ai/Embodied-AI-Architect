@@ -10,22 +10,66 @@ keywords:
   - swarm naval surface
   - swarm naval surface
   - military swarm naval surface
+  - smart swarm naval surface
+  - swarm naval surface platform
+  - automated swarm naval surface
+  - military robot
+  - tactical robot
+  - defense platform
+  - combat robot
+  - military UGV
+  - MULE
   descriptions:
   - swarm naval surface system
   - autonomous swarm naval surface
+  - system for swarm naval surface applications
+  - military platform using swarm naval surface technology
+  - intelligent swarm naval surface solution
+  - military-grade autonomous platform for tactical operations
+  - defense robot for reconnaissance and force protection
   application:
   - swarm naval surface
   - military automation
+  - swarm naval surface automation
+  - real-time swarm naval surface
+  - swarm naval surface monitoring
+  - swarm naval surface detection
+  - reconnaissance
+  - ISR
+  - bomb disposal
+  - EOD
+  - logistics resupply
+  - perimeter security
+  - CBRN detection
+  - mine clearance
   industry:
   - military
   - swarm naval surface
+  - defense
+  - homeland security
+  - intelligence
+  - force protection
+  - C4ISR
+  - special operations
   components:
   - imu
   - gps
   - eo_ir
+  - ruggedized enclosure
+  - encrypted radio
+  - FLIR camera
+  - NBC sensor
+  - ballistic armor
+  - weapons mount
   related:
   - military
   - swarm
+  - MIL-STD
+  - ITAR
+  - C2 system
+  - tactical network
+  - STANAG
+  - blue force tracking
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

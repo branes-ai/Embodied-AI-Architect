@@ -10,21 +10,67 @@ keywords:
   - cnc tending
   - cnc tending
   - manipulation cnc tending
+  - smart cnc tending
+  - cnc tending platform
+  - automated cnc tending
+  - robotic cnc tending
+  - cnc tending robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - cnc tending system
   - autonomous cnc tending
+  - system for cnc tending applications
+  - manipulation platform using cnc tending technology
+  - intelligent cnc tending solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - cnc tending
   - manipulation automation
+  - cnc tending automation
+  - real-time cnc tending
+  - cnc tending monitoring
+  - cnc tending detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
   industry:
   - manipulation
   - cnc tending
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - cnc
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

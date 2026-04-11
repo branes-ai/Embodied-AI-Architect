@@ -10,20 +10,64 @@ keywords:
   - gunshot detection
   - gunshot detection
   - surveillance gunshot detection
+  - smart gunshot detection
+  - gunshot detection platform
+  - automated gunshot detection
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - gunshot detection system
   - autonomous gunshot detection
+  - system for gunshot detection applications
+  - surveillance platform using gunshot detection technology
+  - intelligent gunshot detection solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - gunshot detection
   - surveillance automation
+  - gunshot detection automation
+  - real-time gunshot detection
+  - gunshot detection monitoring
+  - gunshot detection analysis
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - gunshot detection
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - gunshot
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

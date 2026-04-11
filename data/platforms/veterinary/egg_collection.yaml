@@ -10,21 +10,64 @@ keywords:
   - egg collection
   - egg collection
   - veterinary egg collection
+  - smart egg collection
+  - egg collection platform
+  - automated egg collection
+  - veterinary robot
+  - animal care robot
+  - livestock robot
+  - animal health platform
+  - vet-tech robot
   descriptions:
   - egg collection system
   - autonomous egg collection
+  - system for egg collection applications
+  - veterinary platform using egg collection technology
+  - intelligent egg collection solution
+  - automated platform for animal health monitoring and care
+  - robot for livestock management and veterinary tasks
   application:
   - egg collection
   - veterinary automation
+  - egg collection automation
+  - real-time egg collection
+  - egg collection monitoring
+  - egg collection detection
+  - animal health monitoring
+  - automated milking
+  - livestock sorting
+  - medication delivery
+  - herd management
+  - animal tracking
+  - reproductive monitoring
+  - weight monitoring
   industry:
   - veterinary
   - egg collection
+  - veterinary medicine
+  - animal husbandry
+  - dairy farming
+  - livestock management
+  - poultry
+  - aquaculture
   components:
   - camera
   - ultrasound
+  - RFID reader
+  - temperature sensor
+  - weighing platform
+  - teat cup
+  - sorting gate
+  - feed dispenser
   related:
   - veterinary
   - egg
+  - herd management software
+  - animal welfare
+  - lameness detection
+  - body condition score
+  - estrus detection
+  - mastitis detection
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

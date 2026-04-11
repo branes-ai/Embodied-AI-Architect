@@ -10,21 +10,67 @@ keywords:
   - communication device
   - communication device
   - assistive communication device
+  - smart communication device
+  - communication device platform
+  - automated communication device
+  - robotic communication device
+  - communication device robot
+  - assistive robot
+  - companion robot
+  - care robot
+  - mobility aid
+  - rehabilitation robot
+  - service robot
   descriptions:
   - communication device system
   - autonomous communication device
+  - system for communication device applications
+  - assistive platform using communication device technology
+  - intelligent communication device solution
+  - robot system that assists people with daily activities
+  - assistive platform for mobility or cognitive support
   application:
   - communication device
   - assistive automation
+  - communication device automation
+  - real-time communication device
+  - communication device monitoring
+  - communication device detection
+  - mobility assistance
+  - daily living support
+  - rehabilitation therapy
+  - companionship
+  - medication reminder
+  - fall detection
+  - gait assistance
+  - object fetching
   industry:
   - assistive
   - communication device
+  - assistive technology
+  - healthcare robotics
+  - elder care
+  - rehabilitation
+  - disability services
+  - social robotics
   components:
   - imu
   - emg
+  - force sensor
+  - voice interface
+  - touch screen
+  - proximity sensor
+  - speaker
+  - microphone array
   related:
   - assistive
   - communication
+  - human-robot interaction
+  - HRI
+  - accessibility
+  - universal design
+  - adaptive interface
+  - gesture recognition
 classification:
   locomotion: wearable.limb_attached
   manipulation: none

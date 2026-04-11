@@ -10,21 +10,67 @@ keywords:
   - heavy forge press
   - heavy forge press
   - manipulation heavy forge press
+  - smart heavy forge press
+  - heavy forge press platform
+  - automated heavy forge press
+  - robotic heavy forge press
+  - heavy forge press robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - heavy forge press system
   - autonomous heavy forge press
+  - system for heavy forge press applications
+  - manipulation platform using heavy forge press technology
+  - intelligent heavy forge press solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - heavy forge press
   - manipulation automation
+  - heavy forge press automation
+  - real-time heavy forge press
+  - heavy forge press monitoring
+  - heavy forge press detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
   industry:
   - manipulation
   - heavy forge press
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - heavy
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

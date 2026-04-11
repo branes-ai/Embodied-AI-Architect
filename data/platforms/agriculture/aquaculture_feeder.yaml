@@ -10,22 +10,66 @@ keywords:
   - aquaculture feeder
   - aquaculture feeder
   - agriculture aquaculture feeder
+  - smart aquaculture feeder
+  - aquaculture feeder platform
+  - automated aquaculture feeder
+  - agribot
+  - farm robot
+  - agricultural robot
+  - precision agriculture system
+  - smart farming platform
+  - agri-tech robot
   descriptions:
   - aquaculture feeder system
   - autonomous aquaculture feeder
+  - system for aquaculture feeder applications
+  - agriculture platform using aquaculture feeder technology
+  - intelligent aquaculture feeder solution
+  - autonomous platform for precision agriculture tasks
+  - farm robot for automated crop management and monitoring
   application:
   - aquaculture feeder
   - agriculture automation
+  - aquaculture feeder automation
+  - real-time aquaculture feeder
+  - aquaculture feeder monitoring
+  - aquaculture feeder detection
+  - crop monitoring
+  - weed detection
+  - precision spraying
+  - yield estimation
+  - soil analysis
+  - planting
+  - harvesting
+  - fruit picking
   industry:
   - agriculture
   - aquaculture feeder
+  - precision agriculture
+  - smart farming
+  - agri-tech
+  - horticulture
+  - viticulture
+  - organic farming
   components:
   - gps
   - imu
   - camera
+  - multispectral camera
+  - NDVI sensor
+  - RTK GPS
+  - spray nozzle
+  - soil moisture sensor
+  - weather station
   related:
   - agriculture
   - aquaculture
+  - NDVI
+  - vegetation index
+  - variable rate application
+  - site-specific management
+  - crop health
+  - field mapping
 classification:
   locomotion: ground.wheeled
   manipulation: none

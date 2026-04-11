@@ -10,22 +10,68 @@ keywords:
   - exploration rover
   - exploration rover
   - ground_tracked exploration rover
+  - ground tracked exploration rover
+  - smart exploration rover
+  - exploration rover platform
+  - automated exploration rover
+  - robotic exploration rover
+  - tracked robot
+  - tracked vehicle
+  - crawler robot
+  - tracked platform
+  - UGV
+  - unmanned ground vehicle
   descriptions:
   - exploration rover system
   - autonomous exploration rover
+  - system for exploration rover applications
+  - ground tracked platform using exploration rover technology
+  - intelligent exploration rover solution
+  - tracked ground robot for challenging terrain operations
+  - unmanned tracked vehicle for hazardous environment tasks
   application:
   - exploration rover
   - ground_tracked automation
+  - exploration rover automation
+  - real-time exploration rover
+  - exploration rover monitoring
+  - exploration rover detection
+  - rough terrain navigation
+  - bomb disposal
+  - mine clearance
+  - pipeline inspection
+  - agricultural tillage
+  - demolition
+  - hazmat response
+  - military reconnaissance
   industry:
   - ground_tracked
   - exploration rover
+  - defense
+  - mining
+  - agriculture
+  - construction
+  - public safety
+  - EOD
   components:
   - lidar
   - imu
   - gps
+  - track assembly
+  - drive sprocket
+  - idler wheel
+  - track tensioner
+  - robotic arm
+  - manipulator
   related:
   - ground_tracked
   - exploration
+  - terrain mobility
+  - slip compensation
+  - skid steering
+  - payload capacity
+  - rugged design
+  - all-terrain
 classification:
   locomotion: ground.tracked
   manipulation: none

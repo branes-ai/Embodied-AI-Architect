@@ -10,22 +10,67 @@ keywords:
   - usv survey
   - usv survey
   - marine_surface usv survey
+  - marine surface usv survey
+  - smart usv survey
+  - usv survey platform
+  - automated usv survey
+  - robotic usv survey
+  - surface vessel
+  - unmanned surface vehicle
+  - autonomous boat
+  - surface drone
+  - marine surface robot
   descriptions:
   - usv survey system
   - autonomous usv survey
+  - system for usv survey applications
+  - marine surface platform using usv survey technology
+  - intelligent usv survey solution
+  - unmanned surface vessel for autonomous maritime missions
+  - autonomous boat platform for survey and monitoring
   application:
   - usv survey
   - marine_surface automation
+  - usv survey automation
+  - real-time usv survey
+  - usv survey monitoring
+  - usv survey detection
+  - hydrographic survey
+  - water quality monitoring
+  - harbor patrol
+  - search and rescue
+  - oil spill response
+  - coastal survey
+  - aquaculture monitoring
+  - cargo transport
   industry:
   - marine_surface
   - usv survey
+  - maritime
+  - hydrography
+  - aquaculture
+  - port operations
+  - environmental services
+  - coast guard
   components:
   - gps
   - imu
   - radar
+  - hull
+  - propulsion motor
+  - GPS antenna
+  - AIS transponder
+  - weather station
+  - echo sounder
   related:
   - marine_surface
   - usv
+  - COLREGs
+  - collision avoidance
+  - waypoint navigation
+  - sea state
+  - station keeping
+  - autonomous docking
 classification:
   locomotion: marine.surface
   manipulation: none

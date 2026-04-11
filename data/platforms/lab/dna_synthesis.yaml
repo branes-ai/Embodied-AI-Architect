@@ -10,21 +10,67 @@ keywords:
   - dna synthesis
   - dna synthesis
   - lab dna synthesis
+  - smart dna synthesis
+  - dna synthesis platform
+  - automated dna synthesis
+  - robotic dna synthesis
+  - dna synthesis robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - dna synthesis system
   - autonomous dna synthesis
+  - system for dna synthesis applications
+  - lab platform using dna synthesis technology
+  - intelligent dna synthesis solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - dna synthesis
   - lab automation
+  - dna synthesis automation
+  - real-time dna synthesis
+  - dna synthesis monitoring
+  - dna synthesis detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - cell culture
   industry:
   - lab
   - dna synthesis
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - dna
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

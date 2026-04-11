@@ -10,20 +10,64 @@ keywords:
   - livestock counting
   - livestock counting
   - surveillance livestock counting
+  - smart livestock counting
+  - livestock counting platform
+  - automated livestock counting
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - livestock counting system
   - autonomous livestock counting
+  - system for livestock counting applications
+  - surveillance platform using livestock counting technology
+  - intelligent livestock counting solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - livestock counting
   - surveillance automation
+  - livestock counting automation
+  - real-time livestock counting
+  - livestock counting monitoring
+  - livestock counting detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - livestock counting
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - livestock
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

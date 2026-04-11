@@ -10,22 +10,69 @@ keywords:
   - tethered persistent
   - tethered persistent
   - aerial tethered persistent
+  - smart tethered persistent
+  - tethered persistent platform
+  - automated tethered persistent
+  - robotic tethered persistent
+  - tethered persistent robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - multirotor
+  - quadcopter
+  - RPAS
   descriptions:
   - tethered persistent system
   - autonomous tethered persistent
+  - system for tethered persistent applications
+  - aerial platform using tethered persistent technology
+  - intelligent tethered persistent solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
   application:
   - tethered persistent
   - aerial automation
+  - tethered persistent automation
+  - real-time tethered persistent
+  - tethered persistent monitoring
+  - tethered persistent detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
   industry:
   - aerial
   - tethered persistent
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
   components:
   - imu
   - gps
   - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
   related:
   - aerial
   - tethered
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

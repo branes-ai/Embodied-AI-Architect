@@ -10,20 +10,65 @@ keywords:
   - elderly monitor
   - elderly monitor
   - edge_vision elderly monitor
+  - edge vision elderly monitor
+  - smart elderly monitor
+  - elderly monitor platform
+  - automated elderly monitor
+  - edge vision system
+  - smart camera
+  - AI camera
+  - vision appliance
+  - edge AI device
+  - intelligent camera
   descriptions:
   - elderly monitor system
   - autonomous elderly monitor
+  - system for elderly monitor applications
+  - edge vision platform using elderly monitor technology
+  - intelligent elderly monitor solution
+  - edge-deployed vision system with on-device AI inference
+  - smart camera platform for real-time video analytics
   application:
   - elderly monitor
   - edge_vision automation
+  - elderly monitor automation
+  - real-time elderly monitor
+  - elderly monitor monitoring
+  - elderly monitor detection
+  - video analytics
+  - object detection
+  - people counting
+  - face recognition
+  - license plate recognition
+  - anomaly detection
+  - behavior analysis
+  - occupancy monitoring
   industry:
   - edge_vision
   - elderly monitor
+  - computer vision
+  - edge computing
+  - security
+  - retail
+  - smart city
+  - transportation
   components:
   - camera
+  - CMOS sensor
+  - ISP
+  - NPU
+  - AI accelerator
+  - lens
+  - IR LED
   related:
   - edge_vision
   - elderly
+  - inference at edge
+  - model optimization
+  - TensorRT
+  - OpenVINO
+  - ONNX
+  - INT8 quantization
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

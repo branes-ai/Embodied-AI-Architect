@@ -10,22 +10,67 @@ keywords:
   - autonomous pallet jack
   - autonomous pallet jack
   - logistics autonomous pallet jack
+  - smart autonomous pallet jack
+  - autonomous pallet jack platform
+  - robotic autonomous pallet jack
+  - autonomous pallet jack robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - autonomous pallet jack system
   - autonomous autonomous pallet jack
+  - system for autonomous pallet jack applications
+  - logistics platform using autonomous pallet jack technology
+  - intelligent autonomous pallet jack solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - autonomous pallet jack
   - logistics automation
+  - autonomous pallet jack automation
+  - real-time autonomous pallet jack
+  - autonomous pallet jack monitoring
+  - autonomous pallet jack detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - autonomous pallet jack
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - autonomous
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

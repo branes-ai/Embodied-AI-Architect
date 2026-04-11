@@ -10,20 +10,64 @@ keywords:
   - smart camera traffic
   - smart camera traffic
   - edge_vision smart camera traffic
+  - edge vision smart camera traffic
+  - smart camera traffic platform
+  - automated smart camera traffic
+  - edge vision system
+  - smart camera
+  - AI camera
+  - vision appliance
+  - edge AI device
+  - intelligent camera
   descriptions:
   - smart camera traffic system
   - autonomous smart camera traffic
+  - system for smart camera traffic applications
+  - edge vision platform using smart camera traffic technology
+  - intelligent smart camera traffic solution
+  - edge-deployed vision system with on-device AI inference
+  - smart camera platform for real-time video analytics
   application:
   - smart camera traffic
   - edge_vision automation
+  - smart camera traffic automation
+  - real-time smart camera traffic
+  - smart camera traffic monitoring
+  - smart camera traffic detection
+  - video analytics
+  - object detection
+  - people counting
+  - face recognition
+  - license plate recognition
+  - anomaly detection
+  - behavior analysis
+  - occupancy monitoring
   industry:
   - edge_vision
   - smart camera traffic
+  - computer vision
+  - edge computing
+  - security
+  - retail
+  - smart city
+  - transportation
   components:
   - camera
+  - CMOS sensor
+  - ISP
+  - NPU
+  - AI accelerator
+  - lens
+  - IR LED
   related:
   - edge_vision
   - smart
+  - inference at edge
+  - model optimization
+  - TensorRT
+  - OpenVINO
+  - ONNX
+  - INT8 quantization
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

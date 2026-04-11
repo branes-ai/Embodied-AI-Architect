@@ -10,21 +10,64 @@ keywords:
   - seizure detector
   - seizure detector
   - wearable seizure detector
+  - smart seizure detector
+  - seizure detector platform
+  - automated seizure detector
+  - wearable robot
+  - exoskeleton
+  - powered suit
+  - assistive wearable
+  - body-worn robot
+  - wearable device
   descriptions:
   - seizure detector system
   - autonomous seizure detector
+  - system for seizure detector applications
+  - wearable platform using seizure detector technology
+  - intelligent seizure detector solution
+  - wearable robotic platform for human augmentation or rehabilitation
+  - body-worn exoskeleton for strength or mobility support
   application:
   - seizure detector
   - wearable automation
+  - seizure detector automation
+  - real-time seizure detector
+  - seizure detector monitoring
+  - seizure detector detection
+  - load bearing
+  - gait assistance
+  - rehabilitation
+  - industrial lifting
+  - military augmentation
+  - fall prevention
+  - posture correction
+  - tremor suppression
   industry:
   - wearable
   - seizure detector
+  - wearable robotics
+  - exoskeletons
+  - industrial ergonomics
+  - defense
+  - assistive technology
   components:
   - imu
   - ppg
+  - actuated joint
+  - EMG sensor
+  - strain gauge
+  - battery pack
+  - harness
+  - control unit
   related:
   - wearable
   - seizure
+  - human augmentation
+  - ergonomic support
+  - fatigue reduction
+  - range of motion
+  - biomechanics
+  - gait analysis
 classification:
   locomotion: wearable.body_worn
   manipulation: none

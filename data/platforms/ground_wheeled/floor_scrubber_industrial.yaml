@@ -10,22 +10,68 @@ keywords:
   - floor scrubber industrial
   - floor scrubber industrial
   - ground_wheeled floor scrubber industrial
+  - ground wheeled floor scrubber industrial
+  - smart floor scrubber industrial
+  - floor scrubber industrial platform
+  - automated floor scrubber industrial
+  - robotic floor scrubber industrial
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - floor scrubber industrial system
   - autonomous floor scrubber industrial
+  - system for floor scrubber industrial applications
+  - ground wheeled platform using floor scrubber industrial technology
+  - intelligent floor scrubber industrial solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - floor scrubber industrial
   - ground_wheeled automation
+  - floor scrubber industrial automation
+  - real-time floor scrubber industrial
+  - floor scrubber industrial monitoring
+  - floor scrubber industrial detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - floor scrubber industrial
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - floor
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

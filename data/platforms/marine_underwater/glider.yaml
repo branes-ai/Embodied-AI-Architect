@@ -10,22 +10,68 @@ keywords:
   - glider
   - glider
   - marine_underwater glider
+  - marine underwater glider
+  - smart glider
+  - glider platform
+  - automated glider
+  - robotic glider
+  - AUV
+  - autonomous underwater vehicle
+  - ROV
+  - remotely operated vehicle
+  - submersible
+  - underwater drone
   descriptions:
   - glider system
   - autonomous glider
+  - system for glider applications
+  - marine underwater platform using glider technology
+  - intelligent glider solution
+  - autonomous underwater vehicle for subsea inspection and survey
+  - remotely operated underwater robot for deep-sea operations
   application:
   - glider
   - marine_underwater automation
+  - glider automation
+  - real-time glider
+  - glider monitoring
+  - glider detection
+  - subsea inspection
+  - pipeline inspection
+  - hull inspection
+  - oceanographic survey
+  - mine countermeasures
+  - wreck exploration
+  - coral reef monitoring
+  - dam inspection
   industry:
   - marine_underwater
   - glider
+  - subsea
+  - offshore oil and gas
+  - oceanography
+  - marine archaeology
+  - defense
+  - aquaculture
   components:
   - imu
   - sonar
   - depth_sensor
+  - depth sensor
+  - DVL
+  - thruster
+  - pressure hull
+  - manipulator
+  - sample collector
   related:
   - marine_underwater
   - glider
+  - depth rating
+  - acoustic navigation
+  - USBL
+  - INS
+  - buoyancy control
+  - tether management
 classification:
   locomotion: marine.underwater
   manipulation: none

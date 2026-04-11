@@ -10,22 +10,65 @@ keywords:
   - pothole inspector
   - pothole inspector
   - municipal pothole inspector
+  - smart pothole inspector
+  - pothole inspector platform
+  - automated pothole inspector
+  - municipal robot
+  - city robot
+  - urban service robot
+  - public works robot
+  - smart city platform
   descriptions:
   - pothole inspector system
   - autonomous pothole inspector
+  - system for pothole inspector applications
+  - municipal platform using pothole inspector technology
+  - intelligent pothole inspector solution
+  - autonomous municipal service platform for city operations
+  - robot for public works and urban maintenance tasks
   application:
   - pothole inspector
   - municipal automation
+  - pothole inspector automation
+  - real-time pothole inspector
+  - pothole inspector monitoring
+  - pothole inspector detection
+  - street cleaning
+  - snow removal
+  - pothole detection
+  - park maintenance
+  - public safety patrol
+  - waste collection
+  - graffiti removal
+  - sidewalk delivery
   industry:
   - municipal
   - pothole inspector
+  - municipal services
+  - public works
+  - smart city
+  - urban planning
+  - waste management
+  - transportation
   components:
   - lidar
   - camera
   - gps
+  - sweeper brush
+  - snow plow
+  - salt spreader
+  - horn
+  - safety lights
+  - reflectors
   related:
   - municipal
   - pothole
+  - municipal fleet
+  - public ROW
+  - ADA compliance
+  - sidewalk navigation
+  - urban mobility
+  - city ordinance
 classification:
   locomotion: ground.wheeled
   manipulation: none

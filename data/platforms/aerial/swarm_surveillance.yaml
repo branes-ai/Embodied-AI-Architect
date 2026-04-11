@@ -10,22 +10,69 @@ keywords:
   - swarm surveillance
   - swarm surveillance
   - aerial swarm surveillance
+  - smart swarm surveillance
+  - swarm surveillance platform
+  - automated swarm surveillance
+  - robotic swarm surveillance
+  - swarm surveillance robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - multirotor
+  - quadcopter
+  - RPAS
   descriptions:
   - swarm surveillance system
   - autonomous swarm surveillance
+  - system for swarm surveillance applications
+  - aerial platform using swarm surveillance technology
+  - intelligent swarm surveillance solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
   application:
   - swarm surveillance
   - aerial automation
+  - swarm surveillance automation
+  - real-time swarm surveillance
+  - swarm surveillance monitoring
+  - swarm surveillance detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
   industry:
   - aerial
   - swarm surveillance
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
   components:
   - imu
   - gps
   - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
   related:
   - aerial
   - swarm
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
 classification:
   locomotion: aerial.rotary_wing
   manipulation: none

@@ -10,21 +10,62 @@ keywords:
   - collection robot
   - collection robot
   - waste collection robot
+  - smart collection robot
+  - collection robot platform
+  - automated collection robot
+  - waste robot
+  - recycling robot
+  - trash sorting robot
+  - waste management platform
+  - refuse handling robot
   descriptions:
   - collection robot system
   - autonomous collection robot
+  - system for collection robot applications
+  - waste platform using collection robot technology
+  - intelligent collection robot solution
+  - autonomous waste sorting and recycling platform
+  - robot for automated waste handling and material recovery
   application:
   - collection robot
   - waste automation
+  - collection robot automation
+  - real-time collection robot
+  - collection robot monitoring
+  - collection robot detection
+  - waste sorting
+  - recycling
+  - material recovery
+  - trash collection
+  - contamination detection
+  - bin emptying
+  - litter picking
+  - compaction
   industry:
   - waste
   - collection robot
+  - waste management
+  - circular economy
+  - environmental services
+  - sanitation
   components:
   - camera
   - hyperspectral
+  - gripper
+  - conveyor belt
+  - NIR sensor
+  - air jet
+  - compactor
+  - bin lifter
   related:
   - waste
   - collection
+  - material classification
+  - contamination rate
+  - MRF
+  - single stream
+  - diversion rate
+  - tipping floor
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

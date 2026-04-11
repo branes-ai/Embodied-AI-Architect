@@ -10,22 +10,68 @@ keywords:
   - quadruped security
   - quadruped security
   - ground_legged quadruped security
+  - ground legged quadruped security
+  - smart quadruped security
+  - quadruped security platform
+  - automated quadruped security
+  - robotic quadruped security
+  - legged robot
+  - walking robot
+  - biped
+  - humanoid robot
+  - legged platform
+  - spot-like robot
   descriptions:
   - quadruped security system
   - autonomous quadruped security
+  - system for quadruped security applications
+  - ground legged platform using quadruped security technology
+  - intelligent quadruped security solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
   application:
   - quadruped security
   - ground_legged automation
+  - quadruped security automation
+  - real-time quadruped security
+  - quadruped security monitoring
+  - quadruped security detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
   industry:
   - ground_legged
   - quadruped security
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
   components:
   - lidar
   - imu
   - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
   related:
   - ground_legged
   - quadruped
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
 classification:
   locomotion: ground.legged
   manipulation: none

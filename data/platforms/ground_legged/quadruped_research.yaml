@@ -10,22 +10,68 @@ keywords:
   - quadruped research
   - quadruped research
   - ground_legged quadruped research
+  - ground legged quadruped research
+  - smart quadruped research
+  - quadruped research platform
+  - automated quadruped research
+  - robotic quadruped research
+  - legged robot
+  - walking robot
+  - biped
+  - humanoid robot
+  - legged platform
+  - spot-like robot
   descriptions:
   - quadruped research system
   - autonomous quadruped research
+  - system for quadruped research applications
+  - ground legged platform using quadruped research technology
+  - intelligent quadruped research solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
   application:
   - quadruped research
   - ground_legged automation
+  - quadruped research automation
+  - real-time quadruped research
+  - quadruped research monitoring
+  - quadruped research detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
   industry:
   - ground_legged
   - quadruped research
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
   components:
   - lidar
   - imu
   - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
   related:
   - ground_legged
   - quadruped
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
 classification:
   locomotion: ground.legged
   manipulation: none

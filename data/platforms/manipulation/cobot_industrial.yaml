@@ -10,21 +10,67 @@ keywords:
   - cobot industrial
   - cobot industrial
   - manipulation cobot industrial
+  - smart cobot industrial
+  - cobot industrial platform
+  - automated cobot industrial
+  - robotic cobot industrial
+  - cobot industrial robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - collaborative robot
+  - industrial robot arm
+  - pick and place robot
   descriptions:
   - cobot industrial system
   - autonomous cobot industrial
+  - system for cobot industrial applications
+  - manipulation platform using cobot industrial technology
+  - intelligent cobot industrial solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - cobot industrial
   - manipulation automation
+  - cobot industrial automation
+  - real-time cobot industrial
+  - cobot industrial monitoring
+  - cobot industrial detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
   industry:
   - manipulation
   - cobot industrial
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - cobot
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

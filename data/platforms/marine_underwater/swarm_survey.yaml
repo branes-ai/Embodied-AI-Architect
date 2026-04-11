@@ -10,22 +10,68 @@ keywords:
   - swarm survey
   - swarm survey
   - marine_underwater swarm survey
+  - marine underwater swarm survey
+  - smart swarm survey
+  - swarm survey platform
+  - automated swarm survey
+  - robotic swarm survey
+  - AUV
+  - autonomous underwater vehicle
+  - ROV
+  - remotely operated vehicle
+  - submersible
+  - underwater drone
   descriptions:
   - swarm survey system
   - autonomous swarm survey
+  - system for swarm survey applications
+  - marine underwater platform using swarm survey technology
+  - intelligent swarm survey solution
+  - autonomous underwater vehicle for subsea inspection and survey
+  - remotely operated underwater robot for deep-sea operations
   application:
   - swarm survey
   - marine_underwater automation
+  - swarm survey automation
+  - real-time swarm survey
+  - swarm survey monitoring
+  - swarm survey detection
+  - subsea inspection
+  - pipeline inspection
+  - hull inspection
+  - oceanographic survey
+  - mine countermeasures
+  - wreck exploration
+  - coral reef monitoring
+  - dam inspection
   industry:
   - marine_underwater
   - swarm survey
+  - subsea
+  - offshore oil and gas
+  - oceanography
+  - marine archaeology
+  - defense
+  - aquaculture
   components:
   - imu
   - sonar
   - depth_sensor
+  - depth sensor
+  - DVL
+  - thruster
+  - pressure hull
+  - manipulator
+  - sample collector
   related:
   - marine_underwater
   - swarm
+  - depth rating
+  - acoustic navigation
+  - USBL
+  - INS
+  - buoyancy control
+  - tether management
 classification:
   locomotion: marine.underwater
   manipulation: none

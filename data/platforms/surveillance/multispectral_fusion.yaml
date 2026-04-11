@@ -10,20 +10,64 @@ keywords:
   - multispectral fusion
   - multispectral fusion
   - surveillance multispectral fusion
+  - smart multispectral fusion
+  - multispectral fusion platform
+  - automated multispectral fusion
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
   descriptions:
   - multispectral fusion system
   - autonomous multispectral fusion
+  - system for multispectral fusion applications
+  - surveillance platform using multispectral fusion technology
+  - intelligent multispectral fusion solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
   application:
   - multispectral fusion
   - surveillance automation
+  - multispectral fusion automation
+  - real-time multispectral fusion
+  - multispectral fusion monitoring
+  - multispectral fusion detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
   industry:
   - surveillance
   - multispectral fusion
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
   components:
   - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
   related:
   - surveillance
   - multispectral
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

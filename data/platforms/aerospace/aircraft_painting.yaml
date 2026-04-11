@@ -10,21 +10,65 @@ keywords:
   - aircraft painting
   - aircraft painting
   - aerospace aircraft painting
+  - smart aircraft painting
+  - aircraft painting platform
+  - automated aircraft painting
+  - spacecraft
+  - satellite
+  - launch vehicle
+  - space system
+  - orbital platform
+  - space robot
   descriptions:
   - aircraft painting system
   - autonomous aircraft painting
+  - system for aircraft painting applications
+  - aerospace platform using aircraft painting technology
+  - intelligent aircraft painting solution
+  - space-grade autonomous system for orbital operations
+  - radiation-hardened platform for space missions
   application:
   - aircraft painting
   - aerospace automation
+  - aircraft painting automation
+  - real-time aircraft painting
+  - aircraft painting monitoring
+  - aircraft painting detection
+  - orbital maneuvering
+  - satellite servicing
+  - space debris removal
+  - on-orbit assembly
+  - Earth observation
+  - deep space exploration
+  - space station maintenance
+  - rendezvous and docking
   industry:
   - aerospace
   - aircraft painting
+  - space industry
+  - defense aerospace
+  - satellite communications
+  - space exploration
+  - NewSpace
+  - launch services
   components:
   - force_torque
   - laser_tracker
+  - star tracker
+  - reaction wheel
+  - sun sensor
+  - radiation-hardened processor
+  - solar panel
+  - thruster
   related:
   - aerospace
   - aircraft
+  - orbital mechanics
+  - space radiation
+  - thermal vacuum
+  - microgravity
+  - debris tracking
+  - TLE
 classification:
   locomotion: stationary.gantry
   manipulation: none

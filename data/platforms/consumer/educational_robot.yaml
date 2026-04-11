@@ -10,22 +10,66 @@ keywords:
   - educational robot
   - educational robot
   - consumer educational robot
+  - smart educational robot
+  - educational robot platform
+  - automated educational robot
+  - consumer robot
+  - home robot
+  - personal robot
+  - household robot
+  - smart home device
+  - domestic robot
   descriptions:
   - educational robot system
   - autonomous educational robot
+  - system for educational robot applications
+  - consumer platform using educational robot technology
+  - intelligent educational robot solution
+  - consumer robotic device for everyday home use
+  - smart home robot with autonomous operation capabilities
   application:
   - educational robot
   - consumer automation
+  - educational robot automation
+  - real-time educational robot
+  - educational robot monitoring
+  - educational robot detection
+  - home cleaning
+  - lawn care
+  - pool cleaning
+  - entertainment
+  - home security
+  - pet care
+  - cooking assistance
+  - education
   industry:
   - consumer
   - educational robot
+  - consumer electronics
+  - home appliances
+  - smart home
+  - IoT
+  - consumer robotics
+  - home automation
   components:
   - lidar
   - camera
   - imu
+  - Wi-Fi module
+  - speaker
+  - microphone
+  - LED display
+  - rechargeable battery
+  - charging dock
   related:
   - consumer
   - educational
+  - app control
+  - voice assistant
+  - smart home integration
+  - OTA update
+  - user-friendly
+  - companion app
 classification:
   locomotion: ground.wheeled
   manipulation: none

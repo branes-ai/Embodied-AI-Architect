@@ -10,22 +10,66 @@ keywords:
   - robot lawn mower
   - robot lawn mower
   - consumer robot lawn mower
+  - smart robot lawn mower
+  - robot lawn mower platform
+  - automated robot lawn mower
+  - consumer robot
+  - home robot
+  - personal robot
+  - household robot
+  - smart home device
+  - domestic robot
   descriptions:
   - robot lawn mower system
   - autonomous robot lawn mower
+  - system for robot lawn mower applications
+  - consumer platform using robot lawn mower technology
+  - intelligent robot lawn mower solution
+  - consumer robotic device for everyday home use
+  - smart home robot with autonomous operation capabilities
   application:
   - robot lawn mower
   - consumer automation
+  - robot lawn mower automation
+  - real-time robot lawn mower
+  - robot lawn mower monitoring
+  - robot lawn mower detection
+  - home cleaning
+  - lawn care
+  - pool cleaning
+  - entertainment
+  - home security
+  - pet care
+  - cooking assistance
+  - education
   industry:
   - consumer
   - robot lawn mower
+  - consumer electronics
+  - home appliances
+  - smart home
+  - IoT
+  - consumer robotics
+  - home automation
   components:
   - lidar
   - camera
   - imu
+  - Wi-Fi module
+  - speaker
+  - microphone
+  - LED display
+  - rechargeable battery
+  - charging dock
   related:
   - consumer
   - robot
+  - app control
+  - voice assistant
+  - smart home integration
+  - OTA update
+  - user-friendly
+  - companion app
 classification:
   locomotion: ground.wheeled
   manipulation: none

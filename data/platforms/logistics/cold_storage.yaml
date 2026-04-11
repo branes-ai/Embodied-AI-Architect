@@ -10,22 +10,68 @@ keywords:
   - cold storage
   - cold storage
   - logistics cold storage
+  - smart cold storage
+  - cold storage platform
+  - automated cold storage
+  - robotic cold storage
+  - cold storage robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - cold storage system
   - autonomous cold storage
+  - system for cold storage applications
+  - logistics platform using cold storage technology
+  - intelligent cold storage solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - cold storage
   - logistics automation
+  - cold storage automation
+  - real-time cold storage
+  - cold storage monitoring
+  - cold storage detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
   industry:
   - logistics
   - cold storage
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - cold
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

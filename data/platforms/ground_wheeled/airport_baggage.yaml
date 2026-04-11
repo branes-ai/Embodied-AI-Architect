@@ -10,22 +10,68 @@ keywords:
   - airport baggage
   - airport baggage
   - ground_wheeled airport baggage
+  - ground wheeled airport baggage
+  - smart airport baggage
+  - airport baggage platform
+  - automated airport baggage
+  - robotic airport baggage
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
   descriptions:
   - airport baggage system
   - autonomous airport baggage
+  - system for airport baggage applications
+  - ground wheeled platform using airport baggage technology
+  - intelligent airport baggage solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
   application:
   - airport baggage
   - ground_wheeled automation
+  - airport baggage automation
+  - real-time airport baggage
+  - airport baggage monitoring
+  - airport baggage detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
   industry:
   - ground_wheeled
   - airport baggage
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
   components:
   - lidar
   - imu
   - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
   related:
   - ground_wheeled
   - airport
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
 classification:
   locomotion: ground.wheeled
   manipulation: none

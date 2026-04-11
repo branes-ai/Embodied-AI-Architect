@@ -10,22 +10,68 @@ keywords:
   - truck loading
   - truck loading
   - logistics truck loading
+  - smart truck loading
+  - truck loading platform
+  - automated truck loading
+  - robotic truck loading
+  - truck loading robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
   descriptions:
   - truck loading system
   - autonomous truck loading
+  - system for truck loading applications
+  - logistics platform using truck loading technology
+  - intelligent truck loading solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
   application:
   - truck loading
   - logistics automation
+  - truck loading automation
+  - real-time truck loading
+  - truck loading monitoring
+  - truck loading detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - inventory management
+  - cycle counting
   industry:
   - logistics
   - truck loading
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
   components:
   - lidar
   - camera
   - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
   related:
   - logistics
   - truck
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
 classification:
   locomotion: ground.wheeled
   manipulation: none

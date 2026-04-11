@@ -10,22 +10,68 @@ keywords:
   - home companion
   - home companion
   - consumer home companion
+  - smart home companion
+  - home companion platform
+  - automated home companion
+  - robotic home companion
+  - home companion robot
+  - consumer robot
+  - home robot
+  - personal robot
+  - household robot
+  - smart home device
+  - domestic robot
   descriptions:
   - home companion system
   - autonomous home companion
+  - system for home companion applications
+  - consumer platform using home companion technology
+  - intelligent home companion solution
+  - consumer robotic device for everyday home use
+  - smart home robot with autonomous operation capabilities
   application:
   - home companion
   - consumer automation
+  - home companion automation
+  - real-time home companion
+  - home companion monitoring
+  - home companion detection
+  - home cleaning
+  - lawn care
+  - pool cleaning
+  - entertainment
+  - home security
+  - pet care
+  - cooking assistance
+  - education
   industry:
   - consumer
   - home companion
+  - consumer electronics
+  - home appliances
+  - smart home
+  - IoT
+  - consumer robotics
+  - home automation
   components:
   - lidar
   - camera
   - imu
+  - Wi-Fi module
+  - speaker
+  - microphone
+  - LED display
+  - rechargeable battery
+  - charging dock
   related:
   - consumer
   - home
+  - app control
+  - voice assistant
+  - smart home integration
+  - OTA update
+  - user-friendly
+  - companion app
 classification:
   locomotion: ground.wheeled
   manipulation: none

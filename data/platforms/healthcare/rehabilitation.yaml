@@ -10,21 +10,63 @@ keywords:
   - rehabilitation
   - rehabilitation
   - healthcare rehabilitation
+  - smart rehabilitation
+  - rehabilitation platform
+  - automated rehabilitation
+  - healthcare robot
+  - medical robot
+  - hospital robot
+  - clinical robot
+  - health-tech platform
   descriptions:
   - rehabilitation system
   - autonomous rehabilitation
+  - system for rehabilitation applications
+  - healthcare platform using rehabilitation technology
+  - intelligent rehabilitation solution
+  - robot platform for healthcare delivery and clinical support
+  - medical automation system for hospital environments
   application:
   - rehabilitation
   - healthcare automation
+  - rehabilitation automation
+  - real-time rehabilitation
+  - rehabilitation monitoring
+  - rehabilitation detection
+  - patient monitoring
+  - telemedicine
+  - medication dispensing
+  - surgical assistance
+  - disinfection
+  - specimen transport
+  - vital signs monitoring
+  - patient lifting
   industry:
   - healthcare
   - rehabilitation
+  - hospital
+  - clinical
+  - medical devices
+  - pharma
+  - health-tech
   components:
   - lidar
   - camera
+  - UV-C lamp
+  - vital signs sensor
+  - touch screen
+  - antimicrobial surface
+  - medical-grade enclosure
+  - sterile interface
   related:
   - healthcare
   - rehabilitation
+  - HIPAA
+  - FDA clearance
+  - clinical workflow
+  - EHR integration
+  - patient safety
+  - infection control
 classification:
   locomotion: ground.wheeled
   manipulation: none

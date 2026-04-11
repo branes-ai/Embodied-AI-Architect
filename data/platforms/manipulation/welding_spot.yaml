@@ -10,21 +10,67 @@ keywords:
   - welding spot
   - welding spot
   - manipulation welding spot
+  - smart welding spot
+  - welding spot platform
+  - automated welding spot
+  - robotic welding spot
+  - welding spot robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - welding spot system
   - autonomous welding spot
+  - system for welding spot applications
+  - manipulation platform using welding spot technology
+  - intelligent welding spot solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - welding spot
   - manipulation automation
+  - welding spot automation
+  - real-time welding spot
+  - welding spot monitoring
+  - welding spot detection
+  - pick and place
+  - assembly
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
+  - polishing
   industry:
   - manipulation
   - welding spot
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - welding
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

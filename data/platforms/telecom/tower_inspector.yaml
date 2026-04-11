@@ -10,21 +10,62 @@ keywords:
   - tower inspector
   - tower inspector
   - telecom tower inspector
+  - smart tower inspector
+  - tower inspector platform
+  - automated tower inspector
+  - telecom robot
+  - cell tower robot
+  - network maintenance robot
+  - telecommunications automation platform
   descriptions:
   - tower inspector system
   - autonomous tower inspector
+  - system for tower inspector applications
+  - telecom platform using tower inspector technology
+  - intelligent tower inspector solution
+  - autonomous platform for telecommunications infrastructure maintenance
+  - robot for cell tower inspection and network equipment servicing
   application:
   - tower inspector
   - telecom automation
+  - tower inspector automation
+  - real-time tower inspector
+  - tower inspector monitoring
+  - tower inspector detection
+  - tower inspection
+  - antenna alignment
+  - cable routing
+  - site survey
+  - spectrum monitoring
+  - small cell installation
+  - fiber optic inspection
+  - network maintenance
   industry:
   - telecom
   - tower inspector
+  - telecommunications
+  - wireless
+  - fiber optics
+  - network infrastructure
+  - tower companies
   components:
   - camera
   - rf_analyzer
+  - spectrum analyzer
+  - antenna
+  - signal meter
+  - climbing mechanism
+  - cable cutter
+  - fiber splicer
   related:
   - telecom
   - tower
+  - RF engineering
+  - antenna pattern
+  - VSWR
+  - tower climbing safety
+  - small cell
+  - mmWave
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

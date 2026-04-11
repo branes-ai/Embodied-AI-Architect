@@ -10,22 +10,65 @@ keywords:
   - street sweeper
   - street sweeper
   - municipal street sweeper
+  - smart street sweeper
+  - street sweeper platform
+  - automated street sweeper
+  - municipal robot
+  - city robot
+  - urban service robot
+  - public works robot
+  - smart city platform
   descriptions:
   - street sweeper system
   - autonomous street sweeper
+  - system for street sweeper applications
+  - municipal platform using street sweeper technology
+  - intelligent street sweeper solution
+  - autonomous municipal service platform for city operations
+  - robot for public works and urban maintenance tasks
   application:
   - street sweeper
   - municipal automation
+  - street sweeper automation
+  - real-time street sweeper
+  - street sweeper monitoring
+  - street sweeper detection
+  - street cleaning
+  - snow removal
+  - pothole detection
+  - park maintenance
+  - public safety patrol
+  - waste collection
+  - graffiti removal
+  - sidewalk delivery
   industry:
   - municipal
   - street sweeper
+  - municipal services
+  - public works
+  - smart city
+  - urban planning
+  - waste management
+  - transportation
   components:
   - lidar
   - camera
   - gps
+  - sweeper brush
+  - snow plow
+  - salt spreader
+  - horn
+  - safety lights
+  - reflectors
   related:
   - municipal
   - street
+  - municipal fleet
+  - public ROW
+  - ADA compliance
+  - sidewalk navigation
+  - urban mobility
+  - city ordinance
 classification:
   locomotion: ground.wheeled
   manipulation: none

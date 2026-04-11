@@ -10,21 +10,67 @@ keywords:
   - plate handler
   - plate handler
   - lab plate handler
+  - smart plate handler
+  - plate handler platform
+  - automated plate handler
+  - robotic plate handler
+  - plate handler robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
   descriptions:
   - plate handler system
   - autonomous plate handler
+  - system for plate handler applications
+  - lab platform using plate handler technology
+  - intelligent plate handler solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
   application:
   - plate handler
   - lab automation
+  - plate handler automation
+  - real-time plate handler
+  - plate handler monitoring
+  - plate handler detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - cell culture
   industry:
   - lab
   - plate handler
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
   components:
   - camera
   - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
   related:
   - lab
   - plate
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
 classification:
   locomotion: stationary.benchtop
   manipulation: none

@@ -10,21 +10,67 @@ keywords:
   - laundry folding
   - laundry folding
   - manipulation laundry folding
+  - smart laundry folding
+  - laundry folding platform
+  - automated laundry folding
+  - robotic laundry folding
+  - laundry folding robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
   descriptions:
   - laundry folding system
   - autonomous laundry folding
+  - system for laundry folding applications
+  - manipulation platform using laundry folding technology
+  - intelligent laundry folding solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
   application:
   - laundry folding
   - manipulation automation
+  - laundry folding automation
+  - real-time laundry folding
+  - laundry folding monitoring
+  - laundry folding detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
   industry:
   - manipulation
   - laundry folding
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
   components:
   - force_torque
   - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
   related:
   - manipulation
   - laundry
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
 classification:
   locomotion: stationary.fixed_mount
   manipulation: none

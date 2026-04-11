@@ -10,22 +10,67 @@ keywords:
   - demolition robot
   - demolition robot
   - ground_tracked demolition robot
+  - ground tracked demolition robot
+  - smart demolition robot
+  - demolition robot platform
+  - automated demolition robot
+  - tracked robot
+  - tracked vehicle
+  - crawler robot
+  - tracked platform
+  - UGV
+  - unmanned ground vehicle
   descriptions:
   - demolition robot system
   - autonomous demolition robot
+  - system for demolition robot applications
+  - ground tracked platform using demolition robot technology
+  - intelligent demolition robot solution
+  - tracked ground robot for challenging terrain operations
+  - unmanned tracked vehicle for hazardous environment tasks
   application:
   - demolition robot
   - ground_tracked automation
+  - demolition robot automation
+  - real-time demolition robot
+  - demolition robot monitoring
+  - demolition robot detection
+  - rough terrain navigation
+  - bomb disposal
+  - mine clearance
+  - pipeline inspection
+  - agricultural tillage
+  - hazmat response
+  - military reconnaissance
+  - cargo transport
   industry:
   - ground_tracked
   - demolition robot
+  - defense
+  - mining
+  - agriculture
+  - construction
+  - public safety
+  - EOD
   components:
   - lidar
   - imu
   - gps
+  - track assembly
+  - drive sprocket
+  - idler wheel
+  - track tensioner
+  - robotic arm
+  - manipulator
   related:
   - ground_tracked
   - demolition
+  - terrain mobility
+  - slip compensation
+  - skid steering
+  - payload capacity
+  - rugged design
+  - all-terrain
 classification:
   locomotion: ground.tracked
   manipulation: none
