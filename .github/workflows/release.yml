@@ -8,6 +8,12 @@ on:
       - "docs-site/**"
       - "docs/**"
       - "*.md"
+  workflow_dispatch:
+    inputs:
+      skip_semantic_release:
+        description: "Skip semantic-release version bump (use current version)"
+        type: boolean
+        default: false
 
 jobs:
   test:
@@ -57,6 +63,7 @@ jobs:
 
       - name: Semantic release version
         id: version
+        if: ${{ !inputs.skip_semantic_release }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -64,15 +71,15 @@ jobs:
           echo "released=$(git diff HEAD~1 --name-only | grep -c pyproject.toml || true)" >> $GITHUB_OUTPUT
 
       - name: Build package
-        if: steps.version.outputs.released != '0'
+        if: steps.version.outputs.released != '0' || inputs.skip_semantic_release
         run: python -m build
 
       - name: Semantic release publish
-        if: steps.version.outputs.released != '0'
+        if: steps.version.outputs.released != '0' && !inputs.skip_semantic_release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: semantic-release publish
 
       - name: Publish to PyPI
-        if: steps.version.outputs.released != '0'
+        if: steps.version.outputs.released != '0' || inputs.skip_semantic_release
         uses: pypa/gh-action-pypi-publish@release/v1
