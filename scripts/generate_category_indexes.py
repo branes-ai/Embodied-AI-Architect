@@ -118,10 +118,6 @@ def generate_category_yaml(category_dir: Path) -> bool:
     category_name = category_dir.name
     n = len(platforms)
 
-    # Pick best description: longest one or first available
-    descriptions = [p.get("description", "") for p in platforms if p.get("description")]
-    description = max(descriptions, key=len) if descriptions else f"{category_name} platforms"
-    # Shorten to a category-level description
     category_desc = f"Shared defaults for {n} {category_name.replace('_', ' ')} platform(s)"
 
     # default_attributes
