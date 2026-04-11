@@ -56,12 +56,15 @@ class TestExistsByName:
 
 class TestDeleteByName:
     def test_delete_by_name(self, store, saved_mission):
-        assert store.delete("vineyard-sprayer")
+        result = store.delete("vineyard-sprayer")
+        assert result
         assert store.load(saved_mission.id) is None
 
     def test_delete_by_id(self, store, saved_mission):
-        assert store.delete(saved_mission.id)
+        result = store.delete(saved_mission.id)
+        assert result
         assert store.load("vineyard-sprayer") is None
 
     def test_delete_nonexistent(self, store):
-        assert not store.delete("nonexistent")
+        result = store.delete("nonexistent")
+        assert not result
