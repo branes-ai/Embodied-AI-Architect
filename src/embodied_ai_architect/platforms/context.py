@@ -133,6 +133,13 @@ def _merge_attributes(attr_list: list[dict[str, Any]]) -> dict[str, Any]:
                 merged[key]["min"] = max(mins)  # tighter: higher minimum
             if maxs:
                 merged[key]["max"] = min(maxs)  # tighter: lower maximum
+            # Clamp: if min > max after merge, swap to keep valid range
+            if "min" in merged[key] and "max" in merged[key]:
+                if merged[key]["min"] > merged[key]["max"]:
+                    merged[key]["min"], merged[key]["max"] = (
+                        merged[key]["max"],
+                        merged[key]["min"],
+                    )
             if typs:
                 merged[key]["typical"] = sum(typs) / len(typs)
         else:
@@ -197,7 +204,7 @@ def _merge_context_blocks(ctx_list: list[dict[str, Any]]) -> dict[str, Any]:
             elif isinstance(val, list) and isinstance(merged[key], list):
                 merged[key] = list(set(merged[key] + val))
             elif isinstance(val, str) and isinstance(merged[key], str):
-                if val not in merged[key]:
+                if val != merged[key] and val not in merged[key].split("; "):
                     merged[key] = merged[key] + "; " + val
     return merged
 
