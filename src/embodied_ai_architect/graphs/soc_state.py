@@ -253,6 +253,7 @@ class SoCDesignState(TypedDict, total=False):
     constraints: dict  # DesignConstraints serialized (TypedDict requires plain types)
     use_case: str  # "delivery_drone", "warehouse_amr", "surgical_robot", etc.
     platform: str  # "drone", "quadruped", "biped", "amr", "edge"
+    platform_context: dict  # Matched platform context from registry (architecture, pitfalls, etc.)
 
     # === Task Graph ===
     task_graph: dict  # TaskGraph serialized via to_dict()
@@ -341,6 +342,7 @@ def create_initial_soc_state(
     rtl_enabled: bool = False,
     rtl_area_feedback: bool = False,
     enable_moo: bool = True,
+    platform_context: Optional[dict] = None,
 ) -> SoCDesignState:
     """Create initial state for a new SoC design session.
 
@@ -366,6 +368,7 @@ def create_initial_soc_state(
         constraints=constraints.model_dump() if constraints else {},
         use_case=use_case,
         platform=platform,
+        platform_context=platform_context or {},
         # Task Graph
         task_graph=task_graph.to_dict(),
         current_task_id="",

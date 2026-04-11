@@ -575,11 +575,17 @@ def design_plan(
 
     constraints = DesignConstraints(**constraint_kwargs) if constraint_kwargs else None
 
+    # Look up platform context from registry
+    from embodied_ai_architect.platforms.context import get_platform_context_for_goal
+
+    platform_ctx = get_platform_context_for_goal(goal)
+
     state = create_initial_soc_state(
         goal=goal,
         constraints=constraints,
         use_case=use_case,
         platform=platform,
+        platform_context=platform_ctx,
     )
 
     # Create planner
@@ -643,27 +649,17 @@ def design_plan(
             return
 
         from embodied_ai_architect.llm.client import LLMClient
-        from embodied_ai_architect.platforms.context import (
-            get_platform_context_for_goal,
-            build_context_prompt,
-        )
 
         llm = LLMClient()
 
-        # Enrich planner prompt with platform registry context
-        platform_ctx = get_platform_context_for_goal(goal)
-        context_prompt = build_context_prompt(platform_ctx)
-        if context_prompt:
-            from embodied_ai_architect.graphs.planner import PLANNER_SYSTEM_PROMPT
-
-            enriched_prompt = PLANNER_SYSTEM_PROMPT + "\n\n" + context_prompt
-            planner = PlannerNode(llm=llm, system_prompt=enriched_prompt)
+        # PlannerNode auto-enriches from state["platform_context"]
+        planner = PlannerNode(llm=llm)
+        if platform_ctx:
             pid = platform_ctx.get("platform_id", "")
             console.print(
                 f"[dim]Platform context loaded: {pid} — " f"calling LLM to decompose goal...[/dim]"
             )
         else:
-            planner = PlannerNode(llm=llm)
             console.print("[dim]Calling LLM to decompose goal into task graph...[/dim]")
 
     try:
