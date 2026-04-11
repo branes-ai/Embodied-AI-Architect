@@ -1,0 +1,50 @@
+id: manipulation.kinova_gen3
+name: "Kinova Gen3"
+category: manipulation
+product_type: robot_arm
+vendor: "Kinova"
+description: "Ultra-lightweight 7-DOF robot arm designed for research and service robotics. Features integrated vision module, ROS2 support, and impedance control. Carbon-fiber links keep weight under 8.2 kg while maintaining 4 kg payload capacity."
+aliases:
+  - "Gen3"
+  - "Kinova Gen3"
+  - "JACO Gen3"
+
+keywords:
+  identity:
+    - kinova
+    - gen3
+    - lightweight arm
+    - 7dof
+    - research arm
+  application:
+    - service robotics
+    - research
+    - assistive robotics
+    - mobile manipulation
+    - education
+
+specifications:
+  weight_kg: 8.2
+  max_payload_kg: 4.0
+  power_watts: 90
+  dof: 7
+  reach_mm: 902
+  repeatability_mm: 0.1
+  operating_temp_c: {min: 5, max: 35}
+
+compute:
+  processor: "Integrated Kinova controller"
+  compute_tops: 0
+
+sensors:
+  - type: "depth_camera"
+    name: "Integrated Intel RealSense Vision Module"
+    resolution: "1920x1080"
+  - type: "torque_sensor"
+    name: "Joint Torque Sensors (x7)"
+  - type: "position_encoder"
+    name: "Joint Encoders (x7)"
+
+pricing:
+  base_price_usd: 30000
+  year: 2024

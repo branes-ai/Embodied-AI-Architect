@@ -1,0 +1,50 @@
+id: consumer.starship_delivery_bot
+name: "Starship Technologies Delivery Robot"
+category: consumer
+product_type: delivery_robot
+vendor: "Starship Technologies"
+description: "Sidewalk delivery robot for last-mile food and package delivery. Six-wheeled design navigates sidewalks, crosswalks, and pedestrian areas autonomously. Features insulated cargo compartment, remote monitoring, and fleet management for university campuses and neighborhoods."
+aliases:
+  - "Starship Bot"
+  - "Starship Delivery"
+
+keywords:
+  identity:
+    - starship
+    - delivery robot
+    - sidewalk robot
+    - last mile
+    - autonomous
+  application:
+    - food delivery
+    - campus delivery
+    - grocery delivery
+    - last-mile delivery
+    - sidewalk navigation
+
+specifications:
+  weight_kg: 23.0
+  max_payload_kg: 10.0
+  power_watts: 50
+  battery_wh: 250
+  max_speed_mps: 1.8
+  ip_rating: "IP54"
+  operating_temp_c: {min: -20, max: 40}
+
+compute:
+  processor: "NVIDIA Jetson + custom compute"
+  compute_tops: 5
+
+sensors:
+  - type: "camera"
+    name: "Surround Cameras (x12)"
+  - type: "ultrasonic"
+    name: "Ultrasonic Sensors (x6)"
+  - type: "radar"
+    name: "Radar Sensor"
+  - type: "imu"
+    name: "IMU/GPS"
+
+pricing:
+  base_price_usd: 5000
+  year: 2024

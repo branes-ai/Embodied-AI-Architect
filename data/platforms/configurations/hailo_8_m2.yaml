@@ -1,0 +1,43 @@
+id: compute.hailo_8_m2
+name: "Hailo-8 M.2 Module"
+category: compute
+product_type: edge_compute
+vendor: "Hailo"
+description: "AI accelerator M.2 module based on the Hailo-8 processor, delivering 26 TOPS at only 2.5W. M.2 form factor enables integration into existing systems including Raspberry Pi 5 via HAT+. Optimized for real-time vision AI with support for multiple neural networks simultaneously."
+aliases:
+  - "Hailo-8"
+  - "Hailo 8 M.2"
+  - "Hailo AI Module"
+
+keywords:
+  identity:
+    - hailo
+    - hailo-8
+    - ai accelerator
+    - m.2 module
+    - npu
+  application:
+    - video analytics
+    - smart camera
+    - edge inference
+    - multi-network inference
+    - surveillance
+    - retail analytics
+
+specifications:
+  weight_kg: 0.008
+  power_watts: 2.5
+  ip_rating: "none"
+  operating_temp_c: {min: 0, max: 80}
+
+compute:
+  processor: "Hailo-8 AI Processor"
+  compute_tops: 26
+  memory_gb: 0
+  storage_gb: 0
+
+sensors: []
+
+pricing:
+  base_price_usd: 100
+  year: 2024

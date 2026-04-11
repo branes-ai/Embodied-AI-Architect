@@ -1,0 +1,51 @@
+id: aerial.dji_agras_t40
+name: "DJI Agras T40"
+category: aerial
+product_type: drone
+vendor: "DJI"
+description: "Agricultural drone with 40 kg spray capacity and 50 kg spreading payload. Features dual atomized spraying system, terrain-following radar, and front/rear phased-array radar for obstacle avoidance. Designed for precision agriculture, orchard spraying, and crop spreading."
+aliases:
+  - "T40"
+  - "Agras T40"
+
+keywords:
+  identity:
+    - dji
+    - agras
+    - t40
+    - agriculture drone
+    - spraying drone
+  application:
+    - precision agriculture
+    - crop spraying
+    - orchard management
+    - fertilizer spreading
+    - pest control
+
+specifications:
+  weight_kg: 28.5
+  max_payload_kg: 50
+  power_watts: 8000
+  battery_wh: 1440
+  flight_time_min: 10
+  max_speed_mps: 15
+  ip_rating: "IP67"
+  operating_temp_c: {min: 0, max: 45}
+
+compute:
+  processor: "DJI proprietary flight controller"
+  compute_tops: 0
+
+sensors:
+  - type: "phased_array_radar"
+    name: "Front/Rear Phased Array Radar"
+  - type: "radar"
+    name: "Terrain-Following Radar"
+  - type: "fpv_camera"
+    name: "FPV Camera"
+  - type: "gnss"
+    name: "RTK GNSS Module"
+
+pricing:
+  base_price_usd: 18500
+  year: 2024

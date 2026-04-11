@@ -1,0 +1,51 @@
+id: humanoid.tesla_optimus_gen2
+name: "Tesla Optimus Gen 2"
+category: humanoid
+product_type: humanoid
+vendor: "Tesla"
+description: "General-purpose humanoid robot with Tesla-designed actuators and AI. Gen 2 features 30% faster walking, 10 kg lighter weight, Tesla-designed hands with 11 DOF, and improved balance using FSD-derived neural networks. Targeting factory and household tasks."
+aliases:
+  - "Optimus"
+  - "Tesla Bot"
+  - "Optimus Gen 2"
+
+keywords:
+  identity:
+    - tesla
+    - optimus
+    - humanoid
+    - tesla bot
+    - general purpose
+  application:
+    - factory automation
+    - household tasks
+    - general purpose
+    - manipulation
+    - logistics
+
+specifications:
+  weight_kg: 57.0
+  max_payload_kg: 9.0
+  power_watts: 500
+  battery_wh: 2300
+  max_speed_mps: 2.2
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "Tesla FSD Computer"
+  compute_tops: 144
+
+sensors:
+  - type: "camera"
+    name: "Tesla Autopilot Cameras (x8)"
+    resolution: "1280x960"
+  - type: "force_torque"
+    name: "Hand Force Sensors"
+  - type: "imu"
+    name: "IMU"
+  - type: "encoder"
+    name: "Joint Encoders (x28)"
+
+pricing:
+  base_price_usd: 20000
+  year: 2024

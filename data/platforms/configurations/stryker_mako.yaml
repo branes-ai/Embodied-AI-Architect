@@ -1,0 +1,46 @@
+id: surgical.stryker_mako
+name: "Stryker Mako SmartRobotics"
+category: surgical
+product_type: surgical_robot
+vendor: "Stryker"
+description: "Robotic-arm assisted surgery system for orthopedic procedures. Features CT-based 3D pre-operative planning, AccuStop haptic boundary technology, and real-time bone tracking. Used for total knee, partial knee, and total hip arthroplasty."
+aliases:
+  - "Mako"
+  - "Mako Robot"
+  - "Mako SmartRobotics"
+
+keywords:
+  identity:
+    - stryker
+    - mako
+    - orthopedic robot
+    - smartrobotics
+    - joint replacement
+  application:
+    - total knee replacement
+    - partial knee replacement
+    - total hip replacement
+    - arthroplasty
+    - orthopedic surgery
+
+specifications:
+  weight_kg: 350.0
+  power_watts: 1500
+  dof: 6
+  operating_temp_c: {min: 15, max: 30}
+
+compute:
+  processor: "Stryker proprietary planning workstation"
+  compute_tops: 0
+
+sensors:
+  - type: "optical_tracker"
+    name: "Infrared Optical Tracking Array"
+  - type: "force_torque"
+    name: "Haptic Force Feedback (AccuStop)"
+  - type: "position_encoder"
+    name: "Joint Encoders"
+
+pricing:
+  base_price_usd: 1000000
+  year: 2024

@@ -1,0 +1,46 @@
+id: surgical.zimmer_biomet_rosa
+name: "Zimmer Biomet ROSA"
+category: surgical
+product_type: surgical_robot
+vendor: "Zimmer Biomet"
+description: "Robotic surgical assistant for knee replacement procedures. Features pre-operative CT or intraoperative X-ray planning, real-time gap balancing, and bone cut guidance. Also available as ROSA Brain for neurosurgical applications."
+aliases:
+  - "ROSA"
+  - "ROSA Knee"
+  - "ROSA Brain"
+
+keywords:
+  identity:
+    - zimmer biomet
+    - rosa
+    - orthopedic robot
+    - knee replacement
+    - neurosurgery
+  application:
+    - total knee arthroplasty
+    - neurosurgery
+    - spine surgery
+    - surgical planning
+    - bone cutting guidance
+
+specifications:
+  weight_kg: 300.0
+  power_watts: 1200
+  dof: 6
+  operating_temp_c: {min: 15, max: 30}
+
+compute:
+  processor: "Zimmer Biomet proprietary planning system"
+  compute_tops: 0
+
+sensors:
+  - type: "optical_tracker"
+    name: "Optical Tracking System"
+  - type: "position_encoder"
+    name: "Joint Encoders"
+  - type: "force_torque"
+    name: "Force Feedback Sensor"
+
+pricing:
+  base_price_usd: 800000
+  year: 2024

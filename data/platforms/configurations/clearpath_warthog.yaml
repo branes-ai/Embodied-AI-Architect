@@ -1,0 +1,49 @@
+id: ugv.clearpath_warthog
+name: "Clearpath Warthog"
+category: ugv
+product_type: wheeled_ugv
+vendor: "Clearpath Robotics"
+description: "Large all-terrain UGV with 272 kg payload capacity and amphibious capability. Four-wheel differential drive with 24-inch tires for traversing extreme terrain including mud, sand, and shallow water. Used in mining, agriculture, and defense research."
+aliases:
+  - "Warthog"
+  - "Clearpath Warthog"
+
+keywords:
+  identity:
+    - clearpath
+    - warthog
+    - all-terrain
+    - amphibious
+    - heavy ugv
+  application:
+    - mining
+    - agriculture
+    - defense
+    - environmental monitoring
+    - extreme terrain
+    - field robotics
+
+specifications:
+  weight_kg: 280.0
+  max_payload_kg: 272.0
+  power_watts: 1200
+  battery_wh: 4800
+  max_speed_mps: 5.0
+  ip_rating: "IP64"
+  operating_temp_c: {min: -30, max: 40}
+
+compute:
+  processor: "User-supplied"
+  compute_tops: 0
+
+sensors:
+  - type: "encoder"
+    name: "Wheel Encoders (x4)"
+  - type: "imu"
+    name: "IMU"
+  - type: "gps"
+    name: "GPS"
+
+pricing:
+  base_price_usd: 45000
+  year: 2024

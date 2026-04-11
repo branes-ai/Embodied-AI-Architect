@@ -1,0 +1,42 @@
+id: compute.nvidia_jetson_orin_nx_devkit
+name: "NVIDIA Jetson Orin NX 16GB"
+category: compute
+product_type: edge_compute
+vendor: "NVIDIA"
+description: "Mid-range Orin edge AI module with 100 TOPS in a compact Jetson NX form factor. Features 8-core Arm Cortex-A78AE, 1024-core Ampere GPU, and 16GB LPDDR5. Popular choice for drone and robotics payloads that need high AI performance in a small footprint."
+aliases:
+  - "Jetson Orin NX"
+  - "Orin NX 16GB"
+
+keywords:
+  identity:
+    - nvidia
+    - jetson
+    - orin nx
+    - edge ai
+    - mid-range
+  application:
+    - drone compute
+    - robotics
+    - edge inference
+    - computer vision
+    - multi-sensor fusion
+    - autonomous navigation
+
+specifications:
+  weight_kg: 0.26
+  power_watts: 25
+  ip_rating: "none"
+  operating_temp_c: {min: -25, max: 80}
+
+compute:
+  processor: "NVIDIA Jetson Orin NX 16GB"
+  compute_tops: 100
+  memory_gb: 16
+  storage_gb: 0
+
+sensors: []
+
+pricing:
+  base_price_usd: 599
+  year: 2024

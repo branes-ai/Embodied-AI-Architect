@@ -1,0 +1,54 @@
+id: ugv.boston_dynamics_spot_arm
+name: "Boston Dynamics Spot with Arm"
+category: ugv
+product_type: quadruped
+vendor: "Boston Dynamics"
+description: "Spot quadruped with integrated manipulation arm for mobile manipulation tasks. The arm adds grasping, door opening, valve turning, and object retrieval capabilities. Features coordinated whole-body control for stable manipulation while walking."
+aliases:
+  - "Spot Arm"
+  - "Spot with Manipulator"
+
+keywords:
+  identity:
+    - boston dynamics
+    - spot
+    - arm
+    - mobile manipulation
+    - quadruped
+  application:
+    - mobile manipulation
+    - valve turning
+    - door opening
+    - sample collection
+    - industrial automation
+
+specifications:
+  weight_kg: 39.0
+  max_payload_kg: 11.0
+  power_watts: 500
+  battery_wh: 605
+  max_speed_mps: 1.6
+  dof: 6
+  reach_mm: 1000
+  ip_rating: "IP54"
+  operating_temp_c: {min: -20, max: 45}
+
+compute:
+  processor: "Intel Core i5 + 2x NVIDIA GPUs"
+  compute_tops: 5
+
+sensors:
+  - type: "stereo_camera"
+    name: "Body Stereo Cameras (x5 pairs)"
+  - type: "depth_camera"
+    name: "Arm Depth Camera"
+  - type: "rgb_camera"
+    name: "Arm Gripper Camera"
+  - type: "force_torque"
+    name: "Arm Force/Torque Sensor"
+  - type: "imu"
+    name: "IMU"
+
+pricing:
+  base_price_usd: 100000
+  year: 2024

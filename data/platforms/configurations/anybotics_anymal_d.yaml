@@ -1,0 +1,57 @@
+id: ugv.anybotics_anymal_d
+name: "ANYbotics ANYmal D"
+category: ugv
+product_type: quadruped
+vendor: "ANYbotics"
+description: "Industrial inspection quadruped robot with IP67 waterproofing and ATEX Zone 1/21 certification for hazardous environments. Features autonomous navigation, 3D LiDAR, pan-tilt-zoom camera, and thermal imaging. Deployed in oil and gas, mining, and chemical plants."
+aliases:
+  - "ANYmal"
+  - "ANYmal D"
+
+keywords:
+  identity:
+    - anybotics
+    - anymal
+    - industrial quadruped
+    - atex
+    - inspection robot
+  application:
+    - industrial inspection
+    - oil and gas
+    - mining
+    - chemical plant
+    - hazardous environment
+    - autonomous patrol
+
+specifications:
+  weight_kg: 50.0
+  max_payload_kg: 10.0
+  power_watts: 450
+  battery_wh: 950
+  max_speed_mps: 1.0
+  ip_rating: "IP67"
+  operating_temp_c: {min: -20, max: 50}
+
+compute:
+  processor: "NVIDIA Jetson AGX Xavier + Intel NUC"
+  compute_tops: 32
+
+sensors:
+  - type: "lidar"
+    name: "Velodyne 3D LiDAR"
+    range_m: 100
+  - type: "ptz_camera"
+    name: "Pan-Tilt-Zoom Inspection Camera"
+  - type: "thermal_camera"
+    name: "Thermal Camera"
+    resolution: "640x512"
+  - type: "depth_camera"
+    name: "Depth Cameras (x4)"
+  - type: "microphone"
+    name: "Acoustic Sensor"
+  - type: "gas_sensor"
+    name: "Gas Detector (optional)"
+
+pricing:
+  base_price_usd: 150000
+  year: 2024

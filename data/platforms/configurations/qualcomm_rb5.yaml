@@ -1,0 +1,43 @@
+id: compute.qualcomm_rb5
+name: "Qualcomm RB5 Robotics Platform"
+category: compute
+product_type: edge_compute
+vendor: "Qualcomm"
+description: "Robotics development platform based on Qualcomm QRB5165 processor. Features heterogeneous compute with Kryo 585 CPU, Adreno 650 GPU, and Hexagon DSP with 15 TOPS AI performance. Includes Wi-Fi 6, 5G modem option, and support for seven concurrent cameras."
+aliases:
+  - "RB5"
+  - "QRB5165"
+  - "Qualcomm Robotics RB5"
+
+keywords:
+  identity:
+    - qualcomm
+    - rb5
+    - qrb5165
+    - robotics platform
+    - heterogeneous compute
+  application:
+    - robotics
+    - drone compute
+    - multi-camera processing
+    - 5g robotics
+    - edge ai
+    - autonomous navigation
+
+specifications:
+  weight_kg: 0.1
+  power_watts: 15
+  ip_rating: "none"
+  operating_temp_c: {min: -20, max: 55}
+
+compute:
+  processor: "Qualcomm QRB5165 (Kryo 585 + Adreno 650 + Hexagon DSP)"
+  compute_tops: 15
+  memory_gb: 8
+  storage_gb: 128
+
+sensors: []
+
+pricing:
+  base_price_usd: 500
+  year: 2024

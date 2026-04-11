@@ -1,0 +1,46 @@
+id: manipulation.ur20
+name: "Universal Robots UR20"
+category: manipulation
+product_type: robot_arm
+vendor: "Universal Robots"
+description: "Next-generation collaborative robot with 20 kg payload and 1750 mm reach. Completely redesigned joint architecture delivers 65% faster cycle times. Built for heavy palletizing, machine tending, and welding applications in high-throughput environments."
+aliases:
+  - "UR20"
+
+keywords:
+  identity:
+    - universal robots
+    - ur20
+    - cobot
+    - collaborative
+    - heavy payload
+  application:
+    - palletizing
+    - heavy machine tending
+    - welding
+    - high throughput
+    - logistics
+
+specifications:
+  weight_kg: 64.0
+  max_payload_kg: 20.0
+  power_watts: 600
+  dof: 6
+  reach_mm: 1750
+  repeatability_mm: 0.05
+  ip_rating: "IP54"
+  operating_temp_c: {min: 0, max: 50}
+
+compute:
+  processor: "UR Control Box (Linux real-time)"
+  compute_tops: 0
+
+sensors:
+  - type: "force_torque"
+    name: "Built-in Force/Torque Sensor"
+  - type: "position_encoder"
+    name: "Joint Encoders (x6)"
+
+pricing:
+  base_price_usd: 52000
+  year: 2024

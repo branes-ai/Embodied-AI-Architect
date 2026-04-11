@@ -1,0 +1,51 @@
+id: amr.6river_chuck
+name: "6 River Systems Chuck"
+category: amr
+product_type: amr
+vendor: "6 River Systems (Shopify)"
+description: "Collaborative mobile robot for warehouse fulfillment. Features touchscreen interface for worker guidance, multi-bin carrying capacity, and cloud-based fleet management. Acquired by Shopify for integrated e-commerce fulfillment."
+aliases:
+  - "Chuck"
+  - "6RS Chuck"
+
+keywords:
+  identity:
+    - 6 river systems
+    - chuck
+    - warehouse robot
+    - fulfillment
+    - shopify
+  application:
+    - order fulfillment
+    - warehouse picking
+    - e-commerce logistics
+    - put-to-light sorting
+    - inventory management
+
+specifications:
+  weight_kg: 90.0
+  max_payload_kg: 40.0
+  power_watts: 120
+  battery_wh: 400
+  max_speed_mps: 1.5
+  ip_rating: "IP20"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "ARM-based onboard computer"
+  compute_tops: 0
+
+sensors:
+  - type: "lidar"
+    name: "2D LiDAR"
+    range_m: 20
+  - type: "depth_camera"
+    name: "Obstacle Detection Camera"
+  - type: "encoder"
+    name: "Wheel Encoders"
+  - type: "touchscreen"
+    name: "Worker Interface Touchscreen"
+
+pricing:
+  base_price_usd: 30000
+  year: 2024

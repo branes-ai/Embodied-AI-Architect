@@ -1,0 +1,56 @@
+id: aerial.dji_matrice_350_rtk
+name: "DJI Matrice 350 RTK"
+category: aerial
+product_type: drone
+vendor: "DJI"
+description: "Enterprise-grade flagship drone with RTK positioning, IP55 weather resistance, and up to 55-minute flight time. Designed for surveying, inspection, and public safety with hot-swappable battery system and triple-redundant propulsion."
+aliases:
+  - "M350 RTK"
+  - "Matrice 350"
+
+keywords:
+  identity:
+    - dji
+    - matrice
+    - m350
+    - rtk
+    - enterprise drone
+  application:
+    - surveying
+    - mapping
+    - inspection
+    - public safety
+    - search and rescue
+    - powerline inspection
+
+specifications:
+  weight_kg: 6.47
+  max_payload_kg: 2.73
+  power_watts: 450
+  battery_wh: 270
+  flight_time_min: 55
+  max_speed_mps: 23
+  ip_rating: "IP55"
+  operating_temp_c: {min: -20, max: 50}
+
+compute:
+  processor: "DJI proprietary flight controller"
+  compute_tops: 0
+
+sensors:
+  - type: "fpv_camera"
+    name: "FPV Camera"
+    resolution: "1920x1080"
+    fps: 30
+  - type: "gnss"
+    name: "RTK GNSS Module"
+  - type: "imu"
+    name: "Redundant IMU (x3)"
+  - type: "barometer"
+    name: "Redundant Barometer"
+  - type: "tof"
+    name: "Infrared Sensing System"
+
+pricing:
+  base_price_usd: 11000
+  year: 2024

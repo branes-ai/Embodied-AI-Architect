@@ -1,0 +1,44 @@
+id: ugv.agilex_ranger_mini_2
+name: "AgileX Ranger Mini 2.0"
+category: ugv
+product_type: wheeled_ugv
+vendor: "AgileX Robotics"
+description: "Compact four-wheel Ackermann-steering UGV for indoor/outdoor research. Supports both Ackermann and skid-steer modes. Lightweight and maneuverable for SLAM, navigation research, and multi-robot coordination."
+aliases:
+  - "Ranger Mini 2"
+  - "Ranger Mini 2.0"
+
+keywords:
+  identity:
+    - agilex
+    - ranger mini
+    - compact ugv
+    - ackermann
+    - research robot
+  application:
+    - indoor navigation
+    - slam
+    - multi-robot
+    - education
+    - rapid prototyping
+
+specifications:
+  weight_kg: 18.0
+  max_payload_kg: 10.0
+  power_watts: 70
+  battery_wh: 220
+  max_speed_mps: 2.0
+  ip_rating: "IP22"
+  operating_temp_c: {min: -10, max: 40}
+
+compute:
+  processor: "User-supplied"
+  compute_tops: 0
+
+sensors:
+  - type: "encoder"
+    name: "Wheel Encoders (x4)"
+
+pricing:
+  base_price_usd: 4500
+  year: 2024

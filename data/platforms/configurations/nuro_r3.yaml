@@ -1,0 +1,55 @@
+id: consumer.nuro_r3
+name: "Nuro R3"
+category: consumer
+product_type: delivery_vehicle
+vendor: "Nuro"
+description: "Third-generation autonomous delivery vehicle with no passenger compartment. Purpose-built for last-mile delivery with two temperature-controlled compartments, exterior airbag for pedestrian safety, and full self-driving capability on public roads."
+aliases:
+  - "R3"
+  - "Nuro R3"
+  - "Nuro Bot"
+
+keywords:
+  identity:
+    - nuro
+    - r3
+    - autonomous delivery
+    - self-driving
+    - last mile
+  application:
+    - grocery delivery
+    - food delivery
+    - pharmacy delivery
+    - last-mile logistics
+    - autonomous delivery
+
+specifications:
+  weight_kg: 590.0
+  max_payload_kg: 230.0
+  power_watts: 3000
+  battery_wh: 25000
+  max_speed_mps: 11.2
+  ip_rating: "IP65"
+  operating_temp_c: {min: -20, max: 50}
+
+compute:
+  processor: "NVIDIA DRIVE Orin"
+  compute_tops: 254
+
+sensors:
+  - type: "lidar"
+    name: "360° LiDAR"
+    range_m: 250
+  - type: "camera"
+    name: "Surround Cameras (x12)"
+    resolution: "2048x1536"
+  - type: "radar"
+    name: "Radar Sensors (x6)"
+  - type: "ultrasonic"
+    name: "Ultrasonic Sensors"
+  - type: "imu"
+    name: "IMU/GNSS"
+
+pricing:
+  base_price_usd: 50000
+  year: 2024

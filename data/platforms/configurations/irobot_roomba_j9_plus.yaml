@@ -1,0 +1,52 @@
+id: consumer.irobot_roomba_j9_plus
+name: "iRobot Roomba j9+"
+category: consumer
+product_type: vacuum_robot
+vendor: "iRobot"
+description: "Premium robot vacuum with automatic dirt disposal, obstacle avoidance using front-facing camera and PrecisionVision Navigation, and smart mapping. Three-stage cleaning system with dual rubber brushes. Self-empties into Clean Base station."
+aliases:
+  - "Roomba j9+"
+  - "j9+"
+  - "Roomba j9 Plus"
+
+keywords:
+  identity:
+    - irobot
+    - roomba
+    - j9
+    - robot vacuum
+    - smart home
+  application:
+    - floor cleaning
+    - home automation
+    - pet hair
+    - smart home
+    - automated cleaning
+
+specifications:
+  weight_kg: 3.4
+  power_watts: 30
+  battery_wh: 50
+  max_speed_mps: 0.3
+  ip_rating: "none"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "iRobot iAdapt 3.0 + PrecisionVision"
+  compute_tops: 0.5
+
+sensors:
+  - type: "camera"
+    name: "Front-Facing PrecisionVision Camera"
+  - type: "lidar"
+    name: "VSLAM Navigation"
+  - type: "cliff_sensor"
+    name: "Cliff Sensors (x4)"
+  - type: "bumper"
+    name: "Contact Bumper Sensor"
+  - type: "dirt_detect"
+    name: "Dirt Detect Sensor"
+
+pricing:
+  base_price_usd: 900
+  year: 2024

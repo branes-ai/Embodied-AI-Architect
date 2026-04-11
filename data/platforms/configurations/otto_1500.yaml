@@ -1,0 +1,48 @@
+id: amr.otto_1500
+name: "OTTO Motors OTTO 1500"
+category: amr
+product_type: amr
+vendor: "OTTO Motors (Rockwell Automation)"
+description: "Heavy-duty AMR with 1500 kg payload capacity for pallet-scale material movement. Features omnidirectional drive for tight spaces, industrial safety system, and integration with Rockwell Automation enterprise systems. IP52 rated for industrial environments."
+aliases:
+  - "OTTO 1500"
+
+keywords:
+  identity:
+    - otto motors
+    - otto 1500
+    - rockwell
+    - heavy amr
+    - industrial
+  application:
+    - pallet transport
+    - heavy manufacturing
+    - automotive logistics
+    - industrial automation
+    - cross-docking
+
+specifications:
+  weight_kg: 600.0
+  max_payload_kg: 1500.0
+  power_watts: 800
+  battery_wh: 2600
+  max_speed_mps: 2.0
+  ip_rating: "IP52"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "Intel-based industrial computer"
+  compute_tops: 0
+
+sensors:
+  - type: "lidar"
+    name: "Safety-rated 2D LiDAR (x2)"
+    range_m: 30
+  - type: "3d_camera"
+    name: "3D Cameras"
+  - type: "encoder"
+    name: "Wheel Encoders"
+
+pricing:
+  base_price_usd: 100000
+  year: 2024

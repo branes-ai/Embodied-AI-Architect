@@ -1,0 +1,53 @@
+id: humanoid.agility_digit
+name: "Agility Robotics Digit"
+category: humanoid
+product_type: humanoid
+vendor: "Agility Robotics"
+description: "Bipedal humanoid robot designed for logistics and warehouse work. Features human-like form factor to operate in human-designed spaces, 16 kg payload capacity, and 16+ DOF for whole-body manipulation. Built at RoboFab, the first humanoid robot factory."
+aliases:
+  - "Digit"
+  - "Agility Digit"
+
+keywords:
+  identity:
+    - agility
+    - digit
+    - humanoid
+    - bipedal
+    - logistics robot
+  application:
+    - warehouse logistics
+    - package handling
+    - tote manipulation
+    - human-designed spaces
+    - last-mile delivery
+
+specifications:
+  weight_kg: 65.0
+  max_payload_kg: 16.0
+  power_watts: 600
+  battery_wh: 2000
+  max_speed_mps: 1.5
+  ip_rating: "IP54"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "Intel + NVIDIA GPU"
+  compute_tops: 20
+
+sensors:
+  - type: "lidar"
+    name: "LiDAR"
+    range_m: 30
+  - type: "depth_camera"
+    name: "Intel RealSense Depth Cameras"
+  - type: "rgb_camera"
+    name: "Head Cameras"
+  - type: "imu"
+    name: "IMU"
+  - type: "force_torque"
+    name: "Wrist Force/Torque Sensors"
+
+pricing:
+  base_price_usd: 250000
+  year: 2024

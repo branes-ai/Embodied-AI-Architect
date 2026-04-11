@@ -1,0 +1,50 @@
+id: amr.amazon_proteus
+name: "Amazon Proteus"
+category: amr
+product_type: amr
+vendor: "Amazon Robotics"
+description: "Autonomous mobile robot designed for Amazon fulfillment centers. First Amazon robot designed to operate safely alongside human workers without containment areas. Features advanced perception, navigation, and GoCarts handling for moving shelving units."
+aliases:
+  - "Proteus"
+  - "Amazon Proteus AMR"
+
+keywords:
+  identity:
+    - amazon
+    - proteus
+    - fulfillment
+    - warehouse robot
+    - amr
+  application:
+    - fulfillment center
+    - warehouse automation
+    - goods transport
+    - human-robot coexistence
+    - e-commerce logistics
+
+specifications:
+  weight_kg: 120.0
+  max_payload_kg: 360.0
+  power_watts: 200
+  battery_wh: 600
+  max_speed_mps: 1.5
+  ip_rating: "IP20"
+  operating_temp_c: {min: 5, max: 40}
+
+compute:
+  processor: "Custom Amazon robotics compute"
+  compute_tops: 5
+
+sensors:
+  - type: "lidar"
+    name: "LiDAR"
+  - type: "depth_camera"
+    name: "Depth Cameras (multiple)"
+  - type: "rgb_camera"
+    name: "Navigation Cameras"
+  - type: "encoder"
+    name: "Wheel Encoders"
+
+pricing:
+  base_price_usd: 50000
+  year: 2024

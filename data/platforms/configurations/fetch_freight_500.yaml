@@ -1,0 +1,51 @@
+id: amr.fetch_freight_500
+name: "Fetch Robotics Freight 500"
+category: amr
+product_type: amr
+vendor: "Fetch Robotics (Zebra Technologies)"
+description: "Industrial AMR with 500 kg payload for heavy material transport. Cloud-managed fleet with autonomous navigation and dynamic obstacle avoidance. Acquired by Zebra Technologies for integration with enterprise automation solutions."
+aliases:
+  - "Freight 500"
+  - "Fetch Freight"
+
+keywords:
+  identity:
+    - fetch
+    - freight
+    - zebra
+    - industrial amr
+    - heavy payload
+  application:
+    - material transport
+    - manufacturing logistics
+    - warehouse automation
+    - pallet movement
+    - cross-docking
+
+specifications:
+  weight_kg: 180.0
+  max_payload_kg: 500.0
+  power_watts: 350
+  battery_wh: 1000
+  max_speed_mps: 2.0
+  ip_rating: "IP20"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "Intel-based onboard computer"
+  compute_tops: 0
+
+sensors:
+  - type: "lidar"
+    name: "2D LiDAR"
+    range_m: 25
+  - type: "3d_camera"
+    name: "3D Camera"
+  - type: "imu"
+    name: "IMU"
+  - type: "encoder"
+    name: "Wheel Encoders"
+
+pricing:
+  base_price_usd: 50000
+  year: 2024

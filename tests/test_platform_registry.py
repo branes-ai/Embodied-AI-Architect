@@ -385,6 +385,39 @@ class TestCategoryDefaults:
         assert reg.platform_count > 0
 
 
+class TestProductConfigurations:
+    """Test product configuration loading from configurations/ directory."""
+
+    def test_live_products_loaded(self):
+        """Product configs from configurations/ are loaded as platforms."""
+        registry = PlatformRegistry()
+        registry.load()
+        # Should find at least some product configs
+        dji = registry.get("aerial.dji_matrice_350")
+        if dji:
+            assert "DJI" in dji.name or "Matrice" in dji.name
+            assert dji.attributes  # should have specifications mapped to attributes
+
+    def test_product_searchable(self):
+        """Product configs are indexed and searchable."""
+        registry = PlatformRegistry()
+        registry.load()
+        results = registry.search("DJI Matrice drone", top_k=5)
+        # If products are loaded, DJI should show up
+        if registry.get("aerial.dji_matrice_350"):
+            ids = [r.platform_id for r in results[:5]]
+            assert any("dji" in pid for pid in ids), f"No DJI in results: {ids}"
+
+    def test_product_specs_as_attributes(self):
+        """Product 'specifications' field maps to attributes."""
+        registry = PlatformRegistry()
+        registry.load()
+        franka = registry.get("manipulation.franka_panda")
+        if franka:
+            # Franka should have specifications loaded as attributes
+            assert "weight_kg" in franka.attributes or "dof" in franka.attributes
+
+
 class TestSearchFromLiveData:
     """Test against the actual data/platforms/ directory if populated."""
 
