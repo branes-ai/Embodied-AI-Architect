@@ -787,12 +787,28 @@ def design_qualify(ctx, goal, mission_id, domain, auto):
 
     # Run the full survey — every question gathers a requirement that matters.
     # Don't short-circuit on early tangibility; complete all questions first.
+    last_question_id = None
+    repeat_count = 0
     while result.next_question:
         q = result.next_question
 
-        if auto and q.default:
+        # Safety guard: detect infinite loops (same question repeating)
+        if q.id == last_question_id:
+            repeat_count += 1
+            if repeat_count > 3:
+                console.print(f"  [yellow]Stuck on '{q.id}', skipping.[/yellow]")
+                result = qualifier.skip(q.id)
+                last_question_id = None
+                repeat_count = 0
+                continue
+        else:
+            last_question_id = q.id
+            repeat_count = 0
+
+        if auto and q.default is not None:
             console.print(f"  [dim]Auto: {q.id} = {q.default}[/dim]")
-            result = qualifier.skip(q.id)
+            # Use answer() not skip() — skip doesn't advance past required questions
+            result = qualifier.answer(q.id, q.default)
             continue
 
         if auto and not q.required:
