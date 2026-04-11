@@ -1,0 +1,52 @@
+id: aerial.dji_mavic_3_enterprise
+name: "DJI Mavic 3 Enterprise"
+category: aerial
+product_type: drone
+vendor: "DJI"
+description: "Compact enterprise drone with mechanical shutter, RTK module support, and 56x hybrid zoom. Available in standard, thermal (M3T), and multispectral (M3M) variants. Foldable design with 45-minute flight time for rapid-deployment inspection and mapping missions."
+aliases:
+  - "Mavic 3E"
+  - "M3E"
+  - "Mavic 3 Enterprise"
+
+keywords:
+  identity:
+    - dji
+    - mavic 3
+    - enterprise
+    - compact drone
+    - foldable
+  application:
+    - rapid inspection
+    - mapping
+    - construction monitoring
+    - precision agriculture
+    - emergency response
+
+specifications:
+  weight_kg: 0.92
+  max_payload_kg: 0
+  power_watts: 100
+  battery_wh: 77
+  flight_time_min: 45
+  max_speed_mps: 21
+  ip_rating: "IP43"
+  operating_temp_c: {min: -10, max: 40}
+
+compute:
+  processor: "DJI proprietary SoC"
+  compute_tops: 0
+
+sensors:
+  - type: "wide_camera"
+    name: "Wide Camera 20MP Mechanical Shutter"
+    resolution: "5280x3956"
+  - type: "zoom_camera"
+    name: "Tele Camera 56x Hybrid Zoom"
+    resolution: "4000x3000"
+  - type: "gnss"
+    name: "RTK GNSS Module (optional)"
+
+pricing:
+  base_price_usd: 4000
+  year: 2024

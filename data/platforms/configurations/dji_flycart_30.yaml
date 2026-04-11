@@ -1,0 +1,51 @@
+id: aerial.dji_flycart_30
+name: "DJI FlyCart 30"
+category: aerial
+product_type: drone
+vendor: "DJI"
+description: "Heavy-lift delivery drone with 30 kg payload capacity in cargo mode and 40 kg via winch. Features dual-battery system for up to 28 km delivery range, IP55 weather resistance, and intelligent route planning. Designed for cargo transport in remote and mountainous terrain."
+aliases:
+  - "FlyCart 30"
+  - "FC30"
+
+keywords:
+  identity:
+    - dji
+    - flycart
+    - fc30
+    - delivery drone
+    - cargo drone
+  application:
+    - cargo delivery
+    - logistics
+    - emergency supply
+    - remote delivery
+    - mountain logistics
+
+specifications:
+  weight_kg: 42.0
+  max_payload_kg: 30
+  power_watts: 12000
+  battery_wh: 3840
+  flight_time_min: 26
+  max_speed_mps: 20
+  ip_rating: "IP55"
+  operating_temp_c: {min: -20, max: 45}
+
+compute:
+  processor: "DJI proprietary flight controller"
+  compute_tops: 0
+
+sensors:
+  - type: "fpv_camera"
+    name: "FPV Camera"
+  - type: "radar"
+    name: "Phased Array Radar"
+  - type: "tof"
+    name: "Infrared Sensing System"
+  - type: "gnss"
+    name: "RTK GNSS Module"
+
+pricing:
+  base_price_usd: 17000
+  year: 2024

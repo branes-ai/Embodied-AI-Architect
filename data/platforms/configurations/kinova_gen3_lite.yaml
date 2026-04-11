@@ -1,0 +1,43 @@
+id: manipulation.kinova_gen3_lite
+name: "Kinova Gen3 Lite"
+category: manipulation
+product_type: robot_arm
+vendor: "Kinova"
+description: "Cost-effective 6-DOF variant of the Kinova Gen3. Simplified design for education and entry-level research with ROS support, integrated controller, and Kinova Kortex API. Ideal for classroom and rapid prototyping applications."
+aliases:
+  - "Gen3 Lite"
+
+keywords:
+  identity:
+    - kinova
+    - gen3 lite
+    - lightweight arm
+    - 6dof
+    - education
+  application:
+    - education
+    - prototyping
+    - basic research
+    - pick and place
+    - classroom
+
+specifications:
+  weight_kg: 5.4
+  max_payload_kg: 0.5
+  power_watts: 60
+  dof: 6
+  reach_mm: 760
+  repeatability_mm: 1.0
+  operating_temp_c: {min: 5, max: 35}
+
+compute:
+  processor: "Integrated Kinova controller"
+  compute_tops: 0
+
+sensors:
+  - type: "position_encoder"
+    name: "Joint Encoders (x6)"
+
+pricing:
+  base_price_usd: 12000
+  year: 2024

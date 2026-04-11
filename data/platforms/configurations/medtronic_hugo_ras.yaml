@@ -1,0 +1,46 @@
+id: surgical.medtronic_hugo_ras
+name: "Medtronic Hugo RAS"
+category: surgical
+product_type: surgical_robot
+vendor: "Medtronic"
+description: "Modular robotic-assisted surgery system with individual arm carts for flexible OR setup. Features Touch Surgery ecosystem for AI-powered surgical analytics, open-architecture instrument platform, and 3D HD visualization with eye-tracking control."
+aliases:
+  - "Hugo"
+  - "Hugo RAS"
+
+keywords:
+  identity:
+    - medtronic
+    - hugo
+    - ras
+    - surgical robot
+    - modular
+  application:
+    - urologic surgery
+    - gynecologic surgery
+    - general surgery
+    - robotic-assisted surgery
+    - minimally invasive
+
+specifications:
+  weight_kg: 750.0
+  power_watts: 2000
+  dof: 7
+  operating_temp_c: {min: 15, max: 30}
+
+compute:
+  processor: "Medtronic proprietary controller"
+  compute_tops: 0
+
+sensors:
+  - type: "stereo_endoscope"
+    name: "3D HD Endoscope"
+    resolution: "1920x1080"
+  - type: "eye_tracking"
+    name: "Eye-Tracking Console Control"
+  - type: "position_encoder"
+    name: "Joint Encoders"
+
+pricing:
+  base_price_usd: 1500000
+  year: 2024

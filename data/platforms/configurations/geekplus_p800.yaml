@@ -1,0 +1,50 @@
+id: amr.geekplus_p800
+name: "Geek+ P800"
+category: amr
+product_type: amr
+vendor: "Geek+"
+description: "Goods-to-person picking robot that lifts and carries shelving units to workers. Part of the PopPick system for automated warehouse fulfillment. Up to 800 kg lift capacity with precision navigation for dense shelf environments."
+aliases:
+  - "P800"
+  - "Geek+ P-Series"
+
+keywords:
+  identity:
+    - geekplus
+    - p800
+    - goods to person
+    - shelf mover
+    - picking robot
+  application:
+    - goods-to-person
+    - warehouse fulfillment
+    - e-commerce
+    - inventory management
+    - shelf transport
+
+specifications:
+  weight_kg: 140.0
+  max_payload_kg: 800.0
+  power_watts: 250
+  battery_wh: 750
+  max_speed_mps: 1.5
+  ip_rating: "IP20"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "ARM-based onboard controller"
+  compute_tops: 0
+
+sensors:
+  - type: "lidar"
+    name: "2D LiDAR"
+  - type: "camera"
+    name: "QR Code Camera"
+  - type: "encoder"
+    name: "Wheel Encoders"
+  - type: "ultrasonic"
+    name: "Ultrasonic Obstacle Sensors"
+
+pricing:
+  base_price_usd: 25000
+  year: 2024

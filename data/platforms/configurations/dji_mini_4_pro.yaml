@@ -1,0 +1,51 @@
+id: aerial.dji_mini_4_pro
+name: "DJI Mini 4 Pro"
+category: aerial
+product_type: drone
+vendor: "DJI"
+description: "Sub-250g consumer drone with 4K/100fps HDR video, 48MP photos, and omnidirectional obstacle sensing. Weighs under 249g for regulatory exemptions in many jurisdictions. Features ActiveTrack 360, Waypoints, and up to 34 minutes of flight time."
+aliases:
+  - "Mini 4 Pro"
+  - "DJI Mini 4"
+
+keywords:
+  identity:
+    - dji
+    - mini
+    - sub-250g
+    - consumer drone
+    - 4k drone
+  application:
+    - aerial photography
+    - videography
+    - travel
+    - recreational flying
+    - real estate
+
+specifications:
+  weight_kg: 0.249
+  max_payload_kg: 0
+  power_watts: 40
+  battery_wh: 31.3
+  flight_time_min: 34
+  max_speed_mps: 16
+  ip_rating: "none"
+  operating_temp_c: {min: -10, max: 40}
+
+compute:
+  processor: "DJI proprietary SoC"
+  compute_tops: 0
+
+sensors:
+  - type: "camera"
+    name: "1/1.3-inch CMOS Camera"
+    resolution: "8064x6048"
+    fps: 100
+  - type: "tof"
+    name: "Omnidirectional Obstacle Sensing"
+  - type: "gnss"
+    name: "GNSS Module (GPS+Galileo+BeiDou)"
+
+pricing:
+  base_price_usd: 760
+  year: 2024

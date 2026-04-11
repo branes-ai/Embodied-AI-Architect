@@ -1,0 +1,45 @@
+id: surgical.intuitive_da_vinci_sp
+name: "Intuitive da Vinci SP"
+category: surgical
+product_type: surgical_robot
+vendor: "Intuitive Surgical"
+description: "Single-port surgical robot system where three multi-jointed instruments and a 3D HD camera all pass through a single 25mm cannula. Enables minimally invasive surgery through a single incision for transoral, transanal, and urologic procedures."
+aliases:
+  - "da Vinci SP"
+  - "daVinci SP"
+  - "Single Port"
+
+keywords:
+  identity:
+    - intuitive
+    - da vinci
+    - sp
+    - single port
+    - surgical robot
+  application:
+    - single-incision surgery
+    - transoral surgery
+    - urologic surgery
+    - oropharyngeal surgery
+    - minimally invasive
+
+specifications:
+  weight_kg: 750.0
+  power_watts: 2000
+  dof: 7
+  operating_temp_c: {min: 15, max: 30}
+
+compute:
+  processor: "Intuitive proprietary real-time controller"
+  compute_tops: 0
+
+sensors:
+  - type: "stereo_endoscope"
+    name: "3D HD Articulating Endoscope"
+    resolution: "1920x1080"
+  - type: "position_encoder"
+    name: "Joint Encoders (per instrument)"
+
+pricing:
+  base_price_usd: 2500000
+  year: 2024

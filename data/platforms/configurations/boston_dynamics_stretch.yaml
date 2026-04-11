@@ -1,0 +1,52 @@
+id: amr.boston_dynamics_stretch
+name: "Boston Dynamics Stretch"
+category: amr
+product_type: logistics_robot
+vendor: "Boston Dynamics"
+description: "Mobile robot designed for warehouse case handling. Features a custom-designed vacuum gripper on a 7-DOF arm mounted on a mobile base. Capable of unloading trucks, building pallets, and moving cases at rates exceeding 800 cases per hour."
+aliases:
+  - "Stretch"
+  - "BD Stretch"
+
+keywords:
+  identity:
+    - boston dynamics
+    - stretch
+    - warehouse robot
+    - case handling
+    - mobile manipulator
+  application:
+    - truck unloading
+    - palletizing
+    - depalletizing
+    - case handling
+    - warehouse automation
+
+specifications:
+  weight_kg: 1200.0
+  max_payload_kg: 23.0
+  power_watts: 2000
+  battery_wh: 7000
+  max_speed_mps: 1.0
+  ip_rating: "IP54"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "Boston Dynamics custom compute"
+  compute_tops: 30
+
+sensors:
+  - type: "depth_camera"
+    name: "Depth Cameras"
+  - type: "lidar"
+    name: "2D LiDAR"
+  - type: "force_torque"
+    name: "Gripper Force Sensors"
+  - type: "encoder"
+    name: "Arm Joint Encoders (x7)"
+  - type: "imu"
+    name: "IMU"
+
+pricing:
+  base_price_usd: 200000
+  year: 2024

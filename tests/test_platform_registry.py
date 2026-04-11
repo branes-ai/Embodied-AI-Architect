@@ -385,6 +385,42 @@ class TestCategoryDefaults:
         assert reg.platform_count > 0
 
 
+class TestProductConfigurations:
+    """Test product configuration loading from configurations/ directory."""
+
+    def test_live_products_loaded(self):
+        """Product configs from configurations/ are loaded as platforms."""
+        registry = PlatformRegistry()
+        registry.load()
+        dji = registry.get("aerial.dji_matrice_350_rtk")
+        assert dji is not None, "DJI Matrice 350 RTK product config not loaded"
+        assert "Matrice" in dji.name
+        assert dji.attributes  # specifications mapped to attributes
+
+    def test_product_searchable(self):
+        """Product configs are indexed and searchable."""
+        registry = PlatformRegistry()
+        registry.load()
+        results = registry.search("DJI Matrice drone", top_k=5)
+        ids = [r.platform_id for r in results[:5]]
+        assert any("dji" in pid for pid in ids), f"No DJI in results: {ids}"
+
+    def test_product_specs_as_attributes(self):
+        """Product 'specifications' field maps to attributes."""
+        registry = PlatformRegistry()
+        registry.load()
+        franka = registry.get("manipulation.franka_research_3")
+        assert franka is not None, "Franka Research 3 product config not loaded"
+        assert "weight_kg" in franka.attributes or "dof" in franka.attributes
+
+    def test_product_count(self):
+        """At least 50 product configs are loaded."""
+        registry = PlatformRegistry()
+        registry.load()
+        config_ids = [p.id for p in registry.list_platforms() if p.raw.get("product_type")]
+        assert len(config_ids) >= 50, f"Only {len(config_ids)} product configs loaded"
+
+
 class TestSearchFromLiveData:
     """Test against the actual data/platforms/ directory if populated."""
 

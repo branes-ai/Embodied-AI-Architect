@@ -1,0 +1,47 @@
+id: manipulation.ur10e
+name: "Universal Robots UR10e"
+category: manipulation
+product_type: robot_arm
+vendor: "Universal Robots"
+description: "Large collaborative robot arm with 12.5 kg payload and 1300 mm reach. Designed for palletizing, machine tending, and heavy-part handling. Maintains collaborative safety features at scale for tasks requiring extended reach and higher payload."
+aliases:
+  - "UR10e"
+  - "UR10"
+
+keywords:
+  identity:
+    - universal robots
+    - ur10e
+    - cobot
+    - collaborative
+    - large arm
+  application:
+    - palletizing
+    - machine tending
+    - heavy assembly
+    - material handling
+    - packaging
+
+specifications:
+  weight_kg: 33.5
+  max_payload_kg: 12.5
+  power_watts: 350
+  dof: 6
+  reach_mm: 1300
+  repeatability_mm: 0.05
+  ip_rating: "IP54"
+  operating_temp_c: {min: 0, max: 50}
+
+compute:
+  processor: "UR Control Box (Linux real-time)"
+  compute_tops: 0
+
+sensors:
+  - type: "force_torque"
+    name: "Built-in Force/Torque Sensor"
+  - type: "position_encoder"
+    name: "Joint Encoders (x6)"
+
+pricing:
+  base_price_usd: 36000
+  year: 2024

@@ -1,0 +1,50 @@
+id: surgical.intuitive_da_vinci_xi
+name: "Intuitive da Vinci Xi"
+category: surgical
+product_type: surgical_robot
+vendor: "Intuitive Surgical"
+description: "Fourth-generation surgical robot system with four overhead-mounted arms on a rotating boom. Features 3D HD endoscopic vision, EndoWrist instruments with 7 DOF, and integrated fluorescence imaging. Used in urology, gynecology, thoracic, and general surgery."
+aliases:
+  - "da Vinci Xi"
+  - "daVinci Xi"
+  - "Xi System"
+
+keywords:
+  identity:
+    - intuitive
+    - da vinci
+    - xi
+    - surgical robot
+    - robotic surgery
+  application:
+    - minimally invasive surgery
+    - urology
+    - gynecology
+    - thoracic surgery
+    - general surgery
+    - prostatectomy
+
+specifications:
+  weight_kg: 871.0
+  power_watts: 2500
+  dof: 7
+  operating_temp_c: {min: 15, max: 30}
+
+compute:
+  processor: "Intuitive proprietary real-time controller"
+  compute_tops: 0
+
+sensors:
+  - type: "stereo_endoscope"
+    name: "3D HD Endoscope"
+    resolution: "1920x1080"
+  - type: "force_estimation"
+    name: "Instrument Force Estimation"
+  - type: "position_encoder"
+    name: "Joint Encoders (per arm)"
+  - type: "fluorescence"
+    name: "Firefly Fluorescence Imaging"
+
+pricing:
+  base_price_usd: 2000000
+  year: 2024

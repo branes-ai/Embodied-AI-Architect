@@ -1,0 +1,58 @@
+id: aerial.autel_evo_max_4t
+name: "Autel EVO Max 4T"
+category: aerial
+product_type: drone
+vendor: "Autel Robotics"
+description: "Enterprise drone with quad-sensor gimbal featuring wide, zoom, thermal, and laser rangefinder. Omnidirectional obstacle avoidance with 3D environment model, SmartTrack tracking, and RTK positioning for precision inspection and public safety missions."
+aliases:
+  - "EVO Max 4T"
+  - "Max 4T"
+
+keywords:
+  identity:
+    - autel
+    - evo max
+    - 4t
+    - quad sensor
+    - enterprise drone
+  application:
+    - inspection
+    - search and rescue
+    - public safety
+    - thermal imaging
+    - surveying
+
+specifications:
+  weight_kg: 1.86
+  max_payload_kg: 0.3
+  power_watts: 200
+  battery_wh: 98.6
+  flight_time_min: 42
+  max_speed_mps: 23
+  ip_rating: "IP43"
+  operating_temp_c: {min: -20, max: 50}
+
+compute:
+  processor: "Qualcomm QRB5165"
+  compute_tops: 15
+
+sensors:
+  - type: "wide_camera"
+    name: "Wide Camera 50MP"
+    resolution: "8192x6144"
+  - type: "zoom_camera"
+    name: "Zoom Camera 160x Hybrid Zoom"
+  - type: "thermal_camera"
+    name: "640x512 Thermal Camera"
+    resolution: "640x512"
+  - type: "laser_rangefinder"
+    name: "Laser Rangefinder"
+    range_m: 1200
+  - type: "tof"
+    name: "Omnidirectional ToF Sensors"
+  - type: "gnss"
+    name: "RTK GNSS Module"
+
+pricing:
+  base_price_usd: 10000
+  year: 2024

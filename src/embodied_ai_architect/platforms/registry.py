@@ -98,17 +98,19 @@ class PlatformRegistry:
         yaml_files = [
             f
             for f in yaml_files
-            if f.name not in ("schema.yaml", "taxonomy.yaml")
-            and not f.name.startswith("_")
-            and "configurations" not in f.parts
+            if f.name not in ("schema.yaml", "taxonomy.yaml") and not f.name.startswith("_")
         ]
 
         for fpath in yaml_files:
             try:
                 with open(fpath) as fh:
                     data = yaml.safe_load(fh)
-                if not data or "id" not in data:
+                if not isinstance(data, dict) or "id" not in data:
                     continue
+                # Product configs use 'specifications' instead of 'attributes'
+                attrs = data.get("attributes", {})
+                if not attrs and "specifications" in data:
+                    attrs = data["specifications"]
                 platform = PlatformDefinition(
                     id=data["id"],
                     name=data.get("name", data["id"]),
@@ -117,7 +119,7 @@ class PlatformRegistry:
                     aliases=data.get("aliases", []),
                     keywords=data.get("keywords", {}),
                     classification=data.get("classification", {}),
-                    attributes=data.get("attributes", {}),
+                    attributes=attrs,
                     implications=data.get("implications", {}),
                     subsystems=data.get("subsystems", {}),
                     context=data.get("context", {}),

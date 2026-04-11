@@ -1,0 +1,56 @@
+id: ugv.turtlebot4
+name: "TurtleBot 4"
+category: ugv
+product_type: wheeled_ugv
+vendor: "Clearpath Robotics / Open Robotics"
+description: "Official ROS 2 reference platform built on iRobot Create 3 base with Raspberry Pi 4. Standard version includes OAK-D stereo camera and 2D LiDAR. The most widely used educational and research robot for learning ROS navigation, SLAM, and autonomous behavior."
+aliases:
+  - "TurtleBot 4"
+  - "TB4"
+  - "TurtleBot4 Standard"
+
+keywords:
+  identity:
+    - turtlebot
+    - ros2
+    - reference platform
+    - clearpath
+    - education
+  application:
+    - ros2 education
+    - slam
+    - navigation research
+    - multi-robot
+    - classroom
+    - prototyping
+
+specifications:
+  weight_kg: 3.8
+  max_payload_kg: 9.0
+  power_watts: 15
+  battery_wh: 46
+  max_speed_mps: 0.31
+  ip_rating: "none"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "Raspberry Pi 4 (4GB)"
+  compute_tops: 0.05
+
+sensors:
+  - type: "stereo_camera"
+    name: "Luxonis OAK-D Pro"
+    resolution: "1280x800"
+  - type: "lidar"
+    name: "RPLIDAR A1M8 2D LiDAR"
+    range_m: 12
+  - type: "imu"
+    name: "OAK-D IMU"
+  - type: "cliff_sensor"
+    name: "Cliff Sensors (x4)"
+  - type: "bumper"
+    name: "Bumper Sensor"
+
+pricing:
+  base_price_usd: 1200
+  year: 2024
