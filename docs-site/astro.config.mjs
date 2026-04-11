@@ -64,6 +64,7 @@ export default defineConfig({
 				{
 					label: 'Features',
 					items: [
+						{ label: 'Mission Management', slug: 'features/mission-management' },
 						{ label: 'Model Analysis', slug: 'features/model-analysis' },
 						{ label: 'Hardware Selection', slug: 'features/hardware-selection' },
 						{ label: 'Roofline Analysis', slug: 'features/roofline-analysis' },
