@@ -75,6 +75,7 @@ class PlatformRegistry:
     def __init__(self, data_dir: Path | str | None = None):
         self._data_dir = Path(data_dir) if data_dir else _DEFAULT_DATA_DIR
         self._platforms: dict[str, PlatformDefinition] = {}
+        self._category_defaults: dict[str, dict[str, Any]] = {}
         # Inverted index: keyword_phrase -> set of platform IDs
         self._keyword_index: dict[str, set[str]] = {}
         # IDF values: log(N / df) for each keyword phrase
@@ -127,9 +128,38 @@ class PlatformRegistry:
             except Exception:
                 logger.warning("Failed to load platform file: %s", fpath, exc_info=True)
 
+        # Load category defaults from _category.yaml files
+        self._load_category_defaults(yaml)
+
+        # Merge category defaults into platforms missing attributes
+        self._apply_category_defaults()
+
         self._build_index()
         self._loaded = True
         logger.info("Loaded %d platforms from %s", len(self._platforms), self._data_dir)
+
+    def _load_category_defaults(self, yaml: Any) -> None:
+        """Load _category.yaml files for each category directory."""
+        self._category_defaults.clear()
+        for cat_file in self._data_dir.rglob("_category.yaml"):
+            try:
+                with open(cat_file) as fh:
+                    data = yaml.safe_load(fh)
+                if isinstance(data, dict) and "category" in data:
+                    self._category_defaults[data["category"]] = data
+            except Exception:
+                logger.warning("Failed to load category file: %s", cat_file, exc_info=True)
+
+    def _apply_category_defaults(self) -> None:
+        """Merge category default_attributes into platforms missing those attributes."""
+        for platform in self._platforms.values():
+            cat_data = self._category_defaults.get(platform.category)
+            if not cat_data:
+                continue
+            defaults = cat_data.get("default_attributes", {})
+            for key, value in defaults.items():
+                if key not in platform.attributes:
+                    platform.attributes[key] = value
 
     def _ensure_loaded(self) -> None:
         if not self._loaded:
@@ -268,6 +298,11 @@ class PlatformRegistry:
         """Return sorted list of unique categories."""
         self._ensure_loaded()
         return sorted({p.category for p in self._platforms.values()})
+
+    def get_category_defaults(self, category: str) -> Optional[dict[str, Any]]:
+        """Return the _category.yaml data for a category, or None."""
+        self._ensure_loaded()
+        return self._category_defaults.get(category)
 
     def list_by_category(self, category: str) -> list[PlatformDefinition]:
         """Return platforms in a given category."""

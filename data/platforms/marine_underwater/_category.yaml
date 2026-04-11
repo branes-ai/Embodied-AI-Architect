@@ -1,0 +1,44 @@
+# Category: marine_underwater
+# Auto-generated index — shared defaults for all marine_underwater platforms
+
+category: marine_underwater
+description: Shared defaults for 6 marine underwater platform(s)
+platform_count: 6
+default_attributes:
+  power_watts:
+    min: 75
+    max: 2500
+    typical: 500
+  weight_kg:
+    min: 5.8
+    max: 1333.3
+    typical: 125
+  cost_usd:
+    min: 34166.7
+    max: 1250000
+    typical: 208333.3
+  latency_ms:
+    min: 16.7
+    max: 500
+    typical: 66.7
+common_classification:
+  locomotion: marine.underwater
+  environment:
+  - coastal
+  - deep_sea
+  - underwater
+  - underwater_deep
+  - underwater_shallow
+common_perception_tasks:
+- anode
+- crack
+- debris
+- dent
+- free_span
+- marine_growth
+- pipeline
+- seabed_feature
+typical_constraints:
+  max_power_watts: 500
+  max_latency_ms: 66.7
+  max_cost_usd: 208333.3

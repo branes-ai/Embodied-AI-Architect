@@ -316,6 +316,75 @@ class TestSearch:
         assert len(matches) <= 2
 
 
+class TestCategoryDefaults:
+    """Test _category.yaml loading and attribute inheritance."""
+
+    def test_category_defaults_loaded(self, sample_platform_dir):
+        """Add a _category.yaml and verify it's loaded."""
+        cat_data = {
+            "category": "surveillance",
+            "description": "Surveillance platforms",
+            "platform_count": 1,
+            "default_attributes": {
+                "power_watts": {"min": 5, "max": 50, "typical": 20},
+                "latency_ms": {"min": 10, "max": 100, "typical": 30},
+                "weight_kg": {"min": 0.5, "max": 5, "typical": 2},
+            },
+        }
+        with open(sample_platform_dir / "surveillance" / "_category.yaml", "w") as f:
+            yaml.dump(cat_data, f)
+
+        reg = PlatformRegistry(data_dir=sample_platform_dir)
+        reg.load()
+        defaults = reg.get_category_defaults("surveillance")
+        assert defaults is not None
+        assert defaults["category"] == "surveillance"
+
+    def test_inherits_missing_attributes(self, sample_platform_dir):
+        """Platform without weight_kg inherits from category default."""
+        cat_data = {
+            "category": "surveillance",
+            "default_attributes": {
+                "weight_kg": {"min": 0.5, "max": 5, "typical": 2},
+            },
+        }
+        with open(sample_platform_dir / "surveillance" / "_category.yaml", "w") as f:
+            yaml.dump(cat_data, f)
+
+        reg = PlatformRegistry(data_dir=sample_platform_dir)
+        reg.load()
+        platform = reg.get("surveillance.edge_vision_box")
+        assert platform is not None
+        # edge_vision_box has power_watts and cost_usd but not weight_kg
+        assert "weight_kg" in platform.attributes
+        assert platform.attributes["weight_kg"]["typical"] == 2
+
+    def test_explicit_attributes_not_overridden(self, sample_platform_dir):
+        """Platform's own attributes take precedence over category defaults."""
+        cat_data = {
+            "category": "surveillance",
+            "default_attributes": {
+                "power_watts": {"min": 1, "max": 10, "typical": 5},
+            },
+        }
+        with open(sample_platform_dir / "surveillance" / "_category.yaml", "w") as f:
+            yaml.dump(cat_data, f)
+
+        reg = PlatformRegistry(data_dir=sample_platform_dir)
+        reg.load()
+        platform = reg.get("surveillance.edge_vision_box")
+        assert platform is not None
+        # edge_vision_box explicitly defines power_watts={min:5, max:30, typical:15}
+        assert platform.attributes["power_watts"]["typical"] == 15  # not overridden to 5
+
+    def test_no_category_file_no_crash(self, sample_platform_dir):
+        """Registry works fine without any _category.yaml files."""
+        reg = PlatformRegistry(data_dir=sample_platform_dir)
+        reg.load()
+        assert reg.get_category_defaults("surveillance") is None
+        assert reg.platform_count > 0
+
+
 class TestSearchFromLiveData:
     """Test against the actual data/platforms/ directory if populated."""
 
@@ -325,3 +394,10 @@ class TestSearchFromLiveData:
         registry.load()
         # Should have at least a few platforms (from the YAML files we create)
         assert registry.platform_count >= 0  # Don't fail if empty yet
+
+    def test_live_category_defaults_loaded(self):
+        """Live registry loads _category.yaml files."""
+        registry = PlatformRegistry()
+        registry.load()
+        # Should have category defaults for at least some categories
+        assert len(registry._category_defaults) > 0

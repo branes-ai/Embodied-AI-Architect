@@ -1,0 +1,31 @@
+# Category: marine
+# Auto-generated index — shared defaults for all marine platforms
+
+category: marine
+description: Shared defaults for 3 marine platform(s)
+platform_count: 3
+default_attributes:
+  power_watts:
+    min: 100
+    max: 5000
+    typical: 500
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+common_classification:
+  locomotion: marine.surface
+  environment:
+  - outdoor_extreme
+typical_constraints:
+  max_power_watts: 500
+  max_latency_ms: 50
+  max_cost_usd: 50000

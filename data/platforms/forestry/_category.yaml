@@ -1,0 +1,41 @@
+# Category: forestry
+# Auto-generated index — shared defaults for all forestry platforms
+
+category: forestry
+description: Shared defaults for 3 forestry platform(s)
+platform_count: 3
+default_attributes:
+  power_watts:
+    min: 233.3
+    max: 11666.7
+    typical: 2333.3
+  weight_kg:
+    min: 67.3
+    max: 2333.3
+    typical: 533.3
+  cost_usd:
+    min: 17333.3
+    max: 500000
+    typical: 83333.3
+  latency_ms:
+    min: 23.3
+    max: 500
+    typical: 100
+common_classification:
+  locomotion: ground.wheeled
+  environment:
+  - forest
+  - hillside
+  - outdoor_rural
+  - outdoor_unstructured
+common_perception_tasks:
+- existing_tree
+- obstacle
+- rock
+- slope
+- stump
+- suitable_planting_spot
+typical_constraints:
+  max_power_watts: 2333.3
+  max_latency_ms: 100
+  max_cost_usd: 83333.3
