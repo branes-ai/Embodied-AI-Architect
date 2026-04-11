@@ -124,12 +124,12 @@ branes actuator search "sprayer pump for agriculture"
 
 ```text
                     Search: sprayer pump for agriculture
-┌────────────────────────┬─────────────────────┬──────────┬───────┐
-│ ID                     │ Name                │ Category │ Score │
-├────────────────────────┼─────────────────────┼──────────┼───────┤
+┌────────────────────────┬──────────────────────┬──────────┬───────┐
+│ ID                     │ Name                 │ Category │ Score │
+├────────────────────────┼──────────────────────┼──────────┼───────┤
 │ fluid.sprayer          │ Agricultural Sprayer │ fluid    │ 1.000 │
-│ fluid.pump             │ Centrifugal Pump    │ fluid    │ 0.456 │
-└────────────────────────┴─────────────────────┴──────────┴───────┘
+│ fluid.pump             │ Centrifugal Pump     │ fluid    │ 0.456 │
+└────────────────────────┴──────────────────────┴──────────┴───────┘
 ```
 
 ```bash
@@ -161,8 +161,8 @@ branes sensor budget vineyard-sprayer
 │ ID                           │ Name                   │ Power │ Weight │ Cost  │
 ├──────────────────────────────┼────────────────────────┼───────┼────────┼───────┤
 │ visual.multispectral_camera  │ Multispectral Camera   │ 5.0W  │ 200g   │ $3000 │
-│ inertial.imu_6dof            │ 6-DOF IMU             │ 0.1W  │ 5g     │ $25   │
-│ position.gps_rtk             │ RTK GPS               │ 1.0W  │ 30g    │ $200  │
+│ inertial.imu_6dof            │ 6-DOF IMU              │ 0.1W  │ 5g     │ $25   │
+│ position.gps_rtk             │ RTK GPS                │ 1.0W  │ 30g    │ $200  │
 ├──────────────────────────────┼────────────────────────┼───────┼────────┼───────┤
 │ TOTAL                        │                        │ 6.1W  │ 235g   │ $3225 │
 └──────────────────────────────┴────────────────────────┴───────┴────────┴───────┘
@@ -212,12 +212,12 @@ Platform context loaded: aerial.agricultural_sprayer
 
 Task Graph (7 tasks, 4 stages)
   t1: Analyze workload          → workload_analyzer
-  t2: Enumerate hardware         → hw_explorer        [after t1]
+  t2: Enumerate hardware         → hw_explorer           [after t1]
   t3: Compose architecture       → architecture_composer [after t2]
-  t4: Explore Pareto frontier    → moo_explorer        [after t2]
-  t5: Assess PPA metrics         → ppa_assessor        [after t3, t4]
-  t6: Review design              → critic              [after t5]
-  t7: Generate report            → report_generator    [after t6]
+  t4: Explore Pareto frontier    → moo_explorer          [after t2]
+  t5: Assess PPA metrics         → ppa_assessor          [after t3, t4]
+  t6: Review design              → critic                [after t5]
+  t7: Generate report            → report_generator      [after t6]
 
 Mission 'vineyard-sprayer' updated → designed
 ```
