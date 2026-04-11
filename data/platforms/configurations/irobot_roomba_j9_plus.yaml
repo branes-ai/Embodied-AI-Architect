@@ -38,8 +38,8 @@ compute:
 sensors:
   - type: "camera"
     name: "Front-Facing PrecisionVision Camera"
-  - type: "lidar"
-    name: "VSLAM Navigation"
+  - type: "camera"
+    name: "VSLAM Navigation Camera"
   - type: "cliff_sensor"
     name: "Cliff Sensors (x4)"
   - type: "bumper"
