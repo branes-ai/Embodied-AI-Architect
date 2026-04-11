@@ -43,6 +43,35 @@ As Product Architect, you need to identify performance and energy-efficiency req
 	</Card>
 </CardGrid>
 
+## Mission-Driven Design Lifecycle
+
+The Branes platform organizes design work around **missions** — persistent entities
+that capture your goal, constraints, and component selections across sessions.
+
+```bash
+# Define what to build
+branes mission new my-drone --goal "Drone perception SoC for YOLO at 30fps under 5W"
+
+# Derive constraints from the goal
+branes design qualify --mission my-drone --auto
+
+# Search and select sensors
+branes sensor search "stereo camera for VIO"
+branes sensor select my-drone visual.stereo_camera inertial.imu_6dof
+
+# Generate a design plan
+branes design plan --mission my-drone --static
+
+# Synthesize and validate
+branes synthesize system my-drone
+branes validate mission my-drone
+```
+
+Every command operates on the same mission entity. State flows forward through
+7 lifecycle phases: **Define → Qualify → Select → Synthesize → Analyze → Optimize → Validate**.
+
+[Follow the full tutorial →](./tutorials/mission-workflow/)
+
 ## Why Custom Matters
 
 Commodity AI hardware serves commodity use cases. But breakthrough products—autonomous vehicles, surgical robots, industrial drones—require **purpose-built solutions** that optimize the entire stack:
@@ -104,8 +133,8 @@ The Embodied AI Architect is the design interface to the **Branes Embodied AI Pl
 	<Card title="Design & Analysis" icon="pencil">
 		Roofline modeling, constraint checking, architecture exploration, competitive benchmarking
 	</Card>
-	<Card title="Hardware Catalog" icon="seti:folder">
-		50+ COTS platforms with calibrated performance data, plus custom accelerator modeling
+	<Card title="Hardware & Component Catalog" icon="seti:folder">
+		328 platforms, 80 sensors, 80 actuators, 62 product configs — all searchable with TF-IDF matching
 	</Card>
 	<Card title="Pre-Silicon Targets" icon="seti:config">
 		Model custom accelerators before tape-out. Validate architectures against requirements early.
@@ -125,6 +154,7 @@ The Embodied AI Architect is the design interface to the **Branes Embodied AI Pl
 ## Get Started
 
 1. [Understand the platform](./getting-started/introduction/)
-2. [Install and run your first analysis](./getting-started/installation/)
-3. [Explore the hardware catalog](./catalog/hardware/)
-4. [See what custom silicon enables](./tutorials/)
+2. [Install and run your first mission](./getting-started/quickstart/)
+3. [Follow the mission workflow tutorial](./tutorials/mission-workflow/)
+4. [Explore the hardware catalog](./catalog/hardware/)
+5. [Browse the CLI reference](./reference/cli/)

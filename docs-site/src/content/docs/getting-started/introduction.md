@@ -31,7 +31,8 @@ The Architect isn't just a tool—it's an AI that reasons about your requirement
 
 We analyze solutions across **commercial off-the-shelf** platforms (NVIDIA Jetson, Google Coral, Hailo, Intel) **and** custom AI accelerators:
 
-- **50+ COTS platforms** with calibrated performance data
+- **328 platform definitions** across 36 categories with 62 real-product configs
+- **80 sensors** and **80 actuators** searchable via TF-IDF keyword matching
 - **Pre-silicon modeling** for custom accelerators before tape-out
 - **Comparative analysis** across your options and competitor systems
 
@@ -43,17 +44,24 @@ Our characterization methodology lets you predict performance, cost, and energy 
 - Generate quantitative competitive analysis
 - Validate your differentiation before you build
 
-### 4. Full Lifecycle Support
+### 4. Mission-Driven Design Lifecycle
 
-From concept through production:
+The platform organizes all work around **missions** — persistent design entities
+that flow through 7 lifecycle phases:
 
-| Phase | What the Architect Does |
-|-------|------------------------|
-| **Design** | Explore hardware options, model architectures, quantization strategies |
-| **Analysis** | Roofline modeling, bottleneck identification, constraint checking |
-| **Optimization** | Recommend optimizations with predicted impact |
-| **Deployment** | Generate deployment configurations, quantization, runtime setup |
-| **Validation** | Verify deployed performance matches predictions |
+| Phase | Command | What happens |
+|-------|---------|-------------|
+| **Define** | `branes mission new` | Create a named mission with a goal |
+| **Qualify** | `branes design qualify --mission` | Derive constraints, match platforms |
+| **Select** | `branes sensor/actuator select` | Choose components from registries |
+| **Synthesize** | `branes synthesize system` | Compose architecture from selections |
+| **Analyze** | `branes analyze-system` | Power, latency, thermal, SWaP-C checks |
+| **Optimize** | `branes optimize explore --mission` | Multi-objective Pareto exploration |
+| **Validate** | `branes validate mission` | Verify all constraints pass |
+
+Every command reads from and writes to the same mission. State persists across
+sessions — you can close the terminal, come back tomorrow, and pick up where
+you left off.
 
 ## Why Custom Matters
 
@@ -97,5 +105,7 @@ The Embodied AI Architect is the design interface to the **Branes Embodied AI Pl
 ## Next Steps
 
 - [Install the platform](/getting-started/installation/)
-- [Run your first analysis](/getting-started/quickstart/)
+- [Run your first mission](/getting-started/quickstart/)
+- [Follow the mission workflow tutorial](/tutorials/mission-workflow/)
 - [Explore the hardware catalog](/catalog/hardware/)
+- [Browse the CLI reference](/reference/cli/)
