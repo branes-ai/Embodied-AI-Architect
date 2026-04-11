@@ -329,6 +329,59 @@ Get the status and progress of an optimization session.
 }
 ```
 
+## Mission Integration
+
+The `mcp analyze` and `mcp latency` CLI commands support the `--mission` flag,
+which loads the model and hardware from the mission's `selected_models` and
+`selected_compute` fields.
+
+### How it works
+
+When you run `branes mcp analyze --mission vineyard-sprayer`, the command:
+
+1. Loads the mission from `.branes/missions/vineyard-sprayer/manifest.json`
+2. Reads `selected_models[0]` as the model name (e.g., `yolov8n`)
+3. Reads `selected_compute` as the hardware name (e.g., `jetson_orin_nano`)
+4. Runs the analysis with those defaults
+
+Explicit positional arguments override mission values:
+
+```bash
+# Uses mission's model and hardware
+branes mcp analyze --mission vineyard-sprayer
+
+# Uses mission's hardware but overrides the model
+branes mcp analyze yolov8s --mission vineyard-sprayer
+
+# Explicit latency check with mission context
+branes mcp latency --mission vineyard-sprayer
+```
+
+### Setting up a mission for MCP
+
+```bash
+# Create and qualify a mission
+branes mission new my-drone --goal "Drone perception SoC"
+branes design qualify --mission my-drone --auto
+
+# Set compute and model selections
+branes mission edit my-drone --selected-compute jetson_orin_nano
+# (selected_models can be set via mission edit or sensor/model select)
+
+# Now MCP commands can load from the mission
+branes mcp analyze --mission my-drone
+branes mcp latency --mission my-drone
+```
+
+### Mission fields used by MCP
+
+| Field | MCP Command | Maps to |
+|-------|-------------|---------|
+| `selected_compute` | `mcp analyze`, `mcp latency` | `hardware_name` argument |
+| `selected_models[0]` | `mcp analyze`, `mcp latency` | `model_name` argument |
+
+For the full CLI reference, see [CLI: mcp](/reference/cli/#mcp).
+
 ## Using with Claude Desktop
 
 Add to `claude_desktop_config.json`:
