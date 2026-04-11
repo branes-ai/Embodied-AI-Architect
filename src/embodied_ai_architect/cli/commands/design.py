@@ -575,11 +575,17 @@ def design_plan(
 
     constraints = DesignConstraints(**constraint_kwargs) if constraint_kwargs else None
 
+    # Look up platform context from registry
+    from embodied_ai_architect.platforms.context import get_platform_context_for_goal
+
+    platform_ctx = get_platform_context_for_goal(goal)
+
     state = create_initial_soc_state(
         goal=goal,
         constraints=constraints,
         use_case=use_case,
         platform=platform,
+        platform_context=platform_ctx,
     )
 
     # Create planner

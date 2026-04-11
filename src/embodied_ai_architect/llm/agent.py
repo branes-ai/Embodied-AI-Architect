@@ -163,6 +163,20 @@ class ArchitectAgent:
         self.max_iterations = max_iterations
         self.verbose = verbose
         self.messages: list[dict[str, Any]] = []
+        self._platform_context_prompt: str = ""
+
+    def set_platform_context(self, goal: str) -> None:
+        """Look up platform context for a goal and cache it for prompt injection."""
+        try:
+            from embodied_ai_architect.platforms.context import (
+                build_context_prompt,
+                get_platform_context_for_goal,
+            )
+
+            ctx = get_platform_context_for_goal(goal)
+            self._platform_context_prompt = build_context_prompt(ctx)
+        except Exception:
+            self._platform_context_prompt = ""
 
     def reset(self) -> None:
         """Clear conversation history."""
@@ -199,11 +213,14 @@ class ArchitectAgent:
         while iterations < self.max_iterations:
             iterations += 1
 
-            # Get LLM response
+            # Get LLM response — inject platform context if available
+            system = SYSTEM_PROMPT
+            if self._platform_context_prompt:
+                system = system + "\n\n" + self._platform_context_prompt
             response = self.llm.chat(
                 messages=self.messages,
                 tools=self.tool_definitions,
-                system=SYSTEM_PROMPT,
+                system=system,
             )
 
             # If there's text and we're thinking, emit it

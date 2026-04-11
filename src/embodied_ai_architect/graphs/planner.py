@@ -295,6 +295,15 @@ class PlannerNode:
         platform = state.get("platform", "")
         enable_moo = state.get("enable_moo", True)
 
+        # Enrich LLM prompt with platform context if available in state
+        platform_ctx = state.get("platform_context", {})
+        if platform_ctx and self.static_plan is None:
+            from embodied_ai_architect.platforms.context import build_context_prompt
+
+            ctx_text = build_context_prompt(platform_ctx)
+            if ctx_text:
+                self.system_prompt = self.system_prompt + "\n\n" + ctx_text
+
         if self.static_plan is not None:
             task_dicts = self.static_plan
         else:

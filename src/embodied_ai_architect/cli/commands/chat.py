@@ -118,6 +118,12 @@ def chat(ctx, model: str, verbose: bool):
                 _show_help()
                 continue
 
+            # Inject platform context into system prompt on first design-related message
+            if not agent._platform_context_prompt:
+                agent.set_platform_context(user_input)
+                if agent._platform_context_prompt and verbose:
+                    console.print("  [dim]Platform context injected into system prompt[/dim]")
+
             # Enrich with platform context on design-related prompts
             enriched_input = _maybe_enrich_with_platform_context(user_input, console, verbose)
 
