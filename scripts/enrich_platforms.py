@@ -6,7 +6,7 @@ Preserves all existing content and structure.
 """
 
 import pathlib
-import re
+
 import yaml
 from collections import defaultdict
 
@@ -1298,7 +1298,6 @@ def generate_description_variants(name: str, category: str, description: str) ->
 def generate_application_from_name(name: str, category: str) -> list[str]:
     """Derive application keywords from the name."""
     name_lower = name.lower()
-    words = [w for w in name_lower.split() if len(w) > 2]
     variants = []
 
     # "X automation"
