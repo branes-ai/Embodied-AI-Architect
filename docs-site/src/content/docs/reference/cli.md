@@ -1263,7 +1263,7 @@ branes mcp energy resnet18 h100_sxm5 --power-gating
 
 #### mcp memory
 
-Analyse peak memory usage and activation timeline.
+Analyze peak memory usage and activation timeline.
 
 ```bash
 branes mcp memory yolov8n jetson_orin_nano
