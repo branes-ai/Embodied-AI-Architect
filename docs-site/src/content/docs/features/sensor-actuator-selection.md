@@ -190,4 +190,4 @@ These flow into downstream commands:
 - [CLI Reference: sensor](/reference/cli/#sensor) — complete sensor command reference
 - [CLI Reference: actuator](/reference/cli/#actuator) — complete actuator command reference
 - [Sensor Catalog](/catalog/sensors/) — browse all 8 sensor categories
-- [Hardware Catalog](/catalog/hardware/) — browse 266 platforms and 62 product configs
+- [Hardware Catalog](/catalog/hardware/) — browse 328 platforms and 62 product configs

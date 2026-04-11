@@ -1,9 +1,9 @@
 ---
 title: Hardware Catalog
-description: Browse 266 platforms and 62 product configurations for embodied AI systems.
+description: Browse 328 platforms and 62 product configurations for embodied AI systems.
 ---
 
-The platform registry contains **266 platform definitions** across 36 categories,
+The platform registry contains **328 platform definitions** across 36 categories,
 **62 real-product configurations** (DJI, Boston Dynamics, Universal Robots, etc.),
 and **36 category index files** with shared defaults.
 
