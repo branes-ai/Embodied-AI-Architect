@@ -67,16 +67,33 @@ class MissionStore:
         logger.debug("Saved mission %s to %s", mission.id, manifest)
         return mission.id
 
-    def load(self, mission_id: str) -> Optional[Mission]:
-        """Load a mission by ID. Returns None if not found."""
-        manifest = self._root / mission_id / "manifest.json"
-        if not manifest.exists():
-            return None
+    def load(self, identifier: str) -> Optional[Mission]:
+        """Load a mission by ID or name. Returns None if not found.
 
-        with open(manifest, encoding="utf-8") as f:
-            data = json.load(f)
+        Tries exact ID match first (directory lookup). If that fails,
+        scans all missions for a matching name field.
+        """
+        # Try exact ID match
+        manifest = self._root / identifier / "manifest.json"
+        if manifest.exists():
+            with open(manifest, encoding="utf-8") as f:
+                data = json.load(f)
+            return Mission(**data)
 
-        return Mission(**data)
+        # Fall back to name search
+        return self._find_by_name(identifier)
+
+    def _find_by_name(self, name: str) -> Optional[Mission]:
+        """Scan missions for one matching the given name."""
+        for manifest in self._list_manifests():
+            try:
+                with open(manifest, encoding="utf-8") as f:
+                    data = json.load(f)
+                if data.get("name") == name:
+                    return Mission(**data)
+            except (json.JSONDecodeError, OSError):
+                continue
+        return None
 
     def load_latest(self) -> Optional[Mission]:
         """Load the most recently updated mission."""
@@ -119,23 +136,35 @@ class MissionStore:
         summaries.sort(key=lambda s: s.get("updated_at", ""), reverse=True)
         return summaries
 
-    def delete(self, mission_id: str) -> bool:
-        """Delete a mission and its directory. Returns True if deleted."""
-        mission_dir = self._root / mission_id
+    def delete(self, identifier: str) -> bool:
+        """Delete a mission by ID or name. Returns True if deleted."""
+        resolved_id = self._resolve_id(identifier)
+        if not resolved_id:
+            return False
+
+        mission_dir = self._root / resolved_id
         if not mission_dir.is_dir():
             return False
 
-        # Remove all files in the mission directory, then the directory
         for f in mission_dir.iterdir():
             f.unlink()
         mission_dir.rmdir()
 
-        logger.debug("Deleted mission %s", mission_id)
+        logger.debug("Deleted mission %s", resolved_id)
         return True
 
-    def exists(self, mission_id: str) -> bool:
-        """Check if a mission exists on disk."""
-        return (self._root / mission_id / "manifest.json").exists()
+    def exists(self, identifier: str) -> bool:
+        """Check if a mission exists by ID or name."""
+        if (self._root / identifier / "manifest.json").exists():
+            return True
+        return self._find_by_name(identifier) is not None
+
+    def _resolve_id(self, identifier: str) -> Optional[str]:
+        """Resolve an identifier (ID or name) to a mission ID."""
+        if (self._root / identifier / "manifest.json").exists():
+            return identifier
+        mission = self._find_by_name(identifier)
+        return mission.id if mission else None
 
     def _list_manifests(self) -> list[Path]:
         """Find all manifest.json files under the root."""
