@@ -10,6 +10,8 @@ what you want to build, through component selection, to system synthesis.
 
 ### 1. Create a Mission
 
+> See also: [Mission Management](/features/mission-management/) | [CLI: mission](/reference/cli/#mission)
+
 Every design starts with a mission — a persistent entity that captures your goal,
 constraints, selected components, and design state across sessions.
 
@@ -17,13 +19,15 @@ constraints, selected components, and design state across sessions.
 branes mission new my-drone --goal "Drone perception SoC for YOLO at 30fps under 5W"
 ```
 
-```
+```text
 Created mission: my-drone
   Goal: Drone perception SoC for YOLO at 30fps under 5W
   Status: draft
 ```
 
 ### 2. Qualify the Goal
+
+> See also: [CLI: design qualify](/reference/cli/#design-qualify)
 
 The qualifier walks through structured questions to derive specific constraints
 from your goal. Use `--auto` for default answers:
@@ -32,7 +36,7 @@ from your goal. Use `--auto` for default answers:
 branes design qualify --mission my-drone --auto
 ```
 
-```
+```text
 Design Qualification — Drone perception SoC
 
   Tangibility:  ████████░░  80%
@@ -43,6 +47,8 @@ Design Qualification — Drone perception SoC
 ```
 
 ### 3. Search and Select Sensors
+
+> See also: [Sensor & Actuator Selection](/features/sensor-actuator-selection/) | [CLI: sensor](/reference/cli/#sensor)
 
 Browse the sensor registry (80+ sensors with TF-IDF search) and select
 components for your mission:
@@ -55,7 +61,7 @@ branes sensor search "stereo camera for VIO"
 branes sensor select my-drone visual.stereo_camera inertial.imu_6dof position.gps_l1
 ```
 
-```
+```text
 Added 3 sensor(s) to mission 'my-drone':
   + visual.stereo_camera (Stereo Camera)
   + inertial.imu_6dof (6-DOF IMU)
@@ -63,6 +69,8 @@ Added 3 sensor(s) to mission 'my-drone':
 ```
 
 ### 4. Check Budgets and Fusion
+
+> See also: [CLI: sensor budget](/reference/cli/#sensor-budget) | [CLI: sensor fusion](/reference/cli/#sensor-fusion)
 
 Verify that your selected sensors fit within power/weight/cost constraints
 and get fusion strategy recommendations:
@@ -75,7 +83,7 @@ branes sensor budget my-drone
 branes sensor fusion my-drone
 ```
 
-```
+```text
 Sensor Fusion — my-drone
 
   Selected categories: inertial, position, visual
@@ -88,6 +96,8 @@ Sensor Fusion — my-drone
 
 ### 5. Generate a Design Plan
 
+> See also: [CLI: design plan](/reference/cli/#design-plan) | [Design Optimization](/features/design-optimization/)
+
 The planner decomposes your goal into a task graph (DAG of specialist agents).
 Use `--static` for a demo plan without an API key:
 
@@ -95,7 +105,7 @@ Use `--static` for a demo plan without an API key:
 branes design plan --mission my-drone --static
 ```
 
-```
+```text
 Task Graph (7 tasks, 4 stages)
   t1: Analyze workload          → workload_analyzer
   t2: Enumerate hardware         → hw_explorer        [after t1]
@@ -110,13 +120,15 @@ Task Graph (7 tasks, 4 stages)
 
 ### 6. Synthesize the System
 
+> See also: [CLI: synthesize](/reference/cli/#synthesize)
+
 View a summary of the composed system from all selected components:
 
 ```bash
 branes synthesize system my-drone
 ```
 
-```
+```text
 System Synthesis — my-drone
 
   Sensors:    visual.stereo_camera, inertial.imu_6dof, position.gps_l1
@@ -127,6 +139,8 @@ System Synthesis — my-drone
 ```
 
 ### 7. Validate
+
+> See also: [CLI: validate](/reference/cli/#validate)
 
 Run all validation checks on the mission:
 
@@ -176,7 +190,7 @@ branes chat
 
 Ask questions in natural language:
 
-```
+```text
 You: Can I run YOLOv8s at 30fps on a Jetson Orin Nano under 5W?
 ```
 
