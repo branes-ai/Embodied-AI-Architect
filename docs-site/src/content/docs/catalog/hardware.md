@@ -1,13 +1,19 @@
 ---
 title: Hardware Catalog
-description: Browse all supported hardware targets for model deployment.
+description: Browse 328 platforms and 62 product configurations for embodied AI systems.
 ---
 
-This catalog lists all hardware platforms supported by Embodied AI Architect.
+The platform registry contains **328 platform definitions** across 36 categories,
+**62 real-product configurations** (DJI, Boston Dynamics, Universal Robots, etc.),
+and **36 category index files** with shared defaults.
 
-:::note
-This page will be auto-generated from the `embodied-schemas` hardware catalog. Individual hardware pages will include detailed specifications, benchmarks, and deployment guides.
-:::
+```bash
+# Browse platforms
+branes platform list
+branes platform list --category aerial
+branes platform search "delivery drone"
+branes platform show aerial.dji_matrice_350_rtk
+```
 
 ## Edge GPUs
 
