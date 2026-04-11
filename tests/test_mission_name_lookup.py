@@ -64,8 +64,7 @@ class TestDeleteByName:
         result = store.delete(saved_mission.id)
         assert result
         assert store.load("vineyard-sprayer") is None
-        deleted = store.delete("nonexistent")
-        assert not deleted
+
     def test_delete_nonexistent(self, store):
         result = store.delete("nonexistent")
         assert not result
