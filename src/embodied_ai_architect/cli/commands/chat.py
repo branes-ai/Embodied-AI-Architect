@@ -96,6 +96,7 @@ def chat(ctx, model: str, verbose: bool):
     console.print()
 
     # Main loop
+    context_initialized = False
     while True:
         try:
             # Get user input
@@ -118,8 +119,9 @@ def chat(ctx, model: str, verbose: bool):
                 _show_help()
                 continue
 
-            # Inject platform context into system prompt on first design-related message
-            if not agent._platform_context_prompt:
+            # Inject platform context into system prompt once (first message only)
+            if not context_initialized:
+                context_initialized = True
                 agent.set_platform_context(user_input)
                 if agent._platform_context_prompt and verbose:
                     console.print("  [dim]Platform context injected into system prompt[/dim]")
