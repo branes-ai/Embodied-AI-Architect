@@ -1,0 +1,41 @@
+# Category: manipulation
+# Auto-generated index — shared defaults for all manipulation platforms
+
+category: manipulation
+description: Shared defaults for 26 manipulation platform(s)
+platform_count: 26
+default_attributes:
+  power_watts:
+    min: 98
+    max: 4812
+    typical: 486
+  weight_kg:
+    min: 1.1
+    max: 960.8
+    typical: 48.4
+  cost_usd:
+    min: 1360
+    max: 482400
+    typical: 49200
+  latency_ms:
+    min: 9.6
+    max: 480.8
+    typical: 48.3
+common_classification:
+  locomotion: stationary.fixed_mount
+  environment:
+  - cleanroom compatible
+  - indoor
+  - indoor_structured
+  - tabletop
+common_perception_tasks:
+- bin
+- fixture
+- hand
+- obstacle
+- part
+- tool
+typical_constraints:
+  max_power_watts: 486
+  max_latency_ms: 48.3
+  max_cost_usd: 49200

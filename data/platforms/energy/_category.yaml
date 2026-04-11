@@ -1,0 +1,40 @@
+# Category: energy
+# Auto-generated index — shared defaults for all energy platforms
+
+category: energy
+description: Shared defaults for 6 energy platform(s)
+platform_count: 6
+default_attributes:
+  power_watts:
+    min: 50
+    max: 500
+    typical: 108.3
+  weight_kg:
+    min: 1.7
+    max: 841.7
+    typical: 45
+  cost_usd:
+    min: 9166.7
+    max: 466666.7
+    typical: 61666.7
+  latency_ms:
+    min: 16.7
+    max: 500
+    typical: 75
+common_classification:
+  locomotion: ground.wheeled
+  environment:
+  - high_altitude
+  - outdoor_exposed
+  - outdoor_extreme
+common_perception_tasks:
+- crack
+- delamination
+- erosion
+- lightning_strike
+- surface_contamination
+- vortex_generator_damage
+typical_constraints:
+  max_power_watts: 108.3
+  max_latency_ms: 75
+  max_cost_usd: 61666.7

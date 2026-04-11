@@ -1,0 +1,39 @@
+# Category: surgical
+# Auto-generated index — shared defaults for all surgical platforms
+
+category: surgical
+description: Shared defaults for 1 surgical platform(s)
+platform_count: 1
+default_attributes:
+  power_watts:
+    min: 200
+    max: 1500
+    typical: 600
+  weight_kg:
+    min: 100
+    max: 800
+    typical: 350
+  cost_usd:
+    min: 500000
+    max: 2000000
+    typical: 1000000
+  latency_ms:
+    min: 1
+    max: 10
+    typical: 5
+common_classification:
+  locomotion: fixed/cart-mounted
+  environment:
+  - indoor
+  - operating room
+  - sterile field
+common_perception_tasks:
+- bone surface
+- implant
+- registration marker
+- soft tissue boundary
+- surgical tool
+typical_constraints:
+  max_power_watts: 600
+  max_latency_ms: 5
+  max_cost_usd: 1000000

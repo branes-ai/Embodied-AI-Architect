@@ -1,0 +1,43 @@
+# Category: assistive
+# Auto-generated index — shared defaults for all assistive platforms
+
+category: assistive
+description: Shared defaults for 4 assistive platform(s)
+platform_count: 4
+default_attributes:
+  power_watts:
+    min: 25.8
+    max: 275
+    typical: 90
+  weight_kg:
+    min: 8.2
+    max: 787.5
+    typical: 57.5
+  cost_usd:
+    min: 2000
+    max: 387500
+    typical: 41250
+  latency_ms:
+    min: 12.5
+    max: 400
+    typical: 50
+common_classification:
+  locomotion: wearable.limb_attached
+  environment:
+  - indoor_commercial
+  - indoor_home
+  - indoor_unstructured
+  - outdoor_structured
+  - outdoor_urban
+common_perception_tasks:
+- curb
+- door
+- drop_off
+- furniture
+- human
+- obstacle
+- ramp
+typical_constraints:
+  max_power_watts: 90
+  max_latency_ms: 50
+  max_cost_usd: 41250

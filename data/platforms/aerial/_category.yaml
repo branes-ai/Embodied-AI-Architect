@@ -1,0 +1,50 @@
+# Category: aerial
+# Auto-generated index — shared defaults for all aerial platforms
+
+category: aerial
+description: Shared defaults for 17 aerial platform(s)
+platform_count: 17
+default_attributes:
+  power_watts:
+    min: 164.1
+    max: 1356.2
+    typical: 470.6
+  weight_kg:
+    min: 4.2
+    max: 1645
+    typical: 72.5
+  cost_usd:
+    min: 5250
+    max: 3492500
+    typical: 165937.5
+  latency_ms:
+    min: 21.2
+    max: 468.8
+    typical: 90.6
+common_classification:
+  locomotion: aerial.rotary_wing
+  environment:
+  - agricultural
+  - outdoor
+  - outdoor_extreme
+  - outdoor_rural
+  - rural
+  - suburban
+  - urban
+common_perception_tasks:
+- bird
+- building
+- crop row
+- diseased area
+- landing pad
+- landing_zone
+- obstacle
+- person
+- power line
+- tree
+- vehicle
+- weed
+typical_constraints:
+  max_power_watts: 470.6
+  max_latency_ms: 90.6
+  max_cost_usd: 165937.5

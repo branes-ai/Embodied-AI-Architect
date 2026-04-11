@@ -1,0 +1,39 @@
+# Category: datacenter
+# Auto-generated index — shared defaults for all datacenter platforms
+
+category: datacenter
+description: Shared defaults for 1 datacenter platform(s)
+platform_count: 1
+default_attributes:
+  power_watts:
+    min: 50
+    max: 300
+    typical: 120
+  weight_kg:
+    min: 15
+    max: 80
+    typical: 35
+  cost_usd:
+    min: 30000
+    max: 200000
+    typical: 80000
+  latency_ms:
+    min: 30
+    max: 200
+    typical: 80
+common_classification:
+  locomotion: ground.wheeled.differential
+  environment:
+  - indoor_datacenter
+common_perception_tasks:
+- barcode
+- cable_anomaly
+- hot_spot
+- human
+- obstacle
+- qr_code
+- server_led_status
+typical_constraints:
+  max_power_watts: 120
+  max_latency_ms: 80
+  max_cost_usd: 80000
