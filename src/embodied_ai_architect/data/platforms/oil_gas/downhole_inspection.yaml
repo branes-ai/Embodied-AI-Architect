@@ -1,0 +1,148 @@
+id: oil_gas.downhole_inspection
+name: Downhole Inspection
+category: oil_gas
+description: Downhole Inspection platform for oil gas applications.
+aliases:
+- downhole inspection
+- Downhole Inspection
+keywords:
+  identity:
+  - downhole inspection
+  - downhole inspection
+  - oil_gas downhole inspection
+  - oil gas downhole inspection
+  - smart downhole inspection
+  - downhole inspection platform
+  - automated downhole inspection
+  - oil and gas robot
+  - offshore robot
+  - refinery robot
+  - pipeline robot
+  - upstream automation platform
+  descriptions:
+  - downhole inspection system
+  - autonomous downhole inspection
+  - system for downhole inspection applications
+  - oil gas platform using downhole inspection technology
+  - intelligent downhole inspection solution
+  - intrinsically safe robot for oil and gas operations
+  - autonomous platform for pipeline and refinery inspection
+  application:
+  - downhole inspection
+  - oil_gas automation
+  - downhole inspection automation
+  - real-time downhole inspection
+  - downhole inspection monitoring
+  - downhole inspection detection
+  - pipeline inspection
+  - flare stack inspection
+  - tank inspection
+  - leak detection
+  - corrosion monitoring
+  - valve operation
+  - wellhead monitoring
+  - rig floor automation
+  industry:
+  - oil_gas
+  - downhole inspection
+  - oil and gas
+  - petroleum
+  - upstream
+  - midstream
+  - downstream
+  - petrochemical
+  components:
+  - gas_detector
+  - thermal_camera
+  - ultrasonic
+  - ATEX-rated enclosure
+  - gas sensor
+  - thermal camera
+  - ultrasonic thickness gauge
+  - explosion-proof motor
+  related:
+  - oil_gas
+  - downhole
+  - ATEX
+  - IECEx
+  - intrinsic safety
+  - hazardous area classification
+  - SIL rating
+  - process safety
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - hazardous_chemical
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 50
+    max: 500
+    typical: 100
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - gas_detector
+    - thermal_camera
+    - ultrasonic
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - radio
+  power:
+    compute_power_watts: 30.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard oil gas architecture for downhole inspection applications.
+  common_pitfalls:
+  - Domain-specific challenges for downhole inspection platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to downhole inspection in the oil gas domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

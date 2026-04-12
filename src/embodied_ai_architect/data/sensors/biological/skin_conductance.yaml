@@ -1,0 +1,45 @@
+id: biological.skin_conductance
+name: Skin Conductance Sensor (GSR/EDA)
+category: biological
+sensor_type: skin_conductance
+description: Electrodermal activity for stress and arousal measurement
+aliases: []
+keywords:
+  identity:
+  - skin conductance sensor (gsr/eda)
+  - skin conductance
+  descriptions:
+  - skin conductance
+  - gsr
+  - galvanic skin response
+  - eda
+  - electrodermal
+  - stress
+  application:
+  - arousal
+  - lie detector
+  - polygraph
+  - affective computing
+  - emotion recognition
+  - wearable
+  industry:
+  - biofeedback
+  - sympathetic nervous
+  - sweat gland
+  components:
+  - tonic phasic
+classification:
+  modality: biological
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 0.05
+    typical: 0.005
+  cost_usd:
+    min: 10
+    max: 200
+    typical: 30

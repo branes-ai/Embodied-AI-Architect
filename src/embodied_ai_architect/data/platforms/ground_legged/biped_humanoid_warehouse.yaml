@@ -1,0 +1,152 @@
+id: ground_legged.biped_humanoid_warehouse
+name: Biped Humanoid Warehouse
+category: ground_legged
+description: Biped Humanoid Warehouse platform for ground legged applications.
+aliases:
+- biped humanoid warehouse
+- Biped Humanoid Warehouse
+keywords:
+  identity:
+  - biped humanoid warehouse
+  - biped humanoid warehouse
+  - ground_legged biped humanoid warehouse
+  - ground legged biped humanoid warehouse
+  - smart biped humanoid warehouse
+  - biped humanoid warehouse platform
+  - automated biped humanoid warehouse
+  - robotic biped humanoid warehouse
+  - legged robot
+  - walking robot
+  - quadruped
+  - humanoid robot
+  - legged platform
+  - spot-like robot
+  descriptions:
+  - biped humanoid warehouse system
+  - autonomous biped humanoid warehouse
+  - system for biped humanoid warehouse applications
+  - ground legged platform using biped humanoid warehouse technology
+  - intelligent biped humanoid warehouse solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
+  application:
+  - biped humanoid warehouse
+  - ground_legged automation
+  - biped humanoid warehouse automation
+  - real-time biped humanoid warehouse
+  - biped humanoid warehouse monitoring
+  - biped humanoid warehouse detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
+  industry:
+  - ground_legged
+  - biped humanoid warehouse
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
+  components:
+  - lidar
+  - imu
+  - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
+  related:
+  - ground_legged
+  - biped
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
+classification:
+  locomotion: ground.legged
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  - outdoor_urban
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 50
+    max: 1000
+    typical: 200
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: quadruped
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - imu
+    - depth_camera
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - ethernet
+  power:
+    compute_power_watts: 60.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard ground legged architecture for biped humanoid warehouse applications.
+  common_pitfalls:
+  - Domain-specific challenges for biped humanoid warehouse platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to biped humanoid warehouse in the ground legged domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

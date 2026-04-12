@@ -1,0 +1,50 @@
+id: amr.mir600
+name: "MiR600"
+category: amr
+product_type: amr
+vendor: "Mobile Industrial Robots (MiR)"
+description: "Heavy-duty autonomous mobile robot for industrial material transport. 600 kg payload capacity with IP52 rating for dusty environments. Designed for pallet transport, heavy goods movement in manufacturing, and integration with conveyor systems."
+aliases:
+  - "MiR 600"
+
+keywords:
+  identity:
+    - mir
+    - mir600
+    - amr
+    - heavy duty
+    - industrial
+  application:
+    - pallet transport
+    - heavy material handling
+    - manufacturing logistics
+    - warehouse automation
+    - industrial transport
+
+specifications:
+  weight_kg: 230.0
+  max_payload_kg: 600.0
+  power_watts: 400
+  battery_wh: 1440
+  max_speed_mps: 2.0
+  ip_rating: "IP52"
+  operating_temp_c: {min: 5, max: 40}
+
+compute:
+  processor: "Intel i5 onboard computer"
+  compute_tops: 0
+
+sensors:
+  - type: "lidar"
+    name: "2D SICK LiDAR (x2)"
+    range_m: 30
+  - type: "3d_camera"
+    name: "3D Cameras (x2)"
+  - type: "imu"
+    name: "IMU"
+  - type: "encoder"
+    name: "Wheel Encoders"
+
+pricing:
+  base_price_usd: 60000
+  year: 2024

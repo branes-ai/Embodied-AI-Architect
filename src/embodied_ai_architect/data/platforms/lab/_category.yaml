@@ -1,0 +1,43 @@
+# Category: lab
+# Auto-generated index — shared defaults for all lab platforms
+
+category: lab
+description: Shared defaults for 12 lab platform(s)
+platform_count: 12
+default_attributes:
+  power_watts:
+    min: 54.2
+    max: 541.7
+    typical: 216.7
+  weight_kg:
+    min: 3.4
+    max: 941.7
+    typical: 55.8
+  cost_usd:
+    min: 2166.7
+    max: 500000
+    typical: 54166.7
+  latency_ms:
+    min: 10
+    max: 466.7
+    typical: 50
+common_classification:
+  locomotion: stationary.benchtop
+  environment:
+  - BSL-2/3
+  - cleanroom
+  - indoor
+  - indoor_lab
+  - laboratory
+common_perception_tasks:
+- barcode
+- bubble
+- liquid level
+- microplate
+- reservoir
+- tip rack
+- tube
+typical_constraints:
+  max_power_watts: 216.7
+  max_latency_ms: 50
+  max_cost_usd: 54166.7

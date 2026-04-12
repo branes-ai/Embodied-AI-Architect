@@ -1,0 +1,40 @@
+# Category: entertainment
+# Auto-generated index — shared defaults for all entertainment platforms
+
+category: entertainment
+description: Shared defaults for 4 entertainment platform(s)
+platform_count: 4
+default_attributes:
+  power_watts:
+    min: 20
+    max: 175
+    typical: 50
+  weight_kg:
+    min: 2
+    max: 757.5
+    typical: 40.5
+  cost_usd:
+    min: 1250
+    max: 382500
+    typical: 39500
+  latency_ms:
+    min: 20
+    max: 450
+    typical: 62.5
+common_classification:
+  locomotion: ground.wheeled
+  environment:
+  - indoor_commercial
+  - indoor_hospital
+  - indoor_office
+  - indoor_structured
+common_perception_tasks:
+- charging_dock
+- door
+- elevator
+- human
+- obstacle
+typical_constraints:
+  max_power_watts: 50
+  max_latency_ms: 62.5
+  max_cost_usd: 39500

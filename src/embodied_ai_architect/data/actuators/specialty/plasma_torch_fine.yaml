@@ -1,0 +1,86 @@
+id: specialty.plasma_torch_fine
+name: High-Definition Plasma Torch
+category: specialty
+actuator_type: plasma_torch
+description: Precision plasma cutting system with fine-kerf nozzles and THC (torch height control) for
+  CNC-quality cuts approaching laser quality on thin sheet.
+aliases:
+- HD plasma
+- fine plasma
+- precision plasma torch
+keywords:
+  identity:
+  - high-definition plasma torch
+  - HD plasma cutter
+  - fine plasma
+  descriptions:
+  - precision plasma cutter
+  - narrow kerf plasma
+  - CNC plasma system
+  application:
+  - precision metal parts
+  - signage fabrication
+  - artistic metalwork
+  - thin sheet cutting
+  industry:
+  - metalworking
+  - signage
+  - art fabrication
+  - manufacturing
+  components:
+  - fine-kerf nozzle
+  - THC controller
+  - electrode
+  - coolant system
+  related:
+  - edge quality
+  - bevel angle
+  - dross
+  - pierce delay
+classification:
+  motion_type: display_output
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 5000
+    max: 200000
+    typical: 40000
+  continuous_power_watts:
+    min: 3000
+    max: 150000
+    typical: 30000
+  position_accuracy_um:
+    min: 50
+    max: 500
+    typical: 150
+  weight_grams:
+    min: 1000
+    max: 15000
+    typical: 5000
+  cost_usd:
+    min: 5000
+    max: 200000
+    typical: 30000
+interface:
+  protocol:
+  - ethernet_ip
+  - analog
+  voltage_v:
+    min: 200
+    max: 600
+    typical: 400
+  current_a:
+    min: 30
+    max: 800
+    typical: 200
+  feedback:
+  - none
+reference_products:
+- id: hypertherm_hpr400xd
+  name: Hypertherm HPR400XD
+  vendor: Hypertherm
+  cost_usd: 80000

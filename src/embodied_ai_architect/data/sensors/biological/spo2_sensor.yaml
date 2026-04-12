@@ -1,0 +1,45 @@
+id: biological.spo2_sensor
+name: SpO2 Sensor
+category: biological
+sensor_type: spo2_sensor
+description: Pulse oximetry for blood oxygen saturation
+aliases: []
+keywords:
+  identity:
+  - spo2 sensor
+  - spo2 sensor
+  descriptions:
+  - spo2
+  - pulse oximetry
+  - oxygen saturation
+  - blood oxygen
+  - photoplethysmography
+  - red led
+  application:
+  - infrared led
+  - photodetector
+  - finger clip
+  - wearable
+  - patient monitoring
+  - max30102
+  industry:
+  - optical
+  - perfusion
+  - pleth variability
+  components:
+  - respiratory rate
+classification:
+  modality: biological
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 0.05
+    typical: 0.01
+  cost_usd:
+    min: 2
+    max: 100
+    typical: 10

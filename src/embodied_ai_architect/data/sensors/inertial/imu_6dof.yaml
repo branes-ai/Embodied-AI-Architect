@@ -1,0 +1,58 @@
+id: inertial.imu_6dof
+name: IMU 6-DoF
+category: inertial
+sensor_type: imu_6dof
+description: 6-axis inertial measurement unit (3-axis accel + 3-axis gyro)
+aliases: []
+keywords:
+  identity:
+  - imu 6-dof
+  - imu 6dof
+  descriptions:
+  - imu
+  - 6dof
+  - 6 axis
+  - accelerometer
+  - gyroscope
+  - mems
+  application:
+  - inertial navigation
+  - dead reckoning
+  - attitude estimation
+  - complementary filter
+  - kalman filter
+  - vibration measurement
+  industry:
+  - tilt sensing
+  - bosch
+  - stmicroelectronics
+  components:
+  - invensense
+classification:
+  modality: inertial
+  output_type: imu_data
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 0.1
+    typical: 0.005
+  weight_grams:
+    min: 0.1
+    max: 10
+    typical: 1
+  cost_usd:
+    min: 1
+    max: 50
+    typical: 5
+reference_products:
+- id: bosch_bmi270
+  name: Bosch BMI270
+  vendor: Bosch
+  cost_usd: 3
+- id: st_lsm6dso
+  name: ST LSM6DSO
+  vendor: STMicroelectronics
+  cost_usd: 4

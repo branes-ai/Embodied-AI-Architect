@@ -1,0 +1,45 @@
+id: ranging.laser_rangefinder
+name: Laser Rangefinder
+category: ranging
+sensor_type: laser_rangefinder
+description: Single-point laser distance measurement
+aliases: []
+keywords:
+  identity:
+  - laser rangefinder
+  - laser rangefinder
+  descriptions:
+  - laser rangefinder
+  - laser distance
+  - single point
+  - surveying
+  - golf
+  - hunting
+  application:
+  - military
+  - construction
+  - class 1 eye safe
+  - class 3
+  - pulsed laser
+  - time of flight
+  industry:
+  - phase shift
+  - accuracy
+  - long range
+  components:
+  - target acquisition
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 1
+    max: 20000
+    typical: 1000
+  cost_usd:
+    min: 50
+    max: 10000
+    typical: 500

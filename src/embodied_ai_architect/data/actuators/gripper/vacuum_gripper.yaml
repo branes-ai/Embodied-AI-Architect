@@ -1,0 +1,88 @@
+id: gripper.vacuum_gripper
+name: Vacuum Gripper System
+category: gripper
+actuator_type: vacuum_gripper
+description: Integrated vacuum gripping system with multiple suction cups, vacuum generator, and sensing
+  for handling flat and semi-flat workpieces. Designed as a complete end-effector for cobots and robots.
+aliases:
+- vacuum end-effector
+- multi-cup vacuum gripper
+keywords:
+  identity:
+  - vacuum gripper
+  - vacuum end-effector
+  - multi-cup gripper
+  descriptions:
+  - integrated vacuum system
+  - multi-zone vacuum gripper
+  - smart vacuum gripper
+  application:
+  - box palletizing
+  - carton handling
+  - sheet handling
+  - depalletizing
+  - case packing
+  industry:
+  - logistics
+  - e-commerce
+  - food processing
+  - packaging
+  components:
+  - suction cups
+  - vacuum pump
+  - pressure sensor
+  - foam seal
+  - quick-change
+  related:
+  - zone control
+  - leak detection
+  - grip verification
+  - tool changing
+classification:
+  motion_type: gripping
+  control_type: on_off
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 10
+    max: 2000
+    typical: 200
+  payload_kg:
+    min: 0.5
+    max: 100
+    typical: 15
+  peak_power_watts:
+    min: 10
+    max: 500
+    typical: 50
+  weight_grams:
+    min: 200
+    max: 5000
+    typical: 1200
+  cost_usd:
+    min: 200
+    max: 8000
+    typical: 2000
+  response_time_ms:
+    min: 50
+    max: 500
+    typical: 150
+interface:
+  protocol:
+  - modbus
+  - ethernet_ip
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - none
+reference_products:
+- id: schmalz_fxcb
+  name: Schmalz FXCB Vacuum Gripper
+  vendor: Schmalz
+  cost_usd: 3000
+  payload_kg: 40

@@ -1,0 +1,41 @@
+# Category: construction
+# Auto-generated index — shared defaults for all construction platforms
+
+category: construction
+description: Shared defaults for 7 construction platform(s)
+platform_count: 7
+default_attributes:
+  power_watts:
+    min: 7571.4
+    max: 100000
+    typical: 25714.3
+  weight_kg:
+    min: 715.1
+    max: 13714.3
+    typical: 3614.3
+  cost_usd:
+    min: 29428.6
+    max: 714285.7
+    typical: 114285.7
+  latency_ms:
+    min: 15.7
+    max: 500
+    typical: 64.3
+common_classification:
+  locomotion: stationary.gantry
+  environment:
+  - construction_site
+  - mining
+  - outdoor_unstructured
+  - outdoor_urban
+common_perception_tasks:
+- human
+- obstacle
+- pile
+- trench_edge
+- utility_line
+- vehicle
+typical_constraints:
+  max_power_watts: 25714.3
+  max_latency_ms: 64.3
+  max_cost_usd: 114285.7

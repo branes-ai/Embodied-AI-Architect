@@ -28,8 +28,10 @@ from embodied_ai_architect.search_utils import tokenize as _tokenize
 
 logger = logging.getLogger(__name__)
 
-# Default data directory — resolved relative to the repo root
-_DEFAULT_DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data" / "actuators"
+# Default data directory — inside the package for pip installs, repo root for dev
+_PACKAGE_DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "actuators"
+_REPO_DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data" / "actuators"
+_DEFAULT_DATA_DIR = _PACKAGE_DATA_DIR if _PACKAGE_DATA_DIR.exists() else _REPO_DATA_DIR
 
 # Actuator categories from taxonomy.yaml
 ACTUATOR_CATEGORIES = [

@@ -1,0 +1,40 @@
+# Category: military
+# Auto-generated index — shared defaults for all military platforms
+
+category: military
+description: Shared defaults for 6 military platform(s)
+platform_count: 6
+default_attributes:
+  power_watts:
+    min: 11.7
+    max: 4200
+    typical: 430
+  weight_kg:
+    min: 0.9
+    max: 834.2
+    typical: 41.9
+  cost_usd:
+    min: 1166.7
+    max: 425000
+    typical: 44166.7
+  latency_ms:
+    min: 10
+    max: 433.3
+    typical: 46.7
+common_classification:
+  locomotion: aerial.rotary_wing
+  environment:
+  - contested_airspace
+  - outdoor_extreme
+  - outdoor_unstructured
+  - urban
+common_perception_tasks:
+- human
+- movement
+- structure
+- thermal_signature
+- vehicle
+typical_constraints:
+  max_power_watts: 430
+  max_latency_ms: 46.7
+  max_cost_usd: 44166.7

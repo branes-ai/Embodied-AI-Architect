@@ -1,0 +1,75 @@
+id: ground_legged.quadruped_inspection
+name: "Quadruped Inspection Robot"
+category: ground_legged
+description: "Four-legged walking robot for autonomous industrial plant walkthrough, infrastructure inspection, and hazardous environment monitoring."
+aliases:
+  - "robot dog"
+  - "walking inspection robot"
+  - "legged inspection platform"
+
+keywords:
+  identity: [quadruped, walking robot, four-legged robot, robot dog, legged robot]
+  descriptions: [inspection robot, plant walkthrough robot, industrial patrol robot, autonomous walking robot, four-legged patrol]
+  application: [plant inspection, facility monitoring, hazardous area inspection, routine patrol, asset monitoring]
+  industry: [industrial inspection, O&M, predictive maintenance, petrochemical, power generation]
+  components: [IMU, LiDAR, thermal camera, joint actuators]
+  related: [Spot, ANYmal, legged locomotion, dynamic balancing]
+
+classification:
+  locomotion: "ground.legged.quadruped"
+  manipulation: "none"
+  load_class: "light"
+  environment: [indoor_industrial, outdoor_structured, hazardous]
+  human_proximity: "humans_nearby"
+
+attributes:
+  power_watts: {min: 150, max: 800, typical: 400}
+  compute_tops: {min: 4, max: 40, typical: 20}
+  latency_ms: {min: 20, max: 200, typical: 50}
+  weight_kg: {min: 12, max: 75, typical: 35}
+  cost_usd: {min: 50000, max: 250000, typical: 100000}
+  autonomy_level: "conditional"
+  safety_level: "sil_2"
+  mission_duration_hours: {min: 1, max: 4, typical: 2}
+
+implications:
+  platform_type: "ground_legged"
+  perception:
+    camera_types: [rgb, thermal, depth]
+    detection_classes: [obstacle, human, gauge, leak, corrosion, anomaly]
+    max_latency_ms: 100
+    min_fps: 15
+  sensors:
+    modalities: [camera, lidar, imu, thermal, gas_detector]
+  actuators:
+    actuator_types: [electric_servo]
+    dof: 12
+    control_rate_hz: 500
+  comms:
+    protocols: [wifi, 5g, ethernet]
+  power:
+    compute_power_watts: 30
+  safety:
+    level: "sil_2"
+    certifications: [ATEX, IECEx]
+
+context:
+  typical_architecture: "Onboard GPU (Jetson-class) runs perception and local planning; joint-level controllers handle gait at 500 Hz; a supervisory station receives telemetry and anomaly alerts over Wi-Fi or 5G."
+  common_pitfalls:
+    - "Underestimating terrain variability—stairs, grating, wet floors, and cable trays all challenge gait planning"
+    - "Thermal camera calibration drift in extreme ambient temperatures"
+    - "Battery life too short for full plant walkthrough without charging docks"
+  regulatory:
+    - "ATEX/IECEx for explosive atmospheres"
+    - "ISO 13482 for personal care / service robots"
+    - "Site-specific safety risk assessments"
+  reference_designs:
+    - "Boston Dynamics Spot"
+    - "Unitree B2"
+    - "ANYbotics ANYmal"
+  design_considerations: "Quadruped inspection robots must handle uneven terrain, stairs, and narrow passages typical of industrial plants. Gait controllers require low-latency IMU fusion at 500+ Hz, while perception for anomaly detection (gauge reading, leak detection, thermal hotspots) can run at 10-15 FPS. Battery management is critical—plan for autonomous return-to-dock. Dust and moisture ingress protection (IP65+) is essential in most industrial environments."
+
+qualification:
+  suggested_questions: [operating_environment, terrain_type, hazardous_classification, patrol_route_length, inspection_targets]
+  critical_constraints: [mission_duration, terrain_capability, hazardous_area_rating, weight_limit]
+  optional_constraints: [manipulation_payload, communication_range, noise_level]

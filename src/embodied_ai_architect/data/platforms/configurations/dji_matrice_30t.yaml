@@ -1,0 +1,58 @@
+id: aerial.dji_matrice_30t
+name: "DJI Matrice 30T"
+category: aerial
+product_type: drone
+vendor: "DJI"
+description: "Compact enterprise drone with integrated thermal and zoom camera payload, IP55 rating, and advanced AI capabilities. Features a 48MP wide camera, 16MP zoom camera with 200x hybrid zoom, and 640x512 thermal sensor for inspection and emergency response."
+aliases:
+  - "M30T"
+  - "Matrice 30T"
+
+keywords:
+  identity:
+    - dji
+    - matrice
+    - m30t
+    - thermal drone
+    - enterprise
+  application:
+    - thermal inspection
+    - search and rescue
+    - firefighting
+    - powerline inspection
+    - emergency response
+
+specifications:
+  weight_kg: 3.77
+  max_payload_kg: 0.23
+  power_watts: 300
+  battery_wh: 131.6
+  flight_time_min: 41
+  max_speed_mps: 23
+  ip_rating: "IP55"
+  operating_temp_c: {min: -20, max: 50}
+
+compute:
+  processor: "DJI proprietary flight controller"
+  compute_tops: 0
+
+sensors:
+  - type: "wide_camera"
+    name: "Wide Camera"
+    resolution: "8000x6000"
+    fps: 30
+  - type: "zoom_camera"
+    name: "Zoom Camera 200x"
+    resolution: "4000x3000"
+  - type: "thermal_camera"
+    name: "Thermal Camera"
+    resolution: "640x512"
+  - type: "laser_rangefinder"
+    name: "Laser Rangefinder"
+    range_m: 1200
+  - type: "gnss"
+    name: "RTK GNSS Module"
+
+pricing:
+  base_price_usd: 14000
+  year: 2024

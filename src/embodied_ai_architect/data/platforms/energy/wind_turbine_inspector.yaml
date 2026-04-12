@@ -1,0 +1,76 @@
+id: energy.wind_turbine_inspector
+name: "Wind Turbine Blade Inspector"
+category: energy
+description: "Robotic system for autonomous inspection and defect detection on wind turbine blade surfaces, replacing rope-access technicians."
+aliases:
+  - "blade inspection robot"
+  - "turbine crawler"
+  - "wind turbine inspection drone"
+
+keywords:
+  identity: [wind turbine inspection, blade inspection, wind turbine robot, blade crawler, turbine inspector]
+  descriptions: [blade surface scanner, wind turbine maintenance robot, automated blade inspector, turbine defect detector, blade crawling robot]
+  application: [blade defect detection, crack detection, erosion inspection, lightning damage assessment, wind energy maintenance]
+  industry: [wind energy, renewable energy, O&M, wind farm, asset inspection]
+  components: [high-resolution camera, adhesion system, rope/rail mechanism, edge computing module]
+  related: [rope access, drone inspection, non-destructive testing, blade repair]
+
+classification:
+  locomotion: "ground.climbing"
+  manipulation: "none"
+  load_class: "micro"
+  environment: [outdoor_exposed, high_altitude]
+  human_proximity: "no_humans"
+
+attributes:
+  power_watts: {min: 50, max: 500, typical: 150}
+  compute_tops: {min: 2, max: 15, typical: 6}
+  latency_ms: {min: 50, max: 500, typical: 200}
+  weight_kg: {min: 5, max: 50, typical: 20}
+  cost_usd: {min: 50000, max: 300000, typical: 120000}
+  autonomy_level: "high"
+  safety_level: "sil_1"
+  mission_duration_hours: {min: 1, max: 6, typical: 3}
+
+implications:
+  platform_type: "climbing_robot"
+  perception:
+    camera_types: [rgb_high_res, infrared, uv]
+    detection_classes: [crack, erosion, delamination, lightning_strike, vortex_generator_damage, surface_contamination]
+    max_latency_ms: 500
+    min_fps: 5
+  sensors:
+    modalities: [camera, infrared, ultrasonic, wind_speed, imu]
+  actuators:
+    actuator_types: [vacuum_adhesion, electric_drive, winch]
+    dof: null
+    control_rate_hz: 20
+  comms:
+    protocols: [wifi, cellular_4g, radio_link]
+  power:
+    compute_power_watts: 10
+  safety:
+    level: "sil_1"
+    certifications: [CE, IP65]
+
+context:
+  typical_architecture: "A crawler or suspended platform traverses the blade surface using vacuum adhesion or guided ropes. High-resolution cameras capture overlapping imagery processed onboard or on the ground. Edge AI classifies defects in real-time; full image sets are uploaded post-mission for detailed analysis. Wind speed monitoring triggers automatic safe-hold or retract."
+  common_pitfalls:
+    - "Loss of adhesion on wet, icy, or contaminated blade surfaces"
+    - "Wind gusts exceeding safe operating limits—must have reliable wind speed monitoring"
+    - "Image quality degradation from vibration during high-wind periods"
+    - "Difficulty inspecting blade leading edge and trailing edge transitions"
+  regulatory:
+    - "IEC 61400 (wind turbine design and safety)"
+    - "Working at height regulations (country-specific)"
+    - "Aviation authority notification for drone-based inspection near turbines"
+  reference_designs:
+    - "Rope Robotics"
+    - "BladeBUG"
+    - "Aerones"
+  design_considerations: "Wind turbine blade inspection robots must operate reliably at heights of 80-160 meters in variable wind conditions. The primary challenge is maintaining stable contact or position on curved, smooth blade surfaces. Image resolution must be sufficient to detect sub-millimeter cracks and early-stage erosion. Inspection must be completed within a weather window, so speed matters. Data management is significant—a single blade inspection can generate 50+ GB of imagery. Consider both crawler-based and drone-based approaches depending on defect types targeted."
+
+qualification:
+  suggested_questions: [turbine_model, blade_length, defect_types, wind_speed_limits, inspection_frequency, data_pipeline]
+  critical_constraints: [max_wind_speed, blade_surface_type, defect_resolution_mm, operating_height]
+  optional_constraints: [repair_capability, fleet_deployment, offline_analysis]

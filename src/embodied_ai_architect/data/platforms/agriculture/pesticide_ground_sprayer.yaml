@@ -1,0 +1,139 @@
+id: agriculture.pesticide_ground_sprayer
+name: "Autonomous Ground Sprayer"
+category: agriculture
+description: "Autonomous ground-based vehicle for precision pesticide, herbicide, and fertilizer application using variable-rate nozzle control and weed-level targeting in row crops, orchards, and vineyards."
+aliases:
+  - "autonomous sprayer"
+  - "ground spray robot"
+  - "precision sprayer"
+  - "smart sprayer"
+
+keywords:
+  identity:
+    - autonomous sprayer
+    - ground sprayer
+    - precision spraying
+    - pesticide applicator
+    - herbicide sprayer
+    - crop sprayer
+    - spray robot
+    - smart sprayer
+  descriptions:
+    - "robot that drives through fields spraying weeds"
+    - "autonomous ground vehicle for precision pesticide application"
+    - "self-driving sprayer that targets individual weeds"
+  application:
+    - variable rate application
+    - vineyard sprayer
+    - orchard sprayer
+    - spot spraying
+    - weed-specific spraying
+    - see and spray
+    - green-on-brown detection
+    - green-on-green detection
+  industry:
+    - precision agriculture
+    - agtech
+    - crop protection
+    - integrated pest management
+    - IPM
+  components:
+    - spray boom
+    - solenoid nozzle
+    - flow controller
+    - RTK GPS
+    - weed detection camera
+    - tank
+    - pump
+  related:
+    - prescription map
+    - NDVI
+    - weed map
+    - herbicide resistance
+    - drift control
+    - adjuvant
+    - nozzle selection
+
+classification:
+  locomotion: "wheeled (4WD/tracked)"
+  manipulation: "spray boom articulation"
+  load_class: "heavy"
+  environment:
+    - outdoor
+    - agricultural
+    - rural
+    - field
+    - orchard
+    - vineyard
+  human_proximity: "standoff"
+
+attributes:
+  power_watts: {min: 500, max: 5000, typical: 2000}
+  compute_tops: {min: 4, max: 40, typical: 16}
+  latency_ms: {min: 10, max: 50, typical: 25}
+  weight_kg: {min: 200, max: 3000, typical: 800}
+  cost_usd: {min: 30000, max: 300000, typical: 100000}
+  autonomy_level: "L4 - full autonomy within field"
+  safety_level: "agricultural machinery"
+  mission_duration_hours: {min: 4, max: 16, typical: 8}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: ["downward-facing RGB", "forward stereo", "multispectral"]
+    detection_classes: ["weed", "crop", "person", "animal", "row end", "obstacle", "fence", "ditch"]
+    max_latency_ms: 25
+    min_fps: 30
+  sensors:
+    modalities: ["RGB camera", "multispectral camera", "RTK GPS", "IMU", "LiDAR", "ultrasonic", "flow sensor", "pressure sensor"]
+  actuators:
+    actuator_types: ["wheel motor", "steering actuator", "spray solenoid valve", "boom height actuator", "pump motor"]
+    dof: 2
+    control_rate_hz: 50
+  comms:
+    protocols: ["4G/LTE", "RTK correction (NTRIP)", "CAN bus", "ISOBUS", "Wi-Fi"]
+  power:
+    compute_power_watts: 25
+  safety:
+    level: "agricultural machinery"
+    certifications: ["ISO 18497 agricultural robot safety", "CE Machinery Directive", "EPA pesticide regulations"]
+
+context:
+  typical_architecture: "Electric or diesel-electric 4WD platform with 200-1000L spray tank, boom-mounted high-speed cameras (one per nozzle section), and per-nozzle solenoid valves for spot spraying. Edge GPU (Jetson Orin class) runs weed detection CNN at 30fps with < 25ms latency to trigger nozzles at travel speeds up to 12 km/h. RTK GPS provides centimeter-level guidance for autonomous row following."
+  common_pitfalls:
+    - "Nozzle-to-camera latency must account for vehicle speed; at 12 km/h a 25ms delay means 8cm of travel error"
+    - "Weed detection models trained on one growth stage fail on another; continuous model updates are essential"
+    - "Soil compaction from heavy sprayer platforms damages crop roots; lightweight design or controlled traffic is critical"
+    - "Chemical spray drift from ground application is lower than aerial but still regulated within 5m of waterways"
+    - "Dust and moisture on camera lenses require self-cleaning (air blast or wiper) mechanisms"
+    - "GPS RTK signal loss under tree canopy in orchards requires dead-reckoning fallback"
+  regulatory:
+    - "ISO 18497 safety for autonomous agricultural machines"
+    - "EPA pesticide application regulations"
+    - "State pesticide applicator licensing"
+    - "Buffer zone requirements near water and habitation"
+    - "Machine Directive 2006/42/EC (EU)"
+  reference_designs:
+    - "John Deere See & Spray Ultimate"
+    - "Blue River Technology (acquired by Deere)"
+    - "Ecorobotix ARA"
+    - "Bilberry smart spraying"
+    - "SwarmFarm Robotics"
+  design_considerations: "The core technical challenge is achieving sub-25ms weed detection latency to enable spot spraying at field speeds, which requires per-nozzle camera placement and dedicated inference hardware. Herbicide savings of 70-90% justify the higher platform cost. The detection model must handle green-on-green discrimination (weed vs crop) which is significantly harder than green-on-brown (weed vs bare soil) and typically requires species-level classification CNNs. Boom height control with 5cm accuracy prevents nozzle-to-target distance variation that would degrade spray pattern uniformity."
+
+qualification:
+  suggested_questions:
+    - crop_type
+    - field_size_hectares
+    - weed_species
+    - spray_type
+    - terrain_slope
+  critical_constraints:
+    - "Weed detection latency < 25ms"
+    - "Per-nozzle control capability"
+    - "RTK GPS guidance accuracy < 2cm"
+    - "Chemical-resistant construction"
+  optional_constraints:
+    - "Green-on-green detection capability"
+    - "Orchard/vineyard row following"
+    - "Night operation capability"

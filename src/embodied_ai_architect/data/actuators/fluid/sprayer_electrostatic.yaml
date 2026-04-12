@@ -1,0 +1,69 @@
+id: fluid.sprayer_electrostatic
+name: Electrostatic Sprayer
+category: fluid
+actuator_type: sprayer
+description: Sprayer that electrically charges droplets for uniform surface coverage with reduced overspray.
+  Used in painting, coating, and agricultural spraying.
+aliases:
+- electrostatic spray gun
+- charged spray nozzle
+keywords:
+  identity:
+  - electrostatic sprayer
+  - charged sprayer
+  - e-spray nozzle
+  descriptions:
+  - charged droplet sprayer
+  - wrap-around spray
+  - high-transfer spray
+  application:
+  - automotive painting
+  - powder coating
+  - crop protection
+  - disinfection
+  - furniture finishing
+  industry:
+  - automotive
+  - agriculture
+  - furniture
+  - aerospace
+  components:
+  - high voltage electrode
+  - nozzle
+  - charging ring
+  - grounding clamp
+  related:
+  - transfer efficiency
+  - Faraday cage effect
+  - charge-to-mass ratio
+classification:
+  motion_type: fluid_flow
+  control_type: proportional
+  environment:
+  - indoor
+  - outdoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 10
+    max: 2000
+    typical: 100
+  weight_grams:
+    min: 200
+    max: 5000
+    typical: 1000
+  cost_usd:
+    min: 100
+    max: 10000
+    typical: 1500
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  feedback:
+  - none
+reference_products: []

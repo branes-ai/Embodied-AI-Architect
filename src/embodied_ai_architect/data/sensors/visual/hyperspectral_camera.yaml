@@ -1,0 +1,53 @@
+id: visual.hyperspectral_camera
+name: Hyperspectral Camera
+category: visual
+sensor_type: hyperspectral_camera
+description: Imaging spectrometer capturing hundreds of narrow spectral bands
+aliases: []
+keywords:
+  identity:
+  - hyperspectral camera
+  - hyperspectral camera
+  descriptions:
+  - hyperspectral
+  - imaging spectrometer
+  - spectral bands
+  - remote sensing
+  - mineral detection
+  - food inspection
+  application:
+  - medical imaging
+  - push broom
+  - snapshot
+  - spectral resolution
+  - vnir
+  - swir
+  industry:
+  - spectral signature
+  - classification
+  - anomaly detection
+  components:
+  - unmixing
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 256
+    max: 1024
+    typical: 640
+  frame_rate_fps:
+    min: 1
+    max: 100
+    typical: 30
+  power_watts:
+    min: 5
+    max: 30
+    typical: 12
+  cost_usd:
+    min: 5000
+    max: 100000
+    typical: 25000

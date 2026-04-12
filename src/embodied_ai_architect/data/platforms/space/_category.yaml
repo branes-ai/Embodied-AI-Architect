@@ -1,0 +1,41 @@
+# Category: space
+# Auto-generated index — shared defaults for all space platforms
+
+category: space
+description: Shared defaults for 5 space platform(s)
+platform_count: 5
+default_attributes:
+  power_watts:
+    min: 18
+    max: 580
+    typical: 140
+  weight_kg:
+    min: 2.8
+    max: 1020
+    typical: 100
+  cost_usd:
+    min: 10000800
+    max: 600400000
+    typical: 100040000
+  latency_ms:
+    min: 28
+    max: 1400
+    typical: 140
+common_classification:
+  locomotion: space.orbital
+  environment:
+  - extraterrestrial
+  - extreme_temperature
+  - space_orbital
+  - vacuum
+common_perception_tasks:
+- crater
+- rock
+- sand_trap
+- science_target
+- slope
+- wheel_sinkage
+typical_constraints:
+  max_power_watts: 140
+  max_latency_ms: 140
+  max_cost_usd: 100040000

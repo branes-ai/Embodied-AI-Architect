@@ -1,0 +1,78 @@
+id: specialty.paint_sprayer_powder
+name: Powder Coating Gun
+category: specialty
+actuator_type: paint_sprayer
+description: Electrostatic spray gun for applying powder coating to metal parts. Powder is charged and
+  attracted to grounded workpiece, then cured in an oven.
+aliases:
+- powder spray gun
+- electrostatic powder gun
+- powder applicator
+keywords:
+  identity:
+  - powder coating gun
+  - powder sprayer
+  - electrostatic powder applicator
+  descriptions:
+  - dry coating applicator
+  - powder paint system
+  - electrostatic deposition gun
+  application:
+  - metal furniture coating
+  - automotive parts
+  - architectural aluminum
+  - appliance coating
+  industry:
+  - metalworking
+  - furniture
+  - automotive
+  - architectural
+  components:
+  - corona electrode
+  - powder pump
+  - fluidized hopper
+  - control unit
+  related:
+  - first-pass transfer
+  - Faraday penetration
+  - powder recovery
+  - cure temperature
+classification:
+  motion_type: fluid_flow
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 20
+    max: 500
+    typical: 100
+  weight_grams:
+    min: 200
+    max: 3000
+    typical: 800
+  cost_usd:
+    min: 200
+    max: 15000
+    typical: 3000
+  lifetime_hours:
+    min: 5000
+    max: 30000
+    typical: 15000
+interface:
+  protocol:
+  - analog
+  - can
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - none
+reference_products:
+- id: gema_optiflex
+  name: Gema OptiFlex Pro
+  vendor: Gema
+  cost_usd: 5000

@@ -1,0 +1,43 @@
+id: compute.nvidia_jetson_agx_orin_devkit
+name: "NVIDIA Jetson AGX Orin Developer Kit"
+category: compute
+product_type: edge_compute
+vendor: "NVIDIA"
+description: "Flagship edge AI developer kit with 275 TOPS of AI performance. Features 12-core Arm Cortex-A78AE CPU, Ampere GPU with 2048 CUDA cores and 64 Tensor Cores, 64GB LPDDR5, and hardware encoders/decoders. The reference platform for autonomous machines and robotics."
+aliases:
+  - "Jetson AGX Orin"
+  - "AGX Orin DevKit"
+  - "Jetson Orin 64GB"
+
+keywords:
+  identity:
+    - nvidia
+    - jetson
+    - agx orin
+    - edge ai
+    - developer kit
+  application:
+    - robotics compute
+    - autonomous machines
+    - edge inference
+    - computer vision
+    - multi-model inference
+    - deep learning
+
+specifications:
+  weight_kg: 0.71
+  power_watts: 60
+  ip_rating: "none"
+  operating_temp_c: {min: -25, max: 80}
+
+compute:
+  processor: "NVIDIA Jetson AGX Orin 64GB"
+  compute_tops: 275
+  memory_gb: 64
+  storage_gb: 64
+
+sensors: []
+
+pricing:
+  base_price_usd: 1999
+  year: 2024

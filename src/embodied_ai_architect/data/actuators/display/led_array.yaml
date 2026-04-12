@@ -1,0 +1,92 @@
+id: display.led_array
+name: LED Array
+category: display
+actuator_type: led_array
+description: Addressable LED array or matrix for status indication, signaling, and decorative lighting
+  on robots and autonomous systems.
+aliases:
+- LED strip
+- NeoPixel
+- addressable LED
+- LED panel
+keywords:
+  identity:
+  - LED array
+  - addressable LED
+  - NeoPixel strip
+  - RGB LED matrix
+  descriptions:
+  - light indicator
+  - status display
+  - programmable lighting
+  - decorative illumination
+  application:
+  - robot status indicator
+  - drone navigation light
+  - AMR signal light
+  - decorative display
+  - alerting system
+  industry:
+  - robotics
+  - entertainment
+  - signage
+  - automotive
+  components:
+  - LED chip
+  - driver IC
+  - PCB strip
+  - diffuser
+  related:
+  - WS2812
+  - APA102
+  - PWM dimming
+  - color temperature
+classification:
+  motion_type: display_output
+  control_type: on_off
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 0.1
+    max: 100
+    typical: 5
+  continuous_power_watts:
+    min: 0.05
+    max: 60
+    typical: 3
+  weight_grams:
+    min: 2
+    max: 500
+    typical: 30
+  cost_usd:
+    min: 1
+    max: 100
+    typical: 10
+  lifetime_hours:
+    min: 20000
+    max: 100000
+    typical: 50000
+interface:
+  protocol:
+  - spi
+  - i2c
+  - pwm
+  voltage_v:
+    min: 3.3
+    max: 12
+    typical: 5
+  current_a:
+    min: 0.01
+    max: 10
+    typical: 0.5
+  feedback:
+  - none
+reference_products:
+- id: ws2812b_strip
+  name: WorldSemi WS2812B Strip
+  vendor: WorldSemi
+  cost_usd: 5

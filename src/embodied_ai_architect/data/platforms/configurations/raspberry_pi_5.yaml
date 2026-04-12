@@ -1,0 +1,43 @@
+id: compute.raspberry_pi_5
+name: "Raspberry Pi 5"
+category: compute
+product_type: edge_compute
+vendor: "Raspberry Pi Foundation"
+description: "Latest generation single-board computer with Broadcom BCM2712 quad-core Arm Cortex-A76 at 2.4 GHz. Features PCIe 2.0, dual 4Kp60 HDMI, and AI acceleration via Hailo-8 M.2 HAT+. The world's most popular SBC platform for robotics prototyping and education."
+aliases:
+  - "RPi 5"
+  - "Pi 5"
+  - "Raspberry Pi"
+
+keywords:
+  identity:
+    - raspberry pi
+    - rpi5
+    - single board computer
+    - arm
+    - broadcom
+  application:
+    - prototyping
+    - education
+    - iot
+    - home automation
+    - robotics education
+    - computer vision
+
+specifications:
+  weight_kg: 0.046
+  power_watts: 12
+  ip_rating: "none"
+  operating_temp_c: {min: 0, max: 85}
+
+compute:
+  processor: "Broadcom BCM2712 Quad-Core Cortex-A76 @ 2.4GHz"
+  compute_tops: 0.1
+  memory_gb: 8
+  storage_gb: 0
+
+sensors: []
+
+pricing:
+  base_price_usd: 80
+  year: 2024

@@ -1,0 +1,87 @@
+id: specialty.laser_cutter_diode
+name: Diode Laser Module
+category: specialty
+actuator_type: laser_cutter
+description: Compact laser diode module for desktop engraving, marking, and light cutting. Low cost and
+  easy to integrate with CNC/3D printer frames.
+aliases:
+- laser diode cutter
+- desktop laser
+- laser module
+keywords:
+  identity:
+  - diode laser module
+  - desktop laser cutter
+  - blue laser module
+  descriptions:
+  - compact laser cutter
+  - hobby laser engraver
+  - low power laser tool
+  application:
+  - desktop engraving
+  - leather cutting
+  - paper cutting
+  - marking
+  - hobby crafting
+  industry:
+  - prototyping
+  - hobby
+  - education
+  - craft
+  components:
+  - laser diode
+  - collimating lens
+  - heatsink
+  - driver board
+  related:
+  - wavelength
+  - spot size
+  - duty cycle
+  - optical power
+classification:
+  motion_type: display_output
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 0.5
+    max: 40
+    typical: 10
+  continuous_power_watts:
+    min: 0.2
+    max: 30
+    typical: 5
+  weight_grams:
+    min: 20
+    max: 500
+    typical: 80
+  cost_usd:
+    min: 20
+    max: 500
+    typical: 100
+  lifetime_hours:
+    min: 5000
+    max: 30000
+    typical: 10000
+interface:
+  protocol:
+  - pwm
+  - analog
+  voltage_v:
+    min: 5
+    max: 24
+    typical: 12
+  current_a:
+    min: 0.5
+    max: 10
+    typical: 3
+  feedback:
+  - none
+reference_products:
+- id: ortur_lm3
+  name: Ortur Laser Module 20W
+  vendor: Ortur
+  cost_usd: 120

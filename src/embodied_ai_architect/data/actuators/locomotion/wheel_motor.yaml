@@ -1,0 +1,103 @@
+id: locomotion.wheel_motor
+name: Hub Wheel Motor
+category: locomotion
+actuator_type: wheel_motor
+description: Brushless motor integrated into a wheel hub for direct-drive differential or omnidirectional
+  platforms. Simplifies mobile robot drivetrains by eliminating belts and gears.
+aliases:
+- hub motor
+- in-wheel motor
+- wheel drive motor
+keywords:
+  identity:
+  - hub wheel motor
+  - in-wheel motor
+  - hub drive
+  descriptions:
+  - direct-drive wheel
+  - integrated wheel motor
+  - electric wheel drive
+  application:
+  - AGV drive
+  - AMR platform
+  - electric scooter
+  - wheelchair drive
+  - mobile robot base
+  industry:
+  - robotics
+  - logistics
+  - personal mobility
+  - warehouse automation
+  components:
+  - BLDC motor
+  - planetary gearbox
+  - encoder
+  - tire
+  - controller
+  related:
+  - wheel odometry
+  - differential drive
+  - torque vectoring
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 0.5
+    max: 100
+    typical: 10
+  speed_rpm:
+    min: 0
+    max: 500
+    typical: 100
+  payload_kg:
+    min: 5
+    max: 500
+    typical: 50
+  efficiency_percent:
+    min: 75
+    max: 92
+    typical: 85
+  peak_power_watts:
+    min: 20
+    max: 3000
+    typical: 250
+  continuous_power_watts:
+    min: 10
+    max: 1500
+    typical: 100
+  weight_grams:
+    min: 200
+    max: 10000
+    typical: 1500
+  cost_usd:
+    min: 30
+    max: 2000
+    typical: 150
+interface:
+  protocol:
+  - can
+  - pwm
+  - rs485
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 1
+    max: 30
+    typical: 8
+  feedback:
+  - encoder_incremental
+  - hall_effect
+reference_products:
+- id: odrive_d6374
+  name: ODrive D6374 Hub Motor
+  vendor: ODrive Robotics
+  cost_usd: 80
+  torque_nm: 8.3

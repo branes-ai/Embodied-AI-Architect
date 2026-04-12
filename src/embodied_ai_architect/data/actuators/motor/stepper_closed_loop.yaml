@@ -1,0 +1,101 @@
+id: motor.stepper_closed_loop
+name: Closed-Loop Stepper Motor
+category: motor
+actuator_type: stepper
+description: Stepper motor with integrated encoder and closed-loop driver. Eliminates missed steps, reduces
+  heat, and enables torque control. Bridges the gap between open-loop steppers and servo motors.
+aliases:
+- servo stepper
+- closed loop stepper
+- hybrid servo
+keywords:
+  identity:
+  - closed-loop stepper
+  - servo stepper
+  - hybrid servo motor
+  descriptions:
+  - encoder-equipped stepper
+  - feedback stepper motor
+  - anti-stall stepper
+  application:
+  - CNC machine
+  - 3D printer
+  - packaging machine
+  - textile machine
+  - precision stage
+  industry:
+  - manufacturing
+  - 3D printing
+  - packaging
+  - textile
+  components:
+  - stepper motor
+  - magnetic encoder
+  - closed-loop driver
+  - current controller
+  related:
+  - stall detection
+  - torque mode
+  - position recovery
+classification:
+  motion_type: rotary
+  control_type: position
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  torque_nm:
+    min: 0.2
+    max: 12.0
+    typical: 2.0
+  speed_rpm:
+    min: 0
+    max: 3000
+    typical: 600
+  position_accuracy_um:
+    min: 1
+    max: 50
+    typical: 10
+  peak_power_watts:
+    min: 10
+    max: 300
+    typical: 60
+  continuous_power_watts:
+    min: 5
+    max: 150
+    typical: 30
+  weight_grams:
+    min: 200
+    max: 5000
+    typical: 600
+  cost_usd:
+    min: 30
+    max: 400
+    typical: 80
+  lifetime_hours:
+    min: 10000
+    max: 50000
+    typical: 25000
+interface:
+  protocol:
+  - step_dir
+  - can
+  - rs485
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.5
+    max: 6
+    typical: 2.5
+  feedback:
+  - encoder_incremental
+  - encoder_absolute
+reference_products:
+- id: isc04_nema17
+  name: Moons iSC04 NEMA 17
+  vendor: Moons
+  cost_usd: 65
+  torque_nm: 0.7

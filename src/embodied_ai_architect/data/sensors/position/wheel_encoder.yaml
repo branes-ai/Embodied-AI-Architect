@@ -1,0 +1,45 @@
+id: position.wheel_encoder
+name: Wheel Encoder
+category: position
+sensor_type: wheel_encoder
+description: Rotary encoder for odometry and speed measurement
+aliases: []
+keywords:
+  identity:
+  - wheel encoder
+  - wheel encoder
+  descriptions:
+  - wheel encoder
+  - rotary encoder
+  - odometry
+  - speed
+  - position
+  - incremental
+  application:
+  - absolute
+  - quadrature
+  - optical encoder
+  - magnetic encoder
+  - hall effect
+  - pulses per revolution
+  industry:
+  - dead reckoning
+  - differential drive
+  - ticks
+  components:
+  - resolution
+classification:
+  modality: position
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.01
+    max: 0.5
+    typical: 0.1
+  cost_usd:
+    min: 5
+    max: 200
+    typical: 30

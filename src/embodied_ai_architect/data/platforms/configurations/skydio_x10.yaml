@@ -1,0 +1,57 @@
+id: aerial.skydio_x10
+name: "Skydio X10"
+category: aerial
+product_type: drone
+vendor: "Skydio"
+description: "Enterprise autonomous drone with AI-powered obstacle avoidance and 65x optical zoom. Features NightSense low-light capabilities, thermal imaging option, and edge computing with NVIDIA Jetson Orin NX. Designed for defense, infrastructure inspection, and public safety."
+aliases:
+  - "X10"
+  - "Skydio X10D"
+  - "Skydio X10V"
+
+keywords:
+  identity:
+    - skydio
+    - x10
+    - autonomous drone
+    - ai drone
+    - enterprise
+  application:
+    - infrastructure inspection
+    - defense
+    - public safety
+    - bridge inspection
+    - autonomous flight
+
+specifications:
+  weight_kg: 2.25
+  max_payload_kg: 0.5
+  power_watts: 250
+  battery_wh: 99
+  flight_time_min: 35
+  max_speed_mps: 18
+  ip_rating: "IP55"
+  operating_temp_c: {min: -20, max: 45}
+
+compute:
+  processor: "NVIDIA Jetson Orin NX"
+  compute_tops: 100
+
+sensors:
+  - type: "navigation_camera"
+    name: "360° Navigation Cameras (x6)"
+    resolution: "2048x1536"
+  - type: "zoom_camera"
+    name: "Narrow Camera 65x Zoom"
+  - type: "wide_camera"
+    name: "Wide Camera"
+    resolution: "4000x3000"
+  - type: "thermal_camera"
+    name: "Thermal Camera (optional)"
+    resolution: "640x512"
+  - type: "gnss"
+    name: "Multi-band GNSS"
+
+pricing:
+  base_price_usd: 22000
+  year: 2024

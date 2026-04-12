@@ -1,0 +1,102 @@
+id: motor.brushed_dc_gearmotor
+name: Brushed DC Gearmotor
+category: motor
+actuator_type: brushed_dc
+description: Brushed DC motor with integrated gear reduction for high torque at low speed. Common in mobile
+  robotics, door locks, and positioning systems.
+aliases:
+- gearmotor
+- geared DC motor
+- gear motor
+keywords:
+  identity:
+  - brushed dc gearmotor
+  - geared motor
+  - gearmotor
+  descriptions:
+  - gear-reduced motor
+  - high torque low speed motor
+  - integrated gearbox motor
+  application:
+  - mobile robot drive
+  - door lock
+  - window lift
+  - antenna positioner
+  - conveyor belt
+  - turntable
+  industry:
+  - robotics
+  - automotive
+  - building automation
+  - consumer products
+  components:
+  - planetary gearbox
+  - spur gear
+  - brushed motor
+  - encoder wheel
+  related:
+  - gear ratio
+  - backlash
+  - torque multiplication
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  torque_nm:
+    min: 0.05
+    max: 20.0
+    typical: 2.0
+  speed_rpm:
+    min: 0
+    max: 500
+    typical: 100
+  efficiency_percent:
+    min: 40
+    max: 70
+    typical: 55
+  peak_power_watts:
+    min: 1
+    max: 200
+    typical: 15
+  continuous_power_watts:
+    min: 0.5
+    max: 100
+    typical: 8
+  weight_grams:
+    min: 20
+    max: 2000
+    typical: 200
+  cost_usd:
+    min: 3
+    max: 150
+    typical: 20
+  lifetime_hours:
+    min: 1000
+    max: 10000
+    typical: 5000
+interface:
+  protocol:
+  - pwm
+  - analog
+  voltage_v:
+    min: 3
+    max: 24
+    typical: 12
+  current_a:
+    min: 0.1
+    max: 10
+    typical: 1.5
+  feedback:
+  - encoder_incremental
+reference_products:
+- id: pololu_37d_70_1
+  name: Pololu 37D 70:1 Gearmotor
+  vendor: Pololu
+  cost_usd: 30
+  torque_nm: 5.5
+  speed_rpm: 150

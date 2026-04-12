@@ -1,0 +1,49 @@
+id: aerial.freefly_alta_x
+name: "Freefly Alta X"
+category: aerial
+product_type: drone
+vendor: "Freefly Systems"
+description: "Heavy-lift professional cinema drone with 15.9 kg payload capacity. Designed for aerial cinematography with top or bottom payload mounting, vibration isolation, and integration with professional cinema cameras and stabilization systems like MoVI Pro."
+aliases:
+  - "Alta X"
+  - "AltaX"
+
+keywords:
+  identity:
+    - freefly
+    - alta
+    - heavy lift
+    - cinema drone
+    - professional
+  application:
+    - aerial cinematography
+    - film production
+    - heavy lift
+    - cinema camera
+    - commercial filming
+
+specifications:
+  weight_kg: 10.1
+  max_payload_kg: 15.9
+  power_watts: 3000
+  battery_wh: 887
+  flight_time_min: 50
+  max_speed_mps: 18
+  ip_rating: "none"
+  operating_temp_c: {min: -10, max: 40}
+
+compute:
+  processor: "Freefly flight controller"
+  compute_tops: 0
+
+sensors:
+  - type: "imu"
+    name: "Dual Redundant IMU"
+  - type: "gnss"
+    name: "Dual GPS"
+  - type: "barometer"
+    name: "Barometer"
+
+pricing:
+  base_price_usd: 14000
+  year: 2024

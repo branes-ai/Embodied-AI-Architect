@@ -1,0 +1,99 @@
+id: motor.brushless_dc_micro
+name: Micro Brushless DC Motor
+category: motor
+actuator_type: brushless_dc
+description: Miniature BLDC motor optimized for small drones, micro-robots, and handheld devices. Sub-50
+  gram weight with diameters under 30mm.
+aliases:
+- micro BLDC
+- miniature brushless motor
+keywords:
+  identity:
+  - micro brushless motor
+  - miniature BLDC
+  - coreless BLDC
+  descriptions:
+  - small electric motor
+  - lightweight motor
+  - compact rotary actuator
+  application:
+  - micro drone
+  - nano UAV
+  - micro robot
+  - handheld gimbal
+  - dental handpiece
+  - micro pump drive
+  industry:
+  - robotics
+  - medical devices
+  - consumer electronics
+  - aerospace
+  components:
+  - neodymium magnet
+  - coreless winding
+  - micro encoder
+  - esc
+  related:
+  - sensorless control
+  - high kv motor
+  - micro propulsion
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 0.001
+    max: 0.05
+    typical: 0.01
+  speed_rpm:
+    min: 0
+    max: 80000
+    typical: 20000
+  efficiency_percent:
+    min: 70
+    max: 90
+    typical: 82
+  peak_power_watts:
+    min: 0.5
+    max: 50
+    typical: 10
+  continuous_power_watts:
+    min: 0.2
+    max: 30
+    typical: 5
+  weight_grams:
+    min: 1
+    max: 50
+    typical: 10
+  cost_usd:
+    min: 3
+    max: 100
+    typical: 20
+  lifetime_hours:
+    min: 5000
+    max: 50000
+    typical: 15000
+interface:
+  protocol:
+  - pwm
+  voltage_v:
+    min: 3.3
+    max: 12
+    typical: 7.4
+  current_a:
+    min: 0.1
+    max: 10
+    typical: 2
+  feedback:
+  - back_emf
+reference_products:
+- id: faulhaber_0824
+  name: Faulhaber 0824 B
+  vendor: Faulhaber
+  cost_usd: 45
+  torque_nm: 0.004
+  speed_rpm: 50000

@@ -1,0 +1,93 @@
+id: gripper.magnetic_gripper
+name: Magnetic Gripper
+category: gripper
+actuator_type: magnetic_gripper
+description: Gripper using permanent magnets or electromagnets to pick up ferromagnetic parts. Zero moving
+  parts, handles oily or perforated surfaces that defeat vacuum grippers.
+aliases:
+- electromagnetic gripper
+- magnet gripper
+- magnetic end-effector
+keywords:
+  identity:
+  - magnetic gripper
+  - electromagnetic gripper
+  - magnet pickup
+  descriptions:
+  - ferromagnetic gripping
+  - contactless release gripper
+  - switchable magnet
+  application:
+  - sheet metal stacking
+  - bin picking steel parts
+  - scrap handling
+  - automotive stamping
+  - steel plate handling
+  industry:
+  - automotive
+  - steel processing
+  - manufacturing
+  - recycling
+  components:
+  - permanent magnet
+  - electromagnet coil
+  - release mechanism
+  - housing
+  related:
+  - holding force
+  - residual magnetism
+  - air gap
+  - breakaway force
+classification:
+  motion_type: gripping
+  control_type: on_off
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 10
+    max: 10000
+    typical: 200
+  payload_kg:
+    min: 0.5
+    max: 500
+    typical: 20
+  peak_power_watts:
+    min: 5
+    max: 200
+    typical: 30
+  weight_grams:
+    min: 100
+    max: 20000
+    typical: 1500
+  cost_usd:
+    min: 50
+    max: 5000
+    typical: 800
+  response_time_ms:
+    min: 50
+    max: 500
+    typical: 100
+interface:
+  protocol:
+  - analog
+  - can
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.5
+    max: 10
+    typical: 2
+  feedback:
+  - none
+reference_products:
+- id: schunk_emh
+  name: SCHUNK EMH Electromagnetic Gripper
+  vendor: SCHUNK
+  cost_usd: 1200
+  force_n: 400

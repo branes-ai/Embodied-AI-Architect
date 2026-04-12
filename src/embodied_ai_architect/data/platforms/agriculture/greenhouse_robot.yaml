@@ -1,0 +1,149 @@
+id: agriculture.greenhouse_robot
+name: Greenhouse Robot
+category: agriculture
+description: Greenhouse Robot platform for agriculture applications.
+aliases:
+- greenhouse robot
+- Greenhouse Robot
+keywords:
+  identity:
+  - greenhouse robot
+  - greenhouse robot
+  - agriculture greenhouse robot
+  - smart greenhouse robot
+  - greenhouse robot platform
+  - automated greenhouse robot
+  - agribot
+  - farm robot
+  - agricultural robot
+  - precision agriculture system
+  - smart farming platform
+  - agri-tech robot
+  descriptions:
+  - greenhouse robot system
+  - autonomous greenhouse robot
+  - system for greenhouse robot applications
+  - agriculture platform using greenhouse robot technology
+  - intelligent greenhouse robot solution
+  - autonomous platform for precision agriculture tasks
+  - farm robot for automated crop management and monitoring
+  application:
+  - greenhouse robot
+  - agriculture automation
+  - greenhouse robot automation
+  - real-time greenhouse robot
+  - greenhouse robot monitoring
+  - greenhouse robot detection
+  - crop monitoring
+  - weed detection
+  - precision spraying
+  - yield estimation
+  - soil analysis
+  - planting
+  - harvesting
+  - fruit picking
+  industry:
+  - agriculture
+  - greenhouse robot
+  - precision agriculture
+  - smart farming
+  - agri-tech
+  - horticulture
+  - viticulture
+  - organic farming
+  components:
+  - gps
+  - imu
+  - camera
+  - multispectral camera
+  - NDVI sensor
+  - RTK GPS
+  - spray nozzle
+  - soil moisture sensor
+  - weather station
+  related:
+  - agriculture
+  - greenhouse
+  - NDVI
+  - vegetation index
+  - variable rate application
+  - site-specific management
+  - crop health
+  - field mapping
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_rural
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 50
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - gps
+    - imu
+    - camera
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - lora
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard agriculture architecture for greenhouse robot applications.
+  common_pitfalls:
+  - Domain-specific challenges for greenhouse robot platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to greenhouse robot in the agriculture domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

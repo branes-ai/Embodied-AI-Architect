@@ -1,0 +1,31 @@
+# Category: municipal
+# Auto-generated index — shared defaults for all municipal platforms
+
+category: municipal
+description: Shared defaults for 2 municipal platform(s)
+platform_count: 2
+default_attributes:
+  power_watts:
+    min: 500
+    max: 20000
+    typical: 5000
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+common_classification:
+  locomotion: ground.wheeled
+  environment:
+  - outdoor_urban
+typical_constraints:
+  max_power_watts: 5000
+  max_latency_ms: 50
+  max_cost_usd: 50000

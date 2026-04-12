@@ -1,0 +1,136 @@
+name: Military ISR UAV
+description: Intelligence, surveillance, and reconnaissance fixed-wing UAV with EO/IR sensors and long loiter time.
+keywords:
+  identity:
+  - ISR drone
+  - surveillance UAV
+  - reconnaissance drone
+  - military UAV
+  descriptions:
+  - military spy drone
+  - long-endurance surveillance aircraft
+  - intelligence gathering UAV
+  application:
+  - intelligence gathering
+  - surveillance
+  - reconnaissance
+  - border patrol
+  - target acquisition
+  industry:
+  - ISR
+  - SIGINT
+  - ELINT
+  - COMINT
+  - C4ISR
+  - GEOINT
+  components:
+  - EO/IR gimbal
+  - SAR radar
+  - SIGINT payload
+  - datalink
+  - SATCOM
+  related:
+  - military
+  - defense
+  - border security
+  - maritime patrol
+classification:
+  locomotion: aerial.fixed_wing
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_rural
+  - outdoor_extreme
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 100
+    max: 5000
+    typical: 1000
+  compute_tops:
+    min: 10
+    max: 200
+    typical: 50
+  latency_ms:
+    min: 10
+    max: 200
+    typical: 50
+  weight_kg:
+    min: 20
+    max: 15000
+    typical: 500
+  cost_usd:
+    min: 50000
+    max: 50000000
+    typical: 2000000
+  autonomy_level: conditional
+  safety_level: sil_2
+  mission_duration_hours:
+    min: 4
+    max: 40
+    typical: 16
+implications:
+  platform_type: drone
+  perception:
+    camera_types:
+    - eo_ir_gimbal
+    - sar_radar
+    detection_classes:
+    - vehicle
+    - person
+    - building
+    max_latency_ms: 50
+    min_fps: 30
+  sensors:
+    modalities:
+    - imu
+    - gps
+    - sigint
+    - eo_ir
+  actuators:
+    actuator_types:
+    - brushless_motor
+    - servo
+    dof: null
+    control_rate_hz: 50
+  comms:
+    protocols:
+    - mavlink
+    - satcom
+    - datalink
+  power:
+    compute_power_watts: 50
+  safety:
+    level: sil_2
+    certifications: []
+context:
+  typical_architecture: Large fixed-wing with turbojet or piston engine, multi-sensor payload (EO/IR gimbal, SAR, SIGINT),
+    redundant flight control, encrypted datalinks, and onboard edge AI for real-time target detection and tracking.
+  common_pitfalls:
+  - Sensor fusion latency between EO/IR and radar degrades target tracking
+  - Encrypted datalink bandwidth limits real-time video quality
+  - GPS jamming/spoofing requires INS fallback
+  regulatory:
+  - ITAR export controls
+  - National airspace integration
+  - Frequency allocation for datalinks
+  reference_designs:
+  - General Atomics MQ-9 Reaper
+  - Northrop Grumman RQ-4 Global Hawk
+  - AeroVironment Puma AE
+  design_considerations: Onboard AI for automatic target recognition (ATR) is the key differentiator — reduces datalink bandwidth
+    requirements and enables autonomous operation in contested RF environments. Multi-INT fusion (EO/IR + SAR + SIGINT) requires
+    significant compute but dramatically improves intelligence quality.
+qualification:
+  suggested_questions:
+  - sensor_payload
+  - endurance_hours
+  - altitude_ft
+  critical_constraints:
+  - Loiter endurance
+  - Sensor resolution
+  - Datalink security
+  optional_constraints:
+  - SAR capability
+  - SIGINT payload
+  - Weapon integration

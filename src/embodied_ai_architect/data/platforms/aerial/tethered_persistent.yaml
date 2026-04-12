@@ -1,0 +1,152 @@
+id: aerial.tethered_persistent
+name: Tethered Persistent
+category: aerial
+description: Tethered Persistent platform for aerial applications.
+aliases:
+- tethered persistent
+- Tethered Persistent
+keywords:
+  identity:
+  - tethered persistent
+  - tethered persistent
+  - aerial tethered persistent
+  - smart tethered persistent
+  - tethered persistent platform
+  - automated tethered persistent
+  - robotic tethered persistent
+  - tethered persistent robot
+  - UAV
+  - unmanned aerial vehicle
+  - drone
+  - multirotor
+  - quadcopter
+  - RPAS
+  descriptions:
+  - tethered persistent system
+  - autonomous tethered persistent
+  - system for tethered persistent applications
+  - aerial platform using tethered persistent technology
+  - intelligent tethered persistent solution
+  - unmanned aerial platform for autonomous missions
+  - drone system with onboard perception and navigation
+  - aerial robot for beyond visual line of sight operations
+  application:
+  - tethered persistent
+  - aerial automation
+  - tethered persistent automation
+  - real-time tethered persistent
+  - tethered persistent monitoring
+  - tethered persistent detection
+  - aerial survey
+  - aerial inspection
+  - aerial mapping
+  - photogrammetry
+  - aerial photography
+  - crop monitoring
+  - infrastructure inspection
+  - search and rescue
+  industry:
+  - aerial
+  - tethered persistent
+  - aerospace
+  - defense
+  - agriculture
+  - energy
+  - construction
+  - logistics
+  components:
+  - imu
+  - gps
+  - barometer
+  - flight controller
+  - ESC
+  - brushless motor
+  - propeller
+  - GPS module
+  - magnetometer
+  related:
+  - aerial
+  - tethered
+  - flight planning
+  - waypoint navigation
+  - geofencing
+  - return to home
+  - autonomous flight
+  - BVLOS
+classification:
+  locomotion: aerial.rotary_wing
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_rural
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 5
+    max: 500
+    typical: 50
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: drone
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - imu
+    - gps
+    - barometer
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - mavlink
+    - wifi
+  power:
+    compute_power_watts: 15.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard aerial architecture for tethered persistent applications.
+  common_pitfalls:
+  - Domain-specific challenges for tethered persistent platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to tethered persistent in the aerial domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

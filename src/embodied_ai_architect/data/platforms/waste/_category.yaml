@@ -1,0 +1,40 @@
+# Category: waste
+# Auto-generated index — shared defaults for all waste platforms
+
+category: waste
+description: Shared defaults for 4 waste platform(s)
+platform_count: 4
+default_attributes:
+  power_watts:
+    min: 275
+    max: 2250
+    typical: 750
+  weight_kg:
+    min: 25.8
+    max: 875
+    typical: 100
+  cost_usd:
+    min: 25750
+    max: 475000
+    typical: 87500
+  latency_ms:
+    min: 10
+    max: 387.5
+    typical: 42.5
+common_classification:
+  locomotion: stationary.fixed_mount
+  environment:
+  - indoor_industrial
+  - indoor_structured
+common_perception_tasks:
+- aluminum
+- cardboard
+- contaminant
+- film_plastic
+- glass
+- hdpe
+- pet_bottle
+typical_constraints:
+  max_power_watts: 750
+  max_latency_ms: 42.5
+  max_cost_usd: 87500

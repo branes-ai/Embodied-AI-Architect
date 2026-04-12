@@ -1,0 +1,149 @@
+id: lab.biobank_storage
+name: Biobank Storage
+category: lab
+description: Biobank Storage platform for lab applications.
+aliases:
+- biobank storage
+- Biobank Storage
+keywords:
+  identity:
+  - biobank storage
+  - biobank storage
+  - lab biobank storage
+  - smart biobank storage
+  - biobank storage platform
+  - automated biobank storage
+  - robotic biobank storage
+  - biobank storage robot
+  - lab robot
+  - laboratory automation
+  - lab automation system
+  - scientific robot
+  - research robot
+  - analytical robot
+  descriptions:
+  - biobank storage system
+  - autonomous biobank storage
+  - system for biobank storage applications
+  - lab platform using biobank storage technology
+  - intelligent biobank storage solution
+  - laboratory automation platform for high-throughput experiments
+  - robotic system for automated lab sample processing
+  application:
+  - biobank storage
+  - lab automation
+  - biobank storage automation
+  - real-time biobank storage
+  - biobank storage monitoring
+  - biobank storage detection
+  - sample handling
+  - pipetting
+  - plate handling
+  - centrifugation
+  - PCR setup
+  - high-throughput screening
+  - compound management
+  - cell culture
+  industry:
+  - lab
+  - biobank storage
+  - life sciences
+  - pharmaceutical
+  - biotech
+  - clinical laboratory
+  - academic research
+  - analytical chemistry
+  components:
+  - camera
+  - barcode_reader
+  - pipette tip
+  - microplate
+  - liquid handler
+  - plate reader
+  - barcode scanner
+  - incubator
+  related:
+  - lab
+  - biobank
+  - LIMS
+  - SiLA
+  - sample tracking
+  - GLP
+  - throughput
+  - reproducibility
+classification:
+  locomotion: stationary.benchtop
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_lab
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 50
+    max: 500
+    typical: 200
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - camera
+    - barcode_reader
+  actuators:
+    actuator_types:
+    - stepper_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethernet
+    - usb
+  power:
+    compute_power_watts: 60.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard lab architecture for biobank storage applications.
+  common_pitfalls:
+  - Domain-specific challenges for biobank storage platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to biobank storage in the lab domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

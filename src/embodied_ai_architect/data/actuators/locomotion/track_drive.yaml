@@ -1,0 +1,95 @@
+id: locomotion.track_drive
+name: Track Drive Motor
+category: locomotion
+actuator_type: track_drive
+description: Motor and sprocket assembly for tracked (caterpillar) platforms. Provides traction on rough
+  terrain, stairs, and loose surfaces.
+aliases:
+- caterpillar drive
+- tracked drive
+- crawler motor
+keywords:
+  identity:
+  - track drive
+  - crawler motor
+  - caterpillar drive
+  - tracked vehicle motor
+  descriptions:
+  - tracked locomotion actuator
+  - skid-steer drive
+  - continuous track motor
+  application:
+  - bomb disposal robot
+  - inspection robot
+  - stair climbing robot
+  - agricultural robot
+  - snow removal
+  industry:
+  - defense
+  - inspection
+  - agriculture
+  - construction
+  - mining
+  components:
+  - gearmotor
+  - sprocket
+  - track belt
+  - tension adjuster
+  - idler wheel
+  related:
+  - skid steering
+  - ground pressure
+  - drawbar pull
+  - track tension
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - outdoor
+  - hazardous
+  reversible: true
+  backdrivable: false
+attributes:
+  torque_nm:
+    min: 1
+    max: 500
+    typical: 30
+  speed_rpm:
+    min: 0
+    max: 300
+    typical: 60
+  payload_kg:
+    min: 5
+    max: 5000
+    typical: 100
+  peak_power_watts:
+    min: 20
+    max: 10000
+    typical: 500
+  continuous_power_watts:
+    min: 10
+    max: 5000
+    typical: 200
+  weight_grams:
+    min: 500
+    max: 50000
+    typical: 3000
+  cost_usd:
+    min: 50
+    max: 10000
+    typical: 500
+interface:
+  protocol:
+  - can
+  - pwm
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 2
+    max: 80
+    typical: 15
+  feedback:
+  - encoder_incremental
+reference_products: []

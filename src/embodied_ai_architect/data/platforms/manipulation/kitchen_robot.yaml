@@ -1,0 +1,147 @@
+id: manipulation.kitchen_robot
+name: Kitchen Robot
+category: manipulation
+description: Kitchen Robot platform for manipulation applications.
+aliases:
+- kitchen robot
+- Kitchen Robot
+keywords:
+  identity:
+  - kitchen robot
+  - kitchen robot
+  - manipulation kitchen robot
+  - smart kitchen robot
+  - kitchen robot platform
+  - automated kitchen robot
+  - manipulation robot
+  - robotic arm
+  - manipulator
+  - cobot
+  - collaborative robot
+  - industrial robot arm
+  descriptions:
+  - kitchen robot system
+  - autonomous kitchen robot
+  - system for kitchen robot applications
+  - manipulation platform using kitchen robot technology
+  - intelligent kitchen robot solution
+  - robotic manipulation platform for industrial automation
+  - robot arm system for automated material handling and assembly
+  application:
+  - kitchen robot
+  - manipulation automation
+  - kitchen robot automation
+  - real-time kitchen robot
+  - kitchen robot monitoring
+  - kitchen robot detection
+  - pick and place
+  - assembly
+  - welding
+  - painting
+  - palletizing
+  - machine tending
+  - bin picking
+  - packaging
+  industry:
+  - manipulation
+  - kitchen robot
+  - manufacturing
+  - automotive
+  - electronics
+  - aerospace
+  - consumer goods
+  - metal fabrication
+  components:
+  - force_torque
+  - joint_encoder
+  - servo joint
+  - gripper
+  - force-torque sensor
+  - end effector
+  - teach pendant
+  - controller cabinet
+  related:
+  - manipulation
+  - kitchen
+  - inverse kinematics
+  - motion planning
+  - grasp planning
+  - payload capacity
+  - reach
+  - repeatability
+classification:
+  locomotion: stationary.fixed_mount
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 100
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: industrial_arm
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - force_torque
+    - joint_encoder
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethercat
+    - ethernet
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard manipulation architecture for kitchen robot applications.
+  common_pitfalls:
+  - Domain-specific challenges for kitchen robot platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to kitchen robot in the manipulation domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

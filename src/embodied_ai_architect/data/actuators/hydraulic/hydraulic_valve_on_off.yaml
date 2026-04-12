@@ -1,0 +1,82 @@
+id: hydraulic.hydraulic_valve_on_off
+name: Hydraulic Directional On/Off Valve
+category: hydraulic
+actuator_type: hydraulic_valve
+description: Solenoid-operated directional control valve that switches hydraulic flow between on/off states.
+  Simple, robust, and inexpensive.
+aliases:
+- solenoid valve
+- directional control valve
+- DCV
+keywords:
+  identity:
+  - on-off hydraulic valve
+  - solenoid hydraulic valve
+  - DCV
+  descriptions:
+  - switching valve
+  - directional control valve
+  - bang-bang valve
+  application:
+  - cylinder extend/retract
+  - motor direction
+  - circuit isolation
+  - safety shutoff
+  industry:
+  - construction
+  - agriculture
+  - manufacturing
+  - mobile hydraulic
+  components:
+  - solenoid
+  - spool
+  - spring
+  - o-ring seals
+  related:
+  - switching time
+  - flow capacity
+  - pressure drop
+classification:
+  motion_type: fluid_flow
+  control_type: on_off
+  environment:
+  - indoor
+  - outdoor
+  - hazardous
+  reversible: true
+  backdrivable: false
+attributes:
+  response_time_ms:
+    min: 10
+    max: 200
+    typical: 40
+  peak_power_watts:
+    min: 5
+    max: 50
+    typical: 20
+  weight_grams:
+    min: 100
+    max: 5000
+    typical: 800
+  cost_usd:
+    min: 20
+    max: 2000
+    typical: 200
+  lifetime_hours:
+    min: 20000
+    max: 200000
+    typical: 50000
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  current_a:
+    min: 0.2
+    max: 3
+    typical: 0.8
+  feedback:
+  - none
+reference_products: []

@@ -1,0 +1,139 @@
+id: surveillance.perimeter_intrusion
+name: "Perimeter Intrusion Detection System"
+category: surveillance
+description: "Fence-line breach detection system combining cameras, radar, and fiber-optic sensors for continuous perimeter surveillance of critical infrastructure and high-security facilities."
+aliases:
+  - "perimeter security system"
+  - "PIDS"
+  - "fence alarm system"
+
+keywords:
+  identity:
+    - perimeter security
+    - intrusion detection
+    - PIDS
+    - perimeter intrusion detection system
+    - fence sensor
+    - boundary alarm
+    - perimeter surveillance
+    - security system
+    - fence detection
+  descriptions:
+    - "system that detects people climbing or cutting a fence"
+    - "camera and sensor system that guards a perimeter"
+    - "automated security system for detecting intruders along a fence line"
+    - "boundary monitoring system for restricted areas"
+  application:
+    - perimeter defense
+    - fence-line monitoring
+    - breach detection
+    - trespass detection
+    - critical infrastructure protection
+    - border security
+    - intrusion alarm
+    - threat detection
+  industry:
+    - physical security
+    - force protection
+    - critical infrastructure
+    - CBRN security
+    - CIP
+    - access control
+  components:
+    - thermal camera
+    - PTZ camera
+    - fiber optic sensor
+    - radar sensor
+    - video analytics
+    - VMS
+    - alarm panel
+  related:
+    - video management system
+    - PSIM
+    - access control
+    - security operations center
+    - SOC
+    - nuisance alarm
+    - false alarm rate
+    - classification vs detection
+
+classification:
+  locomotion: "fixed installation"
+  manipulation: "PTZ camera tracking"
+  load_class: "infrastructure"
+  environment:
+    - outdoor
+    - all-weather
+    - perimeter
+  human_proximity: "remote monitoring"
+
+attributes:
+  power_watts: {min: 50, max: 500, typical: 200}
+  compute_tops: {min: 2, max: 40, typical: 12}
+  latency_ms: {min: 50, max: 500, typical: 200}
+  weight_kg: {min: 5, max: 50, typical: 20}
+  cost_usd: {min: 5000, max: 100000, typical: 30000}
+  autonomy_level: "automated detection, human verification"
+  safety_level: "security grade"
+  mission_duration_hours: {min: 8760, max: 8760, typical: 8760}
+
+implications:
+  platform_type: "surveillance"
+  perception:
+    camera_types: ["thermal LWIR", "PTZ visible", "fixed wide-angle", "stereo depth"]
+    detection_classes: ["person", "vehicle", "animal", "crawling person", "climbing person", "fence cut", "thrown object", "drone"]
+    max_latency_ms: 300
+    min_fps: 15
+  sensors:
+    modalities: ["thermal camera", "visible camera", "radar", "fiber optic vibration", "microwave barrier", "PIR sensor", "seismic sensor", "acoustic sensor"]
+  actuators:
+    actuator_types: ["PTZ pan/tilt motor", "spotlight", "siren", "gate lock"]
+    dof: 2
+    control_rate_hz: 10
+  comms:
+    protocols: ["Ethernet/IP", "ONVIF", "RTSP", "SIA DC-07", "Modbus", "dry contact alarm"]
+  power:
+    compute_power_watts: 30
+  safety:
+    level: "security grade"
+    certifications: ["UL 2900 cybersecurity", "NDAA Section 889 compliant", "CPNI approved", "IEC 62676"]
+
+context:
+  typical_architecture: "Multi-layer detection architecture: primary detection via fiber-optic fence sensor or radar providing zone-level alerts, verified by auto-slewing PTZ thermal/visible cameras with on-edge video analytics for classification. Edge compute nodes at each camera cluster run detection and tracking, with centralized VMS/PSIM for correlation, display, and response coordination."
+  common_pitfalls:
+    - "High nuisance alarm rate (animals, weather, vegetation) erodes operator trust and response effectiveness"
+    - "Thermal cameras lose contrast at dawn/dusk crossover periods"
+    - "Fiber-optic sensors require per-site calibration to distinguish fence climbing from wind or rain vibration"
+    - "Camera coverage gaps at corners and undulating terrain require careful site survey"
+    - "Cybersecurity of IP cameras is critical; compromised cameras are a direct security breach"
+    - "PTZ camera mechanical wear from continuous slewing reduces MTBF to 2-3 years"
+  regulatory:
+    - "CFATS for chemical facilities"
+    - "NERC CIP for energy infrastructure"
+    - "TSA security directives for transportation"
+    - "ITAR for military installations"
+    - "GDPR/privacy for areas near public land"
+  reference_designs:
+    - "FLIR Elara / Quasar perimeter solution"
+    - "Axis Perimeter Defender"
+    - "Magos radar + camera integration"
+    - "Senstar FiberPatrol / FlexZone"
+    - "Optex REDSCAN LiDAR"
+  design_considerations: "Perimeter systems must achieve near-zero missed detections while minimizing nuisance alarms; the industry target is probability of detection (Pd) > 0.95 with nuisance alarm rate < 1 per zone per day. Multi-sensor fusion (radar + thermal + video analytics) dramatically reduces false positives compared to single-sensor approaches. Edge compute must survive -40C to +65C without fans, favoring low-power inference accelerators. The system must operate continuously for 5+ years with minimal maintenance, so MTBF of all components is a primary design driver."
+
+qualification:
+  suggested_questions:
+    - perimeter_length_m
+    - threat_type
+    - terrain_type
+    - integration_with_existing_vms
+    - response_time_requirement_s
+  critical_constraints:
+    - "Probability of detection > 95%"
+    - "Nuisance alarm rate < 1 per zone per day"
+    - "24/7/365 continuous operation"
+    - "All-weather operation"
+  optional_constraints:
+    - "NDAA Section 889 compliance"
+    - "Integration with access control system"
+    - "Drone detection capability"

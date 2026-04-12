@@ -1,0 +1,104 @@
+id: hydraulic.hydraulic_motor
+name: Hydraulic Motor
+category: hydraulic
+actuator_type: hydraulic_motor
+description: Rotary actuator driven by pressurized hydraulic fluid. Delivers very high torque at low speed
+  without gearing. Used in winches, augers, track drives, and marine propulsion.
+aliases:
+- hydraulic rotary motor
+- orbit motor
+- gear motor hydraulic
+keywords:
+  identity:
+  - hydraulic motor
+  - orbit motor
+  - gerotor motor
+  - piston motor
+  descriptions:
+  - fluid power motor
+  - high torque rotary actuator
+  - low speed high torque motor
+  application:
+  - winch drive
+  - auger
+  - conveyor drive
+  - track drive
+  - mixer
+  - marine thruster
+  industry:
+  - construction
+  - marine
+  - agriculture
+  - forestry
+  - mining
+  components:
+  - gerotor set
+  - axial piston
+  - radial piston
+  - hydraulic fluid
+  - shaft seal
+  related:
+  - displacement
+  - volumetric efficiency
+  - pressure rating
+  - drain flow
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - outdoor
+  - indoor
+  - underwater
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 10
+    max: 50000
+    typical: 500
+  speed_rpm:
+    min: 0
+    max: 5000
+    typical: 200
+  efficiency_percent:
+    min: 70
+    max: 95
+    typical: 88
+  peak_power_watts:
+    min: 500
+    max: 200000
+    typical: 15000
+  continuous_power_watts:
+    min: 200
+    max: 100000
+    typical: 8000
+  weight_grams:
+    min: 1000
+    max: 200000
+    typical: 10000
+  cost_usd:
+    min: 200
+    max: 30000
+    typical: 2000
+  lifetime_hours:
+    min: 5000
+    max: 30000
+    typical: 12000
+interface:
+  protocol:
+  - analog
+  - can
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  feedback:
+  - encoder_incremental
+  - none
+reference_products:
+- id: bosch_rexroth_a4vg
+  name: Bosch Rexroth A4VG Variable Pump/Motor
+  vendor: Bosch Rexroth
+  cost_usd: 5000
+  torque_nm: 800
+  speed_rpm: 3600

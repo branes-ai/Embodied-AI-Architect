@@ -1,0 +1,50 @@
+id: manipulation.abb_yumi
+name: "ABB YuMi IRB 14000"
+category: manipulation
+product_type: robot_arm
+vendor: "ABB"
+description: "Dual-arm collaborative robot designed for small parts assembly. Two 7-DOF arms with padded exterior for inherently safe human-robot collaboration. Integrated vision, vacuum grippers, and flexible feeding system. Optimized for electronics and consumer goods assembly."
+aliases:
+  - "YuMi"
+  - "IRB 14000"
+  - "ABB YuMi"
+
+keywords:
+  identity:
+    - abb
+    - yumi
+    - dual arm
+    - collaborative
+    - assembly robot
+  application:
+    - small parts assembly
+    - electronics assembly
+    - consumer goods
+    - laboratory automation
+    - packaging
+
+specifications:
+  weight_kg: 38.0
+  max_payload_kg: 0.5
+  power_watts: 250
+  dof: 7
+  reach_mm: 559
+  repeatability_mm: 0.02
+  ip_rating: "IP30"
+  operating_temp_c: {min: 5, max: 40}
+
+compute:
+  processor: "ABB IRC5 Controller"
+  compute_tops: 0
+
+sensors:
+  - type: "camera"
+    name: "Integrated Vision System"
+  - type: "force_torque"
+    name: "Lead-Through Force Sensing"
+  - type: "position_encoder"
+    name: "Joint Encoders (x7 per arm)"
+
+pricing:
+  base_price_usd: 58000
+  year: 2024

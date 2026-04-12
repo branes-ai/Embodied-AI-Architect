@@ -1,0 +1,45 @@
+id: environmental.water_quality
+name: Water Quality Sensor
+category: environmental
+sensor_type: water_quality
+description: pH, turbidity, dissolved oxygen measurement
+aliases: []
+keywords:
+  identity:
+  - water quality sensor
+  - water quality
+  descriptions:
+  - water quality
+  - ph sensor
+  - turbidity
+  - dissolved oxygen
+  - conductivity
+  - tds
+  application:
+  - orp
+  - chlorine
+  - aquaculture
+  - wastewater
+  - drinking water
+  - environmental monitoring
+  industry:
+  - iot water
+  - multiparameter
+  - in situ
+  components:
+  - online monitoring
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.1
+    max: 5
+    typical: 1
+  cost_usd:
+    min: 50
+    max: 5000
+    typical: 500

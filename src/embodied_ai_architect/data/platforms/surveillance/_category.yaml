@@ -1,0 +1,56 @@
+# Category: surveillance
+# Auto-generated index — shared defaults for all surveillance platforms
+
+category: surveillance
+description: Shared defaults for 33 surveillance platform(s)
+platform_count: 33
+default_attributes:
+  power_watts:
+    min: 7.3
+    max: 119.7
+    typical: 37.6
+  weight_kg:
+    min: 1.1
+    max: 911.4
+    typical: 46.3
+  cost_usd:
+    min: 1157.6
+    max: 459242.4
+    typical: 46842.4
+  latency_ms:
+    min: 13.8
+    max: 533.3
+    typical: 67.3
+common_classification:
+  locomotion: stationary.fixed_mount
+  environment:
+  - all-weather
+  - edge location
+  - indoor
+  - indoor_structured
+  - network closet
+  - outdoor
+  - outdoor (IP65 variants)
+  - outdoor_urban
+  - perimeter
+  - transit
+  - venue
+common_perception_tasks:
+- animal
+- climbing person
+- configurable per deployment
+- counter-flow
+- crawling person
+- crowd cluster
+- drone
+- fallen person
+- fence cut
+- person
+- queue
+- restricted area breach
+- thrown object
+- vehicle
+typical_constraints:
+  max_power_watts: 37.6
+  max_latency_ms: 67.3
+  max_cost_usd: 46842.4

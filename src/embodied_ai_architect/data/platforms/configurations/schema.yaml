@@ -1,0 +1,144 @@
+# Product Configuration Schema — specific real-world products.
+#
+# Product configs extend the platform category definitions with exact
+# attribute values from manufacturer datasheets. They use the same
+# fields as platform definitions but with concrete (non-range) values.
+#
+# Naming: <category>.<product_slug>
+#   e.g., aerial.dji_matrice_350, manipulation.franka_panda
+#
+# Issue #97, Epic #46
+
+# ── IDENTITY ──────────────────────────────────────────────────────────
+
+id:
+  type: string
+  required: true
+  description: "Unique ID: <category>.<product_slug>"
+  example: "aerial.dji_matrice_350"
+
+name:
+  type: string
+  required: true
+  description: "Official product name"
+  example: "DJI Matrice 350 RTK"
+
+category:
+  type: string
+  required: true
+  description: "Platform category from taxonomy"
+  example: "aerial"
+
+product_type:
+  type: string
+  required: true
+  description: "What kind of product: drone, ugv, robot_arm, amr, surgical, etc."
+  example: "drone"
+
+vendor:
+  type: string
+  required: true
+  description: "Manufacturer name"
+  example: "DJI"
+
+description:
+  type: string
+  required: false
+  description: "One-paragraph product description"
+
+# ── SPECIFICATIONS ────────────────────────────────────────────────────
+# Exact values from the manufacturer datasheet.
+
+specifications:
+  type: object
+  required: false
+  fields:
+    weight_kg:
+      type: number
+      description: "Total weight including battery"
+      example: 6.47
+    max_payload_kg:
+      type: number
+      description: "Maximum payload capacity"
+      example: 2.73
+    power_watts:
+      type: number
+      description: "Typical power consumption"
+      example: 450
+    battery_wh:
+      type: number
+      description: "Battery capacity"
+      example: 270
+    flight_time_min:
+      type: number
+      description: "Typical mission duration"
+    max_speed_mps:
+      type: number
+      description: "Maximum speed"
+    ip_rating:
+      type: string
+      description: "Ingress protection"
+      example: "IP55"
+    operating_temp_c:
+      type: object
+      description: "Operating temperature range"
+      example: { min: -20, max: 50 }
+
+# ── COMPUTE ───────────────────────────────────────────────────────────
+# Onboard compute specifications.
+
+compute:
+  type: object
+  required: false
+  fields:
+    processor:
+      type: string
+      description: "Main processor"
+      example: "NVIDIA Jetson Orin NX 16GB"
+    compute_tops:
+      type: number
+      description: "AI compute throughput"
+      example: 100
+    memory_gb:
+      type: number
+    storage_gb:
+      type: number
+
+# ── SENSORS ───────────────────────────────────────────────────────────
+
+sensors:
+  type: list[object]
+  required: false
+  description: "Sensor suite included with the product"
+  example:
+    - type: "stereo_camera"
+      name: "FPV Camera"
+      resolution: "1920x1080"
+      fps: 30
+    - type: "lidar"
+      name: "L2 LiDAR"
+      range_m: 450
+
+# ── PRICING ───────────────────────────────────────────────────────────
+
+pricing:
+  type: object
+  required: false
+  fields:
+    base_price_usd:
+      type: number
+      description: "Base configuration price"
+    year:
+      type: integer
+      description: "Price reference year"
+
+# ── REFERENCES ────────────────────────────────────────────────────────
+
+references:
+  type: object
+  required: false
+  fields:
+    datasheet_url:
+      type: string
+    vendor_page:
+      type: string

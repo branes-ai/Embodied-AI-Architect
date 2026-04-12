@@ -1,0 +1,56 @@
+# Category: ground_wheeled
+# Auto-generated index — shared defaults for all ground_wheeled platforms
+
+category: ground_wheeled
+description: Shared defaults for 19 ground wheeled platform(s)
+platform_count: 19
+default_attributes:
+  power_watts:
+    min: 97.8
+    max: 2100
+    typical: 272.2
+  weight_kg:
+    min: 781.4
+    max: 2905.6
+    typical: 1440.6
+  cost_usd:
+    min: 12833.3
+    max: 476666.7
+    typical: 65833.3
+  latency_ms:
+    min: 12.2
+    max: 458.3
+    typical: 51.7
+common_classification:
+  locomotion: ground.wheeled
+  environment:
+  - controlled-access road
+  - highway
+  - indoor
+  - indoor_structured
+  - outdoor
+  - outdoor_urban
+  - structured
+  - warehouse
+common_perception_tasks:
+- animal
+- charging station
+- construction zone
+- cyclist
+- debris
+- doorway
+- forklift
+- lane marking
+- obstacle
+- pallet
+- pedestrian
+- person
+- shelf
+- tire
+- traffic light
+- traffic sign
+- vehicle
+typical_constraints:
+  max_power_watts: 272.2
+  max_latency_ms: 51.7
+  max_cost_usd: 65833.3

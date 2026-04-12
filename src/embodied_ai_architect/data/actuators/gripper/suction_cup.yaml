@@ -1,0 +1,92 @@
+id: gripper.suction_cup
+name: Suction Cup Gripper
+category: gripper
+actuator_type: suction_cup
+description: Vacuum-based gripper using suction cups to grip flat and smooth surfaces. Excellent for sheet
+  material, boxes, glass, and PCBs.
+aliases:
+- vacuum pad
+- suction gripper
+- vacuum cup
+keywords:
+  identity:
+  - suction cup
+  - vacuum pad
+  - suction gripper
+  descriptions:
+  - vacuum grip end-effector
+  - non-contact gripping
+  - surface adhesion gripper
+  application:
+  - sheet metal handling
+  - glass handling
+  - box palletizing
+  - PCB pick-and-place
+  - label application
+  industry:
+  - logistics
+  - packaging
+  - electronics
+  - glass manufacturing
+  - automotive
+  components:
+  - suction cup
+  - vacuum generator
+  - vacuum sensor
+  - quick-change adapter
+  related:
+  - vacuum level
+  - cup material
+  - lift force
+  - leak rate
+classification:
+  motion_type: gripping
+  control_type: on_off
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 1
+    max: 500
+    typical: 30
+  payload_kg:
+    min: 0.01
+    max: 50
+    typical: 3
+  peak_power_watts:
+    min: 1
+    max: 50
+    typical: 10
+  weight_grams:
+    min: 5
+    max: 500
+    typical: 30
+  cost_usd:
+    min: 2
+    max: 200
+    typical: 15
+  response_time_ms:
+    min: 20
+    max: 300
+    typical: 80
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - none
+reference_products:
+- id: schmalz_sab
+  name: Schmalz SAB Suction Cup
+  vendor: Schmalz
+  cost_usd: 8
+- id: piab_bx
+  name: Piab BX Suction Cup
+  vendor: Piab
+  cost_usd: 10

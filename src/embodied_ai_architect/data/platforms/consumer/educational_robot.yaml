@@ -1,0 +1,149 @@
+id: consumer.educational_robot
+name: Educational Robot
+category: consumer
+description: Educational Robot platform for consumer applications.
+aliases:
+- educational robot
+- Educational Robot
+keywords:
+  identity:
+  - educational robot
+  - educational robot
+  - consumer educational robot
+  - smart educational robot
+  - educational robot platform
+  - automated educational robot
+  - consumer robot
+  - home robot
+  - personal robot
+  - household robot
+  - smart home device
+  - domestic robot
+  descriptions:
+  - educational robot system
+  - autonomous educational robot
+  - system for educational robot applications
+  - consumer platform using educational robot technology
+  - intelligent educational robot solution
+  - consumer robotic device for everyday home use
+  - smart home robot with autonomous operation capabilities
+  application:
+  - educational robot
+  - consumer automation
+  - educational robot automation
+  - real-time educational robot
+  - educational robot monitoring
+  - educational robot detection
+  - home cleaning
+  - lawn care
+  - pool cleaning
+  - entertainment
+  - home security
+  - pet care
+  - cooking assistance
+  - education
+  industry:
+  - consumer
+  - educational robot
+  - consumer electronics
+  - home appliances
+  - smart home
+  - IoT
+  - consumer robotics
+  - home automation
+  components:
+  - lidar
+  - camera
+  - imu
+  - Wi-Fi module
+  - speaker
+  - microphone
+  - LED display
+  - rechargeable battery
+  - charging dock
+  related:
+  - consumer
+  - educational
+  - app control
+  - voice assistant
+  - smart home integration
+  - OTA update
+  - user-friendly
+  - companion app
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_unstructured
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 10
+    max: 100
+    typical: 30
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: amr
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - camera
+    - imu
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - bluetooth
+  power:
+    compute_power_watts: 9.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard consumer architecture for educational robot applications.
+  common_pitfalls:
+  - Domain-specific challenges for educational robot platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to educational robot in the consumer domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

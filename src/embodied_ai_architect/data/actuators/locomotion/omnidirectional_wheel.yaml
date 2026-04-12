@@ -1,0 +1,94 @@
+id: locomotion.omnidirectional_wheel
+name: Omnidirectional Wheel Motor
+category: locomotion
+actuator_type: omnidirectional_wheel
+description: Drive module for mecanum or omni-wheel platforms that can move in any direction without turning.
+  Enables holonomic motion for AGVs, service robots, and competition robots.
+aliases:
+- mecanum drive
+- omni wheel
+- holonomic wheel
+keywords:
+  identity:
+  - omnidirectional wheel
+  - mecanum wheel motor
+  - omni wheel drive
+  descriptions:
+  - holonomic drive module
+  - lateral motion actuator
+  - 360-degree drive
+  application:
+  - warehouse AGV
+  - service robot
+  - competition robot
+  - platform cart
+  - mobile manipulator base
+  industry:
+  - logistics
+  - robotics
+  - warehouse automation
+  - healthcare
+  components:
+  - mecanum wheel
+  - BLDC motor
+  - encoder
+  - roller
+  - controller
+  related:
+  - holonomic kinematics
+  - inverse kinematics
+  - roller angle
+  - slip ratio
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 0.5
+    max: 50
+    typical: 5
+  speed_rpm:
+    min: 0
+    max: 300
+    typical: 80
+  payload_kg:
+    min: 5
+    max: 500
+    typical: 50
+  peak_power_watts:
+    min: 20
+    max: 2000
+    typical: 150
+  continuous_power_watts:
+    min: 10
+    max: 1000
+    typical: 80
+  weight_grams:
+    min: 200
+    max: 5000
+    typical: 800
+  cost_usd:
+    min: 50
+    max: 2000
+    typical: 200
+interface:
+  protocol:
+  - can
+  - pwm
+  - rs485
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 1
+    max: 20
+    typical: 5
+  feedback:
+  - encoder_incremental
+  - hall_effect
+reference_products: []

@@ -1,0 +1,151 @@
+id: marine_surface.usv_patrol
+name: Usv Patrol
+category: marine_surface
+description: Usv Patrol platform for marine surface applications.
+aliases:
+- usv patrol
+- Usv Patrol
+keywords:
+  identity:
+  - usv patrol
+  - usv patrol
+  - marine_surface usv patrol
+  - marine surface usv patrol
+  - smart usv patrol
+  - usv patrol platform
+  - automated usv patrol
+  - robotic usv patrol
+  - surface vessel
+  - unmanned surface vehicle
+  - autonomous boat
+  - surface drone
+  - marine surface robot
+  descriptions:
+  - usv patrol system
+  - autonomous usv patrol
+  - system for usv patrol applications
+  - marine surface platform using usv patrol technology
+  - intelligent usv patrol solution
+  - unmanned surface vessel for autonomous maritime missions
+  - autonomous boat platform for survey and monitoring
+  application:
+  - usv patrol
+  - marine_surface automation
+  - usv patrol automation
+  - real-time usv patrol
+  - usv patrol monitoring
+  - usv patrol detection
+  - hydrographic survey
+  - water quality monitoring
+  - harbor patrol
+  - search and rescue
+  - oil spill response
+  - coastal survey
+  - aquaculture monitoring
+  - cargo transport
+  industry:
+  - marine_surface
+  - usv patrol
+  - maritime
+  - hydrography
+  - aquaculture
+  - port operations
+  - environmental services
+  - coast guard
+  components:
+  - gps
+  - imu
+  - radar
+  - hull
+  - propulsion motor
+  - GPS antenna
+  - AIS transponder
+  - weather station
+  - echo sounder
+  related:
+  - marine_surface
+  - usv
+  - COLREGs
+  - collision avoidance
+  - waypoint navigation
+  - sea state
+  - station keeping
+  - autonomous docking
+classification:
+  locomotion: marine.surface
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_extreme
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 50
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - gps
+    - imu
+    - radar
+    - sonar
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - satellite
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard marine surface architecture for usv patrol applications.
+  common_pitfalls:
+  - Domain-specific challenges for usv patrol platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to usv patrol in the marine surface domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

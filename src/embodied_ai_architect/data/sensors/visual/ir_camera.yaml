@@ -1,0 +1,53 @@
+id: visual.ir_camera
+name: IR Camera
+category: visual
+sensor_type: ir_camera
+description: Near-infrared camera for night vision and eye tracking
+aliases: []
+keywords:
+  identity:
+  - ir camera
+  - ir camera
+  descriptions:
+  - near infrared
+  - nir
+  - swir
+  - ir illumination
+  - night vision
+  - eye tracking
+  application:
+  - driver monitoring
+  - face recognition
+  - ir led
+  - active illumination
+  - covert surveillance
+  - 850nm
+  industry:
+  - 940nm
+  - ir filter
+  - silicon sensitivity
+  components:
+  - quantum dot
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 640
+    max: 2048
+    typical: 1280
+  frame_rate_fps:
+    min: 15
+    max: 120
+    typical: 30
+  power_watts:
+    min: 0.5
+    max: 3.0
+    typical: 1.5
+  cost_usd:
+    min: 50
+    max: 1000
+    typical: 200

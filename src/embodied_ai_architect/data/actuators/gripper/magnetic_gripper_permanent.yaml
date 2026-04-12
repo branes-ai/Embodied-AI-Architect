@@ -1,0 +1,84 @@
+id: gripper.magnetic_gripper_permanent
+name: Permanent Magnet Gripper
+category: gripper
+actuator_type: magnetic_gripper
+description: Gripper using switchable permanent magnets (no power to hold). Actuates a mechanical linkage
+  to redirect magnetic flux for release. Fail-safe holding with zero power consumption.
+aliases:
+- switchable magnet
+- permanent magnet lifter
+- no-power magnet gripper
+keywords:
+  identity:
+  - permanent magnet gripper
+  - switchable magnet
+  - magnetic lifter
+  descriptions:
+  - zero-power hold gripper
+  - fail-safe magnetic gripper
+  - flux-switching gripper
+  application:
+  - sheet metal handling
+  - die change
+  - mold handling
+  - steel beam lifting
+  - press tending
+  industry:
+  - metalworking
+  - stamping
+  - heavy manufacturing
+  - tooling
+  components:
+  - neodymium magnets
+  - flux switch mechanism
+  - housing
+  - actuator lever
+  related:
+  - flux path
+  - residual magnetism
+  - air gap tolerance
+  - breakaway force
+classification:
+  motion_type: gripping
+  control_type: on_off
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 50
+    max: 50000
+    typical: 1000
+  payload_kg:
+    min: 1
+    max: 2000
+    typical: 100
+  peak_power_watts:
+    min: 0
+    max: 20
+    typical: 5
+  weight_grams:
+    min: 200
+    max: 50000
+    typical: 5000
+  cost_usd:
+    min: 100
+    max: 10000
+    typical: 1500
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 0
+    max: 24
+    typical: 24
+  feedback:
+  - none
+reference_products:
+- id: eoat_mge
+  name: Schunk MGE Permanent Magnet Gripper
+  vendor: SCHUNK
+  cost_usd: 2000
+  force_n: 2000

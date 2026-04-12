@@ -1,0 +1,90 @@
+id: specialty.paint_sprayer
+name: Robotic Paint Sprayer
+category: specialty
+actuator_type: paint_sprayer
+description: Automated paint application system for uniform coating of parts and surfaces. Includes electrostatic,
+  airless, and HVLP spray technologies.
+aliases:
+- paint gun
+- spray gun
+- robotic coater
+keywords:
+  identity:
+  - paint sprayer
+  - spray gun
+  - robotic paint applicator
+  descriptions:
+  - automated coating system
+  - surface finishing tool
+  - paint application device
+  application:
+  - automotive body painting
+  - furniture coating
+  - aerospace coating
+  - appliance painting
+  - wood finishing
+  industry:
+  - automotive
+  - furniture
+  - aerospace
+  - appliance
+  - general manufacturing
+  components:
+  - spray bell
+  - turbine
+  - paint hose
+  - color changer
+  - flow meter
+  related:
+  - transfer efficiency
+  - film thickness
+  - overspray
+  - pattern width
+classification:
+  motion_type: fluid_flow
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 50
+    max: 5000
+    typical: 500
+  continuous_power_watts:
+    min: 20
+    max: 3000
+    typical: 300
+  weight_grams:
+    min: 300
+    max: 5000
+    typical: 1500
+  cost_usd:
+    min: 500
+    max: 50000
+    typical: 8000
+  lifetime_hours:
+    min: 2000
+    max: 30000
+    typical: 10000
+interface:
+  protocol:
+  - analog
+  - profinet
+  - can
+  voltage_v:
+    min: 24
+    max: 400
+    typical: 24
+  current_a:
+    min: 1
+    max: 20
+    typical: 5
+  feedback:
+  - none
+reference_products:
+- id: fanuc_p250ia
+  name: FANUC P-250iA Paint Robot Applicator
+  vendor: FANUC
+  cost_usd: 30000

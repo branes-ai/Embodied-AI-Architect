@@ -1,0 +1,45 @@
+id: position.vio
+name: Visual-Inertial Odometry Unit
+category: position
+sensor_type: vio
+description: Combined camera+IMU for GPS-denied positioning
+aliases: []
+keywords:
+  identity:
+  - visual-inertial odometry unit
+  - vio
+  descriptions:
+  - vio
+  - visual inertial odometry
+  - visual inertial
+  - gps denied
+  - indoor navigation
+  - slam
+  application:
+  - tracking camera
+  - intel realsense t265
+  - pose estimation
+  - six dof
+  - feature tracking
+  - optical flow
+  industry:
+  - imu fusion
+  - drift correction
+  - loop closure
+  components:
+  - relocalization
+classification:
+  modality: position
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 1
+    max: 5
+    typical: 2.5
+  cost_usd:
+    min: 100
+    max: 500
+    typical: 250

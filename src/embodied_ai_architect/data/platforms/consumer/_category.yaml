@@ -1,0 +1,45 @@
+# Category: consumer
+# Auto-generated index — shared defaults for all consumer platforms
+
+category: consumer
+description: Shared defaults for 8 consumer platform(s)
+platform_count: 8
+default_attributes:
+  power_watts:
+    min: 11.2
+    max: 97.5
+    typical: 31.2
+  weight_kg:
+    min: 1.1
+    max: 875.6
+    typical: 44.2
+  cost_usd:
+    min: 893.8
+    max: 437687.5
+    typical: 43812.5
+  latency_ms:
+    min: 15
+    max: 475
+    typical: 56.2
+common_classification:
+  locomotion: ground.wheeled
+  environment:
+  - commercial (light)
+  - indoor
+  - indoor_unstructured
+  - residential
+common_perception_tasks:
+- cable
+- carpet
+- charging dock
+- cliff/stairs
+- door threshold
+- furniture
+- pet
+- pet waste
+- shoe
+- wall
+typical_constraints:
+  max_power_watts: 31.2
+  max_latency_ms: 56.2
+  max_cost_usd: 43812.5

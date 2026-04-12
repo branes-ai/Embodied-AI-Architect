@@ -1,0 +1,75 @@
+id: textile.sewing_robot
+name: "Robotic Sewing System"
+category: textile
+description: "Automated garment assembly robot that manipulates deformable fabric, aligns seams, and performs stitching operations for clothing manufacturing."
+aliases:
+  - "garment assembly robot"
+  - "automated sewing machine"
+  - "fabric stitching robot"
+
+keywords:
+  identity: [sewing robot, garment robot, automated sewing, textile robot, robotic sewing]
+  descriptions: [fabric assembly robot, seam stitching robot, clothing manufacturing robot, automated garment maker, smart sewing system]
+  application: [garment assembly, seam stitching, fabric handling, clothing manufacturing, textile production]
+  industry: [textile manufacturing, apparel, fashion, garment production, cut-and-sew]
+  components: [sewing head, fabric gripper, vision system, tensioning mechanism]
+  related: [cut-and-sew, industrial sewing machine, fabric manipulation, deformable object handling]
+
+classification:
+  locomotion: "stationary.fixed_mount"
+  manipulation: "articulated_arm"
+  load_class: "deformable_light"
+  environment: [indoor_factory]
+  human_proximity: "humans_nearby"
+
+attributes:
+  power_watts: {min: 500, max: 3000, typical: 1200}
+  compute_tops: {min: 4, max: 20, typical: 10}
+  latency_ms: {min: 10, max: 50, typical: 20}
+  weight_kg: {min: 200, max: 1000, typical: 500}
+  cost_usd: {min: 100000, max: 500000, typical: 250000}
+  autonomy_level: "full"
+  safety_level: "sil_1"
+  mission_duration_hours: {min: 8, max: 24, typical: 16}
+
+implications:
+  platform_type: "stationary_manipulator"
+  perception:
+    camera_types: [rgb_high_res, depth, line_scan]
+    detection_classes: [fabric_edge, seam_line, pattern_mark, wrinkle, misalignment, stitch_defect]
+    max_latency_ms: 20
+    min_fps: 30
+  sensors:
+    modalities: [camera, depth, force_torque, laser_edge_detector]
+  actuators:
+    actuator_types: [servo_motor, sewing_head, fabric_gripper, pneumatic_clamp]
+    dof: 6
+    control_rate_hz: 100
+  comms:
+    protocols: [ethernet, opc_ua, modbus]
+  power:
+    compute_power_watts: 15
+  safety:
+    level: "sil_1"
+    certifications: [CE, UL]
+
+context:
+  typical_architecture: "A robotic arm or gantry system picks fabric panels from a stack, positions them under a sewing head using vision-guided alignment, and feeds fabric through the stitch path while maintaining tension and alignment. Force-torque sensing adjusts fabric handling in real-time to prevent bunching or stretching. Vision monitors stitch quality continuously."
+  common_pitfalls:
+    - "Deformable fabric handling is fundamentally harder than rigid object manipulation—fabrics stretch, fold, and drape unpredictably"
+    - "Different fabric types (knit vs woven, thick vs thin) require completely different handling parameters"
+    - "Seam alignment tolerance of 1-2 mm is extremely challenging with deformable materials"
+    - "Needle breakage and thread tension issues require real-time detection"
+  regulatory:
+    - "EU Machinery Directive 2006/42/EC"
+    - "ISO 10218 (industrial robot safety)"
+    - "OSHA machine guarding"
+  reference_designs:
+    - "Sewbo"
+    - "SoftWear Automation Sewbots"
+  design_considerations: "Robotic sewing is one of the hardest manipulation problems due to the deformable nature of fabric. The system must handle diverse materials (cotton, polyester, denim, knits) with different stretch and drape properties. Real-time vision must track fabric edges and seam paths at sub-millimeter accuracy during stitching. Some approaches stiffen fabric temporarily (e.g., water-soluble polymer) to simplify handling. Changeover between garment styles must be rapid to support fast-fashion production cycles. Quality inspection of stitch consistency should be integrated inline."
+
+qualification:
+  suggested_questions: [fabric_types, garment_complexity, seam_types, production_volume, changeover_frequency, quality_standard]
+  critical_constraints: [seam_accuracy_mm, fabric_types, throughput_garments_per_hour, stitch_types]
+  optional_constraints: [multi_style_flexibility, inline_quality_inspection, fabric_stiffening_method]

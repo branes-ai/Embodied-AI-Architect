@@ -1,0 +1,96 @@
+id: locomotion.jet_thruster_underwater
+name: Underwater Thruster
+category: locomotion
+actuator_type: jet_thruster
+description: Sealed brushless motor with propeller for underwater propulsion. Used in ROVs, AUVs, and
+  underwater drones. Pressure-rated housings with magnetic coupling or flooded motor designs.
+aliases:
+- ROV thruster
+- submarine motor
+- underwater propulsion
+keywords:
+  identity:
+  - underwater thruster
+  - ROV thruster
+  - marine thruster
+  descriptions:
+  - submersible propulsion
+  - pressure-rated motor
+  - marine actuator
+  application:
+  - ROV maneuver
+  - AUV propulsion
+  - underwater drone
+  - submarine
+  - diver propulsion vehicle
+  industry:
+  - marine
+  - defense
+  - offshore
+  - research
+  - aquaculture
+  components:
+  - sealed BLDC motor
+  - propeller
+  - nozzle
+  - shaft seal
+  - potting compound
+  related:
+  - bollard thrust
+  - depth rating
+  - flooded motor
+  - magnetic coupling
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - underwater
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 1
+    max: 5000
+    typical: 50
+  peak_power_watts:
+    min: 10
+    max: 20000
+    typical: 300
+  continuous_power_watts:
+    min: 5
+    max: 10000
+    typical: 150
+  weight_grams:
+    min: 50
+    max: 20000
+    typical: 500
+  cost_usd:
+    min: 50
+    max: 10000
+    typical: 300
+  lifetime_hours:
+    min: 2000
+    max: 30000
+    typical: 10000
+interface:
+  protocol:
+  - pwm
+  - can
+  - rs485
+  voltage_v:
+    min: 10
+    max: 48
+    typical: 16
+  current_a:
+    min: 1
+    max: 50
+    typical: 10
+  feedback:
+  - back_emf
+  - hall_effect
+reference_products:
+- id: bluerobotics_t200
+  name: Blue Robotics T200 Thruster
+  vendor: Blue Robotics
+  cost_usd: 170
+  force_n: 52

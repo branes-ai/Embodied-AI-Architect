@@ -1,0 +1,107 @@
+id: locomotion.propeller
+name: Propeller Drive
+category: locomotion
+actuator_type: propeller
+description: Combination of brushless motor and propeller for aerial thrust generation. The primary actuator
+  for multirotors, fixed-wing UAVs, and eVTOL aircraft.
+aliases:
+- prop drive
+- rotor
+- thruster
+keywords:
+  identity:
+  - propeller
+  - rotor
+  - prop drive
+  - thruster motor
+  descriptions:
+  - aerial thrust generator
+  - multirotor motor
+  - UAV propulsion
+  - fixed-wing motor
+  application:
+  - multirotor drone
+  - fixed-wing UAV
+  - eVTOL
+  - tilt-rotor
+  - aerial photography
+  - delivery drone
+  industry:
+  - aerospace
+  - drone
+  - defense
+  - delivery
+  - inspection
+  components:
+  - brushless motor
+  - propeller blade
+  - ESC
+  - prop adapter
+  related:
+  - thrust coefficient
+  - advance ratio
+  - propeller pitch
+  - motor kv
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 0.01
+    max: 50
+    typical: 1.5
+  speed_rpm:
+    min: 0
+    max: 30000
+    typical: 5000
+  efficiency_percent:
+    min: 50
+    max: 85
+    typical: 70
+  peak_power_watts:
+    min: 10
+    max: 50000
+    typical: 500
+  continuous_power_watts:
+    min: 5
+    max: 30000
+    typical: 250
+  weight_grams:
+    min: 10
+    max: 10000
+    typical: 200
+  cost_usd:
+    min: 10
+    max: 5000
+    typical: 100
+interface:
+  protocol:
+  - pwm
+  - can
+  voltage_v:
+    min: 7.4
+    max: 60
+    typical: 22.2
+  current_a:
+    min: 1
+    max: 200
+    typical: 20
+  feedback:
+  - back_emf
+reference_products:
+- id: tmotor_u15ii
+  name: T-Motor U15II KV100
+  vendor: T-Motor
+  cost_usd: 450
+  peak_power_watts: 6000
+  weight_grams: 1100
+- id: kde_14215xf
+  name: KDE 14215XF-185
+  vendor: KDE Direct
+  cost_usd: 350
+  peak_power_watts: 4500
+  weight_grams: 840

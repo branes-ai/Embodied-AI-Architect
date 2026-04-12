@@ -1,0 +1,146 @@
+id: entertainment.animatronic
+name: Animatronic
+category: entertainment
+description: Animatronic platform for entertainment applications.
+aliases:
+- animatronic
+- Animatronic
+keywords:
+  identity:
+  - animatronic
+  - animatronic
+  - entertainment animatronic
+  - smart animatronic
+  - animatronic platform
+  - automated animatronic
+  - entertainment robot
+  - show robot
+  - performance robot
+  - theme park robot
+  - interactive robot
+  descriptions:
+  - animatronic system
+  - autonomous animatronic
+  - system for animatronic applications
+  - entertainment platform using animatronic technology
+  - intelligent animatronic solution
+  - robot platform for live entertainment and audience interaction
+  - automated performance system for events and shows
+  application:
+  - animatronic
+  - entertainment automation
+  - animatronic automation
+  - real-time animatronic
+  - animatronic monitoring
+  - animatronic detection
+  - live performance
+  - audience interaction
+  - theme park attraction
+  - light show
+  - dance performance
+  - character performance
+  - interactive exhibit
+  - educational entertainment
+  industry:
+  - entertainment
+  - animatronic
+  - theme parks
+  - events
+  - media production
+  - live events
+  - experiential marketing
+  - museum
+  components:
+  - camera
+  - microphone
+  - LED array
+  - speaker system
+  - servo motor
+  - motion controller
+  - DMX controller
+  - fog machine
+  related:
+  - entertainment
+  - animatronic
+  - choreography
+  - synchronized motion
+  - show control
+  - audience engagement
+  - motion capture
+  - expressive movement
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 20
+    max: 200
+    typical: 50
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - camera
+    - microphone
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - bluetooth
+  power:
+    compute_power_watts: 15.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard entertainment architecture for animatronic applications.
+  common_pitfalls:
+  - Domain-specific challenges for animatronic platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to animatronic in the entertainment domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

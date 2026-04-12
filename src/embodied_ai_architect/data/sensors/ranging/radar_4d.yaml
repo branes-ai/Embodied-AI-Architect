@@ -1,0 +1,58 @@
+id: ranging.radar_4d
+name: Radar 4D
+category: ranging
+sensor_type: radar_4d
+description: 4D imaging radar with elevation for 3D scene understanding
+aliases: []
+keywords:
+  identity:
+  - radar 4d
+  - radar 4d
+  descriptions:
+  - 4d radar
+  - imaging radar
+  - elevation
+  - 3d radar
+  - point cloud
+  - mmwave
+  application:
+  - 77ghz
+  - mimo
+  - automotive
+  - adas
+  - autonomous driving
+  - high resolution
+  industry:
+  - angular resolution
+  - continental
+  - texas instruments
+  components:
+  - cascade radar
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 30
+    max: 350
+    typical: 200
+  power_watts:
+    min: 5
+    max: 25
+    typical: 12
+  cost_usd:
+    min: 200
+    max: 2000
+    typical: 800
+reference_products:
+- id: continental_ars548
+  name: Continental ARS548
+  vendor: Continental
+  cost_usd: 1200
+- id: ti_awr2944
+  name: TI AWR2944
+  vendor: Texas Instruments
+  cost_usd: 200

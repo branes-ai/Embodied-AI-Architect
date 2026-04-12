@@ -1,0 +1,48 @@
+id: environmental.barometer
+name: Barometer
+category: environmental
+sensor_type: barometer
+description: Atmospheric pressure sensor for altitude estimation
+aliases: []
+keywords:
+  identity:
+  - barometer
+  - barometer
+  descriptions:
+  - barometer
+  - pressure sensor
+  - altitude
+  - altimeter
+  - atmospheric
+  - mems
+  application:
+  - bmp280
+  - bmp390
+  - weather
+  - variometer
+  - climb rate
+  - absolute pressure
+  industry:
+  - relative altitude
+  - drone
+  - weather station
+  components:
+  - digital pressure
+classification:
+  modality: environmental
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  accuracy:
+    typical: 0.5
+    unit: hPa
+  power_watts:
+    min: 0.0001
+    max: 0.01
+    typical: 0.001
+  cost_usd:
+    min: 1
+    max: 20
+    typical: 3

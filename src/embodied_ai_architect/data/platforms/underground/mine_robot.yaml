@@ -1,0 +1,148 @@
+id: underground.mine_robot
+name: Mine Robot
+category: underground
+description: Mine Robot platform for underground applications.
+aliases:
+- mine robot
+- Mine Robot
+keywords:
+  identity:
+  - mine robot
+  - mine robot
+  - underground mine robot
+  - smart mine robot
+  - mine robot platform
+  - automated mine robot
+  - underground robot
+  - tunnel robot
+  - subterranean robot
+  - sewer robot
+  - pipe inspection robot
+  - cave exploration robot
+  descriptions:
+  - mine robot system
+  - autonomous mine robot
+  - system for mine robot applications
+  - underground platform using mine robot technology
+  - intelligent mine robot solution
+  - robot for inspecting underground infrastructure and tunnels
+  - autonomous platform for subterranean exploration and maintenance
+  application:
+  - mine robot
+  - underground automation
+  - mine robot automation
+  - real-time mine robot
+  - mine robot monitoring
+  - mine robot detection
+  - tunnel inspection
+  - pipe inspection
+  - sewer inspection
+  - utility mapping
+  - underground construction
+  - cable pulling
+  - confined space inspection
+  - structural assessment
+  industry:
+  - underground
+  - mine robot
+  - utilities
+  - tunneling
+  - civil infrastructure
+  - wastewater
+  - mining
+  components:
+  - lidar
+  - camera
+  - gas_detector
+  - crawler tracks
+  - LED lighting
+  - sonar
+  - gas sensor
+  - pipe gripper
+  - thickness gauge
+  related:
+  - underground
+  - mine
+  - CCTV inspection
+  - manhole entry
+  - confined space safety
+  - inflow and infiltration
+  - structural rating
+  - NASSCO PACP
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - subterranean
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 50
+    max: 500
+    typical: 100
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - camera
+    - gas_detector
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - tethered
+  power:
+    compute_power_watts: 30.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard underground architecture for mine robot applications.
+  common_pitfalls:
+  - Domain-specific challenges for mine robot platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to mine robot in the underground domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

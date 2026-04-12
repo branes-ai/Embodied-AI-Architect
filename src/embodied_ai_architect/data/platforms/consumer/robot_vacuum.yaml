@@ -1,0 +1,144 @@
+id: consumer.robot_vacuum
+name: "Robot Vacuum Cleaner"
+category: consumer
+description: "Autonomous floor cleaning robot for residential and light commercial spaces, combining SLAM-based navigation with suction and mopping for hands-free floor maintenance."
+aliases:
+  - "robovac"
+  - "robot cleaner"
+  - "autonomous vacuum"
+  - "smart vacuum"
+
+keywords:
+  identity:
+    - robot vacuum
+    - robotic vacuum
+    - roomba
+    - vacuum robot
+    - floor cleaner
+    - autonomous vacuum
+    - robot cleaner
+    - smart vacuum
+    - robovac
+    - cleaning robot
+  descriptions:
+    - "robot that vacuums your floors automatically"
+    - "autonomous vacuum cleaner that maps your home"
+    - "self-navigating floor cleaning robot"
+  application:
+    - floor cleaning
+    - vacuuming
+    - mopping
+    - carpet cleaning
+    - hard floor cleaning
+    - pet hair removal
+    - dust collection
+    - home automation
+    - scheduled cleaning
+  industry:
+    - consumer electronics
+    - home appliance
+    - smart home
+    - IoT
+    - home robotics
+  components:
+    - LiDAR turret
+    - main brush
+    - side brush
+    - dust bin
+    - HEPA filter
+    - suction motor
+    - charging dock
+    - mop pad
+    - cliff sensor
+  related:
+    - SLAM
+    - room mapping
+    - no-go zone
+    - virtual wall
+    - auto-empty dock
+    - self-cleaning
+    - obstacle avoidance
+    - carpet detection
+
+classification:
+  locomotion: "differential drive"
+  manipulation: "cleaning end effectors"
+  load_class: "ultralight"
+  environment:
+    - indoor
+    - residential
+    - commercial (light)
+  human_proximity: "shared living space"
+
+attributes:
+  power_watts: {min: 20, max: 80, typical: 40}
+  compute_tops: {min: 0.5, max: 8, typical: 2}
+  latency_ms: {min: 50, max: 300, typical: 100}
+  weight_kg: {min: 2, max: 5, typical: 3.5}
+  cost_usd: {min: 150, max: 1500, typical: 500}
+  autonomy_level: "L4 - full autonomy within home"
+  safety_level: "consumer product safety"
+  mission_duration_hours: {min: 1, max: 3, typical: 2}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: ["forward-facing RGB", "top-mounted LiDAR", "front structured light"]
+    detection_classes: ["furniture", "wall", "door threshold", "cable", "shoe", "pet", "pet waste", "carpet", "cliff/stairs", "charging dock"]
+    max_latency_ms: 100
+    min_fps: 15
+  sensors:
+    modalities: ["LiDAR (ToF or triangulation)", "RGB camera", "structured light", "IR cliff sensor", "bumper contact sensor", "wheel encoder", "IMU", "carpet detector", "dust level sensor"]
+  actuators:
+    actuator_types: ["wheel motor", "main brush motor", "side brush motor", "suction fan motor", "mop vibration motor", "water pump"]
+    dof: 2
+    control_rate_hz: 20
+  comms:
+    protocols: ["Wi-Fi", "BLE", "IR (dock homing)", "cloud API", "Matter/Thread"]
+  power:
+    compute_power_watts: 3
+  safety:
+    level: "consumer product"
+    certifications: ["UL 60335-2-2", "CE", "FCC", "RoHS", "Energy Star"]
+
+context:
+  typical_architecture: "Circular or D-shaped chassis with LiDAR turret (ToF or triangulation) for SLAM-based room mapping. Main compute SoC (ARM Cortex-A class) runs SLAM, path planning, and optional AI-based obstacle avoidance. Cleaning system combines roller brush, side brush, and centrifugal suction fan (2000-6000 Pa). Optional mopping module with vibrating pad and water tank. IR-guided dock return for autonomous charging. Cloud-connected app for maps, schedules, and no-go zones."
+  common_pitfalls:
+    - "LiDAR SLAM fails in rooms with all-glass furniture or highly reflective surfaces"
+    - "Cable and cord entanglement is the most common failure mode; AI obstacle avoidance has improved but is not perfect"
+    - "Cliff sensors fail on dark-colored rugs that absorb IR, causing false cliff detection and missed areas"
+    - "Mop modules leave excess water on hardwood floors without proper water flow control"
+    - "Pet waste incidents ('poopocalypse') require reliable object detection; this is a real customer pain point"
+    - "Battery degradation over 2-3 years reduces run time below useful threshold for large homes"
+  regulatory:
+    - "UL 60335-2-2 for vacuum cleaners"
+    - "FCC Part 15 for wireless emissions"
+    - "CE marking for EU markets"
+    - "Privacy regulations for camera-equipped models (in-home imagery)"
+    - "Battery safety (UL 2054 for lithium-ion)"
+  reference_designs:
+    - "iRobot Roomba j9+"
+    - "Roborock S8 MaxV Ultra"
+    - "Ecovacs Deebot X2 Omni"
+    - "Dyson 360 Vis Nav"
+    - "Dreame X40 Ultra"
+    - "Samsung Bespoke Jet Bot AI"
+  design_considerations: "Robot vacuums are the highest-volume consumer robotics product, making BOM cost the dominant design constraint. The compute budget of 2-4W total must cover SLAM, path planning, and increasingly AI-based obstacle avoidance on a single low-cost SoC. LiDAR-based SLAM has become the standard for mid-range and above, replacing camera-only vSLAM for mapping reliability. AI obstacle avoidance using a forward camera with a lightweight detection model (MobileNet/YOLO-nano class) is the current differentiator. The mechanical cleaning system (brush design, suction power, edge cleaning) remains as important as navigation intelligence for actual cleaning performance."
+
+qualification:
+  suggested_questions:
+    - floor_types
+    - home_size_sqm
+    - pets
+    - budget_tier
+    - mop_required
+  critical_constraints:
+    - "2+ hour battery life"
+    - "Reliable room mapping (SLAM)"
+    - "Autonomous dock return and charging"
+    - "BOM cost target"
+  optional_constraints:
+    - "AI obstacle avoidance"
+    - "Auto-empty dock"
+    - "Mopping capability"
+    - "Matter/Thread smart home integration"

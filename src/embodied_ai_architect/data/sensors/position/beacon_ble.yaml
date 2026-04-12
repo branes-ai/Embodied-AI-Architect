@@ -1,0 +1,49 @@
+id: position.beacon_ble
+name: BLE Beacon
+category: position
+sensor_type: beacon_ble
+description: Bluetooth Low Energy beacon for proximity and indoor positioning
+aliases: []
+keywords:
+  identity:
+  - ble beacon
+  - beacon ble
+  descriptions:
+  - ble beacon
+  - bluetooth
+  - ibeacon
+  - eddystone
+  - indoor positioning
+  - proximity
+  application:
+  - asset tracking
+  - wayfinding
+  - retail analytics
+  - museum guide
+  - rssi
+  - fingerprinting
+  industry:
+  - trilateration
+  - nrf52
+  - low power
+  components:
+  - mesh network
+classification:
+  modality: position
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 1
+    max: 100
+    typical: 30
+  power_watts:
+    min: 0.0001
+    max: 0.01
+    typical: 0.001
+  cost_usd:
+    min: 5
+    max: 50
+    typical: 15

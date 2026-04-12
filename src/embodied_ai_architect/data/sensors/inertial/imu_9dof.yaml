@@ -1,0 +1,45 @@
+id: inertial.imu_9dof
+name: IMU 9-DoF
+category: inertial
+sensor_type: imu_9dof
+description: 9-axis IMU (accel + gyro + magnetometer) for heading estimation
+aliases: []
+keywords:
+  identity:
+  - imu 9-dof
+  - imu 9dof
+  descriptions:
+  - 9dof
+  - 9 axis
+  - ahrs
+  - heading
+  - magnetic north
+  - compass
+  application:
+  - attitude heading reference
+  - sensor fusion
+  - madgwick
+  - mahony
+  - mems
+  - drone
+  industry:
+  - robot
+  - navigation
+  - orientation
+  components:
+  - quaternion
+classification:
+  modality: inertial
+  output_type: imu_data
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.002
+    max: 0.15
+    typical: 0.01
+  cost_usd:
+    min: 2
+    max: 100
+    typical: 10

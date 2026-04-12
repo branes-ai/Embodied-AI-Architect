@@ -1,0 +1,45 @@
+id: position.magnetometer
+name: Magnetometer
+category: position
+sensor_type: magnetometer
+description: Magnetic field sensor for heading and anomaly detection
+aliases: []
+keywords:
+  identity:
+  - magnetometer
+  - magnetometer
+  descriptions:
+  - magnetometer
+  - compass
+  - magnetic field
+  - heading
+  - north
+  - geomagnetic
+  application:
+  - hall effect
+  - fluxgate
+  - anisotropic magnetoresistive
+  - amr
+  - tmr
+  - calibration
+  industry:
+  - hard iron
+  - soft iron
+  - magnetic anomaly
+  components:
+  - metal detection
+classification:
+  modality: position
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 0.05
+    typical: 0.003
+  cost_usd:
+    min: 0.5
+    max: 50
+    typical: 3

@@ -1,0 +1,80 @@
+id: motor.stepper_pancake
+name: Pancake Stepper Motor
+category: motor
+actuator_type: stepper
+description: Ultra-flat stepper motor for space-constrained applications. Short body length at the expense
+  of lower torque.
+aliases:
+- flat stepper
+- thin stepper
+- low-profile stepper
+keywords:
+  identity:
+  - pancake stepper
+  - flat stepper
+  - slim stepper motor
+  descriptions:
+  - ultra-thin stepper
+  - short body stepper
+  - compact position motor
+  application:
+  - optical instrument
+  - compact 3D printer
+  - turntable
+  - stage rotation
+  - miniature positioner
+  industry:
+  - optics
+  - laboratory
+  - 3D printing
+  - consumer electronics
+  components:
+  - thin rotor
+  - stator laminations
+  - stepper driver
+  related:
+  - holding torque
+  - step resolution
+  - form factor
+classification:
+  motion_type: rotary
+  control_type: position
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  torque_nm:
+    min: 0.005
+    max: 0.3
+    typical: 0.05
+  speed_rpm:
+    min: 0
+    max: 1500
+    typical: 200
+  peak_power_watts:
+    min: 0.5
+    max: 15
+    typical: 3
+  weight_grams:
+    min: 20
+    max: 200
+    typical: 60
+  cost_usd:
+    min: 5
+    max: 80
+    typical: 15
+interface:
+  protocol:
+  - step_dir
+  voltage_v:
+    min: 5
+    max: 24
+    typical: 12
+  current_a:
+    min: 0.1
+    max: 1
+    typical: 0.4
+  feedback:
+  - none
+reference_products: []

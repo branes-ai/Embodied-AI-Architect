@@ -1,0 +1,54 @@
+id: ugv.unitree_go2
+name: "Unitree Go2"
+category: ugv
+product_type: quadruped
+vendor: "Unitree Robotics"
+description: "Consumer-grade quadruped robot with AI-powered locomotion and obstacle avoidance. Features 4D LiDAR, intelligent side-follow, and voice control. Available in Air, Pro, and Edu variants with up to Jetson Orin compute for research applications."
+aliases:
+  - "Go2"
+  - "Go2 Pro"
+  - "Go2 Edu"
+
+keywords:
+  identity:
+    - unitree
+    - go2
+    - quadruped
+    - robot dog
+    - legged robot
+  application:
+    - companion robot
+    - education
+    - research
+    - patrol
+    - entertainment
+
+specifications:
+  weight_kg: 15.0
+  max_payload_kg: 8.0
+  power_watts: 150
+  battery_wh: 185
+  max_speed_mps: 3.5
+  ip_rating: "IP54"
+  operating_temp_c: {min: -5, max: 40}
+
+compute:
+  processor: "Unitree custom + NVIDIA Jetson Orin (Edu)"
+  compute_tops: 100
+
+sensors:
+  - type: "lidar"
+    name: "4D LiDAR L1"
+    range_m: 30
+  - type: "depth_camera"
+    name: "Intel RealSense D435i"
+  - type: "ultrasonic"
+    name: "Ultrasonic Sensors (x3)"
+  - type: "imu"
+    name: "IMU"
+  - type: "foot_force"
+    name: "Foot Force Sensors (x4)"
+
+pricing:
+  base_price_usd: 2800
+  year: 2024

@@ -1,0 +1,75 @@
+id: military.swarm_recon
+name: "Reconnaissance Drone Swarm"
+category: military
+description: "Distributed swarm of small UAVs for coordinated intelligence, surveillance, and reconnaissance (ISR) over contested or denied areas."
+aliases:
+  - "ISR drone swarm"
+  - "recon swarm"
+  - "multi-drone surveillance"
+
+keywords:
+  identity: [drone swarm, reconnaissance swarm, ISR swarm, military drone swarm, swarm UAV]
+  descriptions: [distributed surveillance drones, coordinated recon drones, multi-drone ISR, autonomous swarm, tactical drone swarm]
+  application: [distributed surveillance, area reconnaissance, target acquisition, battle damage assessment, perimeter monitoring]
+  industry: [defense, military ISR, intelligence, tactical operations, force protection]
+  components: [SWAP-optimized compute, encrypted datalink, EO/IR sensor, mesh radio]
+  related: [DARPA OFFSET, swarm intelligence, collaborative autonomy, C-UAS]
+
+classification:
+  locomotion: "aerial.rotary_wing.multirotor"
+  manipulation: "none"
+  load_class: "micro"
+  environment: [outdoor_unstructured, urban, contested_airspace]
+  human_proximity: "humans_distant"
+
+attributes:
+  power_watts: {min: 20, max: 200, typical: 80}
+  compute_tops: {min: 1, max: 10, typical: 4}
+  latency_ms: {min: 10, max: 100, typical: 30}
+  weight_kg: {min: 0.3, max: 5, typical: 1.5}
+  cost_usd: {min: 2000, max: 50000, typical: 15000}
+  autonomy_level: "high"
+  safety_level: "basic"
+  mission_duration_hours: {min: 0.3, max: 2, typical: 0.75}
+
+implications:
+  platform_type: "aerial_multirotor"
+  perception:
+    camera_types: [rgb, infrared, low_light]
+    detection_classes: [human, vehicle, structure, movement, thermal_signature]
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities: [camera, infrared, imu, gps, barometer]
+  actuators:
+    actuator_types: [brushless_motor]
+    dof: null
+    control_rate_hz: 400
+  comms:
+    protocols: [mesh_radio, encrypted_datalink, manet]
+  power:
+    compute_power_watts: 5
+  safety:
+    level: "basic"
+    certifications: [MIL-STD-810, MIL-STD-461]
+
+context:
+  typical_architecture: "Each drone carries a lightweight compute module (e.g., Qualcomm RB5) running onboard detection and tracking. A mesh radio network enables drone-to-drone communication for task allocation and cooperative coverage. A ground control station manages mission-level objectives; individual drones execute autonomously. Swarm consensus algorithms distribute targets and avoid collisions without centralized control."
+  common_pitfalls:
+    - "Mesh network fragmentation when drones spread beyond radio range"
+    - "GPS denial in contested environments—need visual-inertial odometry fallback"
+    - "Battery life severely limits mission radius and loiter time"
+    - "Swarm coordination algorithms failing gracefully when individual drones are lost"
+  regulatory:
+    - "ITAR restrictions on defense UAV technology"
+    - "DoD Autonomous Weapons Policy (DoDD 3000.09)"
+    - "Airspace deconfliction with manned aircraft"
+  reference_designs:
+    - "DARPA OFFSET program"
+    - "Shield AI Hivemind"
+  design_considerations: "Swarm ISR drones must be low-cost and expendable while still carrying useful sensors. The key challenge is distributed coordination without reliable centralized comms—swarm algorithms must tolerate individual drone loss, GPS denial, and intermittent connectivity. Each drone must run efficient onboard inference (person/vehicle detection) within a 3-5 W compute budget. Encrypted mesh networking with low latency is critical. Launch and recovery of 10-50+ drones simultaneously demands simple, reliable mechanical design."
+
+qualification:
+  suggested_questions: [swarm_size, mission_area_km2, gps_availability, threat_environment, launch_method, data_exfil_method]
+  critical_constraints: [unit_cost, swarm_size, endurance_minutes, gps_denied_capability, encryption_standard]
+  optional_constraints: [payload_modularity, counter_uas_resilience, indoor_capability]

@@ -1,0 +1,148 @@
+id: mining.underground_loader
+name: Underground Loader
+category: mining
+description: Underground Loader platform for mining applications.
+aliases:
+- underground loader
+- Underground Loader
+keywords:
+  identity:
+  - underground loader
+  - underground loader
+  - mining underground loader
+  - smart underground loader
+  - underground loader platform
+  - automated underground loader
+  - mining robot
+  - mine automation system
+  - autonomous mining vehicle
+  - underground mining robot
+  - mining drone
+  descriptions:
+  - underground loader system
+  - autonomous underground loader
+  - system for underground loader applications
+  - mining platform using underground loader technology
+  - intelligent underground loader solution
+  - autonomous mining platform for underground or surface operations
+  - robot for mine inspection and extraction support
+  application:
+  - underground loader
+  - mining automation
+  - underground loader automation
+  - real-time underground loader
+  - underground loader monitoring
+  - underground loader detection
+  - ore extraction
+  - tunnel inspection
+  - drilling
+  - blasting support
+  - conveyor monitoring
+  - ventilation monitoring
+  - geotechnical survey
+  - rock bolting
+  industry:
+  - mining
+  - underground loader
+  - quarrying
+  - tunneling
+  - mineral processing
+  - underground mining
+  - open pit mining
+  - geotechnical
+  components:
+  - lidar
+  - gas_detector
+  - camera
+  - rock drill
+  - gas sensor
+  - proximity detection
+  - collision avoidance system
+  - ruggedized chassis
+  - dust filter
+  related:
+  - mining
+  - underground
+  - mine safety
+  - MSHA compliance
+  - stope planning
+  - ore body modeling
+  - fleet management
+  - machine guidance
+classification:
+  locomotion: ground.tracked
+  manipulation: none
+  load_class: none
+  environment:
+  - subterranean
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 500
+    max: 50000
+    typical: 5000
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - gas_detector
+    - camera
+  actuators:
+    actuator_types:
+    - hydraulic
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - mesh
+  power:
+    compute_power_watts: 1500.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard mining architecture for underground loader applications.
+  common_pitfalls:
+  - Domain-specific challenges for underground loader platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to underground loader in the mining domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

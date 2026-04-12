@@ -1,0 +1,76 @@
+id: waste.recycling_sorter
+name: "Recycling Sorting Robot"
+category: waste
+description: "High-speed robotic arm that picks and sorts recyclable materials from mixed waste streams on a conveyor belt in material recovery facilities."
+aliases:
+  - "waste sorting robot"
+  - "MRF picking robot"
+  - "trash sorting robot"
+
+keywords:
+  identity: [recycling robot, waste sorting robot, recycling sorter, MRF robot, trash sorting robot]
+  descriptions: [waste picker robot, material sorting robot, automated recycling, conveyor picking robot, recyclable sorting machine]
+  application: [recyclable sorting, material recovery, waste stream separation, contamination removal, quality control sorting]
+  industry: [waste management, recycling, material recovery, MRF, circular economy]
+  components: [delta robot arm, vacuum gripper, hyperspectral camera, conveyor belt sensor]
+  related: [material recovery facility, single-stream recycling, optical sorting, waste characterization]
+
+classification:
+  locomotion: "stationary.fixed_mount"
+  manipulation: "articulated_arm"
+  load_class: "light"
+  environment: [indoor_industrial]
+  human_proximity: "humans_nearby"
+
+attributes:
+  power_watts: {min: 500, max: 3000, typical: 1500}
+  compute_tops: {min: 4, max: 30, typical: 15}
+  latency_ms: {min: 10, max: 50, typical: 20}
+  weight_kg: {min: 100, max: 500, typical: 250}
+  cost_usd: {min: 100000, max: 400000, typical: 200000}
+  autonomy_level: "full"
+  safety_level: "sil_1"
+  mission_duration_hours: {min: 8, max: 24, typical: 16}
+
+implications:
+  platform_type: "stationary_manipulator"
+  perception:
+    camera_types: [rgb, hyperspectral, nir]
+    detection_classes: [pet_bottle, hdpe, cardboard, aluminum, glass, film_plastic, contaminant]
+    max_latency_ms: 30
+    min_fps: 30
+  sensors:
+    modalities: [camera, hyperspectral, nir, metal_detector]
+  actuators:
+    actuator_types: [delta_robot, vacuum_gripper, pneumatic_actuator]
+    dof: 4
+    control_rate_hz: 100
+  comms:
+    protocols: [ethernet, modbus, opc_ua]
+  power:
+    compute_power_watts: 25
+  safety:
+    level: "sil_1"
+    certifications: [CE, UL]
+
+context:
+  typical_architecture: "Overhead cameras (RGB + NIR/hyperspectral) scan the conveyor belt; a GPU runs material classification at 30+ FPS; the system tracks objects and commands a delta-style robot arm to pick targets via vacuum or pinch gripper into sorted bins. Multiple robots are arranged in series for multi-fraction sorting."
+  common_pitfalls:
+    - "Material overlap and occlusion on crowded conveyor belts degrade detection"
+    - "Contaminated or wet materials confuse spectral classification"
+    - "Gripper failures on irregularly shaped or flexible items like film plastic"
+    - "Conveyor speed mismatch between detection and pick execution"
+  regulatory:
+    - "OSHA machine guarding requirements"
+    - "Local waste processing permits"
+    - "EU Machinery Directive 2006/42/EC"
+  reference_designs:
+    - "AMP Robotics AMP Cortex"
+    - "ZenRobotics ZenBrain"
+    - "Machinex SamurAI"
+  design_considerations: "Recycling sorters must classify 60+ material types at high throughput (60-80 picks per minute per arm). The vision system must handle extreme variability in object appearance—crushed, dirty, wet, overlapping items on a moving belt. Hyperspectral or NIR sensors are often needed to distinguish polymer types (PET vs HDPE vs PP). The robot must be robust to the harsh MRF environment: dust, moisture, and occasional heavy/sharp objects. System uptime is critical since downtime directly impacts facility throughput."
+
+qualification:
+  suggested_questions: [conveyor_speed, material_fractions, picks_per_minute, shift_duration, existing_sorting_stages]
+  critical_constraints: [throughput_picks_per_minute, material_types, purity_rate, conveyor_width]
+  optional_constraints: [multi_robot_coordination, data_reporting, integration_with_existing_mrf]

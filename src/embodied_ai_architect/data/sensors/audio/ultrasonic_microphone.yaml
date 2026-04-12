@@ -1,0 +1,45 @@
+id: audio.ultrasonic_microphone
+name: Ultrasonic Microphone
+category: audio
+sensor_type: ultrasonic_microphone
+description: High-frequency acoustic sensor for leak and discharge detection
+aliases: []
+keywords:
+  identity:
+  - ultrasonic microphone
+  - ultrasonic microphone
+  descriptions:
+  - ultrasonic microphone
+  - high frequency
+  - leak detection
+  - partial discharge
+  - compressed air
+  - gas leak
+  application:
+  - bearing fault
+  - acoustic emission
+  - condition monitoring
+  - predictive maintenance
+  - 40khz
+  - 100khz
+  industry:
+  - bat detector
+  - wildlife monitoring
+  - industrial inspection
+  components:
+  - corona detection
+classification:
+  modality: audio
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.01
+    max: 0.5
+    typical: 0.1
+  cost_usd:
+    min: 50
+    max: 2000
+    typical: 300

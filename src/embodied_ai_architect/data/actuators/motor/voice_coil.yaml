@@ -1,0 +1,114 @@
+id: motor.voice_coil
+name: Voice Coil Actuator
+category: motor
+actuator_type: voice_coil
+description: Direct-drive linear actuator using a coil in a magnetic field, producing force proportional
+  to current with zero cogging and extremely fast response. Used for autofocus, vibration isolation, disk
+  drive heads, and precision positioning.
+aliases:
+- VCA
+- voice coil motor
+- moving coil actuator
+keywords:
+  identity:
+  - voice coil actuator
+  - VCA
+  - moving coil actuator
+  descriptions:
+  - linear force actuator
+  - direct drive actuator
+  - zero cogging actuator
+  - fast response linear actuator
+  application:
+  - autofocus mechanism
+  - optical image stabilization
+  - vibration isolation
+  - disk drive head
+  - valve actuation
+  - active damping
+  industry:
+  - optics
+  - consumer electronics
+  - semiconductor
+  - aerospace
+  components:
+  - voice coil
+  - permanent magnet
+  - flexure bearing
+  - linear encoder
+  related:
+  - lorentz force
+  - force constant
+  - moving mass
+  - bandwidth
+classification:
+  motion_type: linear
+  control_type: force
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 0.01
+    max: 200
+    typical: 5
+  speed_mps:
+    min: 0.01
+    max: 5.0
+    typical: 0.5
+  stroke_mm:
+    min: 0.1
+    max: 50
+    typical: 5
+  position_accuracy_um:
+    min: 0.01
+    max: 50
+    typical: 1
+  peak_power_watts:
+    min: 0.1
+    max: 100
+    typical: 10
+  continuous_power_watts:
+    min: 0.05
+    max: 50
+    typical: 5
+  weight_grams:
+    min: 1
+    max: 500
+    typical: 30
+  cost_usd:
+    min: 5
+    max: 1000
+    typical: 50
+  response_time_ms:
+    min: 0.01
+    max: 1
+    typical: 0.1
+  lifetime_hours:
+    min: 50000
+    max: 500000
+    typical: 100000
+interface:
+  protocol:
+  - analog
+  - pwm
+  voltage_v:
+    min: 3
+    max: 48
+    typical: 12
+  current_a:
+    min: 0.01
+    max: 10
+    typical: 1
+  feedback:
+  - encoder_incremental
+  - hall_effect
+reference_products:
+- id: bij_lvcm_019
+  name: BEI Kimco LVCM-019-013-01
+  vendor: BEI Kimco
+  cost_usd: 120
+  force_n: 8.5
+  stroke_mm: 6.4

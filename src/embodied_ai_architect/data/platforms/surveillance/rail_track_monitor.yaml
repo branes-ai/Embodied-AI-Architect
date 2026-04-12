@@ -1,0 +1,145 @@
+id: surveillance.rail_track_monitor
+name: Rail Track Monitor
+category: surveillance
+description: Rail Track Monitor platform for surveillance applications.
+aliases:
+- rail track monitor
+- Rail Track Monitor
+keywords:
+  identity:
+  - rail track monitor
+  - rail track monitor
+  - surveillance rail track monitor
+  - smart rail track monitor
+  - rail track monitor platform
+  - automated rail track monitor
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
+  descriptions:
+  - rail track monitor system
+  - autonomous rail track monitor
+  - system for rail track monitor applications
+  - surveillance platform using rail track monitor technology
+  - intelligent rail track monitor solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
+  application:
+  - rail track monitor
+  - surveillance automation
+  - rail track monitor automation
+  - real-time rail track monitor
+  - rail track monitor monitoring
+  - rail track monitor detection
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
+  industry:
+  - surveillance
+  - rail track monitor
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
+  components:
+  - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
+  related:
+  - surveillance
+  - rail
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
+classification:
+  locomotion: stationary.fixed_mount
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  - outdoor_urban
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 5
+    max: 100
+    typical: 30
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: fixed_camera
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - camera
+  actuators:
+    actuator_types: []
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethernet
+    - wifi
+  power:
+    compute_power_watts: 9.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard surveillance architecture for rail track monitor applications.
+  common_pitfalls:
+  - Domain-specific challenges for rail track monitor platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to rail track monitor in the surveillance domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

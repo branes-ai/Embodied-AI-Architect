@@ -1,0 +1,151 @@
+id: logistics.goods_to_person
+name: Goods To Person
+category: logistics
+description: Goods To Person platform for logistics applications.
+aliases:
+- goods to person
+- Goods To Person
+keywords:
+  identity:
+  - goods to person
+  - goods to person
+  - logistics goods to person
+  - smart goods to person
+  - goods to person platform
+  - automated goods to person
+  - robotic goods to person
+  - goods to person robot
+  - logistics robot
+  - warehouse robot
+  - fulfillment robot
+  - delivery robot
+  - sortation robot
+  - material handling robot
+  descriptions:
+  - goods to person system
+  - autonomous goods to person
+  - system for goods to person applications
+  - logistics platform using goods to person technology
+  - intelligent goods to person solution
+  - automated logistics platform for warehouse operations
+  - robot for material handling and order fulfillment
+  application:
+  - goods to person
+  - logistics automation
+  - goods to person automation
+  - real-time goods to person
+  - goods to person monitoring
+  - goods to person detection
+  - order picking
+  - goods-to-person
+  - sortation
+  - palletizing
+  - depalletizing
+  - container unloading
+  - truck loading
+  - inventory management
+  industry:
+  - logistics
+  - goods to person
+  - supply chain
+  - e-commerce
+  - 3PL
+  - warehousing
+  - distribution
+  - freight
+  components:
+  - lidar
+  - camera
+  - imu
+  - barcode scanner
+  - conveyor interface
+  - lift mechanism
+  - roller deck
+  - tote handler
+  - pallet jack
+  related:
+  - logistics
+  - goods
+  - WMS integration
+  - fleet management
+  - pick rate
+  - throughput
+  - order accuracy
+  - zone picking
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 50
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: amr
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - camera
+    - imu
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - ethernet
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard logistics architecture for goods to person applications.
+  common_pitfalls:
+  - Domain-specific challenges for goods to person platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to goods to person in the logistics domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

@@ -1,0 +1,76 @@
+id: entertainment.telepresence
+name: "Telepresence Robot"
+category: entertainment
+description: "Mobile remote-presence robot enabling a remote user to navigate, see, hear, and interact in a distant physical space via video conferencing on a tablet or screen."
+aliases:
+  - "remote presence robot"
+  - "video conferencing robot"
+  - "mobile telepresence"
+
+keywords:
+  identity: [telepresence robot, remote presence, video conferencing robot, remote worker robot, mobile telepresence]
+  descriptions: [virtual presence robot, remote meeting robot, roaming video call, walking tablet, remote collaboration robot]
+  application: [remote office presence, virtual site visit, remote collaboration, telemedicine visit, remote museum tour]
+  industry: [enterprise, healthcare, education, hospitality, remote work]
+  components: [tablet/screen, wide-angle camera, microphone array, speaker, wheel base]
+  related: [video conferencing, remote work, hybrid office, telemedicine]
+
+classification:
+  locomotion: "ground.wheeled.differential"
+  manipulation: "none"
+  load_class: "none"
+  environment: [indoor_office, indoor_commercial, indoor_hospital]
+  human_proximity: "humans_nearby"
+
+attributes:
+  power_watts: {min: 20, max: 100, typical: 50}
+  compute_tops: {min: 0.5, max: 4, typical: 1}
+  latency_ms: {min: 50, max: 300, typical: 100}
+  weight_kg: {min: 5, max: 30, typical: 12}
+  cost_usd: {min: 2000, max: 30000, typical: 8000}
+  autonomy_level: "assisted"
+  safety_level: "basic"
+  mission_duration_hours: {min: 4, max: 10, typical: 8}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: [rgb_wide_angle, depth]
+    detection_classes: [obstacle, human, door, elevator, charging_dock]
+    max_latency_ms: 150
+    min_fps: 15
+  sensors:
+    modalities: [camera, depth, microphone_array, imu, cliff_sensor]
+  actuators:
+    actuator_types: [wheel_motor, screen_tilt]
+    dof: null
+    control_rate_hz: 20
+  comms:
+    protocols: [wifi, bluetooth, webrtc]
+  power:
+    compute_power_watts: 5
+  safety:
+    level: "basic"
+    certifications: [CE, FCC, UL]
+
+context:
+  typical_architecture: "A slim, wheeled base supports a height-adjustable pole topped with a tablet or screen. The remote user controls movement via a web browser or app; the robot handles basic obstacle avoidance and cliff detection locally. Video and audio are streamed via WebRTC over Wi-Fi. Some models support autonomous navigation to preset locations (desk, meeting room) and auto-docking for charging."
+  common_pitfalls:
+    - "Wi-Fi dead zones cause video freezing and loss of control"
+    - "Navigating through doors, elevators, and thresholds is unreliable without autonomy assist"
+    - "Audio echo and feedback in open office environments"
+    - "Tall, narrow form factor is prone to tipping on transitions or uneven floors"
+  regulatory:
+    - "FCC Part 15 (radio emissions)"
+    - "CE marking for European markets"
+    - "ADA considerations for shared spaces"
+  reference_designs:
+    - "Double Robotics Double 3"
+    - "Ava Robotics"
+    - "OhmniLabs Ohmni"
+  design_considerations: "Telepresence robots must provide a natural remote-presence experience with low-latency, high-quality video and audio. The robot must be easy to drive remotely with minimal training—collision avoidance and auto-docking reduce user burden. Screen height should approximate standing eye level for natural face-to-face interaction. Battery life must cover a full workday. Wi-Fi reliability is the single biggest factor in user experience. The robot should be quiet, stable, and non-intimidating to people sharing the space."
+
+qualification:
+  suggested_questions: [deployment_environment, wifi_coverage, floor_type, elevator_access, number_of_units, user_technical_level]
+  critical_constraints: [battery_life_hours, wifi_requirements, screen_size, video_quality]
+  optional_constraints: [autonomous_navigation, multi_floor, height_adjustment, fleet_management]

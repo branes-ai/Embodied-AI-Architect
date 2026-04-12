@@ -1,0 +1,88 @@
+id: display.speaker_ultrasonic
+name: Ultrasonic Speaker / Emitter
+category: display
+actuator_type: speaker
+description: Transducer emitting ultrasonic sound above 20 kHz for ranging, gesture recognition, parametric
+  audio, and pest deterrence.
+aliases:
+- ultrasonic emitter
+- parametric speaker
+- ultrasonic transducer
+keywords:
+  identity:
+  - ultrasonic speaker
+  - ultrasonic emitter
+  - parametric speaker
+  descriptions:
+  - above-audible transducer
+  - directional audio
+  - ultrasonic output
+  application:
+  - ultrasonic ranging
+  - gesture recognition
+  - directional audio
+  - pest deterrence
+  - proximity sensing
+  industry:
+  - robotics
+  - automotive
+  - consumer electronics
+  - security
+  components:
+  - piezo disc
+  - horn
+  - matching layer
+  - driver circuit
+  related:
+  - resonance frequency
+  - beam angle
+  - SPL at 40kHz
+  - impedance matching
+classification:
+  motion_type: vibration
+  control_type: on_off
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 0.01
+    max: 10
+    typical: 0.5
+  weight_grams:
+    min: 0.5
+    max: 50
+    typical: 3
+  cost_usd:
+    min: 0.5
+    max: 50
+    typical: 2
+  response_time_ms:
+    min: 0.01
+    max: 1
+    typical: 0.1
+  lifetime_hours:
+    min: 30000
+    max: 200000
+    typical: 100000
+interface:
+  protocol:
+  - pwm
+  - analog
+  voltage_v:
+    min: 3.3
+    max: 12
+    typical: 5
+  current_a:
+    min: 0.005
+    max: 0.5
+    typical: 0.05
+  feedback:
+  - none
+reference_products:
+- id: murata_ma40s4s
+  name: Murata MA40S4S Ultrasonic Transducer
+  vendor: Murata
+  cost_usd: 2
