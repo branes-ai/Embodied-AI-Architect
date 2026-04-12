@@ -55,7 +55,7 @@ class TestQualifyToPlan:
         assert res.exit_code == 0, res.output
 
         # Verify constraints flowed through
-        m = MissionStore().load(mid)
+        m = store_mod.MissionStore().load(mid)
         assert m.design_state is not None
         ds = m.design_state
         # The design state should have constraints from qualify
