@@ -23,8 +23,9 @@ from rich.table import Table
 console = Console()
 
 
-@click.group()
-def mission():
+@click.group(invoke_without_command=True)
+@click.pass_context
+def mission(ctx):
     """Manage design missions.
 
     \\b
@@ -37,7 +38,8 @@ def mission():
       branes mission refine <mission_id>
       branes mission fork <source_id> "What-If Variant"
     """
-    pass
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @mission.command("new")
@@ -99,7 +101,7 @@ def mission_list(ctx):
         return
 
     table = Table(title="Design Missions", show_header=True)
-    table.add_column("ID", style="cyan", max_width=20)
+    table.add_column("ID", style="cyan", no_wrap=True)
     table.add_column("Name")
     table.add_column("Status")
     table.add_column("Goal", max_width=40)
@@ -124,6 +126,7 @@ def mission_list(ctx):
         )
 
     console.print(table)
+    console.print("[dim]Tip: use mission name instead of ID for all commands[/dim]")
 
 
 @mission.command("show")

@@ -268,7 +268,7 @@ def estimate(
     content = (
         f"  Weight:    {weight:.1f} g\n"
         f"  Volume:    {volume:.1f} cm³\n"
-        f"  Cost:      ${cost:.2f}\n"
+        f"  Unit Cost (NRE-amortized):  ${cost:.2f}\n"
         f"  Dims:      {dims.length_mm:.0f}×{dims.width_mm:.0f}×{dims.height_mm:.0f} mm\n"
         f"  Thermal:   Tj={tj:.0f}°C (margin: {margin:.0f}°C) {thermal_icon}"
     )
@@ -279,6 +279,14 @@ def estimate(
             border_style="cyan",
         )
     )
+    if not feasible:
+        console.print()
+        console.print("[bold yellow]Thermal remediation suggestions:[/bold yellow]")
+        console.print("  1. Switch to active cooling (fan or heat-pipe)")
+        console.print("  2. Reduce power budget or clock frequency")
+        console.print("  3. Move to a smaller process node for lower power density")
+        console.print("  4. Increase die area to spread heat over a larger surface")
+        console.print("  5. Use a package with better thermal conductivity (e.g., flip-chip)")
 
 
 # ---------------------------------------------------------------------------

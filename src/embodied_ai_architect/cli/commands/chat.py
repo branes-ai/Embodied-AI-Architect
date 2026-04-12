@@ -17,7 +17,7 @@ console = Console()
 @click.command()
 @click.option(
     "--model",
-    default="claude-sonnet-4-20250514",
+    default="claude-sonnet-4-6",
     help="Claude model to use",
 )
 @click.option(
@@ -33,7 +33,7 @@ def chat(ctx, model: str, verbose: bool):
     \b
     Examples:
       branes chat
-      branes chat --model claude-sonnet-4-20250514
+      branes chat --model claude-sonnet-4-6
       branes chat -v
 
     \b

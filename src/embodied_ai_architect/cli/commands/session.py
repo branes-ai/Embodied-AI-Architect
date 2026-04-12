@@ -14,8 +14,9 @@ from rich.table import Table
 console = Console()
 
 
-@click.group()
-def session():
+@click.group(invoke_without_command=True)
+@click.pass_context
+def session(ctx):
     """Manage saved design sessions.
 
     \\b
@@ -25,7 +26,8 @@ def session():
       branes session show --latest           # Inspect most recent
       branes session delete soc_abc123       # Delete a session
     """
-    pass
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @session.command("list")

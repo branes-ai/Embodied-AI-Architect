@@ -6,8 +6,9 @@ from rich.console import Console
 console = Console()
 
 
-@click.group()
-def api() -> None:
+@click.group(invoke_without_command=True)
+@click.pass_context
+def api(ctx) -> None:
     """Manage the REST API server.
 
     \\b
@@ -16,7 +17,8 @@ def api() -> None:
       branes api serve --port 9000        # Custom port
       branes api serve --host 0.0.0.0     # Listen on all interfaces
     """
-    pass
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @api.command()
