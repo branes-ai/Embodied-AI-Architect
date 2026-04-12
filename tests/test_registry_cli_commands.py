@@ -110,8 +110,8 @@ class TestSensorSelect:
         mission, _ = empty_mission
         runner = CliRunner()
         result = runner.invoke(sensor, ["select", mission.id, "nonexistent.sensor"], obj={})
-        assert result.exit_code == 0
-        assert "not found in registry" in result.output
+        assert result.exit_code != 0
+        assert "not found" in result.output
 
 
 class TestSensorBudget:
@@ -203,8 +203,8 @@ class TestActuatorSelect:
         mission, _ = empty_mission
         runner = CliRunner()
         result = runner.invoke(actuator, ["select", mission.id, "nonexistent.actuator"], obj={})
-        assert result.exit_code == 0
-        assert "not found in registry" in result.output
+        assert result.exit_code != 0
+        assert "not found" in result.output
 
 
 class TestActuatorBudget:

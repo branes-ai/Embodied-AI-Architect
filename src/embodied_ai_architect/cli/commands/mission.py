@@ -57,12 +57,30 @@ def mission_new(ctx, name, goal, platform_id, use_case):
       branes mission new "Warehouse AMR" --platform ground_wheeled.warehouse_amr
     """
     from embodied_ai_architect.mission import Mission, MissionStore
+    from embodied_ai_architect.mission.goal_parser import parse_goal_constraints
+
+    # Parse numeric constraints from the goal string so that
+    # ``mission show`` and ``design validate`` see them immediately
+    # (BUG-007 / #165).
+    parsed = parse_goal_constraints(goal)
+    constraints: dict = {}
+    if "power_watts" in parsed:
+        constraints["max_power_watts"] = parsed["power_watts"]
+    if "latency_ms" in parsed:
+        constraints["max_latency_ms"] = parsed["latency_ms"]
+    if "cost_usd" in parsed:
+        constraints["max_cost_usd"] = parsed["cost_usd"]
+
+    # Infer platform from goal text when not explicitly provided
+    if platform_id is None and "platform" in parsed:
+        platform_id = parsed["platform"]
 
     m = Mission(
         name=name,
         goal=goal,
         platform_id=platform_id,
         use_case=use_case,
+        constraints=constraints,
     )
 
     store = MissionStore()
