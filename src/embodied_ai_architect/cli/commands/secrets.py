@@ -11,8 +11,9 @@ from rich.table import Table
 console = Console()
 
 
-@click.group()
-def secrets():
+@click.group(invoke_without_command=True)
+@click.pass_context
+def secrets(ctx):
     """Manage secrets and credentials.
 
     \b
@@ -26,7 +27,8 @@ def secrets():
       # Validate secrets setup
       branes secrets validate
     """
-    pass
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @secrets.command()

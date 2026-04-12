@@ -9,8 +9,9 @@ from rich.table import Table
 console = Console()
 
 
-@click.group()
-def backends():
+@click.group(invoke_without_command=True)
+@click.pass_context
+def backends(ctx):
     """Manage benchmark backends.
 
     \b
@@ -21,7 +22,8 @@ def backends():
       # Test backend connection
       branes backends test kubernetes
     """
-    pass
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @backends.command()

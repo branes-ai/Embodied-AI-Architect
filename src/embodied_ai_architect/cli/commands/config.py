@@ -10,8 +10,9 @@ from rich.syntax import Syntax
 console = Console()
 
 
-@click.group()
-def config():
+@click.group(invoke_without_command=True)
+@click.pass_context
+def config(ctx):
     """Manage configuration settings.
 
     \b
@@ -22,7 +23,8 @@ def config():
       # Initialize configuration
       branes config init
     """
-    pass
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @config.command()

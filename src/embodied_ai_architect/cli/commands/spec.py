@@ -15,8 +15,9 @@ from rich.tree import Tree
 console = Console()
 
 
-@click.group()
-def spec():
+@click.group(invoke_without_command=True)
+@click.pass_context
+def spec(ctx):
     """Manage system specifications with versioning and provenance.
 
     \b
@@ -28,7 +29,8 @@ def spec():
       branes spec history my-drone
       branes spec why my-drone /perception/min_fps
     """
-    pass
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @spec.command("new")

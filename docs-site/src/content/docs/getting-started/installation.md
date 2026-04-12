@@ -5,7 +5,7 @@ description: How to install Embodied AI Architect and its dependencies.
 
 ## Requirements
 
-- Python 3.9 or higher
+- Python 3.11 or higher
 - pip or uv package manager
 
 ## Basic Installation
