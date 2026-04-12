@@ -1,11 +1,14 @@
 """Tests for --mission flag on swap, optimize, mcp commands (issue #65)."""
 
 import pytest
+
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands._utils import load_mission_constraints
 from embodied_ai_architect.mission.models import Mission, MissionStatus
 from embodied_ai_architect.mission.store import MissionStore
+
+pytestmark = pytest.mark.cli
 
 
 @pytest.fixture()

@@ -6,10 +6,13 @@ import json
 from unittest.mock import patch
 
 import pytest
+
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli import cli
 from embodied_ai_architect.cli.commands import swap as swap_mod
+
+pytestmark = pytest.mark.cli
 
 # Register swap command on the cli group (normally done in main())
 cli.add_command(swap_mod.swap)

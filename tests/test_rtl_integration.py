@@ -12,6 +12,9 @@ from embodied_ai_architect.graphs.kpu_config import (
 from embodied_ai_architect.graphs.rtl_templates import RTLTemplateEngine
 from embodied_ai_architect.graphs.rtl_loop import RTLLoopConfig, run_rtl_loop
 from embodied_ai_architect.graphs.technology import estimate_area_um2
+import pytest
+
+pytestmark = [pytest.mark.integration, pytest.mark.slow]
 
 
 class TestRTLFromKPUConfig:

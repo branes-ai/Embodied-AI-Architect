@@ -1,6 +1,9 @@
 """Tests for grouped CLI help output (issue #68)."""
 
 from click.testing import CliRunner
+import pytest
+
+pytestmark = pytest.mark.cli
 
 
 def _get_cli():

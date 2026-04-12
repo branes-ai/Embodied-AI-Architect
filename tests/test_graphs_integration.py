@@ -24,9 +24,11 @@ except ImportError:
     HAS_GRAPHS = False
     HAS_PYDANTIC = False
 
-pytestmark = pytest.mark.skipif(
-    not DEPS_AVAILABLE, reason="graphs and/or embodied-schemas not installed"
-)
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.slow,
+    pytest.mark.skipif(not DEPS_AVAILABLE, reason="graphs and/or embodied-schemas not installed"),
+]
 
 
 class TestCheckLatency:

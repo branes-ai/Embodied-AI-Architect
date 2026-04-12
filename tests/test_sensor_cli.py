@@ -3,6 +3,9 @@
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands.sensor import sensor
+import pytest
+
+pytestmark = pytest.mark.cli
 
 
 class TestSensorList:

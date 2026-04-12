@@ -1,11 +1,14 @@
 """Tests for the branes mission CLI command group (issue #53)."""
 
 import pytest
+
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands.mission import mission
 from embodied_ai_architect.mission import Mission, MissionStore
 import embodied_ai_architect.mission.store as store_mod
+
+pytestmark = pytest.mark.cli
 
 
 @pytest.fixture(autouse=True)

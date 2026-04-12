@@ -41,6 +41,9 @@ from embodied_ai_architect.codebase.recommender import (
 from embodied_ai_architect.codebase.scanner import CodebaseScanner
 from embodied_ai_architect.graphs.session_store import SessionStore
 
+pytestmark = [pytest.mark.integration, pytest.mark.slow]
+
+
 FIXTURES = Path(__file__).parent / "fixtures" / "sample_projects"
 
 

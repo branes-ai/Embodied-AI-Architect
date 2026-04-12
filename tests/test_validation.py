@@ -1,12 +1,15 @@
 """Tests for the validation runner and CLI commands (issue #56)."""
 
 import pytest
+
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands.validate import validate
 from embodied_ai_architect.mission import Mission, MissionStore
 from embodied_ai_architect.validation import ValidationReport, ValidationRunner
 import embodied_ai_architect.mission.store as store_mod
+
+pytestmark = pytest.mark.cli
 
 
 @pytest.fixture(autouse=True)

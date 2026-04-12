@@ -3,6 +3,9 @@
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands.actuator import actuator
+import pytest
+
+pytestmark = pytest.mark.cli
 
 
 class TestActuatorList:

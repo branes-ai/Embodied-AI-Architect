@@ -3,6 +3,7 @@
 import json
 
 import pytest
+
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands.analyze_group import analyze_lifecycle
@@ -10,6 +11,8 @@ from embodied_ai_architect.cli.commands.select import select
 from embodied_ai_architect.cli.commands.synthesize import synthesize
 from embodied_ai_architect.mission.models import Mission
 from embodied_ai_architect.mission.store import MissionStore
+
+pytestmark = pytest.mark.cli
 
 
 @pytest.fixture()
