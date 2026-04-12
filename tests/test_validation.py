@@ -9,7 +9,6 @@ from embodied_ai_architect.mission import Mission, MissionStore
 from embodied_ai_architect.validation import ValidationReport, ValidationRunner
 import embodied_ai_architect.mission.store as store_mod
 
-
 pytestmark = pytest.mark.cli
 
 

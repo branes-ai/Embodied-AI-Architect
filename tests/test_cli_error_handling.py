@@ -19,7 +19,6 @@ from embodied_ai_architect.cli.commands.synthesize import synthesize
 from embodied_ai_architect.cli.commands.validate import validate
 import embodied_ai_architect.mission.store as store_mod
 
-
 pytestmark = pytest.mark.cli
 
 

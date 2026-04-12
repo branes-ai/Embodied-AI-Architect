@@ -12,7 +12,6 @@ from click.testing import CliRunner
 from embodied_ai_architect.cli import cli
 from embodied_ai_architect.cli.commands import swap as swap_mod
 
-
 pytestmark = pytest.mark.cli
 
 # Register swap command on the cli group (normally done in main())

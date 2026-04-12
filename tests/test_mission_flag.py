@@ -8,7 +8,6 @@ from embodied_ai_architect.cli.commands._utils import load_mission_constraints
 from embodied_ai_architect.mission.models import Mission, MissionStatus
 from embodied_ai_architect.mission.store import MissionStore
 
-
 pytestmark = pytest.mark.cli
 
 

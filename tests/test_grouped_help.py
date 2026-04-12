@@ -3,7 +3,6 @@
 from click.testing import CliRunner
 import pytest
 
-
 pytestmark = pytest.mark.cli
 
 
