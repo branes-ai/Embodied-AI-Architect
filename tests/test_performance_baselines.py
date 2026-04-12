@@ -137,12 +137,11 @@ class TestMissionStoreThroughput:
         """Create 10 missions, list them: <2s total."""
         import embodied_ai_architect.mission.store as store_mod
         from embodied_ai_architect.mission.models import Mission
-        from embodied_ai_architect.mission.store import MissionStore
 
         monkeypatch.chdir(tmp_path)
         monkeypatch.setattr(store_mod, "DEFAULT_MISSIONS_DIR", tmp_path / ".branes" / "missions")
 
-        store = MissionStore()
+        store = store_mod.MissionStore()
 
         t0 = time.perf_counter()
         for i in range(10):
@@ -153,3 +152,23 @@ class TestMissionStoreThroughput:
 
         assert len(missions) == 10
         assert elapsed < 2.0, f"10 mission CRUD took {elapsed:.2f}s (limit: 2.0s)"
+
+
+class TestCLIResponsiveness:
+    """CLI help and basic commands should respond quickly."""
+
+    def test_help_rendering(self):
+        """branes --help: <5s (includes import time)."""
+        from click.testing import CliRunner
+
+        runner = CliRunner()
+
+        t0 = time.perf_counter()
+        # Import and run inline so we measure the full cold-start cost
+        from embodied_ai_architect.cli import cli
+
+        result = runner.invoke(cli, ["--help"])
+        elapsed = time.perf_counter() - t0
+
+        assert result.exit_code == 0
+        assert elapsed < 5.0, f"--help took {elapsed:.1f}s (limit: 5s)"
