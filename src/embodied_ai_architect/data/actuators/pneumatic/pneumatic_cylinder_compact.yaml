@@ -1,0 +1,87 @@
+id: pneumatic.pneumatic_cylinder_compact
+name: Compact Guided Pneumatic Cylinder
+category: pneumatic
+actuator_type: pneumatic_cylinder
+description: Short-stroke pneumatic cylinder with integrated linear guide for non-rotating piston rod
+  motion. Ideal for pressing, punching, and clamping in tight spaces.
+aliases:
+- guided cylinder
+- compact pneumatic
+- short stroke air cylinder
+keywords:
+  identity:
+  - compact guided cylinder
+  - short stroke pneumatic
+  - mini pneumatic
+  descriptions:
+  - guided air cylinder
+  - non-rotating piston
+  - anti-twist pneumatic
+  application:
+  - pressing
+  - light stamping
+  - workholding
+  - labeling
+  - component insertion
+  industry:
+  - manufacturing
+  - packaging
+  - electronics assembly
+  components:
+  - twin piston
+  - guide rods
+  - end plate
+  - cushion
+  related:
+  - non-rotation accuracy
+  - guide load capacity
+  - cycle rate
+classification:
+  motion_type: linear
+  control_type: on_off
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 5
+    max: 5000
+    typical: 200
+  speed_mps:
+    min: 0.05
+    max: 1.5
+    typical: 0.3
+  stroke_mm:
+    min: 5
+    max: 100
+    typical: 25
+  weight_grams:
+    min: 20
+    max: 2000
+    typical: 150
+  cost_usd:
+    min: 20
+    max: 500
+    typical: 60
+  response_time_ms:
+    min: 10
+    max: 100
+    typical: 20
+interface:
+  protocol:
+  - analog
+  voltage_v:
+    min: 24
+    max: 24
+    typical: 24
+  feedback:
+  - hall_effect
+  - none
+reference_products:
+- id: festo_adngf
+  name: Festo ADNGF Compact Cylinder
+  vendor: Festo
+  cost_usd: 55
+  force_n: 314
+  stroke_mm: 25

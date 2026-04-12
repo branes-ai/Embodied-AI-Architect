@@ -1,0 +1,53 @@
+id: humanoid.unitree_h1
+name: "Unitree H1"
+category: humanoid
+product_type: humanoid
+vendor: "Unitree Robotics"
+description: "Full-size humanoid robot standing 180 cm tall with 19 DOF. Features 360-degree depth perception, 3D LiDAR, and real-time whole-body motion control. Capable of walking at up to 3.3 m/s, making it one of the fastest humanoid robots commercially available."
+aliases:
+  - "H1"
+  - "Unitree H1"
+
+keywords:
+  identity:
+    - unitree
+    - h1
+    - humanoid
+    - bipedal
+    - full-size humanoid
+  application:
+    - research
+    - industrial automation
+    - logistics
+    - service robotics
+    - walking robot
+
+specifications:
+  weight_kg: 47.0
+  max_payload_kg: 10.0
+  power_watts: 700
+  battery_wh: 864
+  max_speed_mps: 3.3
+  ip_rating: "IP54"
+  operating_temp_c: {min: -5, max: 45}
+
+compute:
+  processor: "Intel Core i7 + NVIDIA GPU"
+  compute_tops: 20
+
+sensors:
+  - type: "lidar"
+    name: "3D LiDAR"
+    range_m: 100
+  - type: "depth_camera"
+    name: "Intel RealSense Depth Camera"
+  - type: "imu"
+    name: "IMU"
+  - type: "force_torque"
+    name: "Ankle Force/Torque Sensors"
+  - type: "encoder"
+    name: "Joint Encoders (x19)"
+
+pricing:
+  base_price_usd: 90000
+  year: 2024

@@ -1,0 +1,151 @@
+id: marine_underwater.swarm_survey
+name: Swarm Survey
+category: marine_underwater
+description: Swarm Survey platform for marine underwater applications.
+aliases:
+- swarm survey
+- Swarm Survey
+keywords:
+  identity:
+  - swarm survey
+  - swarm survey
+  - marine_underwater swarm survey
+  - marine underwater swarm survey
+  - smart swarm survey
+  - swarm survey platform
+  - automated swarm survey
+  - robotic swarm survey
+  - AUV
+  - autonomous underwater vehicle
+  - ROV
+  - remotely operated vehicle
+  - submersible
+  - underwater drone
+  descriptions:
+  - swarm survey system
+  - autonomous swarm survey
+  - system for swarm survey applications
+  - marine underwater platform using swarm survey technology
+  - intelligent swarm survey solution
+  - autonomous underwater vehicle for subsea inspection and survey
+  - remotely operated underwater robot for deep-sea operations
+  application:
+  - swarm survey
+  - marine_underwater automation
+  - swarm survey automation
+  - real-time swarm survey
+  - swarm survey monitoring
+  - swarm survey detection
+  - subsea inspection
+  - pipeline inspection
+  - hull inspection
+  - oceanographic survey
+  - mine countermeasures
+  - wreck exploration
+  - coral reef monitoring
+  - dam inspection
+  industry:
+  - marine_underwater
+  - swarm survey
+  - subsea
+  - offshore oil and gas
+  - oceanography
+  - marine archaeology
+  - defense
+  - aquaculture
+  components:
+  - imu
+  - sonar
+  - depth_sensor
+  - depth sensor
+  - DVL
+  - thruster
+  - pressure hull
+  - manipulator
+  - sample collector
+  related:
+  - marine_underwater
+  - swarm
+  - depth rating
+  - acoustic navigation
+  - USBL
+  - INS
+  - buoyancy control
+  - tether management
+classification:
+  locomotion: marine.underwater
+  manipulation: none
+  load_class: none
+  environment:
+  - underwater_shallow
+  - underwater_deep
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 50
+    max: 2000
+    typical: 300
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - imu
+    - sonar
+    - depth_sensor
+  actuators:
+    actuator_types:
+    - thruster
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - acoustic
+  power:
+    compute_power_watts: 90.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard marine underwater architecture for swarm survey applications.
+  common_pitfalls:
+  - Domain-specific challenges for swarm survey platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to swarm survey in the marine underwater domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

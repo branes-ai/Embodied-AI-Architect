@@ -1,0 +1,43 @@
+id: surgical.cmr_versius
+name: "CMR Versius"
+category: surgical
+product_type: surgical_robot
+vendor: "CMR Surgical"
+description: "Modular surgical robot with small, portable individual arm units that can be positioned around the patient. Each arm is the size of a human arm. Open console design allows direct patient access. Designed for cost-effective adoption in smaller hospitals."
+aliases:
+  - "Versius"
+
+keywords:
+  identity:
+    - cmr
+    - versius
+    - surgical robot
+    - modular
+    - portable
+  application:
+    - gynecology
+    - urology
+    - general surgery
+    - colorectal surgery
+    - thoracic surgery
+
+specifications:
+  weight_kg: 28.0
+  power_watts: 500
+  dof: 7
+  operating_temp_c: {min: 15, max: 30}
+
+compute:
+  processor: "CMR proprietary controller"
+  compute_tops: 0
+
+sensors:
+  - type: "stereo_endoscope"
+    name: "3D HD Endoscope"
+    resolution: "1920x1080"
+  - type: "position_encoder"
+    name: "Joint Encoders (per arm)"
+
+pricing:
+  base_price_usd: 1200000
+  year: 2024

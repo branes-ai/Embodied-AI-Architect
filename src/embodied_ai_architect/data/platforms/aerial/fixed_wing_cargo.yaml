@@ -1,0 +1,130 @@
+name: Fixed-Wing Cargo UAV
+description: Long-range heavy cargo transport UAV with >5kg payload and >60min endurance.
+keywords:
+  identity:
+  - fixed-wing cargo drone
+  - cargo UAV
+  - delivery UAV
+  - freight drone
+  descriptions:
+  - large drone carrying heavy packages long distance
+  - fixed-wing cargo aircraft
+  application:
+  - cargo delivery
+  - medical supply delivery
+  - remote logistics
+  - humanitarian aid
+  industry:
+  - BVLOS
+  - cargo drone
+  - freight UAV
+  - long-range delivery
+  components:
+  - fixed wing
+  - cargo bay
+  - parachute delivery
+  - RTK-GPS
+  related:
+  - logistics
+  - humanitarian
+  - island delivery
+  - rural supply
+classification:
+  locomotion: aerial.fixed_wing
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_rural
+  - outdoor_extreme
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 50
+    max: 500
+    typical: 200
+  compute_tops:
+    min: 2
+    max: 20
+    typical: 8
+  latency_ms:
+    min: 50
+    max: 500
+    typical: 200
+  weight_kg:
+    min: 10
+    max: 200
+    typical: 50
+  cost_usd:
+    min: 5000
+    max: 200000
+    typical: 50000
+  autonomy_level: high
+  safety_level: sil_2
+  mission_duration_hours:
+    min: 1
+    max: 8
+    typical: 3
+implications:
+  platform_type: drone
+  perception:
+    camera_types:
+    - monocular
+    - thermal
+    detection_classes:
+    - obstacle
+    - landing_zone
+    max_latency_ms: 200
+    min_fps: 10
+  sensors:
+    modalities:
+    - imu
+    - barometer
+    - gps
+    - airspeed
+  actuators:
+    actuator_types:
+    - brushless_motor
+    - servo
+    dof: null
+    control_rate_hz: 50
+  comms:
+    protocols:
+    - mavlink
+    - lte
+    - satellite
+  power:
+    compute_power_watts: 10
+  safety:
+    level: sil_2
+    certifications:
+    - DO-178C
+context:
+  typical_architecture: Fixed-wing airframe with pusher or tractor propeller, autopilot (PX4/ArduPilot), and cargo bay with
+    release mechanism. Compute typically Jetson-class for terrain-following and landing zone detection.
+  common_pitfalls:
+  - Wind loading on large cargo shifts CG significantly
+  - BVLOS requires detect-and-avoid system
+  - Battery capacity limits range more than payload weight
+  regulatory:
+  - FAA Part 107 BVLOS waiver
+  - EASA specific category
+  - ICAO unmanned aircraft systems
+  reference_designs:
+  - Zipline P2 Zip
+  - Wingcopter 198
+  - Volansi VOLY C10
+  design_considerations: Range is the primary constraint — optimize for aerodynamic efficiency over speed. Payload release
+    mechanism reliability is critical for medical/humanitarian delivery. Terrain-following radar or LiDAR required for low-altitude
+    BVLOS in varied terrain.
+qualification:
+  suggested_questions:
+  - payload_weight_kg
+  - range_km
+  - delivery_mechanism
+  critical_constraints:
+  - Payload capacity
+  - Range
+  - BVLOS capability
+  optional_constraints:
+  - Parachute delivery
+  - Medical cold chain

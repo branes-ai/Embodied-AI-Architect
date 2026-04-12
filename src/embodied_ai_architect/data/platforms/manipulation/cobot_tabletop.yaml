@@ -1,0 +1,133 @@
+id: manipulation.cobot_tabletop
+name: "Tabletop Collaborative Robot"
+category: manipulation
+description: "Desktop-scale collaborative robot arm for small-part assembly, pick-and-place, and inspection tasks in shared human-robot workspaces with inherent force-limited safety."
+aliases:
+  - "cobot"
+  - "desktop robot arm"
+  - "collaborative robot arm"
+  - "tabletop cobot"
+
+keywords:
+  identity:
+    - cobot
+    - collaborative robot
+    - tabletop robot
+    - desktop robot arm
+    - small robot arm
+    - cobotic arm
+    - lightweight robot arm
+  descriptions:
+    - "small robot arm that works alongside people on a desk"
+    - "collaborative robot for pick and place tasks"
+    - "safe robot arm for desktop assembly"
+  application:
+    - pick and place
+    - assembly robot
+    - small part handling
+    - screw driving
+    - soldering
+    - inspection
+    - testing
+    - machine tending
+    - lab automation
+  industry:
+    - electronics assembly
+    - light manufacturing
+    - laboratory
+    - quality inspection
+    - education
+  components:
+    - servo actuator
+    - torque sensor
+    - force/torque sensor
+    - gripper
+    - teach pendant
+    - vision camera
+  related:
+    - end effector
+    - tool changer
+    - force control
+    - impedance control
+    - hand guiding
+    - safety-rated monitored stop
+
+classification:
+  locomotion: "fixed base"
+  manipulation: "articulated arm"
+  load_class: "light"
+  environment:
+    - indoor
+    - tabletop
+    - cleanroom compatible
+  human_proximity: "direct collaboration"
+
+attributes:
+  power_watts: {min: 50, max: 300, typical: 150}
+  compute_tops: {min: 1, max: 20, typical: 6}
+  latency_ms: {min: 1, max: 20, typical: 8}
+  weight_kg: {min: 4, max: 20, typical: 11}
+  cost_usd: {min: 10000, max: 60000, typical: 30000}
+  autonomy_level: "programmed task execution"
+  safety_level: "ISO 10218 / ISO/TS 15066"
+  mission_duration_hours: {min: 8, max: 24, typical: 16}
+
+implications:
+  platform_type: "manipulation"
+  perception:
+    camera_types: ["wrist-mounted", "overhead fixed", "in-hand"]
+    detection_classes: ["part", "bin", "fixture", "tool", "hand", "obstacle"]
+    max_latency_ms: 20
+    min_fps: 30
+  sensors:
+    modalities: ["RGB camera", "depth camera", "force/torque sensor", "joint torque sensor", "proximity sensor", "tactile sensor"]
+  actuators:
+    actuator_types: ["servo motor with harmonic drive", "parallel gripper", "vacuum gripper", "soft gripper"]
+    dof: 6
+    control_rate_hz: 1000
+  comms:
+    protocols: ["Ethernet/IP", "EtherCAT", "Modbus TCP", "ROS 2", "PROFINET"]
+  power:
+    compute_power_watts: 10
+  safety:
+    level: "ISO/TS 15066 PFL"
+    certifications: ["ISO 10218-1", "ISO/TS 15066", "CE", "UL", "TUV"]
+
+context:
+  typical_architecture: "6-DOF articulated arm with joint torque sensors in every axis for collision detection and force-limited operation. Integrated controller runs real-time servo loop at 1kHz with safety-rated monitoring. Wrist-mounted camera for visual servoing and part localization. External compute (edge PC or embedded module) handles vision processing and task planning. End effector interface supports quick-change tooling."
+  common_pitfalls:
+    - "Payload rating includes gripper and tool weight, not just the part; a 3kg robot may only handle 0.5kg parts after tooling"
+    - "Force-limiting mode (PFL) reduces maximum speed to 250mm/s, dramatically affecting cycle time"
+    - "Vision-based pick accuracy depends heavily on lighting consistency; shadow-free ring lights are essential"
+    - "Cable routing through joints fails at high cycle counts without proper strain relief"
+    - "ISO/TS 15066 risk assessment is per-application, not per-robot; every deployment needs its own safety analysis"
+  regulatory:
+    - "ISO 10218-1/2 robot safety requirements"
+    - "ISO/TS 15066 collaborative robot safety"
+    - "Machinery Directive 2006/42/EC (EU)"
+    - "ANSI/RIA R15.06 (US)"
+    - "Risk assessment per ISO 12100"
+  reference_designs:
+    - "Universal Robots UR3e"
+    - "Franka Emika Panda"
+    - "ABB GoFa CRB 15000"
+    - "FANUC CRX-5iA"
+    - "Doosan M0609"
+  design_considerations: "Tabletop cobots are constrained by the force-limiting requirements of ISO/TS 15066, which caps contact forces at 65-150N depending on body region. This fundamentally limits speed and payload, so cycle time optimization must focus on path planning efficiency rather than raw speed. Vision-guided picking requires 0.1-0.5mm repeatability, achievable with eye-in-hand calibration. The control system should support both position and impedance control modes, as assembly tasks often require compliant insertion. Integration compute should be kept external to the arm to allow upgrades without re-certifying the safety system."
+
+qualification:
+  suggested_questions:
+    - payload_kg
+    - reach_mm
+    - task_type
+    - cycle_time_target_s
+    - human_proximity_level
+  critical_constraints:
+    - "Payload capacity 0.5-5 kg"
+    - "Force-limited collaborative operation"
+    - "Position repeatability < 0.05mm"
+    - "ISO/TS 15066 compliance"
+  optional_constraints:
+    - "Cleanroom compatibility"
+    - "ESD-safe operation"
+    - "Vision-guided picking"

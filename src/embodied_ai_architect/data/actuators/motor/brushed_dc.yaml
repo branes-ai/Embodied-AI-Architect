@@ -1,0 +1,111 @@
+id: motor.brushed_dc
+name: Brushed DC Motor
+category: motor
+actuator_type: brushed_dc
+description: Traditional commutated motor with carbon brushes and a wound rotor. Simple to drive (just
+  apply voltage), low cost, and widely available. Suitable for toys, low-cost robots, and applications
+  where brush wear is acceptable.
+aliases:
+- DC motor
+- brushed motor
+- permanent magnet DC motor
+keywords:
+  identity:
+  - brushed dc motor
+  - DC motor
+  - PMDC motor
+  descriptions:
+  - commutated motor
+  - carbon brush motor
+  - simple electric motor
+  - reversible motor
+  application:
+  - toy drive
+  - window actuator
+  - seat adjuster
+  - hobby robot
+  - pump motor
+  - small conveyor
+  industry:
+  - consumer products
+  - automotive
+  - robotics
+  - education
+  components:
+  - carbon brush
+  - commutator
+  - permanent magnet
+  - armature winding
+  related:
+  - h-bridge
+  - pwm speed control
+  - back-emf sensing
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 0.001
+    max: 5.0
+    typical: 0.1
+  speed_rpm:
+    min: 0
+    max: 30000
+    typical: 3000
+  efficiency_percent:
+    min: 50
+    max: 80
+    typical: 65
+  peak_power_watts:
+    min: 0.5
+    max: 500
+    typical: 20
+  continuous_power_watts:
+    min: 0.2
+    max: 300
+    typical: 10
+  weight_grams:
+    min: 5
+    max: 3000
+    typical: 100
+  cost_usd:
+    min: 0.5
+    max: 100
+    typical: 5
+  lifetime_hours:
+    min: 500
+    max: 10000
+    typical: 3000
+interface:
+  protocol:
+  - pwm
+  - analog
+  voltage_v:
+    min: 1.5
+    max: 48
+    typical: 12
+  current_a:
+    min: 0.05
+    max: 20
+    typical: 2
+  feedback:
+  - back_emf
+  - encoder_incremental
+reference_products:
+- id: mabuchi_rs_775
+  name: Mabuchi RS-775
+  vendor: Mabuchi
+  cost_usd: 8
+  torque_nm: 0.25
+  speed_rpm: 7400
+- id: pololu_25d_hp
+  name: Pololu 25D HP 12V
+  vendor: Pololu
+  cost_usd: 25
+  torque_nm: 0.3
+  speed_rpm: 560

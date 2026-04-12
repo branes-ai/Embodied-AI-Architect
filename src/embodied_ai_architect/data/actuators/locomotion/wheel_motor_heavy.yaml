@@ -1,0 +1,93 @@
+id: locomotion.wheel_motor_heavy
+name: Heavy-Duty Wheel Motor
+category: locomotion
+actuator_type: wheel_motor
+description: High-torque wheel drive for outdoor AGVs, forklifts, and rough-terrain robots. Includes braking,
+  IP65+ sealing, and thermal management.
+aliases:
+- heavy duty hub motor
+- outdoor wheel drive
+- industrial wheel motor
+keywords:
+  identity:
+  - heavy-duty wheel motor
+  - industrial hub motor
+  - outdoor wheel drive
+  descriptions:
+  - high torque wheel actuator
+  - sealed wheel drive
+  - ruggedized wheel motor
+  application:
+  - outdoor AGV
+  - forklift drive
+  - field robot
+  - industrial tug
+  - rough terrain platform
+  industry:
+  - logistics
+  - agriculture
+  - construction
+  - defense
+  components:
+  - BLDC motor
+  - planetary gearbox
+  - electromagnetic brake
+  - thermal sensor
+  related:
+  - traction control
+  - regenerative braking
+  - IP rating
+  - thermal derating
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - outdoor
+  - hazardous
+  reversible: true
+  backdrivable: false
+attributes:
+  torque_nm:
+    min: 20
+    max: 500
+    typical: 100
+  speed_rpm:
+    min: 0
+    max: 200
+    typical: 60
+  payload_kg:
+    min: 100
+    max: 5000
+    typical: 500
+  peak_power_watts:
+    min: 500
+    max: 20000
+    typical: 3000
+  continuous_power_watts:
+    min: 200
+    max: 10000
+    typical: 1500
+  weight_grams:
+    min: 5000
+    max: 50000
+    typical: 12000
+  cost_usd:
+    min: 500
+    max: 10000
+    typical: 2000
+interface:
+  protocol:
+  - can
+  - ethercat
+  voltage_v:
+    min: 24
+    max: 80
+    typical: 48
+  current_a:
+    min: 10
+    max: 200
+    typical: 50
+  feedback:
+  - encoder_incremental
+  - hall_effect
+reference_products: []

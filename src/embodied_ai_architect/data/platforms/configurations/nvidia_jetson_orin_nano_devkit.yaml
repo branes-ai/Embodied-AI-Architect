@@ -1,0 +1,42 @@
+id: compute.nvidia_jetson_orin_nano_devkit
+name: "NVIDIA Jetson Orin Nano Developer Kit"
+category: compute
+product_type: edge_compute
+vendor: "NVIDIA"
+description: "Entry-level Orin edge AI developer kit with 40 TOPS performance at only 7-15W. Features 6-core Arm Cortex-A78AE, 1024-core Ampere GPU, and 8GB LPDDR5. Cost-effective platform for deploying AI at the edge in robotics, smart cameras, and IoT."
+aliases:
+  - "Jetson Orin Nano"
+  - "Orin Nano DevKit"
+
+keywords:
+  identity:
+    - nvidia
+    - jetson
+    - orin nano
+    - edge ai
+    - low power
+  application:
+    - edge inference
+    - smart camera
+    - entry-level robotics
+    - iot ai
+    - computer vision
+    - embedded ai
+
+specifications:
+  weight_kg: 0.28
+  power_watts: 15
+  ip_rating: "none"
+  operating_temp_c: {min: -25, max: 80}
+
+compute:
+  processor: "NVIDIA Jetson Orin Nano 8GB"
+  compute_tops: 40
+  memory_gb: 8
+  storage_gb: 0
+
+sensors: []
+
+pricing:
+  base_price_usd: 499
+  year: 2024

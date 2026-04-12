@@ -1,0 +1,148 @@
+id: construction.site_survey_robot
+name: Site Survey Robot
+category: construction
+description: Site Survey Robot platform for construction applications.
+aliases:
+- site survey robot
+- Site Survey Robot
+keywords:
+  identity:
+  - site survey robot
+  - site survey robot
+  - construction site survey robot
+  - smart site survey robot
+  - site survey robot platform
+  - automated site survey robot
+  - construction robot
+  - building robot
+  - construction automation system
+  - autonomous construction vehicle
+  - construction drone
+  descriptions:
+  - site survey robot system
+  - autonomous site survey robot
+  - system for site survey robot applications
+  - construction platform using site survey robot technology
+  - intelligent site survey robot solution
+  - autonomous construction platform for building site operations
+  - robot system for automated construction tasks
+  application:
+  - site survey robot
+  - construction automation
+  - site survey robot automation
+  - real-time site survey robot
+  - site survey robot monitoring
+  - site survey robot detection
+  - site survey
+  - progress monitoring
+  - bricklaying
+  - concrete pouring
+  - demolition
+  - excavation
+  - rebar tying
+  - welding
+  industry:
+  - construction
+  - site survey robot
+  - civil engineering
+  - architecture
+  - building
+  - infrastructure
+  - real estate development
+  - heavy industry
+  components:
+  - gps
+  - lidar
+  - imu
+  - total station
+  - laser scanner
+  - BIM integration
+  - hydraulic actuator
+  - concrete pump
+  - robotic arm
+  related:
+  - construction
+  - site
+  - BIM
+  - digital twin
+  - site safety
+  - progress tracking
+  - point cloud
+  - as-built model
+classification:
+  locomotion: stationary.gantry
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_urban
+  human_proximity: humans_distant
+attributes:
+  power_watts:
+    min: 500
+    max: 50000
+    typical: 5000
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - gps
+    - lidar
+    - imu
+  actuators:
+    actuator_types:
+    - hydraulic
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - radio
+  power:
+    compute_power_watts: 1500.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard construction architecture for site survey robot applications.
+  common_pitfalls:
+  - Domain-specific challenges for site survey robot platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to site survey robot in the construction domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

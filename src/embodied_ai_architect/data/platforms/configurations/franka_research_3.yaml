@@ -1,0 +1,48 @@
+id: manipulation.franka_research_3
+name: "Franka Research 3"
+category: manipulation
+product_type: robot_arm
+vendor: "Franka Robotics"
+description: "Research-grade 7-DOF torque-controlled robot arm with sub-millimeter repeatability. Features integrated torque sensors in every joint for compliant manipulation, direct force control, and safe human-robot interaction. The de facto standard for manipulation research."
+aliases:
+  - "Franka Panda"
+  - "Panda"
+  - "FR3"
+  - "Franka Emika Panda"
+
+keywords:
+  identity:
+    - franka
+    - panda
+    - fr3
+    - research arm
+    - torque controlled
+  application:
+    - manipulation research
+    - human-robot interaction
+    - assembly
+    - dexterous manipulation
+    - compliant control
+
+specifications:
+  weight_kg: 17.5
+  max_payload_kg: 3.0
+  power_watts: 300
+  dof: 7
+  reach_mm: 855
+  repeatability_mm: 0.1
+  operating_temp_c: {min: 5, max: 40}
+
+compute:
+  processor: "Franka Control Interface (FCI) real-time controller"
+  compute_tops: 0
+
+sensors:
+  - type: "torque_sensor"
+    name: "Joint Torque Sensors (x7)"
+  - type: "position_encoder"
+    name: "Joint Position Encoders (x7)"
+
+pricing:
+  base_price_usd: 35000
+  year: 2024

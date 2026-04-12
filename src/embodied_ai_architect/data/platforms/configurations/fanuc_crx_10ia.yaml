@@ -1,0 +1,48 @@
+id: manipulation.fanuc_crx_10ia
+name: "FANUC CRX-10iA"
+category: manipulation
+product_type: robot_arm
+vendor: "FANUC"
+description: "Collaborative robot arm from FANUC's CRX series with 10 kg payload and 1249 mm reach. Features direct teaching via hand guidance, FANUC iHMI tablet interface, and integration with FANUC's industrial ecosystem. ISO 10218-1 and TS 15066 compliant."
+aliases:
+  - "CRX-10iA"
+  - "CRX-10"
+  - "FANUC CRX"
+
+keywords:
+  identity:
+    - fanuc
+    - crx
+    - cobot
+    - collaborative
+    - industrial
+  application:
+    - machine tending
+    - inspection
+    - assembly
+    - material handling
+    - palletizing
+
+specifications:
+  weight_kg: 40.0
+  max_payload_kg: 10.0
+  power_watts: 350
+  dof: 6
+  reach_mm: 1249
+  repeatability_mm: 0.04
+  ip_rating: "IP67"
+  operating_temp_c: {min: 0, max: 45}
+
+compute:
+  processor: "FANUC R-30iB Mini Plus Controller"
+  compute_tops: 0
+
+sensors:
+  - type: "force_torque"
+    name: "Joint Torque Sensors (x6)"
+  - type: "position_encoder"
+    name: "Joint Encoders (x6)"
+
+pricing:
+  base_price_usd: 40000
+  year: 2024

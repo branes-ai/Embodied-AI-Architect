@@ -1,0 +1,150 @@
+id: assistive.prosthetic_hand
+name: Prosthetic Hand
+category: assistive
+description: Prosthetic Hand platform for assistive applications.
+aliases:
+- prosthetic hand
+- Prosthetic Hand
+keywords:
+  identity:
+  - prosthetic hand
+  - prosthetic hand
+  - assistive prosthetic hand
+  - smart prosthetic hand
+  - prosthetic hand platform
+  - automated prosthetic hand
+  - robotic prosthetic hand
+  - prosthetic hand robot
+  - assistive robot
+  - companion robot
+  - care robot
+  - mobility aid
+  - rehabilitation robot
+  - service robot
+  descriptions:
+  - prosthetic hand system
+  - autonomous prosthetic hand
+  - system for prosthetic hand applications
+  - assistive platform using prosthetic hand technology
+  - intelligent prosthetic hand solution
+  - robot system that assists people with daily activities
+  - assistive platform for mobility or cognitive support
+  application:
+  - prosthetic hand
+  - assistive automation
+  - prosthetic hand automation
+  - real-time prosthetic hand
+  - prosthetic hand monitoring
+  - prosthetic hand detection
+  - mobility assistance
+  - daily living support
+  - rehabilitation therapy
+  - companionship
+  - medication reminder
+  - fall detection
+  - gait assistance
+  - object fetching
+  industry:
+  - assistive
+  - prosthetic hand
+  - assistive technology
+  - healthcare robotics
+  - elder care
+  - rehabilitation
+  - disability services
+  - social robotics
+  components:
+  - imu
+  - emg
+  - force sensor
+  - voice interface
+  - touch screen
+  - proximity sensor
+  - speaker
+  - microphone array
+  related:
+  - assistive
+  - prosthetic
+  - human-robot interaction
+  - HRI
+  - accessibility
+  - universal design
+  - adaptive interface
+  - gesture recognition
+classification:
+  locomotion: wearable.limb_attached
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_unstructured
+  - outdoor_urban
+  human_proximity: humans_on_body
+attributes:
+  power_watts:
+    min: 1
+    max: 100
+    typical: 20
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - imu
+    - emg
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - bluetooth
+    - wifi
+  power:
+    compute_power_watts: 6.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard assistive architecture for prosthetic hand applications.
+  common_pitfalls:
+  - Domain-specific challenges for prosthetic hand platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to prosthetic hand in the assistive domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

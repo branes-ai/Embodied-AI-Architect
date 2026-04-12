@@ -1,0 +1,105 @@
+id: motor.servo_miniature
+name: Miniature Servo Motor
+category: motor
+actuator_type: servo
+description: Compact hobby-class servo with integrated gear train and position feedback. Low cost and
+  easy to drive via PWM signal. Used in RC vehicles, small robots, and pan-tilt mechanisms.
+aliases:
+- hobby servo
+- RC servo
+- micro servo
+keywords:
+  identity:
+  - miniature servo
+  - hobby servo
+  - RC servo
+  - micro servo
+  descriptions:
+  - compact position actuator
+  - PWM-driven servo
+  - gear-reduced servo
+  application:
+  - RC vehicle steering
+  - pan-tilt camera
+  - small robot arm
+  - animatronic
+  - model aircraft control surface
+  industry:
+  - hobby
+  - education
+  - robotics
+  - entertainment
+  components:
+  - potentiometer
+  - dc motor
+  - gear train
+  - pwm controller
+  related:
+  - servo horn
+  - microsecond pulse
+  - analog servo
+  - digital servo
+classification:
+  motion_type: rotary
+  control_type: position
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  torque_nm:
+    min: 0.05
+    max: 3.0
+    typical: 0.3
+  speed_rpm:
+    min: 0
+    max: 100
+    typical: 50
+  peak_power_watts:
+    min: 0.5
+    max: 15
+    typical: 3
+  continuous_power_watts:
+    min: 0.2
+    max: 8
+    typical: 1.5
+  weight_grams:
+    min: 3
+    max: 80
+    typical: 12
+  cost_usd:
+    min: 2
+    max: 60
+    typical: 8
+  response_time_ms:
+    min: 5
+    max: 50
+    typical: 15
+  lifetime_hours:
+    min: 1000
+    max: 10000
+    typical: 3000
+interface:
+  protocol:
+  - pwm
+  voltage_v:
+    min: 4.8
+    max: 7.4
+    typical: 6.0
+  current_a:
+    min: 0.1
+    max: 2
+    typical: 0.5
+  feedback:
+  - potentiometer
+reference_products:
+- id: hitec_hs_311
+  name: Hitec HS-311
+  vendor: Hitec
+  cost_usd: 10
+  torque_nm: 0.3
+- id: savox_sv1250mg
+  name: Savox SV-1250MG
+  vendor: Savox
+  cost_usd: 45
+  torque_nm: 0.8

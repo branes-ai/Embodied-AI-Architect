@@ -1,0 +1,151 @@
+id: marine_underwater.rov_deep_sea
+name: Rov Deep Sea
+category: marine_underwater
+description: Rov Deep Sea platform for marine underwater applications.
+aliases:
+- rov deep sea
+- Rov Deep Sea
+keywords:
+  identity:
+  - rov deep sea
+  - rov deep sea
+  - marine_underwater rov deep sea
+  - marine underwater rov deep sea
+  - smart rov deep sea
+  - rov deep sea platform
+  - automated rov deep sea
+  - robotic rov deep sea
+  - AUV
+  - autonomous underwater vehicle
+  - remotely operated vehicle
+  - submersible
+  - underwater drone
+  - subsea robot
+  descriptions:
+  - rov deep sea system
+  - autonomous rov deep sea
+  - system for rov deep sea applications
+  - marine underwater platform using rov deep sea technology
+  - intelligent rov deep sea solution
+  - autonomous underwater vehicle for subsea inspection and survey
+  - remotely operated underwater robot for deep-sea operations
+  application:
+  - rov deep sea
+  - marine_underwater automation
+  - rov deep sea automation
+  - real-time rov deep sea
+  - rov deep sea monitoring
+  - rov deep sea detection
+  - subsea inspection
+  - pipeline inspection
+  - hull inspection
+  - oceanographic survey
+  - mine countermeasures
+  - wreck exploration
+  - coral reef monitoring
+  - dam inspection
+  industry:
+  - marine_underwater
+  - rov deep sea
+  - subsea
+  - offshore oil and gas
+  - oceanography
+  - marine archaeology
+  - defense
+  - aquaculture
+  components:
+  - imu
+  - sonar
+  - depth_sensor
+  - depth sensor
+  - DVL
+  - thruster
+  - pressure hull
+  - manipulator
+  - sample collector
+  related:
+  - marine_underwater
+  - rov
+  - depth rating
+  - acoustic navigation
+  - USBL
+  - INS
+  - buoyancy control
+  - tether management
+classification:
+  locomotion: marine.underwater
+  manipulation: none
+  load_class: none
+  environment:
+  - underwater_shallow
+  - underwater_deep
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 50
+    max: 2000
+    typical: 300
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - imu
+    - sonar
+    - depth_sensor
+  actuators:
+    actuator_types:
+    - thruster
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - acoustic
+  power:
+    compute_power_watts: 90.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard marine underwater architecture for rov deep sea applications.
+  common_pitfalls:
+  - Domain-specific challenges for rov deep sea platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to rov deep sea in the marine underwater domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

@@ -1,0 +1,47 @@
+id: manipulation.ur5e
+name: "Universal Robots UR5e"
+category: manipulation
+product_type: robot_arm
+vendor: "Universal Robots"
+description: "Versatile collaborative robot arm and the industry's most popular cobot. 5 kg payload with 850 mm reach balances capability and size. Used for machine tending, palletizing, quality inspection, and general-purpose automation."
+aliases:
+  - "UR5e"
+  - "UR5"
+
+keywords:
+  identity:
+    - universal robots
+    - ur5e
+    - cobot
+    - collaborative
+    - versatile
+  application:
+    - machine tending
+    - palletizing
+    - quality inspection
+    - packaging
+    - welding
+
+specifications:
+  weight_kg: 20.6
+  max_payload_kg: 5.0
+  power_watts: 200
+  dof: 6
+  reach_mm: 850
+  repeatability_mm: 0.03
+  ip_rating: "IP54"
+  operating_temp_c: {min: 0, max: 50}
+
+compute:
+  processor: "UR Control Box (Linux real-time)"
+  compute_tops: 0
+
+sensors:
+  - type: "force_torque"
+    name: "Built-in Force/Torque Sensor"
+  - type: "position_encoder"
+    name: "Joint Encoders (x6)"
+
+pricing:
+  base_price_usd: 28000
+  year: 2024

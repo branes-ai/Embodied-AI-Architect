@@ -1,0 +1,92 @@
+id: fluid.peristaltic_pump
+name: Peristaltic Pump
+category: fluid
+actuator_type: peristaltic_pump
+description: Pump that squeezes fluid through a flexible tube using rotating rollers. Fluid contacts only
+  the tube, making it ideal for sterile, corrosive, or shear-sensitive applications.
+aliases:
+- roller pump
+- tube pump
+- hose pump
+keywords:
+  identity:
+  - peristaltic pump
+  - roller pump
+  - tube pump
+  descriptions:
+  - tube-based pump
+  - sterile pump
+  - contamination-free pump
+  - self-priming pump
+  application:
+  - medical infusion
+  - laboratory dosing
+  - food dispensing
+  - chemical sampling
+  - bioprocessing
+  industry:
+  - medical
+  - pharmaceutical
+  - food processing
+  - laboratory
+  - biotechnology
+  components:
+  - rotor
+  - rollers
+  - flexible tubing
+  - stepper motor
+  - tube cartridge
+  related:
+  - tube life
+  - occlusion
+  - pulsation
+  - dosing accuracy
+classification:
+  motion_type: fluid_flow
+  control_type: velocity
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 1
+    max: 500
+    typical: 20
+  continuous_power_watts:
+    min: 0.5
+    max: 300
+    typical: 10
+  weight_grams:
+    min: 50
+    max: 10000
+    typical: 500
+  cost_usd:
+    min: 20
+    max: 5000
+    typical: 300
+  lifetime_hours:
+    min: 1000
+    max: 20000
+    typical: 5000
+interface:
+  protocol:
+  - step_dir
+  - rs485
+  - analog
+  voltage_v:
+    min: 5
+    max: 24
+    typical: 12
+  current_a:
+    min: 0.1
+    max: 5
+    typical: 1
+  feedback:
+  - encoder_incremental
+reference_products:
+- id: watson_marlow_530
+  name: Watson-Marlow 530
+  vendor: Watson-Marlow
+  cost_usd: 3000

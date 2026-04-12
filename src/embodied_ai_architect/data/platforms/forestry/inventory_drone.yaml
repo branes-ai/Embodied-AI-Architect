@@ -1,0 +1,147 @@
+id: forestry.inventory_drone
+name: Inventory Drone
+category: forestry
+description: Inventory Drone platform for forestry applications.
+aliases:
+- inventory drone
+- Inventory Drone
+keywords:
+  identity:
+  - inventory drone
+  - inventory drone
+  - forestry inventory drone
+  - smart inventory drone
+  - inventory drone platform
+  - automated inventory drone
+  - forestry robot
+  - timber robot
+  - logging robot
+  - forest management platform
+  - silviculture robot
+  descriptions:
+  - inventory drone system
+  - autonomous inventory drone
+  - system for inventory drone applications
+  - forestry platform using inventory drone technology
+  - intelligent inventory drone solution
+  - autonomous platform for forestry operations and monitoring
+  - robot for forest management and timber operations
+  application:
+  - inventory drone
+  - forestry automation
+  - inventory drone automation
+  - real-time inventory drone
+  - inventory drone monitoring
+  - inventory drone detection
+  - tree inventory
+  - timber harvesting
+  - reforestation
+  - fire monitoring
+  - pest detection
+  - trail maintenance
+  - wildlife monitoring
+  - tree health assessment
+  industry:
+  - forestry
+  - inventory drone
+  - timber
+  - logging
+  - conservation
+  - wildlife management
+  - fire prevention
+  - environmental services
+  components:
+  - gps
+  - lidar
+  - camera
+  - multispectral camera
+  - chainsaw attachment
+  - tree diameter sensor
+  - GPS/GNSS
+  - rugged chassis
+  related:
+  - forestry
+  - inventory
+  - DBH measurement
+  - canopy cover
+  - forest inventory
+  - timber volume
+  - species classification
+  - fire risk index
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_rural
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 100
+    max: 10000
+    typical: 1000
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - gps
+    - lidar
+    - camera
+  actuators:
+    actuator_types:
+    - hydraulic
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - lte
+    - satellite
+  power:
+    compute_power_watts: 300.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard forestry architecture for inventory drone applications.
+  common_pitfalls:
+  - Domain-specific challenges for inventory drone platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to inventory drone in the forestry domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

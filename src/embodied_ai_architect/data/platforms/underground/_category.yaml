@@ -1,0 +1,42 @@
+# Category: underground
+# Auto-generated index — shared defaults for all underground platforms
+
+category: underground
+description: Shared defaults for 4 underground platform(s)
+platform_count: 4
+default_attributes:
+  power_watts:
+    min: 50
+    max: 500
+    typical: 125
+  weight_kg:
+    min: 1.5
+    max: 762.5
+    typical: 41.2
+  cost_usd:
+    min: 5750
+    max: 425000
+    typical: 57500
+  latency_ms:
+    min: 15
+    max: 425
+    typical: 62.5
+common_classification:
+  locomotion: ground.wheeled
+  environment:
+  - confined_space
+  - submerged
+  - subterranean
+  - underground
+common_perception_tasks:
+- blockage
+- corrosion
+- crack
+- deformation
+- joint_offset
+- lateral_connection
+- root_intrusion
+typical_constraints:
+  max_power_watts: 125
+  max_latency_ms: 62.5
+  max_cost_usd: 57500

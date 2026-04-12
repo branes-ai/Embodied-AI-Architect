@@ -1,0 +1,115 @@
+id: motor.stepper
+name: Stepper Motor
+category: motor
+actuator_type: stepper
+description: Brushless motor that divides a full rotation into discrete steps, enabling precise open-loop
+  position control. Widely used in 3D printers, CNC machines, pick-and-place equipment, and camera platforms.
+aliases:
+- step motor
+- stepping motor
+keywords:
+  identity:
+  - stepper motor
+  - step motor
+  - stepping motor
+  - NEMA motor
+  descriptions:
+  - discrete step motor
+  - open-loop position motor
+  - hybrid stepper
+  - bipolar stepper
+  - unipolar stepper
+  application:
+  - 3D printer
+  - CNC axis
+  - pick-and-place
+  - camera slider
+  - telescope mount
+  - lab automation
+  industry:
+  - manufacturing
+  - 3D printing
+  - laboratory
+  - astronomy
+  - robotics
+  components:
+  - coil winding
+  - rotor teeth
+  - stepper driver
+  - microstepping controller
+  related:
+  - microstepping
+  - holding torque
+  - detent torque
+  - step angle
+classification:
+  motion_type: rotary
+  control_type: position
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  torque_nm:
+    min: 0.01
+    max: 15.0
+    typical: 0.5
+  speed_rpm:
+    min: 0
+    max: 3000
+    typical: 300
+  position_accuracy_um:
+    min: 5
+    max: 200
+    typical: 50
+  peak_power_watts:
+    min: 2
+    max: 200
+    typical: 30
+  continuous_power_watts:
+    min: 1
+    max: 100
+    typical: 15
+  weight_grams:
+    min: 50
+    max: 5000
+    typical: 350
+  cost_usd:
+    min: 5
+    max: 200
+    typical: 15
+  lifetime_hours:
+    min: 5000
+    max: 50000
+    typical: 20000
+interface:
+  protocol:
+  - step_dir
+  - spi
+  voltage_v:
+    min: 5
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.2
+    max: 6
+    typical: 1.7
+  feedback:
+  - none
+reference_products:
+- id: nema17_42byghw804
+  name: NEMA 17 (42BYGHW804)
+  vendor: StepperOnline
+  cost_usd: 10
+  torque_nm: 0.48
+  speed_rpm: 600
+- id: nema23_23hs45
+  name: NEMA 23 (23HS45-4204S)
+  vendor: StepperOnline
+  cost_usd: 25
+  torque_nm: 3.0
+  speed_rpm: 400
+- id: trinamic_tmc2209
+  name: Trinamic TMC2209 (driver)
+  vendor: Trinamic
+  cost_usd: 8

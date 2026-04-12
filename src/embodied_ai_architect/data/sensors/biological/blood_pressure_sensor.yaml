@@ -1,0 +1,45 @@
+id: biological.blood_pressure_sensor
+name: Blood Pressure Sensor
+category: biological
+sensor_type: blood_pressure_sensor
+description: Non-invasive blood pressure measurement
+aliases: []
+keywords:
+  identity:
+  - blood pressure sensor
+  - blood pressure sensor
+  descriptions:
+  - blood pressure
+  - sphygmomanometer
+  - systolic
+  - diastolic
+  - oscillometric
+  - cuff
+  application:
+  - wearable
+  - continuous
+  - pulse transit time
+  - ptt
+  - arterial
+  - tonometry
+  industry:
+  - optical
+  - medical device
+  - hypertension
+  components:
+  - ambulatory
+classification:
+  modality: biological
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.01
+    max: 1
+    typical: 0.1
+  cost_usd:
+    min: 10
+    max: 500
+    typical: 50

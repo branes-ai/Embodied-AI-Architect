@@ -1,0 +1,43 @@
+# Category: wearable
+# Auto-generated index — shared defaults for all wearable platforms
+
+category: wearable
+description: Shared defaults for 12 wearable platform(s)
+platform_count: 12
+default_attributes:
+  power_watts:
+    min: 0.0
+    max: 4.6
+    typical: 0.5
+  weight_kg:
+    min: 0.9
+    max: 916.7
+    typical: 45.8
+  cost_usd:
+    min: 920.8
+    max: 458400
+    typical: 45858.3
+  latency_ms:
+    min: 13.3
+    max: 875
+    typical: 87.5
+common_classification:
+  locomotion: wearable.body_worn
+  environment:
+  - ambulatory
+  - body-worn
+  - clinical
+  - home
+  - indoor_unstructured
+  - outdoor_urban
+common_perception_tasks:
+- atrial fibrillation
+- bradycardia
+- normal sinus rhythm
+- pause
+- premature ventricular contraction
+- tachycardia
+typical_constraints:
+  max_power_watts: 0.5
+  max_latency_ms: 87.5
+  max_cost_usd: 45858.3

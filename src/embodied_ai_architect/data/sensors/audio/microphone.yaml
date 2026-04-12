@@ -1,0 +1,45 @@
+id: audio.microphone
+name: Microphone
+category: audio
+sensor_type: microphone
+description: Single-channel audio capture
+aliases: []
+keywords:
+  identity:
+  - microphone
+  - microphone
+  descriptions:
+  - microphone
+  - mic
+  - audio
+  - sound
+  - speech
+  - voice
+  application:
+  - mems microphone
+  - condenser
+  - electret
+  - digital microphone
+  - pdm
+  - i2s
+  industry:
+  - snr
+  - sensitivity
+  - noise cancellation
+  components:
+  - automatic gain control
+classification:
+  modality: audio
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.0005
+    max: 0.05
+    typical: 0.005
+  cost_usd:
+    min: 0.5
+    max: 20
+    typical: 2

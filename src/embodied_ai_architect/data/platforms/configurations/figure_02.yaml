@@ -1,0 +1,55 @@
+id: humanoid.figure_02
+name: "Figure 02"
+category: humanoid
+product_type: humanoid
+vendor: "Figure AI"
+description: "Second-generation general-purpose humanoid robot with 16 DOF hands, onboard vision-language model, and full-body control. Features 25 kg payload capacity, 4+ hours of battery life, and human-like dexterity for factory and logistics applications. Backed by OpenAI partnership for AI capabilities."
+aliases:
+  - "Figure 02"
+  - "Figure Robot"
+  - "Figure 2"
+
+keywords:
+  identity:
+    - figure
+    - figure 02
+    - humanoid
+    - general purpose
+    - ai humanoid
+  application:
+    - factory automation
+    - logistics
+    - general purpose
+    - manipulation
+    - warehouse
+
+specifications:
+  weight_kg: 60.0
+  max_payload_kg: 25.0
+  power_watts: 500
+  battery_wh: 2100
+  max_speed_mps: 1.2
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "Custom AI compute (vision-language model onboard)"
+  compute_tops: 100
+
+sensors:
+  - type: "camera"
+    name: "Head Cameras (stereo)"
+    resolution: "2048x1536"
+  - type: "depth_camera"
+    name: "Depth Sensors"
+  - type: "force_torque"
+    name: "Hand Force Sensors"
+  - type: "imu"
+    name: "IMU"
+  - type: "encoder"
+    name: "Joint Encoders"
+  - type: "microphone"
+    name: "Microphone Array"
+
+pricing:
+  base_price_usd: 50000
+  year: 2024

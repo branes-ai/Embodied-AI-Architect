@@ -1,0 +1,42 @@
+# Category: healthcare
+# Auto-generated index — shared defaults for all healthcare platforms
+
+category: healthcare
+description: Shared defaults for 6 healthcare platform(s)
+platform_count: 6
+default_attributes:
+  power_watts:
+    min: 75
+    max: 750
+    typical: 216.7
+  weight_kg:
+    min: 7.5
+    max: 858.3
+    typical: 55
+  cost_usd:
+    min: 9166.7
+    max: 450000
+    typical: 58333.3
+  latency_ms:
+    min: 25
+    max: 583.3
+    typical: 125
+common_classification:
+  locomotion: ground.wheeled
+  environment:
+  - cleanroom
+  - clinical
+  - hospital
+  - indoor
+  - indoor_structured
+common_perception_tasks:
+- bed
+- door
+- furniture
+- person
+- wall
+- window
+typical_constraints:
+  max_power_watts: 216.7
+  max_latency_ms: 125
+  max_cost_usd: 58333.3

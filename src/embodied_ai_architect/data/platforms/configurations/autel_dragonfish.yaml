@@ -1,0 +1,49 @@
+id: aerial.autel_dragonfish
+name: "Autel Dragonfish"
+category: aerial
+product_type: drone
+vendor: "Autel Robotics"
+description: "VTOL fixed-wing enterprise drone with up to 81 minutes of flight time and 18 km transmission range. Tilt-rotor design enables vertical takeoff and efficient cruise flight for large-area mapping, corridor inspection, and long-range surveillance."
+aliases:
+  - "Dragonfish"
+  - "Dragonfish Standard"
+
+keywords:
+  identity:
+    - autel
+    - dragonfish
+    - vtol
+    - fixed-wing
+    - long range
+  application:
+    - corridor inspection
+    - large area mapping
+    - long range surveillance
+    - pipeline inspection
+    - border patrol
+
+specifications:
+  weight_kg: 7.15
+  max_payload_kg: 1.0
+  power_watts: 350
+  battery_wh: 500
+  flight_time_min: 81
+  max_speed_mps: 26
+  ip_rating: "IP45"
+  operating_temp_c: {min: -20, max: 50}
+
+compute:
+  processor: "Autel proprietary flight controller"
+  compute_tops: 0
+
+sensors:
+  - type: "zoom_camera"
+    name: "Zoom Camera 20x"
+  - type: "wide_camera"
+    name: "Wide Camera"
+  - type: "gnss"
+    name: "RTK GNSS Module"
+
+pricing:
+  base_price_usd: 20000
+  year: 2024

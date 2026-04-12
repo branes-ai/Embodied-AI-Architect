@@ -1,0 +1,58 @@
+id: visual.multispectral_camera
+name: Multispectral Camera
+category: visual
+sensor_type: multispectral_camera
+description: Multi-band imaging for agriculture, environmental monitoring
+aliases: []
+keywords:
+  identity:
+  - multispectral camera
+  - multispectral camera
+  descriptions:
+  - multispectral
+  - ndvi
+  - vegetation index
+  - precision agriculture
+  - crop health
+  - spectral bands
+  application:
+  - nir
+  - red edge
+  - blue band
+  - green band
+  - remote sensing
+  - environmental monitoring
+  industry:
+  - chlorophyll
+  - water stress
+  - band pass filter
+  components:
+  - narrow band
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 1280
+    max: 2048
+    typical: 1280
+  frame_rate_fps:
+    min: 1
+    max: 30
+    typical: 7
+  power_watts:
+    min: 2
+    max: 10
+    typical: 5
+  cost_usd:
+    min: 1000
+    max: 20000
+    typical: 5000
+reference_products:
+- id: micasense_rededge_p
+  name: MicaSense RedEdge-P
+  vendor: MicaSense
+  cost_usd: 5500

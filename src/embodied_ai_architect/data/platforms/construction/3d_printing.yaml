@@ -1,0 +1,148 @@
+id: construction.3d_printing
+name: 3D Printing
+category: construction
+description: 3D Printing platform for construction applications.
+aliases:
+- 3d printing
+- 3D Printing
+keywords:
+  identity:
+  - 3d printing
+  - 3d printing
+  - construction 3d printing
+  - smart 3d printing
+  - 3d printing platform
+  - automated 3d printing
+  - construction robot
+  - building robot
+  - construction automation system
+  - autonomous construction vehicle
+  - construction drone
+  descriptions:
+  - 3d printing system
+  - autonomous 3d printing
+  - system for 3d printing applications
+  - construction platform using 3d printing technology
+  - intelligent 3d printing solution
+  - autonomous construction platform for building site operations
+  - robot system for automated construction tasks
+  application:
+  - 3d printing
+  - construction automation
+  - 3d printing automation
+  - real-time 3d printing
+  - 3d printing monitoring
+  - 3d printing detection
+  - site survey
+  - progress monitoring
+  - bricklaying
+  - concrete pouring
+  - demolition
+  - excavation
+  - rebar tying
+  - welding
+  industry:
+  - construction
+  - 3d printing
+  - civil engineering
+  - architecture
+  - building
+  - infrastructure
+  - real estate development
+  - heavy industry
+  components:
+  - gps
+  - lidar
+  - imu
+  - total station
+  - laser scanner
+  - BIM integration
+  - hydraulic actuator
+  - concrete pump
+  - robotic arm
+  related:
+  - construction
+  - 3d
+  - BIM
+  - digital twin
+  - site safety
+  - progress tracking
+  - point cloud
+  - as-built model
+classification:
+  locomotion: stationary.gantry
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_urban
+  human_proximity: humans_distant
+attributes:
+  power_watts:
+    min: 500
+    max: 50000
+    typical: 5000
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - gps
+    - lidar
+    - imu
+  actuators:
+    actuator_types:
+    - hydraulic
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - radio
+  power:
+    compute_power_watts: 1500.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard construction architecture for 3d printing applications.
+  common_pitfalls:
+  - Domain-specific challenges for 3d printing platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to 3d printing in the construction domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

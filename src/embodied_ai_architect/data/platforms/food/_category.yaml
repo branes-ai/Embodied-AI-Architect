@@ -1,0 +1,41 @@
+# Category: food
+# Auto-generated index — shared defaults for all food platforms
+
+category: food
+description: Shared defaults for 5 food platform(s)
+platform_count: 5
+default_attributes:
+  power_watts:
+    min: 360
+    max: 3600
+    typical: 1000
+  weight_kg:
+    min: 100.8
+    max: 1800
+    typical: 440
+  cost_usd:
+    min: 20800
+    max: 600000
+    typical: 100000
+  latency_ms:
+    min: 9
+    max: 406
+    typical: 42
+common_classification:
+  locomotion: stationary.fixed_mount
+  environment:
+  - cold_storage
+  - food_processing
+  - indoor_food_grade
+common_perception_tasks:
+- bruise
+- color_grade
+- foreign_object
+- insect_damage
+- rot
+- shape_defect
+- size_grade
+typical_constraints:
+  max_power_watts: 1000
+  max_latency_ms: 42
+  max_cost_usd: 100000

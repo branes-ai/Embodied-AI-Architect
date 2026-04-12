@@ -1,0 +1,76 @@
+id: marine_underwater.auv_inspection
+name: "Inspection AUV"
+category: marine_underwater
+description: "Autonomous underwater vehicle for subsea pipeline, hull, and infrastructure inspection using sonar, cameras, and acoustic positioning in depths up to several thousand meters."
+aliases:
+  - "subsea inspection robot"
+  - "underwater inspection vehicle"
+  - "pipeline inspection AUV"
+
+keywords:
+  identity: [AUV, autonomous underwater vehicle, underwater inspection, subsea inspection, underwater robot]
+  descriptions: [pipeline inspection AUV, hull inspection robot, subsea survey vehicle, underwater survey robot, deep-sea inspector]
+  application: [pipeline inspection, hull inspection, subsea infrastructure, underwater survey, offshore inspection]
+  industry: [oil and gas, offshore energy, marine, subsea, naval, port operations]
+  components: [thruster, DVL, USBL, side-scan sonar, pressure hull]
+  related: [ROV, subsea, bathymetry, cathodic protection, marine growth]
+
+classification:
+  locomotion: "marine.underwater.propelled"
+  manipulation: "none"
+  load_class: "medium"
+  environment: [underwater, deep_sea, coastal]
+  human_proximity: "no_humans"
+
+attributes:
+  power_watts: {min: 200, max: 5000, typical: 1500}
+  compute_tops: {min: 2, max: 20, typical: 8}
+  latency_ms: {min: 50, max: 500, typical: 150}
+  weight_kg: {min: 30, max: 3000, typical: 500}
+  cost_usd: {min: 200000, max: 5000000, typical: 1000000}
+  autonomy_level: "high"
+  safety_level: "sil_1"
+  mission_duration_hours: {min: 4, max: 72, typical: 24}
+
+implications:
+  platform_type: "marine_underwater"
+  perception:
+    camera_types: [rgb_underwater, structured_light, stereo]
+    detection_classes: [pipeline, anode, free_span, marine_growth, crack, dent, debris, seabed_feature]
+    max_latency_ms: 200
+    min_fps: 10
+  sensors:
+    modalities: [camera, side_scan_sonar, multibeam_sonar, dvl, usbl, ctd, imu]
+  actuators:
+    actuator_types: [thruster, ballast_control]
+    dof: null
+    control_rate_hz: 20
+  comms:
+    protocols: [acoustic_modem, usbl, wifi_surface, satellite_surface]
+  power:
+    compute_power_watts: 20
+  safety:
+    level: "sil_1"
+    certifications: [DNV, Lloyd_Register, API_1160]
+
+context:
+  typical_architecture: "A torpedo or box-shaped vehicle carries sonar (side-scan and/or multibeam), cameras, and a DVL for navigation. USBL acoustic positioning provides geo-referencing. The AUV follows pre-programmed survey lines autonomously, collecting data for onshore post-processing. Some systems support real-time classification of pipeline anomalies. Navigation relies on INS + DVL + USBL fusion due to the absence of GPS underwater."
+  common_pitfalls:
+    - "Acoustic positioning (USBL) drift accumulates on long survey lines without loop closures"
+    - "Turbidity and marine growth degrade camera image quality"
+    - "Current and surge can push the vehicle off survey track"
+    - "Communication bandwidth through water is extremely limited (acoustic: ~10 kbps)"
+  regulatory:
+    - "DNV-ST-0511 (autonomous and remotely operated vehicles)"
+    - "API 1160 (pipeline integrity management in operating pipelines)"
+    - "IMCA guidelines for AUV operations"
+  reference_designs:
+    - "Saab Sabertooth"
+    - "Kongsberg Hugin"
+    - "General Dynamics Bluefin"
+  design_considerations: "Inspection AUVs must navigate precisely without GPS using INS/DVL/USBL sensor fusion. Camera and sonar data quality degrades with turbidity, marine growth, and distance from target—altitude and standoff control are critical. Battery capacity limits mission endurance; energy-efficient transit and survey speeds must be balanced. Data volumes are massive (terabytes per mission), requiring efficient onboard storage and post-processing pipelines. Pressure hull design must match target depth rating. Consider resident AUV concepts for permanent subsea deployment to reduce vessel costs."
+
+qualification:
+  suggested_questions: [max_depth, survey_target, mission_endurance, navigation_accuracy, data_products, launch_recovery_method]
+  critical_constraints: [depth_rating, navigation_accuracy_m, endurance_hours, sensor_suite]
+  optional_constraints: [resident_capability, manipulation_arm, real_time_classification, docking_station]

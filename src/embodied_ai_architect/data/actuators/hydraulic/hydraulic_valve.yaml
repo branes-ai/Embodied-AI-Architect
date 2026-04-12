@@ -1,0 +1,105 @@
+id: hydraulic.hydraulic_valve
+name: Hydraulic Proportional Valve
+category: hydraulic
+actuator_type: hydraulic_valve
+description: Electronically controlled valve that modulates hydraulic flow and pressure proportionally
+  to an electrical command signal. Controls the speed, force, and direction of hydraulic cylinders and
+  motors.
+aliases:
+- proportional valve
+- servo valve
+- hydraulic directional valve
+keywords:
+  identity:
+  - hydraulic valve
+  - proportional valve
+  - servo valve
+  - directional valve
+  descriptions:
+  - flow control valve
+  - pressure control valve
+  - spool valve
+  - electrohydraulic valve
+  application:
+  - cylinder speed control
+  - press control
+  - injection molding
+  - flight control surface
+  - motion platform
+  industry:
+  - manufacturing
+  - aerospace
+  - construction
+  - simulation
+  - oil and gas
+  components:
+  - spool
+  - solenoid
+  - LVDT
+  - pilot stage
+  - orifice
+  related:
+  - flow gain
+  - pressure gain
+  - null shift
+  - hysteresis
+classification:
+  motion_type: fluid_flow
+  control_type: proportional
+  environment:
+  - indoor
+  - outdoor
+  - hazardous
+  reversible: true
+  backdrivable: false
+attributes:
+  response_time_ms:
+    min: 2
+    max: 50
+    typical: 10
+  peak_power_watts:
+    min: 5
+    max: 200
+    typical: 30
+  continuous_power_watts:
+    min: 2
+    max: 100
+    typical: 15
+  weight_grams:
+    min: 200
+    max: 20000
+    typical: 3000
+  cost_usd:
+    min: 100
+    max: 20000
+    typical: 1500
+  lifetime_hours:
+    min: 10000
+    max: 100000
+    typical: 30000
+interface:
+  protocol:
+  - analog
+  - can
+  - profinet
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 24
+  current_a:
+    min: 0.1
+    max: 3
+    typical: 0.8
+  feedback:
+  - none
+reference_products:
+- id: moog_d633
+  name: Moog D633 Direct Drive Valve
+  vendor: Moog
+  cost_usd: 3000
+  response_time_ms: 4
+- id: bosch_4wre
+  name: Bosch Rexroth 4WRE
+  vendor: Bosch Rexroth
+  cost_usd: 800
+  response_time_ms: 15

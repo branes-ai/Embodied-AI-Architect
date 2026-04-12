@@ -1,0 +1,152 @@
+id: ground_wheeled.sidewalk_delivery
+name: Sidewalk Delivery
+category: ground_wheeled
+description: Sidewalk Delivery platform for ground wheeled applications.
+aliases:
+- sidewalk delivery
+- Sidewalk Delivery
+keywords:
+  identity:
+  - sidewalk delivery
+  - sidewalk delivery
+  - ground_wheeled sidewalk delivery
+  - ground wheeled sidewalk delivery
+  - smart sidewalk delivery
+  - sidewalk delivery platform
+  - automated sidewalk delivery
+  - robotic sidewalk delivery
+  - wheeled robot
+  - mobile robot
+  - AGV
+  - AMR
+  - autonomous mobile robot
+  - wheeled platform
+  descriptions:
+  - sidewalk delivery system
+  - autonomous sidewalk delivery
+  - system for sidewalk delivery applications
+  - ground wheeled platform using sidewalk delivery technology
+  - intelligent sidewalk delivery solution
+  - wheeled mobile robot for autonomous transport and navigation
+  - autonomous ground vehicle for logistics or patrol tasks
+  application:
+  - sidewalk delivery
+  - ground_wheeled automation
+  - sidewalk delivery automation
+  - real-time sidewalk delivery
+  - sidewalk delivery monitoring
+  - sidewalk delivery detection
+  - material transport
+  - warehouse automation
+  - last-mile delivery
+  - campus delivery
+  - patrol
+  - floor cleaning
+  - inventory scanning
+  - guided vehicle
+  industry:
+  - ground_wheeled
+  - sidewalk delivery
+  - logistics
+  - warehousing
+  - manufacturing
+  - retail
+  - hospitality
+  - healthcare logistics
+  components:
+  - lidar
+  - imu
+  - wheel_encoder
+  - wheel encoder
+  - ultrasonic sensor
+  - bumper sensor
+  - motor driver
+  - caster wheel
+  - battery management system
+  related:
+  - ground_wheeled
+  - sidewalk
+  - path planning
+  - SLAM
+  - fleet management
+  - traffic control
+  - docking station
+  - obstacle avoidance
+classification:
+  locomotion: ground.wheeled
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  - outdoor_urban
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 10
+    max: 2000
+    typical: 100
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: amr
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - imu
+    - wheel_encoder
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - ethernet
+  power:
+    compute_power_watts: 30.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard ground wheeled architecture for sidewalk delivery applications.
+  common_pitfalls:
+  - Domain-specific challenges for sidewalk delivery platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to sidewalk delivery in the ground wheeled domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

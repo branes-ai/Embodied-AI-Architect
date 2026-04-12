@@ -1,0 +1,76 @@
+id: underground.sewer_inspection
+name: "Sewer Pipe Inspection Robot"
+category: underground
+description: "Tracked or wheeled crawler robot with pan-tilt camera for CCTV inspection of municipal sewer and storm drain pipelines to detect defects and blockages."
+aliases:
+  - "pipe crawler"
+  - "sewer camera robot"
+  - "drain inspection robot"
+
+keywords:
+  identity: [sewer robot, pipe inspection robot, sewer camera, pipe crawler, CCTV inspection robot]
+  descriptions: [drain inspection robot, sewer inspection crawler, pipeline camera robot, underground pipe robot, sewer survey robot]
+  application: [pipe defect detection, sewer inspection, drain survey, blockage detection, pipe condition assessment]
+  industry: [municipal utilities, wastewater, pipeline inspection, infrastructure assessment, NASSCO PACP]
+  components: [pan-tilt camera, LED lighting, cable reel, tractor unit]
+  related: [CCTV inspection, trenchless rehabilitation, pipe relining, GIS mapping]
+
+classification:
+  locomotion: "ground.tracked"
+  manipulation: "none"
+  load_class: "micro"
+  environment: [underground, confined_space, submerged]
+  human_proximity: "no_humans"
+
+attributes:
+  power_watts: {min: 50, max: 500, typical: 200}
+  compute_tops: {min: 0.5, max: 8, typical: 2}
+  latency_ms: {min: 30, max: 200, typical: 100}
+  weight_kg: {min: 3, max: 50, typical: 15}
+  cost_usd: {min: 20000, max: 200000, typical: 80000}
+  autonomy_level: "assisted"
+  safety_level: "basic"
+  mission_duration_hours: {min: 2, max: 8, typical: 4}
+
+implications:
+  platform_type: "ground_tracked"
+  perception:
+    camera_types: [rgb_pan_tilt, fisheye, laser_profiler]
+    detection_classes: [crack, root_intrusion, joint_offset, corrosion, blockage, deformation, lateral_connection]
+    max_latency_ms: 200
+    min_fps: 15
+  sensors:
+    modalities: [camera, laser_profiler, inclinometer, distance_counter]
+  actuators:
+    actuator_types: [tracked_drive, pan_tilt_motor]
+    dof: null
+    control_rate_hz: 10
+  comms:
+    protocols: [coaxial_cable, fiber_optic, ethernet]
+  power:
+    compute_power_watts: 8
+  safety:
+    level: "basic"
+    certifications: [IP68, ATEX]
+
+context:
+  typical_architecture: "A tractor-style crawler connected to the surface via cable (coax or fiber) carries a pan-tilt-zoom camera and LED array. The operator controls the crawler from a surface van; video is recorded and AI-assisted defect coding runs either in real-time on a surface workstation or in post-processing. Laser profiling provides pipe diameter and ovality measurements."
+  common_pitfalls:
+    - "Cable management in long runs (300+ meters) and pipes with many bends"
+    - "Traction loss in silted, greasy, or flooded pipe sections"
+    - "LED illumination washout on reflective wet pipe surfaces"
+    - "Inconsistent AI defect coding when pipe material or condition varies widely"
+  regulatory:
+    - "NASSCO PACP/MACP/LACP coding standards"
+    - "EN 13508-2 (condition classification of drain and sewer systems)"
+    - "Confined space entry regulations (OSHA 29 CFR 1910.146)"
+  reference_designs:
+    - "RedZone Robotics Solo"
+    - "Envirosight ROVVER X"
+    - "CUES DUC"
+  design_considerations: "Sewer inspection robots must navigate pipes from 150 mm to 1500+ mm diameter through standing water, debris, and sharp bends. IP68 rating is mandatory. AI-assisted defect detection is increasingly expected to code defects per PACP standards in real-time, reducing manual review time by 50-80%. Laser profiling for ovality and diameter measurement adds value beyond visual inspection. The tethered design provides reliable power and data but limits range; consider autonomous untethered designs for trunk sewers."
+
+qualification:
+  suggested_questions: [pipe_diameter_range, pipe_material, max_inspection_distance, flow_conditions, coding_standard, autonomous_vs_tethered]
+  critical_constraints: [pipe_diameter_range, waterproofing_rating, cable_length, defect_coding_standard]
+  optional_constraints: [laser_profiling, autonomous_navigation, gis_integration]

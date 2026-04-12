@@ -1,0 +1,106 @@
+id: motor.linear_actuator_precision
+name: Precision Linear Stage
+category: motor
+actuator_type: linear_actuator
+description: High-accuracy linear positioner using ground ball screws or linear motors with sub-micron
+  feedback. For semiconductor, optics, and metrology.
+aliases:
+- linear stage
+- precision positioner
+- linear translation stage
+keywords:
+  identity:
+  - precision linear stage
+  - linear positioner
+  - translation stage
+  descriptions:
+  - sub-micron positioner
+  - high accuracy stage
+  - nanopositioning stage
+  application:
+  - semiconductor lithography
+  - optical alignment
+  - metrology
+  - wafer inspection
+  - microscopy
+  industry:
+  - semiconductor
+  - optics
+  - metrology
+  - research
+  components:
+  - linear motor
+  - linear encoder
+  - air bearing
+  - cross roller guide
+  related:
+  - interferometric feedback
+  - nanometer resolution
+  - planar motion
+classification:
+  motion_type: linear
+  control_type: position
+  environment:
+  - cleanroom
+  - indoor
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 5
+    max: 500
+    typical: 50
+  speed_mps:
+    min: 0.001
+    max: 0.5
+    typical: 0.1
+  stroke_mm:
+    min: 5
+    max: 500
+    typical: 50
+  position_accuracy_um:
+    min: 0.01
+    max: 5
+    typical: 0.1
+  repeatability_um:
+    min: 0.005
+    max: 1
+    typical: 0.05
+  peak_power_watts:
+    min: 5
+    max: 200
+    typical: 40
+  continuous_power_watts:
+    min: 2
+    max: 100
+    typical: 20
+  weight_grams:
+    min: 200
+    max: 10000
+    typical: 2000
+  cost_usd:
+    min: 500
+    max: 50000
+    typical: 5000
+interface:
+  protocol:
+  - ethercat
+  - analog
+  voltage_v:
+    min: 24
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.5
+    max: 10
+    typical: 2
+  feedback:
+  - encoder_incremental
+  - encoder_absolute
+reference_products:
+- id: aerotech_pro165
+  name: Aerotech PRO165LM
+  vendor: Aerotech
+  cost_usd: 8000
+  stroke_mm: 200
+  position_accuracy_um: 0.1

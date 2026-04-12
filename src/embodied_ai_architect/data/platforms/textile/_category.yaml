@@ -1,0 +1,39 @@
+# Category: textile
+# Auto-generated index — shared defaults for all textile platforms
+
+category: textile
+description: Shared defaults for 3 textile platform(s)
+platform_count: 3
+default_attributes:
+  power_watts:
+    min: 233.3
+    max: 1666.7
+    typical: 600
+  weight_kg:
+    min: 67.3
+    max: 1000
+    typical: 200
+  cost_usd:
+    min: 34000
+    max: 500000
+    typical: 116666.7
+  latency_ms:
+    min: 10
+    max: 350
+    typical: 40
+common_classification:
+  locomotion: stationary.fixed_mount
+  environment:
+  - indoor_factory
+  - indoor_structured
+common_perception_tasks:
+- fabric_edge
+- misalignment
+- pattern_mark
+- seam_line
+- stitch_defect
+- wrinkle
+typical_constraints:
+  max_power_watts: 600
+  max_latency_ms: 40
+  max_cost_usd: 116666.7

@@ -1,0 +1,98 @@
+id: fluid.syringe_pump
+name: Syringe Pump
+category: fluid
+actuator_type: syringe_pump
+description: Precision fluid pump using a motor-driven plunger in a syringe barrel. Delivers highly accurate
+  and pulsation-free flow. Standard in medical infusion, microfluidics, and 3D bioprinting.
+aliases:
+- infusion pump
+- precision syringe dispenser
+keywords:
+  identity:
+  - syringe pump
+  - infusion pump
+  - syringe driver
+  descriptions:
+  - precision fluid dispenser
+  - pulsation-free pump
+  - linear displacement pump
+  application:
+  - IV infusion
+  - microfluidics
+  - 3D bioprinting
+  - electrospinning
+  - lab automation
+  - chromatography
+  industry:
+  - medical
+  - research
+  - pharmaceutical
+  - biotechnology
+  components:
+  - syringe barrel
+  - plunger
+  - lead screw
+  - stepper motor
+  - force sensor
+  related:
+  - flow rate accuracy
+  - syringe size
+  - infusion profile
+  - bolus delivery
+classification:
+  motion_type: fluid_flow
+  control_type: velocity
+  environment:
+  - indoor
+  - cleanroom
+  reversible: true
+  backdrivable: false
+attributes:
+  force_n:
+    min: 1
+    max: 500
+    typical: 50
+  speed_mps:
+    min: 0.0001
+    max: 0.01
+    typical: 0.001
+  peak_power_watts:
+    min: 1
+    max: 50
+    typical: 10
+  continuous_power_watts:
+    min: 0.5
+    max: 30
+    typical: 5
+  weight_grams:
+    min: 100
+    max: 5000
+    typical: 800
+  cost_usd:
+    min: 50
+    max: 10000
+    typical: 1000
+  position_accuracy_um:
+    min: 0.1
+    max: 50
+    typical: 5
+interface:
+  protocol:
+  - rs485
+  - usb
+  - ethernet_ip
+  voltage_v:
+    min: 12
+    max: 24
+    typical: 12
+  current_a:
+    min: 0.2
+    max: 3
+    typical: 0.5
+  feedback:
+  - encoder_incremental
+reference_products:
+- id: harvard_phd_ultra
+  name: Harvard Apparatus PHD Ultra
+  vendor: Harvard Apparatus
+  cost_usd: 3500

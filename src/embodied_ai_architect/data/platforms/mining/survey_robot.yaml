@@ -1,0 +1,148 @@
+id: mining.survey_robot
+name: Survey Robot
+category: mining
+description: Survey Robot platform for mining applications.
+aliases:
+- survey robot
+- Survey Robot
+keywords:
+  identity:
+  - survey robot
+  - survey robot
+  - mining survey robot
+  - smart survey robot
+  - survey robot platform
+  - automated survey robot
+  - mining robot
+  - mine automation system
+  - autonomous mining vehicle
+  - underground mining robot
+  - mining drone
+  descriptions:
+  - survey robot system
+  - autonomous survey robot
+  - system for survey robot applications
+  - mining platform using survey robot technology
+  - intelligent survey robot solution
+  - autonomous mining platform for underground or surface operations
+  - robot for mine inspection and extraction support
+  application:
+  - survey robot
+  - mining automation
+  - survey robot automation
+  - real-time survey robot
+  - survey robot monitoring
+  - survey robot detection
+  - ore extraction
+  - tunnel inspection
+  - drilling
+  - blasting support
+  - conveyor monitoring
+  - ventilation monitoring
+  - geotechnical survey
+  - rock bolting
+  industry:
+  - mining
+  - survey robot
+  - quarrying
+  - tunneling
+  - mineral processing
+  - underground mining
+  - open pit mining
+  - geotechnical
+  components:
+  - lidar
+  - gas_detector
+  - camera
+  - rock drill
+  - gas sensor
+  - proximity detection
+  - collision avoidance system
+  - ruggedized chassis
+  - dust filter
+  related:
+  - mining
+  - survey
+  - mine safety
+  - MSHA compliance
+  - stope planning
+  - ore body modeling
+  - fleet management
+  - machine guidance
+classification:
+  locomotion: ground.tracked
+  manipulation: none
+  load_class: none
+  environment:
+  - subterranean
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 500
+    max: 50000
+    typical: 5000
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - gas_detector
+    - camera
+  actuators:
+    actuator_types:
+    - hydraulic
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - mesh
+  power:
+    compute_power_watts: 1500.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard mining architecture for survey robot applications.
+  common_pitfalls:
+  - Domain-specific challenges for survey robot platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to survey robot in the mining domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

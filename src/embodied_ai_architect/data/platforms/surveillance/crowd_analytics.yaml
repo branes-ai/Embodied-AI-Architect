@@ -1,0 +1,134 @@
+id: surveillance.crowd_analytics
+name: "Crowd Analytics System"
+category: surveillance
+description: "Stadium, transit, and public venue crowd monitoring system for real-time density estimation, flow analysis, and crush risk detection using overhead cameras and edge AI."
+aliases:
+  - "crowd monitoring system"
+  - "crowd density system"
+  - "people counting system"
+
+keywords:
+  identity:
+    - crowd monitoring
+    - crowd density
+    - crowd analytics
+    - people flow
+    - crowd counting
+    - crowd management
+    - occupancy monitoring
+    - crowd detection
+  descriptions:
+    - "system that counts and monitors crowds in stadiums"
+    - "camera system that detects dangerous crowd density"
+    - "AI system for monitoring people flow in transit stations"
+  application:
+    - crush detection
+    - crowd density estimation
+    - people counting
+    - flow analysis
+    - occupancy monitoring
+    - queue management
+    - evacuation monitoring
+    - dwell time analysis
+  industry:
+    - public safety
+    - venue management
+    - transit operations
+    - smart city
+    - event security
+  components:
+    - overhead camera
+    - fisheye camera
+    - edge GPU
+    - people counter
+    - heatmap display
+    - dashboard
+  related:
+    - crowd crush
+    - Hillsborough
+    - Itaewon
+    - Level of Service
+    - Fruin scale
+    - pedestrian dynamics
+    - social force model
+
+classification:
+  locomotion: "fixed installation"
+  manipulation: "none"
+  load_class: "infrastructure"
+  environment:
+    - indoor
+    - outdoor
+    - venue
+    - transit
+  human_proximity: "overhead monitoring"
+
+attributes:
+  power_watts: {min: 30, max: 300, typical: 100}
+  compute_tops: {min: 4, max: 40, typical: 16}
+  latency_ms: {min: 100, max: 2000, typical: 500}
+  weight_kg: {min: 2, max: 20, typical: 8}
+  cost_usd: {min: 3000, max: 50000, typical: 15000}
+  autonomy_level: "automated monitoring with alert escalation"
+  safety_level: "life safety"
+  mission_duration_hours: {min: 8760, max: 8760, typical: 8760}
+
+implications:
+  platform_type: "surveillance"
+  perception:
+    camera_types: ["overhead fisheye", "wide-angle fixed", "PTZ"]
+    detection_classes: ["person", "crowd cluster", "queue", "counter-flow", "fallen person", "restricted area breach"]
+    max_latency_ms: 1000
+    min_fps: 10
+  sensors:
+    modalities: ["RGB camera", "fisheye camera", "thermal camera", "Wi-Fi probe", "BLE beacon", "turnstile counter"]
+  actuators:
+    actuator_types: ["PTZ motor", "digital signage", "PA system trigger"]
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols: ["Ethernet/IP", "ONVIF", "RTSP", "MQTT", "REST API"]
+  power:
+    compute_power_watts: 20
+  safety:
+    level: "life safety"
+    certifications: ["EN 50132 CCTV", "GDPR compliance", "local privacy regulations"]
+
+context:
+  typical_architecture: "Network of overhead fisheye or wide-angle cameras (one per 50-100 sqm) feeding edge compute nodes that run density estimation CNNs. Results aggregate to a central dashboard showing real-time heatmaps, zone occupancy counts, and flow vectors. Alert thresholds trigger notifications to control room operators when density exceeds safe levels (typically 4-6 persons/sqm depending on venue type)."
+  common_pitfalls:
+    - "Overhead camera mounting height and lens selection critically affect counting accuracy; too high loses individuals in dense crowds"
+    - "Privacy regulations (GDPR, CCPA) may prohibit face-resolution imagery; density estimation models work on blob-level features"
+    - "Occlusion in dense crowds (>4 persons/sqm) causes standard detection models to undercount by 30-50%"
+    - "Lighting changes during concerts/events cause dramatic accuracy degradation without robust preprocessing"
+    - "Alert fatigue from poorly calibrated thresholds leads operators to ignore genuine crush warnings"
+  regulatory:
+    - "GDPR/CCPA data protection and privacy impact assessment"
+    - "Local CCTV code of practice"
+    - "EN 50132 for video surveillance systems"
+    - "Venue licensing conditions for maximum occupancy"
+    - "Guide to Safety at Sports Grounds (Green Guide)"
+  reference_designs:
+    - "Axis People Counter"
+    - "Hikvision Crowd Density Detection"
+    - "HELLA Aglaia people sensing"
+    - "Irisity IRIS crowd analytics"
+    - "Viisights behavioral analytics"
+  design_considerations: "Crowd analytics systems must prioritize density estimation over individual tracking in high-density scenarios; CSRNet-style density map regression outperforms detection-based counting above 2 persons/sqm. Camera placement is the single most impactful design decision: overhead mounting at 6-10m with fisheye lenses maximizes coverage while minimizing occlusion. Edge processing per camera is preferred over centralized GPU servers to reduce bandwidth (a single 4K stream at 15fps is ~15 Mbps) and latency. The system should output Fruin Level-of-Service grades (A-F) mapped to actionable crowd management protocols."
+
+qualification:
+  suggested_questions:
+    - venue_type
+    - peak_occupancy
+    - area_sqm
+    - camera_mounting_height
+    - privacy_jurisdiction
+  critical_constraints:
+    - "Real-time density estimation (< 2s latency)"
+    - "Counting accuracy > 90% up to 4 persons/sqm"
+    - "Privacy-compliant (no face storage)"
+    - "24/7 continuous operation"
+  optional_constraints:
+    - "Flow direction analysis"
+    - "Queue wait time estimation"
+    - "Integration with PA/signage systems"

@@ -1,0 +1,145 @@
+id: food.bakery_automation
+name: Bakery Automation
+category: food
+description: Bakery Automation platform for food applications.
+aliases:
+- bakery automation
+- Bakery Automation
+keywords:
+  identity:
+  - bakery automation
+  - bakery automation
+  - food bakery automation
+  - smart bakery automation
+  - bakery automation platform
+  - automated bakery automation
+  - food robot
+  - food processing robot
+  - kitchen robot
+  - food service robot
+  - culinary automation system
+  descriptions:
+  - bakery automation system
+  - autonomous bakery automation
+  - system for bakery automation applications
+  - food platform using bakery automation technology
+  - intelligent bakery automation solution
+  - automated food preparation and handling platform
+  - robot for commercial kitchen or food processing operations
+  application:
+  - bakery automation
+  - food automation
+  - bakery automation automation
+  - real-time bakery automation
+  - bakery automation monitoring
+  - bakery automation detection
+  - food preparation
+  - cooking
+  - plating
+  - ingredient handling
+  - food sorting
+  - quality inspection
+  - food packaging
+  - food delivery
+  industry:
+  - food
+  - bakery automation
+  - food service
+  - food processing
+  - restaurant
+  - catering
+  - food manufacturing
+  - hospitality
+  components:
+  - camera
+  - hyperspectral
+  - food-grade gripper
+  - temperature sensor
+  - weight scale
+  - conveyor belt
+  - dispensing nozzle
+  - heating element
+  related:
+  - food
+  - bakery
+  - food safety
+  - HACCP
+  - sanitation
+  - food-grade materials
+  - allergen handling
+  - portion control
+classification:
+  locomotion: stationary.fixed_mount
+  manipulation: none
+  load_class: none
+  environment:
+  - food_processing
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 200
+    max: 2000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - camera
+    - hyperspectral
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethernet
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard food architecture for bakery automation applications.
+  common_pitfalls:
+  - Domain-specific challenges for bakery automation platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to bakery automation in the food domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

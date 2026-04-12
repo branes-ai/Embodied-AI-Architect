@@ -1,0 +1,42 @@
+id: compute.google_coral_dev_board
+name: "Google Coral Dev Board"
+category: compute
+product_type: edge_compute
+vendor: "Google"
+description: "Single-board computer with Google Edge TPU coprocessor for fast ML inferencing. Features NXP i.MX 8M SoC, 1GB LPDDR4, Wi-Fi/Bluetooth, and Mendel Linux OS. Designed for prototyping on-device ML applications with TensorFlow Lite models."
+aliases:
+  - "Coral Dev Board"
+  - "Coral Board"
+
+keywords:
+  identity:
+    - google
+    - coral
+    - edge tpu
+    - tflite
+    - ml accelerator
+  application:
+    - on-device ml
+    - image classification
+    - object detection
+    - prototyping
+    - iot
+    - smart camera
+
+specifications:
+  weight_kg: 0.14
+  power_watts: 5
+  ip_rating: "none"
+  operating_temp_c: {min: 0, max: 50}
+
+compute:
+  processor: "NXP i.MX 8M SoC + Google Edge TPU"
+  compute_tops: 4
+  memory_gb: 1
+  storage_gb: 8
+
+sensors: []
+
+pricing:
+  base_price_usd: 130
+  year: 2024

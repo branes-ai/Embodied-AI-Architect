@@ -1,0 +1,152 @@
+id: ground_legged.biped_humanoid_companion
+name: Biped Humanoid Companion
+category: ground_legged
+description: Biped Humanoid Companion platform for ground legged applications.
+aliases:
+- biped humanoid companion
+- Biped Humanoid Companion
+keywords:
+  identity:
+  - biped humanoid companion
+  - biped humanoid companion
+  - ground_legged biped humanoid companion
+  - ground legged biped humanoid companion
+  - smart biped humanoid companion
+  - biped humanoid companion platform
+  - automated biped humanoid companion
+  - robotic biped humanoid companion
+  - legged robot
+  - walking robot
+  - quadruped
+  - humanoid robot
+  - legged platform
+  - spot-like robot
+  descriptions:
+  - biped humanoid companion system
+  - autonomous biped humanoid companion
+  - system for biped humanoid companion applications
+  - ground legged platform using biped humanoid companion technology
+  - intelligent biped humanoid companion solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
+  application:
+  - biped humanoid companion
+  - ground_legged automation
+  - biped humanoid companion automation
+  - real-time biped humanoid companion
+  - biped humanoid companion monitoring
+  - biped humanoid companion detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
+  industry:
+  - ground_legged
+  - biped humanoid companion
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
+  components:
+  - lidar
+  - imu
+  - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
+  related:
+  - ground_legged
+  - biped
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
+classification:
+  locomotion: ground.legged
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  - outdoor_urban
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 50
+    max: 1000
+    typical: 200
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: quadruped
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - imu
+    - depth_camera
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - ethernet
+  power:
+    compute_power_watts: 60.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard ground legged architecture for biped humanoid companion applications.
+  common_pitfalls:
+  - Domain-specific challenges for biped humanoid companion platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to biped humanoid companion in the ground legged domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

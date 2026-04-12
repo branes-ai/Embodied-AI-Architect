@@ -1,0 +1,149 @@
+id: military.swarm_ground_logistics
+name: Swarm Ground Logistics
+category: military
+description: Swarm Ground Logistics platform for military applications.
+aliases:
+- swarm ground logistics
+- Swarm Ground Logistics
+keywords:
+  identity:
+  - swarm ground logistics
+  - swarm ground logistics
+  - military swarm ground logistics
+  - smart swarm ground logistics
+  - swarm ground logistics platform
+  - automated swarm ground logistics
+  - military robot
+  - tactical robot
+  - defense platform
+  - combat robot
+  - military UGV
+  - MULE
+  descriptions:
+  - swarm ground logistics system
+  - autonomous swarm ground logistics
+  - system for swarm ground logistics applications
+  - military platform using swarm ground logistics technology
+  - intelligent swarm ground logistics solution
+  - military-grade autonomous platform for tactical operations
+  - defense robot for reconnaissance and force protection
+  application:
+  - swarm ground logistics
+  - military automation
+  - swarm ground logistics automation
+  - real-time swarm ground logistics
+  - swarm ground logistics monitoring
+  - swarm ground logistics detection
+  - reconnaissance
+  - ISR
+  - bomb disposal
+  - EOD
+  - logistics resupply
+  - perimeter security
+  - CBRN detection
+  - mine clearance
+  industry:
+  - military
+  - swarm ground logistics
+  - defense
+  - homeland security
+  - intelligence
+  - force protection
+  - C4ISR
+  - special operations
+  components:
+  - imu
+  - gps
+  - eo_ir
+  - ruggedized enclosure
+  - encrypted radio
+  - FLIR camera
+  - NBC sensor
+  - ballistic armor
+  - weapons mount
+  related:
+  - military
+  - swarm
+  - MIL-STD
+  - ITAR
+  - C2 system
+  - tactical network
+  - STANAG
+  - blue force tracking
+classification:
+  locomotion: aerial.rotary_wing
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_extreme
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 10
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: drone
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - imu
+    - gps
+    - eo_ir
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - radio
+    - mesh
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard military architecture for swarm ground logistics applications.
+  common_pitfalls:
+  - Domain-specific challenges for swarm ground logistics platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to swarm ground logistics in the military domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

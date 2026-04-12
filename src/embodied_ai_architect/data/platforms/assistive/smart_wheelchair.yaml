@@ -1,0 +1,77 @@
+id: assistive.smart_wheelchair
+name: "Smart Wheelchair"
+category: assistive
+description: "Semi-autonomous powered wheelchair with intelligent navigation, obstacle avoidance, and adaptive control for users with limited mobility or cognitive impairment."
+aliases:
+  - "autonomous wheelchair"
+  - "intelligent wheelchair"
+  - "robotic wheelchair"
+
+keywords:
+  identity: [smart wheelchair, autonomous wheelchair, powered wheelchair, intelligent wheelchair, robotic wheelchair]
+  descriptions: [self-driving wheelchair, motorized wheelchair, assistive mobility, semi-autonomous wheelchair, adaptive wheelchair]
+  application: [assisted navigation, obstacle avoidance, indoor mobility, autonomous docking, path following]
+  industry: [assistive technology, rehabilitation, healthcare, elderly care, disability]
+  components: [joystick controller, LiDAR, ultrasonic sensor, hub motor, seat pressure sensor]
+  related: [mobility aid, power chair, assistive robotics, accessible navigation]
+
+classification:
+  locomotion: "ground.wheeled.differential"
+  manipulation: "none"
+  load_class: "medium"
+  environment: [indoor_home, indoor_commercial, outdoor_structured]
+  human_proximity: "humans_on_body"
+
+attributes:
+  power_watts: {min: 100, max: 800, typical: 300}
+  compute_tops: {min: 1, max: 10, typical: 4}
+  latency_ms: {min: 20, max: 100, typical: 50}
+  weight_kg: {min: 30, max: 150, typical: 80}
+  cost_usd: {min: 5000, max: 50000, typical: 15000}
+  autonomy_level: "assisted"
+  safety_level: "sil_2"
+  mission_duration_hours: {min: 4, max: 12, typical: 8}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: [rgb, depth]
+    detection_classes: [obstacle, human, door, ramp, curb, drop_off, furniture]
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities: [camera, depth, lidar_2d, ultrasonic, imu, seat_pressure]
+  actuators:
+    actuator_types: [hub_motor, linear_actuator]
+    dof: null
+    control_rate_hz: 50
+  comms:
+    protocols: [bluetooth, wifi]
+  power:
+    compute_power_watts: 8
+  safety:
+    level: "sil_2"
+    certifications: [IEC_60601, FDA_Class_II, CE_Medical]
+
+context:
+  typical_architecture: "A compact compute module augments the standard power wheelchair controller with perception (depth camera + 2D LiDAR) and shared autonomy. The user retains primary control via joystick; the autonomy system overrides only for collision avoidance or provides path-following assistance. Localization uses visual-inertial SLAM for indoor navigation."
+  common_pitfalls:
+    - "Shared control must never feel like it is fighting the user's intent"
+    - "Glass doors, transparent barriers, and thin obstacles are hard to detect with depth sensors"
+    - "Outdoor terrain transitions (curb cuts, uneven sidewalks) challenge stability"
+    - "Medical device regulatory approval significantly extends development timelines"
+  regulatory:
+    - "IEC 60601-1 (medical electrical equipment safety)"
+    - "FDA Class II medical device (powered wheelchair)"
+    - "ISO 7176 (wheelchair standards)"
+    - "ADA accessibility requirements"
+  reference_designs:
+    - "WHILL Model C2"
+    - "Permobil M5 Corpus"
+    - "Sunrise Medical Q700"
+  design_considerations: "Smart wheelchairs must prioritize user safety and comfort above all else. Shared autonomy should be seamless—collision avoidance must intervene gently without jarring the user. The system must handle diverse indoor environments (narrow doorways, elevators, crowded spaces) and outdoor transitions. Compute and sensors must not significantly increase weight or reduce battery life. Medical device certification (IEC 60601, FDA) is a major design driver. The interface must accommodate users with varying cognitive and physical abilities."
+
+qualification:
+  suggested_questions: [user_mobility_level, indoor_outdoor_split, doorway_width, control_interface, battery_range, medical_certification]
+  critical_constraints: [user_weight_capacity, safety_certification, battery_range_km, minimum_doorway_width]
+  optional_constraints: [autonomous_docking, voice_control, caregiver_override, outdoor_capability]

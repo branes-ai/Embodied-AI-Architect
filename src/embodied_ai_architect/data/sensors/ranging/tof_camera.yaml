@@ -1,0 +1,53 @@
+id: ranging.tof_camera
+name: Time-of-Flight Camera
+category: ranging
+sensor_type: tof_camera
+description: Direct time-of-flight depth camera for range imaging
+aliases: []
+keywords:
+  identity:
+  - time-of-flight camera
+  - tof camera
+  descriptions:
+  - time of flight
+  - tof camera
+  - dtof
+  - itof
+  - range imaging
+  - depth map
+  application:
+  - 3d sensing
+  - gesture recognition
+  - face unlock
+  - robotics
+  - agv
+  - spad array
+  industry:
+  - vcsel
+  - flood illuminator
+  - apple truedepth
+  components:
+  - android depth
+classification:
+  modality: ranging
+  output_type: point_cloud
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  range_m:
+    min: 0.1
+    max: 10
+    typical: 5
+  resolution:
+    min: 64
+    max: 640
+    typical: 320
+  frame_rate_fps:
+    min: 15
+    max: 60
+    typical: 30
+  cost_usd:
+    min: 20
+    max: 500
+    typical: 100

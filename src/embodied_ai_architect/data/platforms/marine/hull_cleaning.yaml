@@ -1,0 +1,150 @@
+id: marine.hull_cleaning
+name: Hull Cleaning
+category: marine
+description: Hull Cleaning platform for marine applications.
+aliases:
+- hull cleaning
+- Hull Cleaning
+keywords:
+  identity:
+  - hull cleaning
+  - hull cleaning
+  - marine hull cleaning
+  - smart hull cleaning
+  - hull cleaning platform
+  - automated hull cleaning
+  - robotic hull cleaning
+  - hull cleaning robot
+  - marine robot
+  - underwater robot
+  - aquatic robot
+  - maritime autonomous system
+  - ocean robot
+  descriptions:
+  - hull cleaning system
+  - autonomous hull cleaning
+  - system for hull cleaning applications
+  - marine platform using hull cleaning technology
+  - intelligent hull cleaning solution
+  - autonomous marine platform for underwater or surface operations
+  - marine robot for inspection, survey, or environmental monitoring
+  application:
+  - hull cleaning
+  - marine automation
+  - hull cleaning automation
+  - real-time hull cleaning
+  - hull cleaning monitoring
+  - hull cleaning detection
+  - underwater inspection
+  - hull inspection
+  - pipeline survey
+  - marine research
+  - fish farming
+  - port security
+  - environmental monitoring
+  - bathymetric survey
+  industry:
+  - marine
+  - hull cleaning
+  - maritime
+  - offshore
+  - aquaculture
+  - naval
+  - ocean science
+  - port operations
+  components:
+  - gps
+  - imu
+  - sonar
+  - thruster
+  - depth sensor
+  - DVL
+  - acoustic modem
+  - pressure housing
+  - buoyancy module
+  related:
+  - marine
+  - hull
+  - underwater navigation
+  - acoustic positioning
+  - USBL
+  - depth rating
+  - corrosion resistance
+  - marine grade
+classification:
+  locomotion: marine.surface
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_extreme
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 100
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - gps
+    - imu
+    - sonar
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - satellite
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard marine architecture for hull cleaning applications.
+  common_pitfalls:
+  - Domain-specific challenges for hull cleaning platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to hull cleaning in the marine domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

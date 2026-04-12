@@ -1,0 +1,47 @@
+id: ugv.agilex_scout_2
+name: "AgileX Scout 2.0"
+category: ugv
+product_type: wheeled_ugv
+vendor: "AgileX Robotics"
+description: "Four-wheel independent drive UGV with skid-steering. Designed for outdoor autonomous navigation research, agriculture, and field robotics. Features CAN bus interface, ROS support, and high ground clearance for rough terrain."
+aliases:
+  - "Scout 2.0"
+  - "Scout 2"
+  - "AgileX Scout"
+
+keywords:
+  identity:
+    - agilex
+    - scout
+    - outdoor ugv
+    - skid steer
+    - field robot
+  application:
+    - outdoor navigation
+    - agriculture
+    - field robotics
+    - patrol
+    - delivery
+
+specifications:
+  weight_kg: 60.0
+  max_payload_kg: 50.0
+  power_watts: 300
+  battery_wh: 720
+  max_speed_mps: 1.5
+  ip_rating: "IP44"
+  operating_temp_c: {min: -10, max: 40}
+
+compute:
+  processor: "User-supplied"
+  compute_tops: 0
+
+sensors:
+  - type: "encoder"
+    name: "Wheel Encoders (x4)"
+  - type: "imu"
+    name: "IMU (optional)"
+
+pricing:
+  base_price_usd: 8000
+  year: 2024

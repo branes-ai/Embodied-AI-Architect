@@ -1,0 +1,45 @@
+id: visual.swir_camera
+name: SWIR Camera
+category: visual
+sensor_type: swir_camera
+description: Short-wave infrared camera (900-1700nm) for material sorting and moisture detection
+aliases: []
+keywords:
+  identity:
+  - swir camera
+  - swir camera
+  descriptions:
+  - swir
+  - short wave infrared
+  - ingaas
+  - 1550nm
+  - eye safe
+  - material sorting
+  application:
+  - moisture detection
+  - food inspection
+  - semiconductor
+  - solar cell
+  - covert
+  - see through
+  industry:
+  - plastic sorting
+  - recycling
+  - bruise detection
+  components:
+  - pharmaceutical
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 320
+    max: 1280
+    typical: 640
+  cost_usd:
+    min: 3000
+    max: 50000
+    typical: 15000

@@ -1,0 +1,149 @@
+id: space.lunar_lander
+name: Lunar Lander
+category: space
+description: Lunar Lander platform for space applications.
+aliases:
+- lunar lander
+- Lunar Lander
+keywords:
+  identity:
+  - lunar lander
+  - lunar lander
+  - space lunar lander
+  - smart lunar lander
+  - lunar lander platform
+  - automated lunar lander
+  - space robot
+  - planetary rover
+  - orbital servicing robot
+  - space manipulator
+  - extraterrestrial robot
+  descriptions:
+  - lunar lander system
+  - autonomous lunar lander
+  - system for lunar lander applications
+  - space platform using lunar lander technology
+  - intelligent lunar lander solution
+  - space-rated robot for planetary or orbital missions
+  - autonomous rover for surface exploration and sample collection
+  application:
+  - lunar lander
+  - space automation
+  - lunar lander automation
+  - real-time lunar lander
+  - lunar lander monitoring
+  - lunar lander detection
+  - planetary exploration
+  - sample collection
+  - surface traverse
+  - satellite servicing
+  - orbital assembly
+  - debris removal
+  - lunar exploration
+  - Mars exploration
+  industry:
+  - space
+  - lunar lander
+  - space exploration
+  - planetary science
+  - NASA
+  - ESA
+  - commercial space
+  - lunar economy
+  components:
+  - imu
+  - star_tracker
+  - lidar
+  - rad-hard processor
+  - solar panel
+  - RTG
+  - rocker-bogie suspension
+  - spectrometer
+  - drill
+  related:
+  - space
+  - lunar
+  - planetary protection
+  - autonomous navigation
+  - sol planning
+  - terrain classification
+  - wheel slip
+  - thermal cycling
+classification:
+  locomotion: space.orbital
+  manipulation: none
+  load_class: none
+  environment:
+  - space_orbital
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 10
+    max: 500
+    typical: 100
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - imu
+    - star_tracker
+    - lidar
+  actuators:
+    actuator_types:
+    - reaction_wheel
+    - thruster
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - radio
+    - satellite
+  power:
+    compute_power_watts: 30.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard space architecture for lunar lander applications.
+  common_pitfalls:
+  - Domain-specific challenges for lunar lander platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to lunar lander in the space domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

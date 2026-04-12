@@ -1,0 +1,99 @@
+id: gripper.multi_finger_hand
+name: Multi-Finger Dexterous Hand
+category: gripper
+actuator_type: multi_finger_hand
+description: Anthropomorphic or multi-fingered robotic hand with many degrees of freedom for complex in-hand
+  manipulation. Used in research, teleoperation, and advanced assembly.
+aliases:
+- robot hand
+- dexterous manipulator
+- multi-DOF hand
+keywords:
+  identity:
+  - multi-finger hand
+  - robot hand
+  - dexterous hand
+  descriptions:
+  - anthropomorphic hand
+  - high DOF manipulator
+  - in-hand manipulation device
+  application:
+  - in-hand manipulation
+  - teleoperation
+  - humanoid robot
+  - research manipulation
+  - prosthetic hand
+  industry:
+  - robotics
+  - research
+  - prosthetics
+  - defense
+  components:
+  - finger joints
+  - tendon cables
+  - tactile sensors
+  - servo motors
+  - harmonic drives
+  related:
+  - dexterity
+  - grasp taxonomy
+  - fingertip force
+  - tactile sensing
+classification:
+  motion_type: gripping
+  control_type: position
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 1
+    max: 100
+    typical: 20
+  payload_kg:
+    min: 0.1
+    max: 5
+    typical: 1
+  control_rate_hz:
+    min: 100
+    max: 2000
+    typical: 500
+  peak_power_watts:
+    min: 10
+    max: 200
+    typical: 50
+  weight_grams:
+    min: 200
+    max: 3000
+    typical: 800
+  cost_usd:
+    min: 1000
+    max: 100000
+    typical: 15000
+interface:
+  protocol:
+  - can
+  - ethercat
+  - rs485
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 1
+    max: 15
+    typical: 5
+  feedback:
+  - encoder_absolute
+  - strain_gauge
+reference_products:
+- id: shadow_hand
+  name: Shadow Dexterous Hand
+  vendor: Shadow Robot
+  cost_usd: 80000
+  payload_kg: 5
+- id: allegro_hand
+  name: Allegro Hand V4
+  vendor: Wonik Robotics
+  cost_usd: 15000

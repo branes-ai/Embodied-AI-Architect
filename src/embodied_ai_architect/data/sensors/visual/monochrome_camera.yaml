@@ -1,0 +1,57 @@
+id: visual.monochrome_camera
+name: Monochrome Camera
+category: visual
+sensor_type: monochrome_camera
+description: Grayscale camera for high-sensitivity low-light applications
+aliases: []
+keywords:
+  identity:
+  - monochrome camera
+  - monochrome camera
+  descriptions:
+  - mono camera
+  - grayscale
+  - black and white
+  - nir sensitive
+  - high sensitivity
+  - low light
+  application:
+  - machine vision
+  - industrial inspection
+  - feature tracking
+  - visual odometry
+  - global shutter
+  - high dynamic range
+  industry:
+  - photon counting
+  - quantum efficiency
+  - noise floor
+  components:
+  - exposure control
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 640
+    max: 2048
+    typical: 1280
+  frame_rate_fps:
+    min: 30
+    max: 500
+    typical: 60
+  power_watts:
+    min: 0.2
+    max: 3.0
+    typical: 1.0
+  weight_grams:
+    min: 5
+    max: 150
+    typical: 25
+  cost_usd:
+    min: 30
+    max: 1000
+    typical: 150

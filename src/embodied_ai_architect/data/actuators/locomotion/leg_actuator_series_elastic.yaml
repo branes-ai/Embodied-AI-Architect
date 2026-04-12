@@ -1,0 +1,94 @@
+id: locomotion.leg_actuator_series_elastic
+name: Series Elastic Actuator
+category: locomotion
+actuator_type: leg_actuator
+description: Motor with a deliberate spring element in series for force sensing and shock absorption.
+  Fundamental building block for compliant legged robots and exoskeletons.
+aliases:
+- SEA
+- elastic actuator
+- spring-loaded joint
+keywords:
+  identity:
+  - series elastic actuator
+  - SEA
+  - compliant joint actuator
+  descriptions:
+  - spring-loaded motor
+  - force-sensing joint
+  - compliant actuator
+  application:
+  - exoskeleton joint
+  - bipedal walking
+  - rehabilitation robot
+  - human-safe robot
+  - prosthetic knee
+  industry:
+  - robotics
+  - prosthetics
+  - rehabilitation
+  - defense
+  - research
+  components:
+  - BLDC motor
+  - torsion spring
+  - encoder pair
+  - harmonic drive
+  related:
+  - spring stiffness
+  - torque transparency
+  - impedance control
+  - force bandwidth
+classification:
+  motion_type: rotary
+  control_type: torque
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 5
+    max: 150
+    typical: 40
+  speed_rpm:
+    min: 0
+    max: 200
+    typical: 50
+  control_rate_hz:
+    min: 500
+    max: 5000
+    typical: 1000
+  peak_power_watts:
+    min: 50
+    max: 3000
+    typical: 400
+  continuous_power_watts:
+    min: 20
+    max: 1500
+    typical: 150
+  weight_grams:
+    min: 300
+    max: 8000
+    typical: 1500
+  cost_usd:
+    min: 500
+    max: 10000
+    typical: 2000
+interface:
+  protocol:
+  - can
+  - ethercat
+  voltage_v:
+    min: 24
+    max: 48
+    typical: 48
+  current_a:
+    min: 2
+    max: 30
+    typical: 8
+  feedback:
+  - encoder_absolute
+  - strain_gauge
+reference_products: []

@@ -1,0 +1,87 @@
+id: locomotion.propeller_micro
+name: Micro Propeller Drive
+category: locomotion
+actuator_type: propeller
+description: Lightweight motor-propeller combo for micro and nano drones under 250g. Typically coreless
+  or small BLDC motors with 2-4 inch propellers.
+aliases:
+- micro rotor
+- mini prop
+- nano drone motor
+keywords:
+  identity:
+  - micro propeller
+  - mini rotor
+  - nano drone motor
+  descriptions:
+  - lightweight prop drive
+  - micro UAV thrust
+  - tiny drone motor
+  application:
+  - nano drone
+  - micro UAV
+  - indoor drone
+  - FPV whoop
+  - swarm drone
+  industry:
+  - drone
+  - defense
+  - research
+  - entertainment
+  components:
+  - coreless motor
+  - micro prop
+  - micro ESC
+  - prop guard
+  related:
+  - gram thrust
+  - power loading
+  - motor kv
+  - prop pitch
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: true
+attributes:
+  torque_nm:
+    min: 0.001
+    max: 0.1
+    typical: 0.01
+  speed_rpm:
+    min: 0
+    max: 50000
+    typical: 20000
+  peak_power_watts:
+    min: 0.5
+    max: 50
+    typical: 10
+  continuous_power_watts:
+    min: 0.2
+    max: 30
+    typical: 5
+  weight_grams:
+    min: 1
+    max: 30
+    typical: 5
+  cost_usd:
+    min: 2
+    max: 30
+    typical: 8
+interface:
+  protocol:
+  - pwm
+  voltage_v:
+    min: 3.7
+    max: 14.8
+    typical: 7.4
+  current_a:
+    min: 0.2
+    max: 10
+    typical: 2
+  feedback:
+  - back_emf
+reference_products: []

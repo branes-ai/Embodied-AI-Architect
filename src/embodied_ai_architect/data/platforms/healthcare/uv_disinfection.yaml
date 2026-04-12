@@ -1,0 +1,137 @@
+id: healthcare.uv_disinfection
+name: "UV-C Disinfection Robot"
+category: healthcare
+description: "Autonomous mobile robot for UV-C germicidal irradiation of hospital rooms, operating rooms, and clinical spaces to eliminate pathogens including drug-resistant bacteria and viruses."
+aliases:
+  - "UV robot"
+  - "disinfection robot"
+  - "sterilization robot"
+  - "germicidal robot"
+
+keywords:
+  identity:
+    - UV robot
+    - disinfection robot
+    - sterilization robot
+    - UV-C robot
+    - hospital robot
+    - germicidal robot
+    - sanitization robot
+    - decontamination robot
+  descriptions:
+    - "robot that uses UV light to sterilize hospital rooms"
+    - "autonomous disinfection robot for healthcare facilities"
+    - "mobile UV-C light system that kills bacteria and viruses"
+  application:
+    - room disinfection
+    - hospital disinfection
+    - UV-C sterilization
+    - pathogen elimination
+    - terminal cleaning
+    - operating room turnover
+    - infection control
+    - HAI reduction
+  industry:
+    - healthcare
+    - hospital operations
+    - infection prevention
+    - environmental services
+    - EVS
+  components:
+    - UV-C lamp array
+    - pulsed xenon lamp
+    - dosimeter
+    - occupancy sensor
+    - PIR sensor
+    - door sensor
+    - LiDAR
+  related:
+    - HAI
+    - healthcare-associated infection
+    - C. diff
+    - MRSA
+    - log reduction
+    - UV dose
+    - fluence
+    - shadow mitigation
+
+classification:
+  locomotion: "differential drive"
+  manipulation: "none"
+  load_class: "medium"
+  environment:
+    - indoor
+    - hospital
+    - clinical
+    - cleanroom
+  human_proximity: "exclusion zone (UV hazard)"
+
+attributes:
+  power_watts: {min: 200, max: 2000, typical: 800}
+  compute_tops: {min: 1, max: 10, typical: 4}
+  latency_ms: {min: 100, max: 1000, typical: 500}
+  weight_kg: {min: 40, max: 150, typical: 80}
+  cost_usd: {min: 50000, max: 200000, typical: 100000}
+  autonomy_level: "L3 - autonomous with human initiation"
+  safety_level: "IEC 62471 photobiological / IEC 60601"
+  mission_duration_hours: {min: 0.1, max: 0.5, typical: 0.25}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: ["navigation camera", "room mapping"]
+    detection_classes: ["person", "door", "bed", "furniture", "wall", "window"]
+    max_latency_ms: 500
+    min_fps: 10
+  sensors:
+    modalities: ["2D LiDAR", "RGB camera", "PIR occupancy sensor", "UV dosimeter", "door contact sensor", "wheel odometry"]
+  actuators:
+    actuator_types: ["wheel motor", "UV lamp array", "UV lamp positioning actuator"]
+    dof: 2
+    control_rate_hz: 20
+  comms:
+    protocols: ["Wi-Fi", "BLE", "REST API", "HL7", "RTLS integration"]
+  power:
+    compute_power_watts: 8
+  safety:
+    level: "IEC 62471 / IEC 60601"
+    certifications: ["FDA Class II", "CE MDR Class I", "IEC 60601-1", "IEC 62471", "UL 61010"]
+
+context:
+  typical_architecture: "Mobile base with differential drive and 2D LiDAR for room navigation and multi-position placement. Tower-mounted array of UV-C mercury lamps (254nm) or pulsed xenon lamps providing 360-degree irradiation. Integrated UV dosimeters measure delivered dose at multiple heights. Multiple safety interlocks: PIR occupancy detection, door sensors, and motion detectors ensure immediate shutoff if a person enters the room. Cloud dashboard tracks disinfection cycles, room coverage, and compliance reporting."
+  common_pitfalls:
+    - "UV-C only works on line-of-sight surfaces; shadowed areas require multi-position treatment or room rearrangement"
+    - "UV dose falls off with inverse-square law; surfaces 3m from the lamp receive 1/9th the dose of surfaces at 1m"
+    - "UV-C degrades plastics, rubber, and some textiles with repeated exposure; sensitive equipment must be shielded"
+    - "Mercury lamp warm-up time (2-5 minutes) extends cycle time; pulsed xenon has no warm-up but lower efficiency"
+    - "False occupancy alarms from HVAC air movement triggering PIR sensors cause unnecessary cycle interruptions"
+  regulatory:
+    - "FDA Class II medical device (UV disinfection)"
+    - "IEC 62471 photobiological safety"
+    - "IEC 60601-1 for hospital-use electrical equipment"
+    - "OSHA UV exposure limits for workers"
+    - "EPA establishment registration for pesticidal claims"
+  reference_designs:
+    - "Xenex LightStrike"
+    - "UVD Robots (Blue Ocean Robotics)"
+    - "Tru-D SmartUVC"
+    - "ADIBOT-S (Ubtech)"
+    - "Ava Robotics UV"
+  design_considerations: "UV-C disinfection effectiveness is measured in log reduction of specific pathogens, typically requiring 20-40 mJ/cm2 for 3-log reduction of MRSA and 40-80 mJ/cm2 for C. diff spores. Room geometry analysis should pre-compute optimal robot positions (typically 3-5 positions per room) to minimize shadowing while maximizing dose uniformity. The safety interlock system must be fail-safe with redundant occupancy detection; a single UV-C exposure event to a person would be a serious incident. Navigation and mapping requirements are modest compared to other mobile robots since the robot operates in empty rooms with known layouts."
+
+qualification:
+  suggested_questions:
+    - room_types
+    - room_size_sqm
+    - target_pathogens
+    - cycle_time_budget_min
+    - rooms_per_day
+  critical_constraints:
+    - "3+ log pathogen reduction"
+    - "Fail-safe human occupancy detection"
+    - "Multi-position room coverage"
+    - "< 15 minute cycle per position"
+  optional_constraints:
+    - "Autonomous room-to-room navigation"
+    - "Integration with EVS scheduling system"
+    - "Cloud compliance reporting"

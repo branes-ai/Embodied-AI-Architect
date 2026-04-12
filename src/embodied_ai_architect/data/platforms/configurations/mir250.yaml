@@ -1,0 +1,50 @@
+id: amr.mir250
+name: "MiR250"
+category: amr
+product_type: amr
+vendor: "Mobile Industrial Robots (MiR)"
+description: "Compact autonomous mobile robot for internal logistics and material transport. Features 250 kg payload, dynamic obstacle avoidance, and fleet management software. Low-profile design fits under standard shelving and carts for automated pick-up and delivery."
+aliases:
+  - "MiR 250"
+
+keywords:
+  identity:
+    - mir
+    - mir250
+    - amr
+    - mobile robot
+    - logistics
+  application:
+    - warehouse logistics
+    - material transport
+    - manufacturing
+    - hospital logistics
+    - intralogistics
+
+specifications:
+  weight_kg: 75.0
+  max_payload_kg: 250.0
+  power_watts: 150
+  battery_wh: 480
+  max_speed_mps: 2.0
+  ip_rating: "IP20"
+  operating_temp_c: {min: 5, max: 40}
+
+compute:
+  processor: "Intel i5 onboard computer"
+  compute_tops: 0
+
+sensors:
+  - type: "lidar"
+    name: "2D SICK LiDAR (x2)"
+    range_m: 30
+  - type: "3d_camera"
+    name: "3D Camera"
+  - type: "imu"
+    name: "IMU"
+  - type: "encoder"
+    name: "Wheel Encoders"
+
+pricing:
+  base_price_usd: 30000
+  year: 2024

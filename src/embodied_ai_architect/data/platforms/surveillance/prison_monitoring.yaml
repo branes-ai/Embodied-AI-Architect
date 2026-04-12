@@ -1,0 +1,145 @@
+id: surveillance.prison_monitoring
+name: Prison Monitoring
+category: surveillance
+description: Prison Monitoring platform for surveillance applications.
+aliases:
+- prison monitoring
+- Prison Monitoring
+keywords:
+  identity:
+  - prison monitoring
+  - prison monitoring
+  - surveillance prison monitoring
+  - smart prison monitoring
+  - prison monitoring platform
+  - automated prison monitoring
+  - surveillance system
+  - security camera
+  - monitoring system
+  - CCTV
+  - video surveillance
+  - security platform
+  descriptions:
+  - prison monitoring system
+  - autonomous prison monitoring
+  - system for prison monitoring applications
+  - surveillance platform using prison monitoring technology
+  - intelligent prison monitoring solution
+  - intelligent surveillance system with real-time analytics
+  - video monitoring platform for security and safety applications
+  application:
+  - prison monitoring
+  - surveillance automation
+  - prison monitoring automation
+  - real-time prison monitoring
+  - prison monitoring detection
+  - prison monitoring analysis
+  - intruder detection
+  - perimeter monitoring
+  - crowd monitoring
+  - traffic surveillance
+  - license plate recognition
+  - face detection
+  - behavior analysis
+  - anomaly detection
+  industry:
+  - surveillance
+  - prison monitoring
+  - physical security
+  - public safety
+  - law enforcement
+  - retail loss prevention
+  - critical infrastructure protection
+  - transportation security
+  components:
+  - camera
+  - PTZ camera
+  - fixed camera
+  - thermal camera
+  - IR illuminator
+  - NVR
+  - VMS
+  related:
+  - surveillance
+  - prison
+  - video management system
+  - ONVIF
+  - RTSP
+  - video analytics
+  - NDAA compliant
+  - cybersecurity
+classification:
+  locomotion: stationary.fixed_mount
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  - outdoor_urban
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 5
+    max: 100
+    typical: 30
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: fixed_camera
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - camera
+  actuators:
+    actuator_types: []
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethernet
+    - wifi
+  power:
+    compute_power_watts: 9.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard surveillance architecture for prison monitoring applications.
+  common_pitfalls:
+  - Domain-specific challenges for prison monitoring platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to prison monitoring in the surveillance domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

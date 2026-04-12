@@ -1,0 +1,75 @@
+id: construction.autonomous_excavator
+name: "Autonomous Excavator"
+category: construction
+description: "Self-driving excavator for autonomous earthmoving, grading, and trenching operations on construction and mining sites."
+aliases:
+  - "robotic excavator"
+  - "autonomous digger"
+  - "self-driving earthmover"
+
+keywords:
+  identity: [autonomous excavator, robotic excavator, self-driving excavator, autonomous earthmover, automated excavator]
+  descriptions: [autonomous digger, robotic trencher, self-driving construction machine, automated grading machine, smart excavator]
+  application: [earthmoving, grading, trenching, excavation, site preparation, foundation digging]
+  industry: [construction, heavy civil, mining, infrastructure, earthworks]
+  components: [hydraulic arm, GNSS receiver, LiDAR, bucket, IMU]
+  related: [bulldozer, backhoe, autonomous construction, machine control]
+
+classification:
+  locomotion: "ground.tracked"
+  manipulation: "articulated_arm"
+  load_class: "ultra_heavy"
+  environment: [outdoor_unstructured, construction_site, mining]
+  human_proximity: "humans_distant"
+
+attributes:
+  power_watts: {min: 50000, max: 400000, typical: 150000}
+  compute_tops: {min: 4, max: 30, typical: 12}
+  latency_ms: {min: 50, max: 500, typical: 150}
+  weight_kg: {min: 5000, max: 90000, typical: 25000}
+  cost_usd: {min: 200000, max: 2000000, typical: 500000}
+  autonomy_level: "conditional"
+  safety_level: "sil_2"
+  mission_duration_hours: {min: 4, max: 12, typical: 8}
+
+implications:
+  platform_type: "ground_tracked"
+  perception:
+    camera_types: [rgb, depth, surround_view]
+    detection_classes: [human, vehicle, trench_edge, pile, obstacle, utility_line]
+    max_latency_ms: 200
+    min_fps: 10
+  sensors:
+    modalities: [camera, lidar, gnss_rtk, imu, inclinometer, pressure_sensor]
+  actuators:
+    actuator_types: [hydraulic_cylinder, hydraulic_motor]
+    dof: 6
+    control_rate_hz: 50
+  comms:
+    protocols: [cellular_4g, wifi, gnss_rtk_correction]
+  power:
+    compute_power_watts: 25
+  safety:
+    level: "sil_2"
+    certifications: [ISO_17757, ISO_19296]
+
+context:
+  typical_architecture: "RTK-GNSS provides centimeter-level positioning; 3D LiDAR builds terrain models; onboard compute plans dig cycles against a 3D design surface; hydraulic valve controllers execute boom/stick/bucket motions at 50 Hz; a remote supervisor monitors via cellular link."
+  common_pitfalls:
+    - "GNSS signal loss near tall structures or in deep trenches"
+    - "Soil type variability causing inconsistent bucket fill and dig force"
+    - "Inadequate human detection range in dusty or low-visibility conditions"
+  regulatory:
+    - "ISO 17757 (autonomous and semi-autonomous machine system safety)"
+    - "ISO 19296 (machine-to-machine communication)"
+    - "OSHA excavation safety standards (29 CFR 1926 Subpart P)"
+  reference_designs:
+    - "Built Robotics Exosystem"
+    - "Caterpillar Command for Excavating"
+    - "Komatsu Intelligent Machine Control"
+  design_considerations: "Autonomous excavators must handle highly variable terrain and soil conditions. RTK-GNSS with IMU fusion provides the positioning accuracy (2-3 cm) needed for grade control. Perception must detect humans at 30+ meters even in dust and rain. Dig planning algorithms must adapt to real-time soil resistance feedback from hydraulic pressure sensors. The harsh environment demands ruggedized compute (vibration, dust, temperature extremes). Remote supervisory control with low-latency video is essential as a fallback."
+
+qualification:
+  suggested_questions: [machine_class, soil_types, grading_accuracy, site_connectivity, operating_hours, human_exclusion_zone]
+  critical_constraints: [grading_accuracy_cm, human_detection_range, operating_temperature, dust_rating]
+  optional_constraints: [fleet_coordination, fuel_type, remote_supervision_latency]

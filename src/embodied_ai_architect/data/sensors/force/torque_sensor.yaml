@@ -1,0 +1,45 @@
+id: force.torque_sensor
+name: Rotary Torque Sensor
+category: force
+sensor_type: torque_sensor
+description: In-line torque measurement for motors and drivetrains
+aliases: []
+keywords:
+  identity:
+  - rotary torque sensor
+  - torque sensor
+  descriptions:
+  - torque sensor
+  - rotary torque
+  - shaft torque
+  - drivetrain
+  - motor testing
+  - slip ring
+  application:
+  - strain gauge
+  - sar
+  - magnetoelastic
+  - hbm
+  - kistler
+  - futek
+  industry:
+  - dynamometer
+  - power measurement
+  - efficiency testing
+  components:
+  - automotive testing
+classification:
+  modality: force
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.5
+    max: 5
+    typical: 2
+  cost_usd:
+    min: 500
+    max: 10000
+    typical: 3000

@@ -1,0 +1,87 @@
+# Research Library Index
+# Master index for HW accelerator research documents.
+# Each entry points to a markdown file with structured frontmatter.
+#
+# Used by: src/embodied_ai_architect/research/library.py
+# Retrieval: tag-based context injection into LLM prompts
+
+documents:
+  # === Accelerators ===
+  - path: accelerators/nvidia_jetson_orin.md
+    title: "NVIDIA Jetson Orin Platform Analysis"
+    domain: accelerator
+    tags: [nvidia, jetson, orin, edge, gpu, inference]
+
+  - path: accelerators/google_coral_edge_tpu.md
+    title: "Google Coral Edge TPU Architecture"
+    domain: accelerator
+    tags: [google, coral, tpu, edge, inference, microcontroller]
+
+  - path: accelerators/hailo_8.md
+    title: "Hailo-8 Dataflow Architecture"
+    domain: accelerator
+    tags: [hailo, dataflow, edge, inference, npu]
+
+  - path: accelerators/arm_ethos_u.md
+    title: "Arm Ethos-U NPU for Microcontrollers"
+    domain: accelerator
+    tags: [arm, ethos, npu, microcontroller, ultra-low-power]
+
+  - path: accelerators/stillwater_kpu.md
+    title: "Stillwater KPU Architecture"
+    domain: accelerator
+    tags: [stillwater, kpu, custom, posit, edge, inference]
+
+  # === Architectures ===
+  - path: architectures/systolic_arrays.md
+    title: "Systolic Array Design Space"
+    domain: architecture
+    tags: [systolic, array, dataflow, gemm, convolution]
+
+  - path: architectures/dataflow_architectures.md
+    title: "Spatial Dataflow Architectures"
+    domain: architecture
+    tags: [dataflow, spatial, temporal, row-stationary, weight-stationary]
+
+  - path: architectures/memory_hierarchies.md
+    title: "Memory Hierarchy Design for DNN Accelerators"
+    domain: architecture
+    tags: [memory, sram, hbm, lpddr, bandwidth, hierarchy]
+
+  # === Efficiency Studies ===
+  - path: efficiency_studies/tops_per_watt_survey.md
+    title: "Cross-Architecture TOPS/W Survey"
+    domain: efficiency
+    tags: [tops, efficiency, power, comparison, benchmark]
+
+  - path: efficiency_studies/quantization_accuracy.md
+    title: "Quantization Accuracy Impact Across Model Families"
+    domain: efficiency
+    tags: [quantization, accuracy, int8, int4, fp16, mixed-precision]
+
+  - path: efficiency_studies/nas_hw_codesign.md
+    title: "Hardware-Aware Neural Architecture Search"
+    domain: efficiency
+    tags: [nas, codesign, efficientnet, ofa, once-for-all, hw-aware]
+
+  # === Workloads ===
+  - path: workloads/transformer_attention.md
+    title: "Transformer Attention Compute Patterns"
+    domain: workload
+    tags: [transformer, attention, memory-bound, kv-cache, inference]
+
+  - path: workloads/convolution_variants.md
+    title: "Convolution Variants and HW Mapping"
+    domain: workload
+    tags: [convolution, depthwise, grouped, pointwise, hw-mapping]
+
+  # === Mission Profiles ===
+  - path: mission_profiles/drone_perception.md
+    title: "Drone Perception Pipeline Requirements"
+    domain: mission
+    tags: [drone, perception, detection, tracking, slam, real-time]
+
+  - path: mission_profiles/autonomous_driving.md
+    title: "Autonomous Driving Compute Architecture"
+    domain: mission
+    tags: [automotive, adas, l2, l4, perception, planning, sensor-fusion]

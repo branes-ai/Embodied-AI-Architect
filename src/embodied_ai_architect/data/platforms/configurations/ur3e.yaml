@@ -1,0 +1,47 @@
+id: manipulation.ur3e
+name: "Universal Robots UR3e"
+category: manipulation
+product_type: robot_arm
+vendor: "Universal Robots"
+description: "Compact collaborative robot arm for light assembly, lab automation, and tabletop tasks. 3 kg payload with 500 mm reach. Features built-in force/torque sensing, 17 safety functions, and PolyScope programming interface for rapid deployment."
+aliases:
+  - "UR3e"
+  - "UR3"
+
+keywords:
+  identity:
+    - universal robots
+    - ur3e
+    - cobot
+    - collaborative
+    - compact arm
+  application:
+    - light assembly
+    - lab automation
+    - polishing
+    - screw driving
+    - pick and place
+
+specifications:
+  weight_kg: 11.2
+  max_payload_kg: 3.0
+  power_watts: 100
+  dof: 6
+  reach_mm: 500
+  repeatability_mm: 0.03
+  ip_rating: "IP54"
+  operating_temp_c: {min: 0, max: 50}
+
+compute:
+  processor: "UR Control Box (Linux real-time)"
+  compute_tops: 0
+
+sensors:
+  - type: "force_torque"
+    name: "Built-in Force/Torque Sensor"
+  - type: "position_encoder"
+    name: "Joint Encoders (x6)"
+
+pricing:
+  base_price_usd: 22000
+  year: 2024

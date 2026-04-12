@@ -1,0 +1,48 @@
+id: manipulation.kuka_iiwa_14
+name: "KUKA LBR iiwa 14 R820"
+category: manipulation
+product_type: robot_arm
+vendor: "KUKA"
+description: "Industrial-grade 7-DOF lightweight robot with integrated torque sensors in all joints. Designed for sensitive assembly, human-robot collaboration, and complex insertion tasks. The 14 kg payload variant with 820 mm reach is the most versatile iiwa model."
+aliases:
+  - "iiwa 14"
+  - "LBR iiwa 14"
+  - "KUKA iiwa"
+
+keywords:
+  identity:
+    - kuka
+    - iiwa
+    - lbr
+    - collaborative
+    - torque controlled
+  application:
+    - precision assembly
+    - human-robot collaboration
+    - force-sensitive tasks
+    - insertion
+    - automotive assembly
+
+specifications:
+  weight_kg: 29.9
+  max_payload_kg: 14.0
+  power_watts: 400
+  dof: 7
+  reach_mm: 820
+  repeatability_mm: 0.15
+  ip_rating: "IP54"
+  operating_temp_c: {min: 5, max: 45}
+
+compute:
+  processor: "KUKA Sunrise Controller"
+  compute_tops: 0
+
+sensors:
+  - type: "torque_sensor"
+    name: "Joint Torque Sensors (x7)"
+  - type: "position_encoder"
+    name: "Joint Position Encoders (x7)"
+
+pricing:
+  base_price_usd: 60000
+  year: 2024

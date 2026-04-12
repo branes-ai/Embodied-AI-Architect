@@ -1,0 +1,46 @@
+id: force.load_cell
+name: Load Cell
+category: force
+sensor_type: load_cell
+description: Precision weight and force measurement transducer
+aliases: []
+keywords:
+  identity:
+  - load cell
+  - load cell
+  descriptions:
+  - load cell
+  - weight sensor
+  - force transducer
+  - scale
+  - weighing
+  - compression
+  application:
+  - tension
+  - shear beam
+  - s type
+  - pancake
+  - column
+  - hbm
+  industry:
+  - mettler toledo
+  - industrial weighing
+  - platform scale
+  components:
+  - hopper scale
+  - batching
+classification:
+  modality: force
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.001
+    max: 0.1
+    typical: 0.01
+  cost_usd:
+    min: 10
+    max: 1000
+    typical: 100

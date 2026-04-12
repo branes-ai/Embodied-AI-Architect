@@ -1,0 +1,76 @@
+id: visual.rgb_camera
+name: RGB Camera
+category: visual
+sensor_type: rgb_camera
+description: Standard visible-light camera for image capture and computer vision
+aliases: []
+keywords:
+  identity:
+  - rgb camera
+  - rgb camera
+  descriptions:
+  - color camera
+  - visible light
+  - cmos sensor
+  - image sensor
+  - machine vision
+  - object detection
+  application:
+  - video capture
+  - frame grabber
+  - bayer filter
+  - rolling shutter
+  - global shutter
+  - auto exposure
+  industry:
+  - white balance
+  - hdr imaging
+  - usb camera
+  components:
+  - csi camera
+  - embedded camera
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 640
+    max: 4096
+    typical: 1920
+    unit: pixels
+  frame_rate_fps:
+    min: 10
+    max: 240
+    typical: 30
+  fov_degrees:
+    min: 40
+    max: 180
+    typical: 70
+  power_watts:
+    min: 0.3
+    max: 5.0
+    typical: 1.5
+  weight_grams:
+    min: 5
+    max: 200
+    typical: 30
+  cost_usd:
+    min: 5
+    max: 500
+    typical: 50
+reference_products:
+- id: sony_imx477
+  name: Sony IMX477
+  vendor: Sony
+  cost_usd: 25
+  resolution: 4056x3040
+  frame_rate_fps: 30
+- id: omnivision_ov2740
+  name: OmniVision OV2740
+  vendor: OmniVision
+  cost_usd: 8
+  resolution: 1920x1080
+  frame_rate_fps: 30

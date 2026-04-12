@@ -1,0 +1,59 @@
+id: visual.event_camera
+name: Event Camera
+category: visual
+sensor_type: event_camera
+description: Neuromorphic sensor that outputs per-pixel brightness changes asynchronously
+aliases: []
+keywords:
+  identity:
+  - event camera
+  - event camera
+  descriptions:
+  - event camera
+  - neuromorphic
+  - dynamic vision sensor
+  - dvs
+  - asynchronous
+  - per pixel
+  application:
+  - brightness change
+  - high temporal resolution
+  - microsecond
+  - low latency
+  - hdr
+  - high dynamic range
+  industry:
+  - motion detection
+  - optical flow
+  - spike
+  components:
+  - silicon retina
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 346
+    max: 1280
+    typical: 640
+  latency_ms:
+    min: 0.001
+    max: 0.1
+    typical: 0.01
+  power_watts:
+    min: 0.05
+    max: 1.0
+    typical: 0.15
+  cost_usd:
+    min: 1000
+    max: 10000
+    typical: 3500
+reference_products:
+- id: prophesee_evk4
+  name: Prophesee EVK4
+  vendor: Prophesee
+  cost_usd: 3490
+  resolution: 1280x720

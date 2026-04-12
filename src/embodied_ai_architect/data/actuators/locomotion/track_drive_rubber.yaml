@@ -1,0 +1,88 @@
+id: locomotion.track_drive_rubber
+name: Rubber Track Drive
+category: locomotion
+actuator_type: track_drive
+description: Compact rubber-track locomotion module for small to medium outdoor robots. Lightweight alternative
+  to steel tracks with good traction on varied terrain.
+aliases:
+- rubber track module
+- mini track drive
+- rubber crawler
+keywords:
+  identity:
+  - rubber track drive
+  - mini crawler
+  - rubber track module
+  descriptions:
+  - lightweight tracked drive
+  - compact crawler
+  - all-terrain track
+  application:
+  - inspection robot
+  - agricultural robot
+  - stair climbing bot
+  - search and rescue robot
+  - snow robot
+  industry:
+  - robotics
+  - agriculture
+  - defense
+  - inspection
+  components:
+  - rubber belt
+  - drive sprocket
+  - idler wheel
+  - gearmotor
+  - suspension
+  related:
+  - ground clearance
+  - traction
+  - track pitch
+  - turning radius
+classification:
+  motion_type: rotary
+  control_type: velocity
+  environment:
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  torque_nm:
+    min: 0.5
+    max: 100
+    typical: 10
+  speed_rpm:
+    min: 0
+    max: 200
+    typical: 50
+  payload_kg:
+    min: 2
+    max: 500
+    typical: 30
+  peak_power_watts:
+    min: 10
+    max: 3000
+    typical: 150
+  weight_grams:
+    min: 200
+    max: 20000
+    typical: 2000
+  cost_usd:
+    min: 30
+    max: 3000
+    typical: 200
+interface:
+  protocol:
+  - pwm
+  - can
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 1
+    max: 30
+    typical: 5
+  feedback:
+  - encoder_incremental
+reference_products: []

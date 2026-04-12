@@ -1,0 +1,52 @@
+id: amr.locus_origin
+name: "Locus Robotics Origin"
+category: amr
+product_type: amr
+vendor: "Locus Robotics"
+description: "Warehouse AMR designed for collaborative picking workflows. Workers pick items and place them on the robot, which autonomously navigates to the next location. Features multi-level tote carrying, barcode scanning, and integration with WMS systems."
+aliases:
+  - "Origin"
+  - "Locus Origin"
+  - "LocusBot"
+
+keywords:
+  identity:
+    - locus
+    - origin
+    - warehouse amr
+    - picking robot
+    - collaborative
+  application:
+    - order fulfillment
+    - warehouse picking
+    - e-commerce
+    - third-party logistics
+    - collaborative picking
+
+specifications:
+  weight_kg: 68.0
+  max_payload_kg: 36.0
+  power_watts: 100
+  battery_wh: 350
+  max_speed_mps: 1.8
+  ip_rating: "IP20"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "ARM-based onboard computer"
+  compute_tops: 0
+
+sensors:
+  - type: "lidar"
+    name: "2D LiDAR"
+    range_m: 25
+  - type: "depth_camera"
+    name: "Depth Camera"
+  - type: "barcode_scanner"
+    name: "Barcode Scanner"
+  - type: "encoder"
+    name: "Wheel Encoders"
+
+pricing:
+  base_price_usd: 35000
+  year: 2024

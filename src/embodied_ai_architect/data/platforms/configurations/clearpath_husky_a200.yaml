@@ -1,0 +1,50 @@
+id: ugv.clearpath_husky_a200
+name: "Clearpath Husky A200"
+category: ugv
+product_type: wheeled_ugv
+vendor: "Clearpath Robotics"
+description: "Medium-sized all-terrain research UGV with ROS integration. Four-wheel differential drive with large payload capacity for outdoor robotics research, field testing, and sensor integration. Industry-standard platform for academic and defense research."
+aliases:
+  - "Husky"
+  - "Husky A200"
+  - "Clearpath Husky"
+
+keywords:
+  identity:
+    - clearpath
+    - husky
+    - a200
+    - research ugv
+    - ros robot
+  application:
+    - outdoor research
+    - field robotics
+    - autonomous navigation
+    - agriculture
+    - defense research
+    - sensor integration
+
+specifications:
+  weight_kg: 50.0
+  max_payload_kg: 75.0
+  power_watts: 200
+  battery_wh: 624
+  max_speed_mps: 1.0
+  ip_rating: "IP52"
+  operating_temp_c: {min: -25, max: 40}
+
+compute:
+  processor: "User-supplied (standard: Intel i7)"
+  compute_tops: 0
+
+sensors:
+  - type: "encoder"
+    name: "Wheel Encoders (x4)"
+  - type: "imu"
+    name: "IMU"
+  - type: "gps"
+    name: "GPS (optional)"
+
+pricing:
+  base_price_usd: 25000
+  year: 2024

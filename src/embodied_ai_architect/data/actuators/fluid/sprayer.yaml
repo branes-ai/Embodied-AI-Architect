@@ -1,0 +1,89 @@
+id: fluid.sprayer
+name: Sprayer Actuator
+category: fluid
+actuator_type: sprayer
+description: Electromechanical or pressure-driven spray nozzle for atomizing and distributing liquid over
+  a surface. Used in agriculture, coating, disinfection, and humidification.
+aliases:
+- spray nozzle
+- atomizer
+- spray head
+keywords:
+  identity:
+  - sprayer
+  - spray nozzle
+  - atomizer
+  - misting nozzle
+  descriptions:
+  - liquid atomizer
+  - spray actuator
+  - fog generator
+  - mist sprayer
+  application:
+  - crop spraying
+  - surface coating
+  - humidification
+  - disinfection
+  - dust suppression
+  - cooling mist
+  industry:
+  - agriculture
+  - manufacturing
+  - HVAC
+  - sanitation
+  - fire suppression
+  components:
+  - nozzle orifice
+  - solenoid valve
+  - pressure regulator
+  - filter
+  - pump
+  related:
+  - spray pattern
+  - droplet size
+  - flow rate
+  - spray angle
+classification:
+  motion_type: fluid_flow
+  control_type: on_off
+  environment:
+  - indoor
+  - outdoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 2
+    max: 500
+    typical: 30
+  weight_grams:
+    min: 10
+    max: 5000
+    typical: 200
+  cost_usd:
+    min: 5
+    max: 2000
+    typical: 50
+  response_time_ms:
+    min: 10
+    max: 200
+    typical: 30
+interface:
+  protocol:
+  - analog
+  - pwm
+  voltage_v:
+    min: 12
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.1
+    max: 10
+    typical: 1
+  feedback:
+  - none
+reference_products:
+- id: teejet_airmix
+  name: TeeJet AirMix 11003
+  vendor: TeeJet Technologies
+  cost_usd: 15

@@ -1,0 +1,150 @@
+id: marine.ship_hold_inspection
+name: Ship Hold Inspection
+category: marine
+description: Ship Hold Inspection platform for marine applications.
+aliases:
+- ship hold inspection
+- Ship Hold Inspection
+keywords:
+  identity:
+  - ship hold inspection
+  - ship hold inspection
+  - marine ship hold inspection
+  - smart ship hold inspection
+  - ship hold inspection platform
+  - automated ship hold inspection
+  - robotic ship hold inspection
+  - ship hold inspection robot
+  - marine robot
+  - underwater robot
+  - aquatic robot
+  - maritime autonomous system
+  - ocean robot
+  descriptions:
+  - ship hold inspection system
+  - autonomous ship hold inspection
+  - system for ship hold inspection applications
+  - marine platform using ship hold inspection technology
+  - intelligent ship hold inspection solution
+  - autonomous marine platform for underwater or surface operations
+  - marine robot for inspection, survey, or environmental monitoring
+  application:
+  - ship hold inspection
+  - marine automation
+  - ship hold inspection automation
+  - real-time ship hold inspection
+  - ship hold inspection monitoring
+  - ship hold inspection detection
+  - underwater inspection
+  - hull inspection
+  - pipeline survey
+  - marine research
+  - fish farming
+  - port security
+  - environmental monitoring
+  - bathymetric survey
+  industry:
+  - marine
+  - ship hold inspection
+  - maritime
+  - offshore
+  - aquaculture
+  - naval
+  - ocean science
+  - port operations
+  components:
+  - gps
+  - imu
+  - sonar
+  - thruster
+  - depth sensor
+  - DVL
+  - acoustic modem
+  - pressure housing
+  - buoyancy module
+  related:
+  - marine
+  - ship
+  - underwater navigation
+  - acoustic positioning
+  - USBL
+  - depth rating
+  - corrosion resistance
+  - marine grade
+classification:
+  locomotion: marine.surface
+  manipulation: none
+  load_class: none
+  environment:
+  - outdoor_extreme
+  human_proximity: no_humans
+attributes:
+  power_watts:
+    min: 100
+    max: 5000
+    typical: 500
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - gps
+    - imu
+    - sonar
+  actuators:
+    actuator_types:
+    - brushless_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - satellite
+  power:
+    compute_power_watts: 150.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard marine architecture for ship hold inspection applications.
+  common_pitfalls:
+  - Domain-specific challenges for ship hold inspection platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to ship hold inspection in the marine domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

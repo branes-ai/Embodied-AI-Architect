@@ -1,0 +1,91 @@
+id: specialty.welding_torch
+name: MIG/MAG Welding Torch
+category: specialty
+actuator_type: welding_torch
+description: Gas metal arc welding (GMAW) torch for robotic and manual welding. Feeds wire electrode and
+  shielding gas while maintaining a controlled arc.
+aliases:
+- welding gun
+- MIG torch
+- GMAW torch
+- robotic welding torch
+keywords:
+  identity:
+  - welding torch
+  - MIG torch
+  - MAG torch
+  - GMAW torch
+  descriptions:
+  - arc welding tool
+  - wire-feed welding head
+  - robotic weld gun
+  application:
+  - automotive body welding
+  - structural fabrication
+  - pipe welding
+  - robotic cell welding
+  - repair welding
+  industry:
+  - automotive
+  - construction
+  - shipbuilding
+  - manufacturing
+  - aerospace
+  components:
+  - contact tip
+  - gas nozzle
+  - wire liner
+  - wire feeder
+  - shielding gas supply
+  related:
+  - wire feed speed
+  - arc voltage
+  - weld penetration
+  - heat input
+classification:
+  motion_type: display_output
+  control_type: proportional
+  environment:
+  - indoor
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 1000
+    max: 50000
+    typical: 8000
+  continuous_power_watts:
+    min: 500
+    max: 30000
+    typical: 5000
+  weight_grams:
+    min: 300
+    max: 5000
+    typical: 1500
+  cost_usd:
+    min: 100
+    max: 10000
+    typical: 1500
+  lifetime_hours:
+    min: 1000
+    max: 20000
+    typical: 5000
+interface:
+  protocol:
+  - analog
+  - can
+  voltage_v:
+    min: 15
+    max: 40
+    typical: 25
+  current_a:
+    min: 30
+    max: 500
+    typical: 200
+  feedback:
+  - none
+reference_products:
+- id: fronius_robacta
+  name: Fronius Robacta Drive
+  vendor: Fronius
+  cost_usd: 3000

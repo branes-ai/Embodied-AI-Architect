@@ -1,0 +1,152 @@
+id: ground_legged.quadruped_research
+name: Quadruped Research
+category: ground_legged
+description: Quadruped Research platform for ground legged applications.
+aliases:
+- quadruped research
+- Quadruped Research
+keywords:
+  identity:
+  - quadruped research
+  - quadruped research
+  - ground_legged quadruped research
+  - ground legged quadruped research
+  - smart quadruped research
+  - quadruped research platform
+  - automated quadruped research
+  - robotic quadruped research
+  - legged robot
+  - walking robot
+  - biped
+  - humanoid robot
+  - legged platform
+  - spot-like robot
+  descriptions:
+  - quadruped research system
+  - autonomous quadruped research
+  - system for quadruped research applications
+  - ground legged platform using quadruped research technology
+  - intelligent quadruped research solution
+  - legged robot platform for traversing unstructured terrain
+  - walking robot with dynamic balance for inspection tasks
+  application:
+  - quadruped research
+  - ground_legged automation
+  - quadruped research automation
+  - real-time quadruped research
+  - quadruped research monitoring
+  - quadruped research detection
+  - rough terrain traversal
+  - stair climbing
+  - industrial inspection
+  - search and rescue
+  - patrol
+  - mapping
+  - load carrying
+  - hazardous environment exploration
+  industry:
+  - ground_legged
+  - quadruped research
+  - defense
+  - public safety
+  - construction
+  - energy
+  - mining
+  - research
+  components:
+  - lidar
+  - imu
+  - depth_camera
+  - actuated leg
+  - depth camera
+  - force-torque sensor
+  - joint encoder
+  - servo motor
+  - battery pack
+  related:
+  - ground_legged
+  - quadruped
+  - gait control
+  - dynamic balance
+  - SLAM
+  - foothold planning
+  - terrain adaptation
+  - compliant locomotion
+classification:
+  locomotion: ground.legged
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  - outdoor_urban
+  human_proximity: humans_nearby
+attributes:
+  power_watts:
+    min: 50
+    max: 1000
+    typical: 200
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: quadruped
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - lidar
+    - imu
+    - depth_camera
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - wifi
+    - ethernet
+  power:
+    compute_power_watts: 60.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard ground legged architecture for quadruped research applications.
+  common_pitfalls:
+  - Domain-specific challenges for quadruped research platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to quadruped research in the ground legged domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

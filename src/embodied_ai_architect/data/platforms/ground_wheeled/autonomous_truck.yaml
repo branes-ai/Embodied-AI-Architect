@@ -1,0 +1,132 @@
+id: ground_wheeled.autonomous_truck
+name: "Autonomous Highway Freight Truck"
+category: ground_wheeled
+description: "Level 4 autonomous Class 8 truck for highway freight operations, capable of driverless hub-to-hub long-haul transport on controlled-access roads."
+aliases:
+  - "self-driving truck"
+  - "driverless truck"
+  - "autonomous freight truck"
+  - "robo-truck"
+
+keywords:
+  identity:
+    - autonomous truck
+    - self-driving truck
+    - driverless truck
+    - robo-truck
+    - AV truck
+    - L4 truck
+    - Class 8 autonomous
+  descriptions:
+    - "truck that drives itself on the highway"
+    - "self-driving semi truck for freight"
+    - "autonomous tractor-trailer"
+  application:
+    - autonomous freight
+    - highway autopilot
+    - platooning
+    - hub-to-hub transport
+    - long-haul trucking
+    - middle-mile logistics
+    - drayage
+  industry:
+    - trucking
+    - freight
+    - logistics
+    - OTR
+    - intermodal
+  components:
+    - LiDAR array
+    - radar array
+    - camera suite
+    - drive-by-wire
+    - redundant compute
+    - V2X module
+  related:
+    - transfer hub
+    - operational design domain
+    - ODD
+    - minimal risk condition
+    - disengagement
+
+classification:
+  locomotion: "ackermann steering"
+  manipulation: "none"
+  load_class: "extra-heavy"
+  environment:
+    - highway
+    - outdoor
+    - controlled-access road
+  human_proximity: "shared road"
+
+attributes:
+  power_watts: {min: 1500, max: 5000, typical: 3000}
+  compute_tops: {min: 200, max: 2000, typical: 800}
+  latency_ms: {min: 30, max: 100, typical: 50}
+  weight_kg: {min: 14000, max: 36000, typical: 25000}
+  cost_usd: {min: 200000, max: 500000, typical: 350000}
+  autonomy_level: "L4 - full autonomy on highway ODD"
+  safety_level: "ASIL D"
+  mission_duration_hours: {min: 4, max: 16, typical: 10}
+
+implications:
+  platform_type: "ground_wheeled"
+  perception:
+    camera_types: ["forward telephoto", "surround view", "stereo", "rear-facing", "side-facing"]
+    detection_classes: ["vehicle", "pedestrian", "cyclist", "lane marking", "traffic sign", "traffic light", "construction zone", "debris", "tire", "animal"]
+    max_latency_ms: 50
+    min_fps: 30
+  sensors:
+    modalities: ["spinning LiDAR", "solid-state LiDAR", "long-range radar", "short-range radar", "RGB camera", "thermal camera", "GNSS/INS", "IMU", "wheel speed sensor", "V2X"]
+  actuators:
+    actuator_types: ["drive-by-wire steering", "drive-by-wire braking", "electronic throttle", "trailer brake"]
+    dof: 2
+    control_rate_hz: 100
+  comms:
+    protocols: ["5G", "V2X (C-V2X)", "DSRC", "cellular telematics", "CAN bus"]
+  power:
+    compute_power_watts: 2000
+  safety:
+    level: "ASIL D"
+    certifications: ["ISO 26262 ASIL D", "ISO 21448 SOTIF", "FMVSS compliance", "UL 4600"]
+
+context:
+  typical_architecture: "Redundant dual-compute architecture with primary and backup planning stacks, each with independent sensor feeds. 360-degree sensor coverage using 6-10 LiDARs, 8-12 cameras, and 6-8 radars. Drive-by-wire interface with independent braking redundancy. High-precision GNSS/INS with HD map localization. Teleoperations link for edge-case remote guidance."
+  common_pitfalls:
+    - "Stopping distance at highway speed (300+ meters at 65 mph fully loaded) demands 300m+ perception range"
+    - "Sensor degradation in rain, fog, and road spray from leading vehicles"
+    - "Trailer dynamics (jackknife risk) require trailer-aware motion planning"
+    - "Thermal management of 2-3kW compute stack in desert and summer conditions"
+    - "Cybersecurity of drive-by-wire and V2X communication channels"
+    - "Regulatory patchwork across state lines with different AV laws"
+  regulatory:
+    - "FMVSS exemption or compliance for autonomous operation"
+    - "State-by-state AV operating permits"
+    - "FMCSA hours-of-service rules (may not apply to driverless)"
+    - "UL 4600 safety case standard"
+    - "ISO 26262 functional safety"
+    - "ISO 21448 SOTIF"
+  reference_designs:
+    - "TuSimple Autonomous Truck"
+    - "Aurora Driver on PACCAR Peterbilt"
+    - "Waymo Via / Waymo One for Trucking"
+    - "Kodiak Autonomous Truck"
+    - "Daimler Truck / Torc Robotics"
+  design_considerations: "Autonomous trucks require the highest compute density of any mobile platform due to long-range perception needs at highway speed. The 250m+ detection range requirement drives the need for telephoto cameras and long-range LiDAR, while the safety-critical nature demands full hardware redundancy including independent compute, sensing, and actuation paths. Power budget for compute (1.5-3 kW) is a small fraction of the diesel powertrain but still requires active liquid cooling. The system must achieve a minimal risk condition (safe stop) within any single-fault scenario."
+
+qualification:
+  suggested_questions:
+    - route_type
+    - cargo_type
+    - operating_states
+    - weather_conditions
+    - transfer_hub_design
+  critical_constraints:
+    - "ASIL D functional safety"
+    - "300m+ perception range"
+    - "Redundant compute and actuation"
+    - "All-weather operation capability"
+  optional_constraints:
+    - "Platooning capability"
+    - "Teleoperations support"
+    - "EV/hydrogen powertrain"

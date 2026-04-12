@@ -1,0 +1,45 @@
+id: audio.hydrophone
+name: Hydrophone
+category: audio
+sensor_type: hydrophone
+description: Underwater acoustic sensor
+aliases: []
+keywords:
+  identity:
+  - hydrophone
+  - hydrophone
+  descriptions:
+  - hydrophone
+  - underwater microphone
+  - acoustic
+  - sonar
+  - marine
+  - ocean
+  application:
+  - whale detection
+  - submarine
+  - auv
+  - seismic
+  - oil gas
+  - piezoelectric
+  industry:
+  - broadband
+  - deep sea
+  - towed array
+  components:
+  - autonomous underwater
+classification:
+  modality: audio
+  output_type: scalar
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  power_watts:
+    min: 0.01
+    max: 1
+    typical: 0.1
+  cost_usd:
+    min: 50
+    max: 5000
+    typical: 500

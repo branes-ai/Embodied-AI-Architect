@@ -1,0 +1,84 @@
+id: display.projector_laser_safety
+name: Laser Safety Zone Projector
+category: display
+actuator_type: projector
+description: Laser projector that casts visible safety zone markings, guidelines, and warning patterns
+  on floors and surfaces around robots and vehicles.
+aliases:
+- safety projector
+- forklift light
+- zone light projector
+keywords:
+  identity:
+  - laser safety projector
+  - zone projector
+  - safety line projector
+  descriptions:
+  - floor marking projector
+  - dynamic safety zone
+  - visual warning projector
+  application:
+  - robot safety zone
+  - forklift path marking
+  - AGV warning
+  - crane work area
+  - pedestrian warning
+  industry:
+  - logistics
+  - manufacturing
+  - warehouse
+  - construction
+  components:
+  - laser diode
+  - diffractive optic
+  - housing
+  - mounting bracket
+  related:
+  - pattern shape
+  - laser class
+  - visibility distance
+  - IP rating
+classification:
+  motion_type: display_output
+  control_type: on_off
+  environment:
+  - indoor
+  - outdoor
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 0.5
+    max: 10
+    typical: 3
+  weight_grams:
+    min: 50
+    max: 500
+    typical: 150
+  cost_usd:
+    min: 20
+    max: 500
+    typical: 80
+  lifetime_hours:
+    min: 10000
+    max: 50000
+    typical: 30000
+interface:
+  protocol:
+  - analog
+  - can
+  voltage_v:
+    min: 10
+    max: 48
+    typical: 24
+  current_a:
+    min: 0.05
+    max: 0.5
+    typical: 0.15
+  feedback:
+  - none
+reference_products:
+- id: banner_wls27
+  name: Banner WLS27 Safety Light
+  vendor: Banner Engineering
+  cost_usd: 120

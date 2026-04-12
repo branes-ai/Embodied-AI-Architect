@@ -1,0 +1,48 @@
+id: ugv.clearpath_jackal
+name: "Clearpath Jackal"
+category: ugv
+product_type: wheeled_ugv
+vendor: "Clearpath Robotics"
+description: "Compact, fast UGV for indoor/outdoor autonomous navigation research. Four-wheel drive with fully integrated ROS computer, IMU, and GPS. Small footprint enables operation in tight spaces while maintaining field capability."
+aliases:
+  - "Jackal"
+  - "Jackal UGV"
+
+keywords:
+  identity:
+    - clearpath
+    - jackal
+    - compact ugv
+    - ros robot
+    - research platform
+  application:
+    - autonomous navigation
+    - slam research
+    - indoor-outdoor
+    - multi-robot systems
+    - rapid prototyping
+
+specifications:
+  weight_kg: 17.0
+  max_payload_kg: 20.0
+  power_watts: 90
+  battery_wh: 270
+  max_speed_mps: 2.0
+  ip_rating: "IP52"
+  operating_temp_c: {min: -25, max: 40}
+
+compute:
+  processor: "Intel i5 onboard computer"
+  compute_tops: 0
+
+sensors:
+  - type: "encoder"
+    name: "Wheel Encoders"
+  - type: "imu"
+    name: "IMU"
+  - type: "gps"
+    name: "GPS"
+
+pricing:
+  base_price_usd: 14000
+  year: 2024

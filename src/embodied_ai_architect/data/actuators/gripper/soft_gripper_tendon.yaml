@@ -1,0 +1,77 @@
+id: gripper.soft_gripper_tendon
+name: Tendon-Driven Soft Gripper
+category: gripper
+actuator_type: soft_gripper
+description: Soft gripper actuated by tendons (cables) pulled by electric motors. Offers better position
+  control than pneumatic soft grippers while retaining compliance.
+aliases:
+- cable-driven gripper
+- tendon gripper
+- underactuated hand
+keywords:
+  identity:
+  - tendon-driven gripper
+  - cable-driven gripper
+  - underactuated gripper
+  descriptions:
+  - motor-driven soft gripper
+  - tendon actuated end-effector
+  - compliant hand
+  application:
+  - assistive robotics
+  - prosthetic hand
+  - fruit picking
+  - delicate assembly
+  industry:
+  - robotics
+  - prosthetics
+  - agriculture
+  - research
+  components:
+  - silicone finger
+  - tendon cable
+  - servo motor
+  - spool
+  related:
+  - underactuation
+  - tendon routing
+  - adaptive grasp
+classification:
+  motion_type: gripping
+  control_type: position
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: true
+attributes:
+  force_n:
+    min: 1
+    max: 30
+    typical: 8
+  payload_kg:
+    min: 0.05
+    max: 3
+    typical: 0.5
+  peak_power_watts:
+    min: 2
+    max: 20
+    typical: 5
+  weight_grams:
+    min: 50
+    max: 400
+    typical: 150
+  cost_usd:
+    min: 100
+    max: 5000
+    typical: 800
+interface:
+  protocol:
+  - pwm
+  - rs485
+  voltage_v:
+    min: 5
+    max: 12
+    typical: 7.4
+  feedback:
+  - encoder_incremental
+reference_products: []

@@ -1,0 +1,90 @@
+# Platform Registry Schema
+# Defines the structure for platform definition YAML files.
+#
+# Each platform file describes a class of embodied AI systems — not a
+# specific product, but a category (e.g., "multirotor_delivery" not
+# "DJI Matrice 350"). Product-specific instances live in configurations/.
+
+platform:
+  # --- Identity ---
+  id: str                          # Unique dot-notation ID (e.g., aerial.multirotor_delivery)
+  name: str                        # Human-readable name
+  category: str                    # Top-level category (aerial, ground_wheeled, manipulation, ...)
+  description: str                 # 1-2 sentence description
+  aliases: list[str]               # Alternative names (e.g., ["delivery drone", "package drone"])
+
+  # --- Keywords (20-50 per platform, grouped for maintainability) ---
+  keywords:
+    identity: list[str]            # Official names, abbreviations, brand associations
+    descriptions: list[str]        # How a non-expert would describe it
+    application: list[str]         # What it does in plain English
+    industry: list[str]            # Domain-specific jargon and acronyms
+    components: list[str]          # Key hardware that implies this platform
+    related: list[str]             # Related concepts that suggest this platform
+
+  # --- Classification (4 primary axes) ---
+  classification:
+    locomotion: str                # From taxonomy: aerial.rotary_wing, ground.wheeled, stationary.fixed_mount, ...
+    manipulation: str              # none, fixed_tool, fluid_dispenser, articulated_arm, surgical_instrument, ...
+    load_class: str                # none, micro, micro_fluid, light, deformable_light, medium, heavy, ultra_heavy, ...
+    environment: list[str]         # Primary operating environments (can be multiple)
+    human_proximity: str           # no_humans, humans_distant, humans_nearby, humans_contact, humans_on_body, humans_inside
+
+  # --- Attribute Ranges (what this platform class typically requires) ---
+  attributes:
+    power_watts: {min: float, max: float, typical: float}
+    compute_tops: {min: float, max: float, typical: float}
+    latency_ms: {min: float, max: float, typical: float}
+    weight_kg: {min: float, max: float, typical: float}
+    cost_usd: {min: float, max: float, typical: float}
+    autonomy_level: str            # teleoperated, assisted, partial, conditional, high, full
+    safety_level: str              # none, basic, sil_1, sil_2, sil_3, sil_4
+    mission_duration_hours: {min: float, max: float, typical: float}
+
+  # --- Default Implications (pre-fill spec when this platform is selected) ---
+  implications:
+    platform_type: str             # Maps to PlatformType enum
+    perception:
+      camera_types: list[str]
+      detection_classes: list[str]
+      max_latency_ms: float
+      min_fps: float
+    sensors:
+      modalities: list[str]
+    actuators:
+      actuator_types: list[str]
+      dof: int | null
+      control_rate_hz: float | null
+    comms:
+      protocols: list[str]
+    power:
+      compute_power_watts: float
+    safety:
+      level: str
+      certifications: list[str]
+
+  # --- Subsystem-Specific Attributes (only present when relevant) ---
+  # Each is optional — only included for platforms that need it.
+  subsystems:
+    fleet: {optional}              # fleet_size, coordination_topology, ...
+    medical: {optional}            # medical_device_class, biocompatible, ...
+    surgical: {optional}           # procedure_domain, instrument_dof, ...
+    laboratory: {optional}         # lab_type, plate_format, ...
+    veterinary: {optional}         # animal_type, restraint, ...
+    surveillance: {optional}       # surveillance_purpose, spectral_bands, ...
+    load: {optional}               # load_class, grip_type, object_variety, ...
+    environment: {optional}        # chemical_handling, atex_rated, ...
+
+  # --- Domain Context (loaded into LLM prompt on match) ---
+  context:
+    typical_architecture: str      # Brief description of typical system architecture
+    common_pitfalls: list[str]     # Things that often go wrong in this domain
+    regulatory: list[str]          # Relevant regulations and standards
+    reference_designs: list[str]   # Well-known products or reference implementations
+    design_considerations: str     # Domain-specific design guidance (2-5 sentences)
+
+  # --- Qualification Guidance ---
+  qualification:
+    suggested_questions: list[str]  # Question IDs to ask during qualification
+    critical_constraints: list[str] # Constraints that MUST be specified
+    optional_constraints: list[str] # Nice-to-have constraints

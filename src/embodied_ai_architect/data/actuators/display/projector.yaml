@@ -1,0 +1,89 @@
+id: display.projector
+name: Micro Projector
+category: display
+actuator_type: projector
+description: Compact projector module using DLP, LCoS, or laser scanning for projecting images, structured
+  light, or information onto surfaces.
+aliases:
+- pico projector
+- DLP projector
+- laser projector
+keywords:
+  identity:
+  - micro projector
+  - pico projector
+  - DLP projector
+  - laser projector
+  descriptions:
+  - compact image projector
+  - structured light source
+  - embedded projector
+  application:
+  - structured light scanning
+  - robot HMI projection
+  - AR display
+  - inspection projection
+  - safety zone projection
+  industry:
+  - robotics
+  - inspection
+  - manufacturing
+  - entertainment
+  components:
+  - DLP chip
+  - laser diode
+  - MEMS mirror
+  - lens assembly
+  related:
+  - throw ratio
+  - lumens
+  - keystone correction
+  - structured light
+classification:
+  motion_type: display_output
+  control_type: on_off
+  environment:
+  - indoor
+  reversible: true
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 1
+    max: 100
+    typical: 15
+  continuous_power_watts:
+    min: 0.5
+    max: 60
+    typical: 10
+  weight_grams:
+    min: 10
+    max: 500
+    typical: 50
+  cost_usd:
+    min: 20
+    max: 2000
+    typical: 200
+  lifetime_hours:
+    min: 10000
+    max: 50000
+    typical: 20000
+interface:
+  protocol:
+  - spi
+  - usb
+  - i2c
+  voltage_v:
+    min: 3.3
+    max: 12
+    typical: 5
+  current_a:
+    min: 0.2
+    max: 5
+    typical: 1
+  feedback:
+  - none
+reference_products:
+- id: ti_dlp2010
+  name: TI DLP2010 Evaluation Module
+  vendor: Texas Instruments
+  cost_usd: 300

@@ -96,6 +96,13 @@ branes = "embodied_ai_architect.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+embodied_ai_architect = [
+    "data/platforms/**/*.yaml",
+    "data/sensors/**/*.yaml",
+    "data/actuators/**/*.yaml",
+]
+
 [tool.black]
 line-length = 100
 target-version = ['py311']

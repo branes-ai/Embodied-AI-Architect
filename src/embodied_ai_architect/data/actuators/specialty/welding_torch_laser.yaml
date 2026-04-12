@@ -1,0 +1,85 @@
+id: specialty.welding_torch_laser
+name: Laser Welding Head
+category: specialty
+actuator_type: welding_torch
+description: Focused laser beam welding head for high-speed, low-distortion joining. Used in automotive
+  BIW, battery tab welding, and micro-welding.
+aliases:
+- laser welder
+- laser welding optic
+- beam welding head
+keywords:
+  identity:
+  - laser welding head
+  - laser welder
+  - beam welding optic
+  descriptions:
+  - non-contact welding tool
+  - high-speed welding head
+  - precision laser joint
+  application:
+  - battery tab welding
+  - automotive BIW
+  - medical device welding
+  - jewelry welding
+  - micro-welding
+  industry:
+  - automotive
+  - electronics
+  - medical devices
+  - jewelry
+  components:
+  - fiber laser
+  - collimating lens
+  - focusing optic
+  - crossjet
+  - seam tracker
+  related:
+  - weld depth
+  - beam diameter
+  - wobble welding
+  - keyhole welding
+classification:
+  motion_type: display_output
+  control_type: proportional
+  environment:
+  - indoor
+  - cleanroom
+  reversible: false
+  backdrivable: false
+attributes:
+  peak_power_watts:
+    min: 100
+    max: 50000
+    typical: 3000
+  continuous_power_watts:
+    min: 50
+    max: 30000
+    typical: 2000
+  position_accuracy_um:
+    min: 5
+    max: 100
+    typical: 20
+  weight_grams:
+    min: 500
+    max: 15000
+    typical: 3000
+  cost_usd:
+    min: 2000
+    max: 200000
+    typical: 20000
+interface:
+  protocol:
+  - ethernet_ip
+  - analog
+  voltage_v:
+    min: 24
+    max: 400
+    typical: 48
+  feedback:
+  - none
+reference_products:
+- id: trumpf_beo_d70
+  name: TRUMPF BEO D70 Welding Optic
+  vendor: TRUMPF
+  cost_usd: 15000

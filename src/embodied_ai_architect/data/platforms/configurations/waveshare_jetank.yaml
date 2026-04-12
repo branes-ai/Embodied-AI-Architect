@@ -1,0 +1,46 @@
+id: ugv.waveshare_jetank
+name: "Waveshare JetTank AI Kit"
+category: ugv
+product_type: tracked_ugv
+vendor: "Waveshare"
+description: "Tracked robot chassis with Jetson Nano/Orin Nano compute for AI robotics education. Features HD camera, pan-tilt mount, OLED display, and ROS support. Affordable platform for learning autonomous navigation, SLAM, and computer vision."
+aliases:
+  - "JetTank"
+  - "Waveshare JetTank"
+
+keywords:
+  identity:
+    - waveshare
+    - jetank
+    - tracked robot
+    - education
+    - jetson
+  application:
+    - robotics education
+    - slam learning
+    - computer vision
+    - hobbyist
+    - research prototyping
+
+specifications:
+  weight_kg: 2.5
+  max_payload_kg: 1.0
+  power_watts: 20
+  battery_wh: 37
+  max_speed_mps: 0.5
+  ip_rating: "none"
+  operating_temp_c: {min: 0, max: 40}
+
+compute:
+  processor: "NVIDIA Jetson Orin Nano (user-supplied)"
+  compute_tops: 40
+
+sensors:
+  - type: "camera"
+    name: "8MP IMX219 Camera with Pan-Tilt"
+  - type: "imu"
+    name: "IMU"
+
+pricing:
+  base_price_usd: 230
+  year: 2024

@@ -1,0 +1,147 @@
+id: aerospace.aircraft_painting
+name: Aircraft Painting
+category: aerospace
+description: Aircraft Painting platform for aerospace applications.
+aliases:
+- aircraft painting
+- Aircraft Painting
+keywords:
+  identity:
+  - aircraft painting
+  - aircraft painting
+  - aerospace aircraft painting
+  - smart aircraft painting
+  - aircraft painting platform
+  - automated aircraft painting
+  - spacecraft
+  - satellite
+  - launch vehicle
+  - space system
+  - orbital platform
+  - space robot
+  descriptions:
+  - aircraft painting system
+  - autonomous aircraft painting
+  - system for aircraft painting applications
+  - aerospace platform using aircraft painting technology
+  - intelligent aircraft painting solution
+  - space-grade autonomous system for orbital operations
+  - radiation-hardened platform for space missions
+  application:
+  - aircraft painting
+  - aerospace automation
+  - aircraft painting automation
+  - real-time aircraft painting
+  - aircraft painting monitoring
+  - aircraft painting detection
+  - orbital maneuvering
+  - satellite servicing
+  - space debris removal
+  - on-orbit assembly
+  - Earth observation
+  - deep space exploration
+  - space station maintenance
+  - rendezvous and docking
+  industry:
+  - aerospace
+  - aircraft painting
+  - space industry
+  - defense aerospace
+  - satellite communications
+  - space exploration
+  - NewSpace
+  - launch services
+  components:
+  - force_torque
+  - laser_tracker
+  - star tracker
+  - reaction wheel
+  - sun sensor
+  - radiation-hardened processor
+  - solar panel
+  - thruster
+  related:
+  - aerospace
+  - aircraft
+  - orbital mechanics
+  - space radiation
+  - thermal vacuum
+  - microgravity
+  - debris tracking
+  - TLE
+classification:
+  locomotion: stationary.gantry
+  manipulation: none
+  load_class: none
+  environment:
+  - indoor_structured
+  human_proximity: humans_distant
+attributes:
+  power_watts:
+    min: 1000
+    max: 10000
+    typical: 3000
+  compute_tops:
+    min: 1
+    max: 100
+    typical: 10
+  latency_ms:
+    min: 10
+    max: 500
+    typical: 50
+  weight_kg:
+    min: 1
+    max: 1000
+    typical: 50
+  cost_usd:
+    min: 1000
+    max: 500000
+    typical: 50000
+  autonomy_level: conditional
+  safety_level: basic
+  mission_duration_hours:
+    min: 1
+    max: 24
+    typical: 8
+implications:
+  platform_type: custom
+  perception:
+    camera_types:
+    - monocular
+    detection_classes: []
+    max_latency_ms: 50
+    min_fps: 15
+  sensors:
+    modalities:
+    - force_torque
+    - laser_tracker
+  actuators:
+    actuator_types:
+    - servo_motor
+    dof: null
+    control_rate_hz: null
+  comms:
+    protocols:
+    - ethernet
+    - ethercat
+  power:
+    compute_power_watts: 900.0
+  safety:
+    level: basic
+    certifications: []
+context:
+  typical_architecture: Standard aerospace architecture for aircraft painting applications.
+  common_pitfalls:
+  - Domain-specific challenges for aircraft painting platforms
+  regulatory: []
+  reference_designs: []
+  design_considerations: Design considerations specific to aircraft painting in the aerospace domain.
+qualification:
+  suggested_questions:
+  - power_budget
+  - latency_requirement
+  - deployment_environment
+  critical_constraints:
+  - Power budget
+  - Perception latency
+  optional_constraints: []

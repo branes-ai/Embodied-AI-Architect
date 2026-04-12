@@ -1,0 +1,45 @@
+id: visual.polarization_camera
+name: Polarization Camera
+category: visual
+sensor_type: polarization_camera
+description: Captures polarization state for glare removal and material classification
+aliases: []
+keywords:
+  identity:
+  - polarization camera
+  - polarization camera
+  descriptions:
+  - polarization
+  - polarimetric
+  - stokes parameters
+  - glare removal
+  - reflection removal
+  - surface inspection
+  application:
+  - stress analysis
+  - birefringence
+  - degree of polarization
+  - angle of polarization
+  - sony polarsens
+  - four directional
+  industry:
+  - wire grid
+  - material classification
+  - transparent object
+  components:
+  - glass inspection
+classification:
+  modality: visual
+  output_type: image
+  environment:
+  - indoor
+  - outdoor
+attributes:
+  resolution:
+    min: 1024
+    max: 2448
+    typical: 2048
+  cost_usd:
+    min: 500
+    max: 5000
+    typical: 2000

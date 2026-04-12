@@ -1,0 +1,42 @@
+# Category: ground_legged
+# Auto-generated index — shared defaults for all ground_legged platforms
+
+category: ground_legged
+description: Shared defaults for 8 ground legged platform(s)
+platform_count: 8
+default_attributes:
+  power_watts:
+    min: 62.5
+    max: 975
+    typical: 225
+  weight_kg:
+    min: 2.4
+    max: 884.4
+    typical: 48.1
+  cost_usd:
+    min: 7125
+    max: 468750
+    typical: 56250
+  latency_ms:
+    min: 11.2
+    max: 462.5
+    typical: 50
+common_classification:
+  locomotion: ground.legged
+  environment:
+  - hazardous
+  - indoor_industrial
+  - indoor_structured
+  - outdoor_structured
+  - outdoor_urban
+common_perception_tasks:
+- anomaly
+- corrosion
+- gauge
+- human
+- leak
+- obstacle
+typical_constraints:
+  max_power_watts: 225
+  max_latency_ms: 50
+  max_cost_usd: 56250
