@@ -232,6 +232,17 @@ def sensor_select(ctx, mission_id, sensor_ids):
     if added:
         store.save(mission)
 
+    # BUG-008 / #166: exit 1 when all requested sensors were skipped
+    if not added and skipped:
+        if json_output:
+            click.echo(
+                json.dumps({"added": added, "skipped": skipped, "total": mission.selected_sensors})
+            )
+        else:
+            console.print(f"[red]No sensors added — {len(skipped)} not found in registry.[/red]")
+        ctx.exit(1)
+        return
+
     if json_output:
         click.echo(
             json.dumps({"added": added, "skipped": skipped, "total": mission.selected_sensors})

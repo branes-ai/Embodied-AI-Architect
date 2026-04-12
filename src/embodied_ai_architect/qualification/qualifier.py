@@ -169,6 +169,11 @@ class GoalQualifier:
         """
         self._original_goal = goal
 
+        # Parse numeric constraints from the goal string *before* any
+        # tangibility checks so that "30fps under 5W" is reflected in
+        # the scorecard immediately (BUG-006 / #164).
+        self._parse_goal_constraints(goal)
+
         # Detect or set domain
         if domain:
             self._domain = domain
@@ -421,6 +426,24 @@ class GoalQualifier:
     # -------------------------------------------------------------------
     # Private
     # -------------------------------------------------------------------
+
+    def _parse_goal_constraints(self, goal: str) -> None:
+        """Extract numeric constraints from the goal string and merge
+        them into ``_spec_fields`` so that tangibility is non-zero even
+        before the Q&A loop begins (BUG-006 / #164).
+        """
+        from embodied_ai_architect.mission.goal_parser import parse_goal_constraints
+
+        parsed = parse_goal_constraints(goal)
+
+        if "power_watts" in parsed:
+            self._merge_implications({"power.compute_power_watts": parsed["power_watts"]})
+        if "latency_ms" in parsed:
+            self._merge_implications({"perception.max_latency_ms": parsed["latency_ms"]})
+        if "cost_usd" in parsed:
+            self._merge_implications({"cost.target_cost_usd": parsed["cost_usd"]})
+        if "platform" in parsed and self._domain is None:
+            self._domain = parsed["platform"]
 
     def _build_result(self) -> QualificationResult:
         """Build a QualificationResult from current state."""
