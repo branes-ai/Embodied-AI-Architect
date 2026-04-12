@@ -119,6 +119,9 @@ from embodied_ai_architect.graphs.session_store import SessionStore  # noqa: E40
 from embodied_ai_architect.graphs.soc_runner import SoCDesignRunner  # noqa: E402
 from embodied_ai_architect.graphs.soc_state import DesignConstraints  # noqa: E402
 
+pytestmark = [pytest.mark.integration, pytest.mark.slow]
+
+
 # Static plan with KPU + RTL specialists in dependency order. enable_moo=False
 # is set on the runner state to skip the moo_explorer task — issue #35 is
 # specifically about the KPU/RTL flow, MOO has its own integration test (#27).

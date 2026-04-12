@@ -1,6 +1,7 @@
 """Tests for spec-to-mission bridge (issue #66)."""
 
 import pytest
+
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands.spec import spec
@@ -9,6 +10,8 @@ from embodied_ai_architect.specs.mission_bridge import (
     load_spec_from_mission,
     sync_spec_to_mission,
 )
+
+pytestmark = pytest.mark.cli
 
 
 @pytest.fixture()

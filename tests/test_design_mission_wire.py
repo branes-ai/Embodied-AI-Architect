@@ -1,11 +1,15 @@
 """Tests for design qualify/plan --mission wiring (issue #64)."""
 
 import pytest
+
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands.design import design
 from embodied_ai_architect.mission.models import Mission, MissionStatus
 from embodied_ai_architect.mission.store import MissionStore
+
+
+pytestmark = pytest.mark.cli
 
 
 @pytest.fixture()

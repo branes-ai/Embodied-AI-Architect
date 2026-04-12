@@ -5,6 +5,7 @@ validate -> delete workflow, the actuator variant, and fork workflow.
 """
 
 import pytest
+
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli.commands.design import design
@@ -15,6 +16,9 @@ from embodied_ai_architect.cli.commands.synthesize import synthesize
 from embodied_ai_architect.cli.commands.validate import validate
 from embodied_ai_architect.mission import MissionStore
 import embodied_ai_architect.mission.store as store_mod
+
+
+pytestmark = pytest.mark.cli
 
 
 @pytest.fixture(autouse=True)

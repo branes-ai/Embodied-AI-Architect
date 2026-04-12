@@ -126,3 +126,9 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+markers = [
+    "cli: CLI command tests (CliRunner-based)",
+    "integration: Multi-component integration tests",
+    "slow: Tests that take >5 seconds",
+    "requires_api: Requires ANTHROPIC_API_KEY",
+]

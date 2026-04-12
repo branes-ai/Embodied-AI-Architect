@@ -6,10 +6,14 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from click.testing import CliRunner
 
 from embodied_ai_architect.cli import cli
 from embodied_ai_architect.cli.commands import demo as demo_mod
+
+
+pytestmark = pytest.mark.cli
 
 # Register demo command on the cli group (normally done in main())
 cli.add_command(demo_mod.demo)

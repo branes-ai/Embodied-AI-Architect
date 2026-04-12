@@ -36,6 +36,9 @@ from embodied_ai_architect.graphs.session_store import SessionStore
 from embodied_ai_architect.graphs.soc_runner import SoCDesignRunner
 from embodied_ai_architect.graphs.soc_state import DesignConstraints
 
+pytestmark = [pytest.mark.integration, pytest.mark.slow]
+
+
 # ---------------------------------------------------------------------------
 # Fixtures and helpers
 # ---------------------------------------------------------------------------
