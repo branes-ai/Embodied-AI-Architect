@@ -112,7 +112,10 @@ class TestSensorSelectToFusion:
         mid = _create_mission(runner, "fusion-test2", "Test fusion evolution")
 
         # Start with visual + inertial
-        runner.invoke(sensor, ["select", mid, "visual.stereo_camera", "inertial.imu_6dof"], obj={})
+        res = runner.invoke(
+            sensor, ["select", mid, "visual.stereo_camera", "inertial.imu_6dof"], obj={}
+        )
+        assert res.exit_code == 0, res.output
 
         # Add GPS → should now recommend INS/GNSS fusion too
         res = runner.invoke(sensor, ["select", mid, "position.gps_l1"], obj={})
@@ -152,7 +155,8 @@ class TestPlanToSynthesize:
         mid = _create_mission(runner, "synth-test", "Drone SoC under 5W")
 
         # Select a sensor so synthesize has something to show
-        runner.invoke(sensor, ["select", mid, "visual.rgb_camera"], obj={})
+        res = runner.invoke(sensor, ["select", mid, "visual.rgb_camera"], obj={})
+        assert res.exit_code == 0, res.output
 
         # Plan
         res = runner.invoke(design, ["plan", "--mission", mid, "--static"], obj={})
