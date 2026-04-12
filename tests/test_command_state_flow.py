@@ -13,7 +13,6 @@ from embodied_ai_architect.cli.commands.design import design
 from embodied_ai_architect.cli.commands.mission import mission
 from embodied_ai_architect.cli.commands.sensor import sensor
 from embodied_ai_architect.cli.commands.synthesize import synthesize
-from embodied_ai_architect.mission.store import MissionStore
 
 pytestmark = pytest.mark.cli
 
@@ -32,7 +31,7 @@ def _create_mission(runner, name, goal):
     """Helper: create a mission and return its ID."""
     res = runner.invoke(mission, ["new", name, "--goal", goal], obj={})
     assert res.exit_code == 0, res.output
-    store = MissionStore()
+    store = store_mod.MissionStore()
     missions = store.list_missions()
     assert len(missions) >= 1
     return missions[0]["id"]
@@ -79,7 +78,7 @@ class TestSensorSelectToBudget:
         assert res.exit_code == 0, res.output
 
         # Verify selection persisted
-        m = MissionStore().load(mid)
+        m = store_mod.MissionStore().load(mid)
         assert "visual.rgb_camera" in m.selected_sensors
         assert "inertial.imu_6dof" in m.selected_sensors
 
@@ -160,7 +159,7 @@ class TestPlanToSynthesize:
         assert res.exit_code == 0, res.output
 
         # Verify status
-        m = MissionStore().load(mid)
+        m = store_mod.MissionStore().load(mid)
         assert m.status.value == "designed"
         assert m.design_state is not None
 
