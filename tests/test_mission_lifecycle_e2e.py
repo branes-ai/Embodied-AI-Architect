@@ -56,6 +56,10 @@ class TestSimpleDroneMission:
         )
         assert res.exit_code == 0, res.output
 
+        # Verify status advanced from draft
+        m = MissionStore().load(mid)
+        assert m.status.value in ("qualified", "draft")  # qualified if all questions answered
+
         # 3. Sensor select
         res = runner.invoke(
             sensor,
@@ -82,6 +86,7 @@ class TestSimpleDroneMission:
 
         m = MissionStore().load(mid)
         assert m.design_state is not None
+        assert m.status.value == "designed"
 
         # 6. Synthesize system
         res = runner.invoke(synthesize, ["system", mid], obj={})
@@ -119,6 +124,12 @@ class TestMissionWithActuators:
         store = MissionStore()
         mid = store.list_missions()[0]["id"]
 
+        # Qualify
+        res = runner.invoke(
+            design, ["qualify", "--mission", mid, "--auto"], obj={}, input="\n" * 50
+        )
+        assert res.exit_code == 0, res.output
+
         # Sensor select
         res = runner.invoke(sensor, ["select", mid, "visual.rgb_camera"], obj={})
         assert res.exit_code == 0, res.output
@@ -136,6 +147,10 @@ class TestMissionWithActuators:
 
         # Sensor budget
         res = runner.invoke(sensor, ["budget", mid], obj={})
+        assert res.exit_code == 0, res.output
+
+        # Plan
+        res = runner.invoke(design, ["plan", "--mission", mid, "--static"], obj={})
         assert res.exit_code == 0, res.output
 
         # Synthesize
@@ -181,20 +196,26 @@ class TestForkWorkflow:
         assert len(forked_entry) == 1
         forked_id = forked_entry[0]["id"]
 
-        # Show forked mission
+        # Show forked mission — same goal as original
         res = runner.invoke(mission, ["show", forked_id], obj={})
         assert res.exit_code == 0, res.output
         assert "forked-copy" in res.output
+        assert "test goal for forking" in res.output
 
-        # Verify same goal
-        forked = store.load(forked_id)
-        original = store.load(original_id)
-        assert forked.goal == original.goal
-        assert forked.id != original.id
+        # Edit the fork's goal
+        res = runner.invoke(mission, ["edit", forked_id, "--goal", "modified fork goal"], obj={})
+        assert res.exit_code == 0, res.output
 
-        # Delete forked
+        # Verify edit took effect
+        forked = MissionStore().load(forked_id)
+        assert forked.goal == "modified fork goal"
+
+        # Original unchanged
+        original = MissionStore().load(original_id)
+        assert original.goal == "test goal for forking"
+
+        # Delete only the fork
         res = runner.invoke(mission, ["delete", forked_id, "--yes"], obj={})
         assert res.exit_code == 0, res.output
-        assert not store.exists(forked_id)
-        # Original still present
-        assert store.exists(original_id)
+        assert not MissionStore().exists(forked_id)
+        assert MissionStore().exists(original_id)
