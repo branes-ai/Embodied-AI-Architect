@@ -48,46 +48,118 @@ except ImportError:
     GraphAnalysisResult = None
 
 
-# Hardware categories for easier discovery
-HARDWARE_CATALOG = {
+# Hardware catalog -- previously a hardcoded dict that drifted from the
+# graphs/ registry (e.g., "Jetson-Orin-AGX" without "-64GB", "V100-SXM2-32GB"
+# vs the registry's "V100-SXM3-32GB"). Phase 5 of branes-ai/graphs#136
+# replaces it with a dynamic lookup against ``graphs.hardware.mappers``.
+#
+# Two-tier display:
+# - Default ("silicon" view): silicon-bin SKUs only. Manageable size for
+#   LLM consumption (~46 today). What the orchestrator usually needs.
+# - Expanded ("all" view, opt-in): silicon-bins + power-profile aliases
+#   (e.g., "Jetson-Orin-Nano-8GB@7W"). What an embodied-AI workflow
+#   reasoning about deployment targets needs once a power envelope has
+#   been chosen.
+#
+# Categories come from the registry's ``category`` metadata
+# (gpu / cpu / tpu / dsp / kpu / dpu / cgra / accelerator / dfm) plus
+# the synthetic "profile_aliases" bucket used when expanded.
+
+# Fallback minimal catalog for environments where graphs isn't installed.
+# Mirrors the registry as of this commit; see _get_hardware_catalog
+# below for the live source-of-truth path.
+_FALLBACK_HARDWARE_CATALOG = {
     "datacenter_gpu": [
         "H100-SXM5-80GB",
+        "H100-PCIe-80GB",
         "A100-SXM4-80GB",
-        "A100-SXM4-40GB",
-        "V100-SXM2-32GB",
-        "L4",
-        "T4",
+        "B100-SXM6-192GB",
+        "V100-SXM3-32GB",
+        "T4-PCIe-16GB",
     ],
     "edge_gpu": [
-        "Jetson-Orin-AGX",
-        "Jetson-Orin-Nano",
-    ],
-    "datacenter_cpu": [
-        "Intel-Xeon-8490H",
-        "AMD-EPYC-9654",
-    ],
-    "edge_cpu": [
-        "Intel-i7-12700K",
+        "Jetson-Orin-AGX-64GB",
+        "Jetson-Orin-NX-16GB",
+        "Jetson-Orin-Nano-8GB",
+        "Jetson-Thor-128GB",
     ],
     "tpu": [
         "TPU-v4",
         "Coral-Edge-TPU",
     ],
     "accelerators": [
-        "KPU-T256",
-        "KPU-T64",
+        "Stillwater-KPU-T256",
+        "Stillwater-KPU-T64",
         "Hailo-8",
     ],
     "automotive": [
-        "TDA4VM",
-        "TDA4VL",
+        "TI-TDA4VM",
+        "TI-TDA4VL",
     ],
 }
 
-# Flatten for quick lookup
-ALL_HARDWARE = []
-for category, hw_list in HARDWARE_CATALOG.items():
-    ALL_HARDWARE.extend(hw_list)
+
+def _get_hardware_catalog(include_profile_aliases: bool = False) -> dict[str, list[str]]:
+    """Return the live hardware catalog grouped by category.
+
+    Sources from ``graphs.hardware.mappers`` when graphs is installed,
+    so the orchestrator's hardware list always matches what the
+    estimators can actually accept. Falls back to the static
+    ``_FALLBACK_HARDWARE_CATALOG`` when graphs isn't available -- this
+    keeps EAA usable for non-analysis flows even without the optional
+    schemas/graphs deps.
+
+    With ``include_profile_aliases=True``, surfaces power-profile aliases
+    (e.g., ``"Jetson-Orin-Nano-8GB@7W"``) alongside their silicon-bin
+    parents. The orchestrator uses the expanded form when reasoning
+    about deployment targets where power envelope is a first-class
+    decision variable -- per branes-ai/graphs#136 Phase 5.
+    """
+    if not HAS_GRAPHS:
+        return _FALLBACK_HARDWARE_CATALOG
+
+    try:
+        from graphs.hardware.mappers import (
+            list_all_mappers,
+            list_all_skus,
+            get_mapper_info,
+        )
+    except ImportError:
+        return _FALLBACK_HARDWARE_CATALOG
+
+    # Build silicon-bin -> category lookup once.
+    silicon_to_category: dict[str, str] = {}
+    for silicon_name in list_all_mappers():
+        info = get_mapper_info(silicon_name)
+        if info is not None:
+            silicon_to_category[silicon_name] = info["category"]
+
+    catalog: dict[str, list[str]] = {}
+    if include_profile_aliases:
+        # list_all_skus returns silicon-bins + profile aliases. Each
+        # alias inherits its silicon-bin's category.
+        for sku in list_all_skus():
+            silicon = sku.split("@", 1)[0]
+            category = silicon_to_category.get(silicon, "unknown")
+            catalog.setdefault(category, []).append(sku)
+    else:
+        for silicon, category in silicon_to_category.items():
+            catalog.setdefault(category, []).append(silicon)
+
+    # Stable ordering: sorted within each category so LLM output is
+    # deterministic across calls.
+    for entries in catalog.values():
+        entries.sort()
+    return catalog
+
+
+# Flat list -- computed on first access via _get_hardware_catalog. Kept
+# as a module-level name for backward compatibility with any consumer
+# that imported ALL_HARDWARE / HARDWARE_CATALOG directly.
+HARDWARE_CATALOG = _get_hardware_catalog(include_profile_aliases=False)
+ALL_HARDWARE: list[str] = []
+for _hw_list in HARDWARE_CATALOG.values():
+    ALL_HARDWARE.extend(_hw_list)
 
 
 def get_graphs_tool_definitions() -> list[dict[str, Any]]:
@@ -118,8 +190,18 @@ def get_graphs_tool_definitions() -> list[dict[str, Any]]:
                     "hardware_name": {
                         "type": "string",
                         "description": (
-                            "Hardware target (e.g., 'H100-SXM5-80GB', 'Jetson-Orin-AGX', "
-                            "'TPU-v4', 'Coral-Edge-TPU', 'KPU-T256')"
+                            "Hardware target. Either a silicon-bin name "
+                            "(e.g., 'H100-SXM5-80GB', 'Jetson-Orin-Nano-8GB', "
+                            "'TPU-v4', 'Coral-Edge-TPU', 'Stillwater-KPU-T256') "
+                            "or a power-profile alias of the form "
+                            "'<silicon>@<profile>' (e.g., "
+                            "'Jetson-Orin-Nano-8GB@7W' for the 7W nvpmodel mode, "
+                            "'Jetson-Orin-AGX-64GB@30W'). The alias form is "
+                            "preferred for embodied-AI deployment analysis when "
+                            "the power envelope is part of the deployment "
+                            "decision. Use list_available_hardware "
+                            "(include_profile_aliases=true) to enumerate "
+                            "available aliases."
                         ),
                     },
                     "batch_size": {
@@ -153,7 +235,14 @@ def get_graphs_tool_definitions() -> list[dict[str, Any]]:
                         "type": "array",
                         "items": {"type": "string"},
                         "description": (
-                            "List of hardware targets to compare. If not specified, "
+                            "List of hardware targets to compare. Each entry is "
+                            "either a silicon-bin name (e.g., 'H100-SXM5-80GB') "
+                            "or a power-profile alias "
+                            "('Jetson-Orin-Nano-8GB@7W'). For embodied-AI "
+                            "deployment comparisons, mixing profiles of the "
+                            "same silicon (e.g., '@7W', '@15W', '@MAXN') is a "
+                            "natural way to surface the power/performance "
+                            "trade-off on a single chip. If not specified, "
                             "uses a default set of representative hardware."
                         ),
                     },
@@ -181,7 +270,7 @@ def get_graphs_tool_definitions() -> list[dict[str, Any]]:
                     },
                     "hardware_name": {
                         "type": "string",
-                        "description": "Hardware target",
+                        "description": "Hardware target. Silicon-bin name or '<silicon>@<profile>' alias (see analyze_model_detailed for full description).",
                     },
                     "batch_size": {
                         "type": "integer",
@@ -194,25 +283,36 @@ def get_graphs_tool_definitions() -> list[dict[str, Any]]:
         {
             "name": "list_available_hardware",
             "description": (
-                "List all available hardware targets for analysis, organized by category "
-                "(datacenter GPU, edge GPU, CPU, TPU, accelerators, automotive)."
+                "List all available hardware targets for analysis, organized by "
+                "category (gpu, cpu, tpu, dsp, kpu, dpu, cgra, accelerator, dfm). "
+                "Categories come live from the graphs registry, so the list always "
+                "matches what the analysis tools can actually accept. By default "
+                "returns silicon-bin names (e.g. 'Jetson-Orin-Nano-8GB'). Set "
+                "include_profile_aliases=true to also surface power-profile aliases "
+                "(e.g. 'Jetson-Orin-Nano-8GB@7W' / '@15W' / '@MAXN'); these are the "
+                "right form for embodied-AI deployment recommendations where the "
+                "power envelope is part of the SKU decision."
             ),
             "input_schema": {
                 "type": "object",
                 "properties": {
                     "category": {
                         "type": "string",
-                        "enum": [
-                            "all",
-                            "datacenter_gpu",
-                            "edge_gpu",
-                            "datacenter_cpu",
-                            "edge_cpu",
-                            "tpu",
-                            "accelerators",
-                            "automotive",
-                        ],
-                        "description": "Filter by category (default: all)",
+                        "description": (
+                            "Filter to a single category from the registry "
+                            "(e.g. 'gpu', 'cpu', 'tpu', 'kpu', 'accelerator'). "
+                            "Default 'all' returns every category."
+                        ),
+                    },
+                    "include_profile_aliases": {
+                        "type": "boolean",
+                        "description": (
+                            "When true, surface power-profile aliases of the form "
+                            "'<silicon>@<profile>' (e.g. 'Jetson-Orin-AGX-64GB@30W') "
+                            "alongside the silicon-bin names. Use this when the "
+                            "user is selecting a deployment target and power "
+                            "envelope matters. Default false (silicon-bin only)."
+                        ),
                     },
                 },
                 "required": [],
@@ -233,7 +333,7 @@ def get_graphs_tool_definitions() -> list[dict[str, Any]]:
                     },
                     "hardware_name": {
                         "type": "string",
-                        "description": "Hardware target",
+                        "description": "Hardware target. Silicon-bin name or '<silicon>@<profile>' alias (see analyze_model_detailed for full description).",
                     },
                     "batch_size": {
                         "type": "integer",
@@ -299,7 +399,7 @@ def get_graphs_tool_definitions() -> list[dict[str, Any]]:
                     },
                     "hardware_name": {
                         "type": "string",
-                        "description": "Hardware target",
+                        "description": "Hardware target. Silicon-bin name or '<silicon>@<profile>' alias (see analyze_model_detailed for full description).",
                     },
                     "power_budget_w": {
                         "type": "number",
@@ -329,7 +429,7 @@ def get_graphs_tool_definitions() -> list[dict[str, Any]]:
                     },
                     "hardware_name": {
                         "type": "string",
-                        "description": "Hardware target",
+                        "description": "Hardware target. Silicon-bin name or '<silicon>@<profile>' alias (see analyze_model_detailed for full description).",
                     },
                     "memory_budget_mb": {
                         "type": "number",
@@ -359,7 +459,7 @@ def get_graphs_tool_definitions() -> list[dict[str, Any]]:
                     },
                     "hardware_name": {
                         "type": "string",
-                        "description": "Hardware target",
+                        "description": "Hardware target. Silicon-bin name or '<silicon>@<profile>' alias (see analyze_model_detailed for full description).",
                     },
                     "constraint_metric": {
                         "type": "string",
@@ -699,22 +799,36 @@ def _interpret_bottleneck(bottleneck_type: "BottleneckType", roofline) -> str:
         )
 
 
-def list_available_hardware(category: str = "all") -> str:
-    """List available hardware targets by category."""
+def list_available_hardware(
+    category: str = "all", include_profile_aliases: bool = False
+) -> str:
+    """List available hardware targets by category.
+
+    Live-sources from ``graphs.hardware.mappers`` so the list always
+    matches the analysis tools' actual hardware support. Set
+    ``include_profile_aliases=True`` to surface power-profile SKUs
+    (e.g. ``"Jetson-Orin-Nano-8GB@7W"``) alongside silicon-bin names --
+    these are the right form for embodied-AI deployment recommendations.
+    """
+    catalog = _get_hardware_catalog(include_profile_aliases=include_profile_aliases)
+    total = sum(len(entries) for entries in catalog.values())
+
     if category == "all":
-        output = {
-            "total_hardware_targets": len(ALL_HARDWARE),
-            "categories": HARDWARE_CATALOG,
+        output: dict[str, Any] = {
+            "total_hardware_targets": total,
+            "include_profile_aliases": include_profile_aliases,
+            "categories": catalog,
         }
-    elif category in HARDWARE_CATALOG:
+    elif category in catalog:
         output = {
             "category": category,
-            "hardware": HARDWARE_CATALOG[category],
+            "include_profile_aliases": include_profile_aliases,
+            "hardware": catalog[category],
         }
     else:
         output = {
             "error": f"Unknown category: {category}",
-            "available_categories": list(HARDWARE_CATALOG.keys()),
+            "available_categories": sorted(catalog.keys()),
         }
 
     return json.dumps(output, indent=2)
