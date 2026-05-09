@@ -6,11 +6,11 @@ Provides LLM-callable tools for:
 - Bottleneck identification
 - Energy/power estimation
 
-Verdict-first tools (NEW):
-- analyze_latency: Check if model meets latency target
-- analyze_power: Check if model meets power budget
-- analyze_memory: Check if model fits in memory
-- check_constraint: Generic constraint checking
+Verdict-first tools:
+- check_latency: Check if model meets latency target
+- check_power: Check if model meets power budget
+- check_memory: Check if model fits in memory
+- full_analysis: Comprehensive analysis with optional constraint check
 """
 
 import json
@@ -66,35 +66,40 @@ except ImportError:
 # the synthetic "profile_aliases" bucket used when expanded.
 
 # Fallback minimal catalog for environments where graphs isn't installed.
-# Mirrors the registry as of this commit; see _get_hardware_catalog
-# below for the live source-of-truth path.
+# Keys MUST match the registry's canonical category names so a query
+# like list_available_hardware(category="gpu") returns a populated
+# bucket in fallback mode, not an "Unknown category" error. The live
+# registry uses: gpu / cpu / tpu / dsp / kpu / dpu / cgra / accelerator
+# / dfm. (Pre-Phase-5 this dict used datacenter_gpu / edge_gpu /
+# accelerators / automotive -- all of which would 404 against the live
+# resolver.)
 _FALLBACK_HARDWARE_CATALOG = {
-    "datacenter_gpu": [
-        "H100-SXM5-80GB",
-        "H100-PCIe-80GB",
+    "gpu": [
         "A100-SXM4-80GB",
         "B100-SXM6-192GB",
-        "V100-SXM3-32GB",
-        "T4-PCIe-16GB",
-    ],
-    "edge_gpu": [
+        "H100-PCIe-80GB",
+        "H100-SXM5-80GB",
         "Jetson-Orin-AGX-64GB",
         "Jetson-Orin-NX-16GB",
         "Jetson-Orin-Nano-8GB",
         "Jetson-Thor-128GB",
+        "T4-PCIe-16GB",
+        "V100-SXM3-32GB",
     ],
     "tpu": [
-        "TPU-v4",
         "Coral-Edge-TPU",
+        "TPU-v4",
     ],
-    "accelerators": [
-        "Stillwater-KPU-T256",
+    "kpu": [
         "Stillwater-KPU-T64",
+        "Stillwater-KPU-T256",
+    ],
+    "accelerator": [
         "Hailo-8",
     ],
-    "automotive": [
-        "TI-TDA4VM",
+    "dsp": [
         "TI-TDA4VL",
+        "TI-TDA4VM",
     ],
 }
 
@@ -364,7 +369,11 @@ def get_graphs_tool_definitions() -> list[dict[str, Any]]:
                     },
                     "hardware_name": {
                         "type": "string",
-                        "description": "Hardware target (e.g., 'H100', 'Jetson-Orin-AGX')",
+                        "description": (
+                            "Hardware target. Silicon-bin name or "
+                            "'<silicon>@<profile>' alias (see "
+                            "analyze_model_detailed for full description)."
+                        ),
                     },
                     "latency_target_ms": {
                         "type": "number",
@@ -592,13 +601,16 @@ def compare_hardware_targets(
     if error:
         return error
 
-    # Default hardware set for comparison
+    # Default hardware set for comparison. Names match the graphs
+    # registry (post-graphs#136 Phase 5) so each entry resolves cleanly
+    # in the analyzer; pre-Phase-5 the bare "Jetson-Orin-AGX" /
+    # "Jetson-Orin-Nano" names didn't.
     if hardware_targets is None:
         hardware_targets = [
             "H100-SXM5-80GB",
             "A100-SXM4-80GB",
-            "Jetson-Orin-AGX",
-            "Jetson-Orin-Nano",
+            "Jetson-Orin-AGX-64GB",
+            "Jetson-Orin-Nano-8GB",
             "TPU-v4",
             "Coral-Edge-TPU",
         ]

@@ -140,3 +140,39 @@ class TestFallbackCatalog:
         flat = [sku for entries in _FALLBACK_HARDWARE_CATALOG.values() for sku in entries]
         assert "Jetson-Orin-Nano-8GB" in flat
         assert "Jetson-Orin-AGX-64GB" in flat
+
+    def test_fallback_catalog_keys_match_registry_categories(self):
+        # Regression guard: the fallback's keys MUST be the registry's
+        # canonical category names (gpu / tpu / kpu / accelerator / dsp
+        # / etc.), NOT the legacy "datacenter_gpu" / "edge_gpu" /
+        # "accelerators" / "automotive" buckets the orchestrator used
+        # pre-Phase-5. Otherwise list_available_hardware(category="gpu")
+        # returns "Unknown category" in fallback mode, which is exactly
+        # the failure CodeRabbit caught on PR #201.
+        legacy_keys = {"datacenter_gpu", "edge_gpu", "accelerators", "automotive"}
+        actual_keys = set(_FALLBACK_HARDWARE_CATALOG.keys())
+        assert legacy_keys.isdisjoint(actual_keys), (
+            f"Fallback catalog still uses legacy category keys "
+            f"{actual_keys & legacy_keys}; should use registry-canonical "
+            f"names like 'gpu'."
+        )
+        # Sanity: at minimum, 'gpu' and 'tpu' are present.
+        assert "gpu" in actual_keys
+        assert "tpu" in actual_keys
+
+    def test_list_available_hardware_in_fallback_mode(self, monkeypatch):
+        # Whole-tool round-trip in fallback mode: when graphs is
+        # unavailable, list_available_hardware(category="gpu") must
+        # return a populated bucket, not the "Unknown category" error
+        # payload. This is what CodeRabbit's Major finding on PR #201
+        # caught -- before the fallback-key fix, the tool would 404 on
+        # the most common LLM query.
+        from embodied_ai_architect.llm import graphs_tools as gt
+
+        monkeypatch.setattr(gt, "HAS_GRAPHS", False)
+        result = json.loads(gt.list_available_hardware(category="gpu"))
+        assert (
+            "error" not in result
+        ), f"Expected populated gpu bucket in fallback mode, got: {result}"
+        assert result["category"] == "gpu"
+        assert len(result["hardware"]) > 0
