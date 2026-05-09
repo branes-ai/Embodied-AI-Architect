@@ -8,6 +8,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Dynamic hardware catalog from `graphs` registry** (2026-05-09, PR #201,
+  `graphs#136` Phase 5):
+  - `llm/graphs_tools.py`: replaced the hand-maintained `HARDWARE_CATALOG`
+    constant with `_get_hardware_catalog(include_profile_aliases=False)`.
+    The orchestrator's hardware list is now live-sourced from
+    `graphs.hardware.mappers.list_all_mappers()`, which keeps it in sync
+    with what the analysis tools can actually accept (no more drift between
+    "what the agent thinks exists" and "what the analyzers will run").
+  - **Profile-aliased SKUs** opt-in via `include_profile_aliases=True`:
+    surfaces `Jetson-Orin-Nano-8GB@7W`, `@15W`, `@25W`, `@MAXN` as
+    addressable deployment targets alongside the silicon-bin name. The
+    `list_available_hardware` tool exposes the same flag.
+  - 5 hardware-tool docstrings updated to document the profile-alias form
+    (`<silicon>` for default profile, `<silicon>@<profile>` for a specific
+    power point); `compare_hardware_targets` defaults updated to current
+    Jetson naming.
+  - **Static fallback catalog** for environments without `graphs` installed:
+    `_FALLBACK_HARDWARE_CATALOG` uses the same registry-canonical bucket
+    keys (`gpu` / `tpu` / `kpu` / `accelerator` / `dsp`), so
+    `list_available_hardware(category="gpu")` returns a populated bucket
+    in fallback mode instead of an "Unknown category" error.
+  - `tests/test_hardware_catalog.py`: 15 tests covering live-source path,
+    profile-alias expansion, alias category inheritance, sorted-output
+    determinism, fallback-mode round-trip, and a regression guard for the
+    fallback bucket-key contract that CodeRabbit caught in review.
+
+### Fixed
+- **Module docstring tool-name drift** in `llm/graphs_tools.py`: the file's
+  module-level documentation referred to deprecated tool names
+  (`analyze_*`, `check_constraint`) that had been renamed to `check_*`
+  and `full_analysis` in earlier work. Refreshed alongside the Phase 5
+  changes (PR #201).
+
 - Multi-Objective Optimization Engine (2026-02-24):
   - New `graphs/moo/` package: 3-layer pipeline (MAP-Elites → Bayesian BO → NSGA-III) for SoC design space exploration
   - `design_space.py`: Mixed discrete/continuous/categorical variable definitions, LHS sampling, encode/decode for pymoo and BoTorch
