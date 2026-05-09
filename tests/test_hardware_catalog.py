@@ -78,9 +78,9 @@ class TestDynamicHardwareCatalog:
         # avoids triggering spurious cache misses in prompt caches.
         catalog = _get_hardware_catalog(include_profile_aliases=False)
         for category, entries in catalog.items():
-            assert entries == sorted(entries), (
-                f"Category {category!r} entries not sorted: {entries}"
-            )
+            assert entries == sorted(
+                entries
+            ), f"Category {category!r} entries not sorted: {entries}"
 
 
 @pytest.mark.skipif(not HAS_GRAPHS, reason="graphs package not installed")
@@ -107,9 +107,7 @@ class TestListAvailableHardwareTool:
         assert any("Jetson-Orin" in sku for sku in result["hardware"])
 
     def test_category_filter_with_aliases(self):
-        result = json.loads(
-            list_available_hardware(category="gpu", include_profile_aliases=True)
-        )
+        result = json.loads(list_available_hardware(category="gpu", include_profile_aliases=True))
         # Profile aliases now visible in the gpu bucket.
         assert any("@" in sku for sku in result["hardware"])
 

@@ -799,9 +799,7 @@ def _interpret_bottleneck(bottleneck_type: "BottleneckType", roofline) -> str:
         )
 
 
-def list_available_hardware(
-    category: str = "all", include_profile_aliases: bool = False
-) -> str:
+def list_available_hardware(category: str = "all", include_profile_aliases: bool = False) -> str:
     """List available hardware targets by category.
 
     Live-sources from ``graphs.hardware.mappers`` so the list always
