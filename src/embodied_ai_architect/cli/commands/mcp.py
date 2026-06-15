@@ -596,8 +596,9 @@ def estimate_memory(ctx, model_name, hardware_name, batch, precision):
     default="latency",
     show_default=True,
 )
+@click.option("--thermal", type=str, default=None, help="Thermal profile applied to all targets (e.g. '15W')")
 @click.pass_context
-def compare_hardware(ctx, model_name, hardware_ids, batch, precision, sort_by):
+def compare_hardware(ctx, model_name, hardware_ids, batch, precision, sort_by, thermal):
     """Compare model performance across multiple hardware targets."""
     json_output = ctx.obj.get("json", False)
     args = {
@@ -607,6 +608,8 @@ def compare_hardware(ctx, model_name, hardware_ids, batch, precision, sort_by):
         "precision": precision,
         "sort_by": sort_by,
     }
+    if thermal:
+        args["thermal_profile"] = thermal
 
     data = _call("compare_hardware", args, json_output)
 
