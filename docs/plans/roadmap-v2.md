@@ -133,10 +133,12 @@ Feb 2026        Mar–Apr 2026     May–Jul 2026      Aug–Nov 2026       Dec 
 | Optimization loop diverges (oscillates between strategies) | Medium | High | Monotonicity check: reject iterations that regress on primary metric |
 | Experience cache grows unbounded | Low | Medium | TTL + LRU eviction; archive old designs |
 | Surrogate model inaccuracy misleads search | Medium | Medium | Validation against full PPA assessor every N iterations |
+| Ships as two disjoint loops (population MOO + single-design dispatcher) with two state schemas; specialists stay deterministic, critic feedback stays coarse | High | High | Follow-on **Loop Convergence** milestone (`roadmap-loop-convergence.md`) unifies on one `DesignState`, agent-ifies critic/optimizer, wires architect skills to a real code iteration |
 
 ### Dependencies
 
 - Requires Release 0.7 (CLI must work for testing the loop end-to-end)
+- Followed by the **Loop Convergence** milestone (`roadmap-loop-convergence.md`) — slots between 0.8 and 0.9; unifies the two loops into one multi-agent loop before co-simulation consumes the design state
 
 ---
 
@@ -177,6 +179,7 @@ Feb 2026        Mar–Apr 2026     May–Jul 2026      Aug–Nov 2026       Dec 
 
 - Requires Release 0.7 (remote backends for running sims on cluster)
 - Can run in parallel with Release 0.8 (independent engineering track)
+- Benefits from the **Loop Convergence** milestone (`roadmap-loop-convergence.md`): co-sim validates against a single unified `DesignState`, so co-sim instrumentation is simpler if Loop Convergence lands first (not a hard blocker)
 
 ---
 
@@ -318,6 +321,14 @@ Feb 2026        Mar–Apr 2026     May–Jul 2026      Aug–Nov 2026       Dec 
            │ • Experience  │   │ • Calibration    │
            │ • Governance  │   │ • Energy tracing │
            └────────┬──────┘   └───┬──────────────┘
+                    │              ▲
+           ┌────────▼───────────┐  ┆ (benefits: unified
+           │ Loop Convergence   │┄┄┘  DesignState)
+           │ • Unify DesignState│
+           │ • Agent critic/opt │
+           │ • Specialist agents│
+           │ • Skills→code loop │
+           └────────┬───────────┘
                     │              │
                     └──────┬───────┘
                            │
@@ -353,17 +364,17 @@ Feb 2026        Mar–Apr 2026     May–Jul 2026      Aug–Nov 2026       Dec 
 
 The longest dependency chain determines the minimum timeline:
 
-1. **0.7 → 0.8 → 1.0** (10 months) — The optimization loop is the core differentiator. It must work before we can sell.
-2. **0.9** runs in parallel with 0.8 if there's a second engineer on co-simulation.
+1. **0.7 → 0.8 → Loop Convergence → 1.0** (~12 months) — The optimization loop is the core differentiator, and Loop Convergence (`roadmap-loop-convergence.md`) is what turns it from LLM-supervised search into a unified multi-agent design loop. It sits on the critical path to a credible customer release.
+2. **0.9** runs in parallel with 0.8 + Loop Convergence if there's a second engineer on co-simulation; it consumes the unified `DesignState` so it benefits from Loop Convergence landing first (soft, not hard, dependency).
 3. **1.1 → 1.2** is sequential — enterprise features enable the customer relationships needed for sim-to-real hardware access.
 
 ### Staffing Implications
 
 | Engineers | Timeline to 1.0 | Notes |
 |-----------|-----------------|-------|
-| 1 | 14 months | Sequential: 0.7 → 0.8 → 0.9 → 1.0 |
-| 2 | 12 months | Parallel: 0.8 ‖ 0.9, then converge at 1.0 |
-| 3 | 10 months | Also parallelize RISC-V/FPGA targets |
+| 1 | 16 months | Sequential: 0.7 → 0.8 → Loop Convergence → 0.9 → 1.0 |
+| 2 | 13 months | Parallel: (0.8 → Loop Convergence) ‖ 0.9, then converge at 1.0 |
+| 3 | 11 months | Also parallelize RISC-V/FPGA targets |
 
 ---
 
