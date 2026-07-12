@@ -24,7 +24,10 @@ jobs:
           python-version: "3.11"
 
       - name: Install linters
-        run: pip install black ruff
+        # Pin to match the project's .venv (see pyproject dev extras) so CI is
+        # deterministic and does not drift onto a newer Black/Ruff that reformats
+        # files the committed, locally-linted tree considers clean.
+        run: pip install black==25.12.0 ruff==0.14.10
 
       - name: Black check
         run: black --check src/ tests/ --line-length 100
