@@ -31,12 +31,38 @@ import uuid
 from pydantic import BaseModel, Field
 
 # Reuse the existing, already-shipped models so the subsumption is real, not a copy.
+# These are re-exported (see __all__) so callers can import them from this module.
 from embodied_ai_architect.graphs.soc_state import (
-    DesignConstraints,  # noqa: F401  (re-exported for callers)
-    DesignDecision,  # noqa: F401
-    DesignStatus,  # noqa: F401
-    PPAMetrics,  # noqa: F401
+    DesignConstraints,
+    DesignDecision,
+    DesignStatus,
+    PPAMetrics,
 )
+
+__all__ = [
+    # Re-exported from soc_state
+    "DesignConstraints",
+    "DesignDecision",
+    "DesignStatus",
+    "PPAMetrics",
+    # Enums
+    "MetricAxis",
+    "AbstractionLevel",
+    "Severity",
+    "IssueStatus",
+    "DeltaKind",
+    # Models
+    "DesignIssue",
+    "DesignDelta",
+    "DesignState",
+    # Lifecycle helpers
+    "create_initial_design_state",
+    "add_issue",
+    "add_delta",
+    "resolve_issue",
+    "open_issues",
+    "has_converged",
+]
 
 
 # ---------------------------------------------------------------------------
