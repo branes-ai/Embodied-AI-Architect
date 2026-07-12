@@ -87,7 +87,7 @@ class ReasoningAgent(ABC):
         self.llm_available = llm_available
         self._llm_client = llm_client  # inject for tests; else lazily constructed
 
-    def _client(self):
+    def _client(self) -> Any:
         if self._llm_client is not None:
             return self._llm_client
         from embodied_ai_architect.llm.client import LLMClient  # lazy: optional dep
@@ -215,7 +215,11 @@ class Optimizer(ReasoningAgent):
         if delta.kind == DeltaKind.DESIGN_SPACE_EDIT:
             _set_path(space, delta.target, delta.change.get("value"))
         elif delta.kind == DeltaKind.VARIABLE_BOUND_CHANGE:
-            _set_path(space, f"{delta.target}.bounds", delta.change.get("bounds"))
+            # Continuous vars carry {"bounds": [lo, hi]}; categorical vars {"categories": [...]}.
+            if "categories" in delta.change:
+                _set_path(space, f"{delta.target}.categories", delta.change.get("categories"))
+            else:
+                _set_path(space, f"{delta.target}.bounds", delta.change.get("bounds"))
         elif delta.kind == DeltaKind.ADD_VARIABLE:
             space.setdefault("variables", {})[delta.target] = delta.change.get("variable")
         elif delta.kind == DeltaKind.REMOVE_VARIABLE:
@@ -262,20 +266,39 @@ def critic_node(state: DesignState) -> dict:
 
 
 def optimizer_node(state: DesignState, *, moo_tool: Optional[MooTool] = None) -> dict:
-    """Node: apply the pending deltas and re-run MOO as a tool."""
+    """Node: apply the pending deltas and re-run MOO as a tool.
+
+    Returns every field the deltas or the MOO tool touched. LangGraph propagates
+    state purely through the return value — in-place mutation of the input `state`
+    does not reliably reach the merged graph state — so all MOO-tool outputs
+    (knee_point, sensitivity, atlas, moo_results, pareto_frontier_history) are
+    re-emitted here, not just the two the loop happens to read next.
+    """
     optimizer = Optimizer(moo_tool=moo_tool)
     pending = [DesignDelta(**d) for d in state.get("pending_deltas", []) if not d.get("applied")]
     optimizer.optimize(state, pending)
-    return {
+    updates: dict = {
         "design_space_config": state.get("design_space_config", {}),
         "constraints": state.get("constraints", {}),
+        "pending_specialist_tasks": state.get("pending_specialist_tasks", []),
         "applied_deltas": state.get("applied_deltas", []),
         "open_issues": state.get("open_issues", []),
         "pending_deltas": [],  # drained
-        "pareto_points": state.get("pareto_points", []),
-        "hypervolume_history": state.get("hypervolume_history", []),
         "iteration": int(state.get("iteration", 0)) + 1,
     }
+    # Re-emit whatever the MOO tool produced so it lands in the merged state.
+    for key in (
+        "pareto_points",
+        "pareto_frontier_history",
+        "hypervolume_history",
+        "knee_point",
+        "sensitivity",
+        "atlas",
+        "moo_results",
+    ):
+        if key in state:
+            updates[key] = state[key]
+    return updates
 
 
 def route_after_critic(state: DesignState) -> str:

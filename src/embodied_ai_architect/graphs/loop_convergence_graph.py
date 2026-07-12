@@ -27,14 +27,14 @@ as `optimize_node` does, but maps its output onto `DesignState` field names.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 from embodied_ai_architect.graphs.design_state import DesignState
 from embodied_ai_architect.graphs.loop_agents import (
     MooTool,
     critic_node,
-    has_converged,
     optimizer_node,
+    route_after_critic,
 )
 
 
@@ -177,15 +177,18 @@ def recommend_node(state: DesignState) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def make_router(max_iterations: int = 6):
-    """Route critic → optimize|recommend, with a hard iteration cap as a backstop."""
+def make_router(max_iterations: int = 6) -> Callable[[DesignState], str]:
+    """Route critic → optimize|recommend, with a hard iteration cap as a backstop.
+
+    Delegates the convergence decision to the single canonical `route_after_critic`
+    (in `loop_agents`) and only adds the iteration-cap backstop on top, so there is
+    one stop-condition implementation, not two.
+    """
 
     def _route(state: DesignState) -> str:
-        if state.get("converged") or has_converged(state):
-            return "recommend"
         if int(state.get("iteration", 0)) >= max_iterations:
             return "recommend"
-        return "optimize"
+        return route_after_critic(state)
 
     return _route
 
@@ -199,7 +202,7 @@ def build_loop_convergence_graph(
     *,
     moo_tool: Optional[MooTool] = None,
     max_iterations: int = 6,
-):
+) -> Any:  # langgraph CompiledStateGraph (untyped to avoid a hard import at module load)
     """Assemble and compile the unified loop.
 
     Args:

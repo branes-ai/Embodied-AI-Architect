@@ -287,9 +287,9 @@ class DesignState(TypedDict, total=False):
     pending_specialist_tasks: list[dict]  # SPECIALIST_RETASK deltas the dispatcher picks up
 
     # --- Reasoning output (OptimizationLoopState) ---
+    # (research_citations is declared once, above, in the decomposition section)
     analysis: str
     recommendation: dict
-    research_citations: list[str]
     final_report: str
 
     # --- Loop control (merged) ---
@@ -297,6 +297,7 @@ class DesignState(TypedDict, total=False):
     max_iterations: int
     converged: bool
     should_iterate: bool
+    llm_available: bool  # gates the reasoning agents' LLM path (read by critic_node)
 
     # --- History / governance / cost (SoCDesignState) ---
     history: list[dict]  # DesignDecision entries
