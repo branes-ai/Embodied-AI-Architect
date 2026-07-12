@@ -246,7 +246,8 @@ def start_server(port: int = 8000, host: str = "localhost"):
 
     handler = ReportHandler
     with socketserver.TCPServer((host, port), handler) as httpd:
-        print(f"""
+        print(
+            f"""
 ╔════════════════════════════════════════════════════════════╗
 ║  Embodied AI Architect - Report Server                    ║
 ╚════════════════════════════════════════════════════════════╝
@@ -258,7 +259,8 @@ def start_server(port: int = 8000, host: str = "localhost"):
 
   This server simply serves static files from ./reports/
   It is completely separate from the orchestrator.
-        """)
+        """
+        )
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

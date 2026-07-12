@@ -89,7 +89,8 @@ class ExperienceCache:
         self._create_table()
 
     def _create_table(self) -> None:
-        self._conn.execute("""
+        self._conn.execute(
+            """
             CREATE TABLE IF NOT EXISTS episodes (
                 episode_id TEXT PRIMARY KEY,
                 timestamp TEXT NOT NULL,
@@ -100,13 +101,18 @@ class ExperienceCache:
                 iterations_used INTEGER NOT NULL,
                 data TEXT NOT NULL
             )
-        """)
-        self._conn.execute("""
+        """
+        )
+        self._conn.execute(
+            """
             CREATE INDEX IF NOT EXISTS idx_use_case ON episodes(use_case)
-        """)
-        self._conn.execute("""
+        """
+        )
+        self._conn.execute(
+            """
             CREATE INDEX IF NOT EXISTS idx_fingerprint ON episodes(fingerprint)
-        """)
+        """
+        )
         self._conn.commit()
 
     def save(self, episode: DesignEpisode) -> str:
