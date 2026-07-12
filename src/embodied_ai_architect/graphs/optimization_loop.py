@@ -25,9 +25,9 @@ from __future__ import annotations
 import json
 import logging
 import time
-from typing import Any, Optional
+from typing import Any
 
-from typing_extensions import TypedDict
+from embodied_ai_architect.graphs.design_state import DesignState
 
 logger = logging.getLogger(__name__)
 
@@ -35,61 +35,12 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # State model
 # ---------------------------------------------------------------------------
-
-
-class OptimizationLoopState(TypedDict, total=False):
-    """State flowing through the agentic optimization loop."""
-
-    # --- Input ---
-    mission_description: str
-
-    # --- Decomposition output ---
-    mission_plan: dict[str, Any]
-    platform: str
-    mission_type: str
-    sub_capabilities: list[dict[str, Any]]
-    research_docs_used: list[str]
-
-    # --- Formulation output ---
-    constraints: dict[str, Any]
-    design_space_config: dict[str, Any]
-    num_variables: int
-
-    # --- Optimization output ---
-    pareto_front: list[dict[str, Any]]
-    hypervolume: float
-    knee_point: Optional[dict[str, Any]]
-    total_evaluations: int
-    convergence_history: list[dict[str, Any]]
-
-    # --- Issue #26: rich MOO context for LLM reasoning ---
-    sensitivity: dict[str, dict[str, float]]
-    layers_used: list[str]
-    atlas: dict[str, Any]
-    atlas_coverage_pct: float
-    design_variables_ranked: list[dict[str, Any]]
-
-    # --- Reasoning output ---
-    analysis: str
-    recommendation: dict[str, Any]
-    research_citations: list[str]
-    should_iterate: bool
-    refinements: dict[str, Any]
-
-    # --- Loop control ---
-    iteration: int
-    max_iterations: int
-    hypervolume_history: list[float]
-    converged: bool
-
-    # --- Final output ---
-    final_report: str
-
-    # --- Error tracking ---
-    errors: list[str]
-
-    # --- LLM config (optional, for reasoning node) ---
-    llm_available: bool
+#
+# This loop flows through the unified DesignState (Seam S2a, #205). The former
+# per-loop TypedDict was merged into DesignState; its seven MOO-search-specific
+# fields (pareto_front, hypervolume, total_evaluations, layers_used,
+# atlas_coverage_pct, design_variables_ranked, refinements) are now declared
+# channels there, alongside the fields both loops already shared.
 
 
 # ---------------------------------------------------------------------------
@@ -185,7 +136,7 @@ def _rank_design_variables(
     return ranked
 
 
-def _build_moo_context_block(state: OptimizationLoopState) -> str:
+def _build_moo_context_block(state: DesignState) -> str:
     """Build a structured MOO-context block for the reasoning prompt (issue #26).
 
     Surfaces sensitivity, layers used, atlas coverage, convergence trajectory,
@@ -242,7 +193,7 @@ def _build_moo_context_block(state: OptimizationLoopState) -> str:
 # ---------------------------------------------------------------------------
 
 
-def decompose_node(state: OptimizationLoopState) -> dict:
+def decompose_node(state: DesignState) -> dict:
     """Decompose mission description into structured plan."""
     from embodied_ai_architect.research.decomposer import MissionDecomposer
 
@@ -266,7 +217,7 @@ def decompose_node(state: OptimizationLoopState) -> dict:
         return {"errors": state.get("errors", []) + [f"Decomposition failed: {e}"]}
 
 
-def formulate_node(state: OptimizationLoopState) -> dict:
+def formulate_node(state: DesignState) -> dict:
     """Formulate joint design space from mission plan."""
     plan_data = state.get("mission_plan", {})
     if not plan_data:
@@ -325,7 +276,7 @@ def formulate_node(state: OptimizationLoopState) -> dict:
         return {"errors": state.get("errors", []) + [f"Formulation failed: {e}"]}
 
 
-def optimize_node(state: OptimizationLoopState) -> dict:
+def optimize_node(state: DesignState) -> dict:
     """Run MOO engine on the joint design space."""
     constraints_dict = state.get("constraints", {})
     if not constraints_dict:
@@ -413,7 +364,7 @@ def optimize_node(state: OptimizationLoopState) -> dict:
         return {"errors": state.get("errors", []) + [f"Optimization failed: {e}"]}
 
 
-def evaluate_node(state: OptimizationLoopState) -> dict:
+def evaluate_node(state: DesignState) -> dict:
     """Evaluate Pareto front quality and check convergence."""
     pareto = state.get("pareto_front", [])
     if not pareto:
@@ -481,7 +432,7 @@ def evaluate_node(state: OptimizationLoopState) -> dict:
     }
 
 
-def reason_node(state: OptimizationLoopState) -> dict:
+def reason_node(state: DesignState) -> dict:
     """Claude reasons over results with research context.
 
     If LLM is not available, uses a rule-based fallback.
@@ -504,7 +455,7 @@ def reason_node(state: OptimizationLoopState) -> dict:
     return _reason_heuristic(state)
 
 
-def _reason_with_llm(state: OptimizationLoopState) -> dict:
+def _reason_with_llm(state: DesignState) -> dict:
     """Use Claude to reason over the Pareto front."""
     from embodied_ai_architect.llm.client import LLMClient
     from embodied_ai_architect.research.library import ResearchLibrary
@@ -568,7 +519,7 @@ to justify your decision. Respond with JSON only."""
         )
 
 
-def _reason_heuristic(state: OptimizationLoopState) -> dict:
+def _reason_heuristic(state: DesignState) -> dict:
     """Rule-based reasoning when LLM is not available."""
     pareto = state.get("pareto_front", [])
     iteration = state.get("iteration", 0)
@@ -608,7 +559,7 @@ def _reason_heuristic(state: OptimizationLoopState) -> dict:
     }
 
 
-def _generate_recommendation(state: OptimizationLoopState) -> dict:
+def _generate_recommendation(state: DesignState) -> dict:
     """Generate final recommendation from the best design."""
     pareto = state.get("pareto_front", [])
     if not pareto:
@@ -635,7 +586,7 @@ def _generate_recommendation(state: OptimizationLoopState) -> dict:
 
 
 def _build_recommendation(
-    state: OptimizationLoopState,
+    state: DesignState,
     selected: dict,
     analysis: str,
     citations: list[str],
@@ -1388,7 +1339,7 @@ def _build_glossary() -> list[str]:
     ]
 
 
-def iterate_node(state: OptimizationLoopState) -> dict:
+def iterate_node(state: DesignState) -> dict:
     """Prepare for next iteration by incrementing counter."""
     return {
         "iteration": state.get("iteration", 0) + 1,
@@ -1400,14 +1351,14 @@ def iterate_node(state: OptimizationLoopState) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def route_after_reason(state: OptimizationLoopState) -> str:
+def route_after_reason(state: DesignState) -> str:
     """Route to iterate or recommend based on reasoning output."""
     if state.get("should_iterate", False) and not state.get("converged", False):
         return "iterate"
     return "recommend"
 
 
-def route_after_iterate(state: OptimizationLoopState) -> str:
+def route_after_iterate(state: DesignState) -> str:
     """After iteration, go back to formulate."""
     return "formulate"
 
@@ -1432,7 +1383,7 @@ def build_optimization_loop():
     """
     from langgraph.graph import END, StateGraph
 
-    workflow = StateGraph(OptimizationLoopState)
+    workflow = StateGraph(DesignState)
 
     # Add nodes
     workflow.add_node("decompose", decompose_node)
@@ -1490,7 +1441,7 @@ def run_optimization_loop(
     """
     graph = build_optimization_loop()
 
-    initial_state: OptimizationLoopState = {
+    initial_state: DesignState = {
         "mission_description": mission_description,
         "iteration": 0,
         "max_iterations": max_iterations,

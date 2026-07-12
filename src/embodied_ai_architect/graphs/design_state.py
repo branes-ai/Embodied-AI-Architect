@@ -284,6 +284,17 @@ class DesignState(TypedDict, total=False):
     atlas: dict
     convergence_history: list[dict]
 
+    # --- MOO search-loop fields (migrated from OptimizationLoopState, S2a #205) ---
+    # NOTE: `pareto_front` is the MOO loop's frontier list; canonicalizing it onto
+    # the dispatcher-loop `pareto_points` name is deferred to S2c (#207).
+    pareto_front: list[dict]
+    hypervolume: float  # scalar for the latest run (hypervolume_history holds the series)
+    total_evaluations: int
+    layers_used: list[str]
+    atlas_coverage_pct: float
+    design_variables_ranked: list[dict]
+    refinements: dict  # search-space refinements the reason node proposes on iterate
+
     # --- NEW: shared multi-agent currency (the Loop Convergence delta) ---
     open_issues: list[dict]  # DesignIssue serialized — the bottleneck backlog
     pending_deltas: list[dict]  # DesignDelta serialized — proposed, not yet applied
