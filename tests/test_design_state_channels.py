@@ -14,6 +14,10 @@ seams S2a/S2b). The `NODE_WRITES` table below is the machine-checked mapping the
 issue asks for; extend it as nodes migrate.
 """
 
+import ast
+import inspect
+import textwrap
+
 import pytest
 
 from embodied_ai_architect.graphs.design_state import (
@@ -134,10 +138,23 @@ def _run_all_nodes() -> dict[str, dict]:
 
 
 def test_no_duplicate_channels():
-    """DesignState must not double-declare a channel (a duplicate silently shadows)."""
-    names = list(DesignState.__annotations__)
-    dupes = {n for n in names if names.count(n) > 1}
-    assert not dupes, f"DesignState has duplicate channel declarations: {sorted(dupes)}"
+    """DesignState must not double-declare a channel (a duplicate silently shadows).
+
+    `DesignState.__annotations__` is already deduplicated — a later declaration
+    overwrites an earlier one before this test could see it — so we inspect the
+    class *source* via AST to catch duplicates before Python collapses them.
+    """
+    tree = ast.parse(textwrap.dedent(inspect.getsource(DesignState)))
+    classdef = next(
+        n for n in ast.walk(tree) if isinstance(n, ast.ClassDef) and n.name == "DesignState"
+    )
+    names = [
+        node.target.id
+        for node in classdef.body
+        if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+    ]
+    dupes = sorted({n for n in names if names.count(n) > 1})
+    assert not dupes, f"DesignState has duplicate channel declarations: {dupes}"
 
 
 @pytest.mark.parametrize("node,fields", sorted(NODE_WRITES.items()))
