@@ -62,6 +62,10 @@ __all__ = [
     "resolve_issue",
     "open_issues",
     "has_converged",
+    # Channel audit (Seam S1)
+    "declared_channels",
+    "undeclared_keys",
+    "assert_declared_channels",
 ]
 
 
@@ -316,6 +320,48 @@ class DesignState(TypedDict, total=False):
 
     # --- Error tracking (OptimizationLoopState) ---
     errors: list[str]
+
+
+# ---------------------------------------------------------------------------
+# Channel audit (Seam S1) — the LangGraph allowlist guard
+# ---------------------------------------------------------------------------
+#
+# A LangGraph StateGraph merges each node's return dict into the state ONLY for
+# keys declared on the state schema. Any key a node returns that is not a
+# declared DesignState channel is silently dropped at runtime — a bug class with
+# no error and no stack trace (hit during the skeleton work with `final_report`,
+# `research_citations`, and `pending_specialist_tasks`). These helpers make the
+# invariant checkable so migrated nodes (S2a/S2b) can self-guard and tests can
+# enforce it.
+
+_DECLARED_CHANNELS: frozenset[str] = frozenset(DesignState.__annotations__)
+
+
+def declared_channels() -> frozenset[str]:
+    """Return the set of declared DesignState channels (the LangGraph allowlist)."""
+    return _DECLARED_CHANNELS
+
+
+def undeclared_keys(update: dict) -> set[str]:
+    """Return the keys in a node's return dict that are NOT declared channels.
+
+    Empty set == safe to merge. Non-empty == those keys would be silently dropped.
+    """
+    return set(update) - _DECLARED_CHANNELS
+
+
+def assert_declared_channels(update: dict, *, node: str = "") -> None:
+    """Raise if `update` contains any key that is not a declared DesignState channel.
+
+    Intended for node self-guarding: `assert_declared_channels(result, node="critic")`.
+    """
+    extra = undeclared_keys(update)
+    if extra:
+        where = f" from node '{node}'" if node else ""
+        raise KeyError(
+            f"DesignState update{where} contains keys not declared as channels: "
+            f"{sorted(extra)}. Declare them on DesignState or LangGraph will drop them."
+        )
 
 
 # ---------------------------------------------------------------------------
