@@ -10,6 +10,8 @@ Tests cover:
 
 from __future__ import annotations
 
+import pytest
+
 from embodied_ai_architect.graphs.design_state import DesignState, undeclared_keys
 from embodied_ai_architect.graphs.optimization_loop import (
     _build_moo_context_block,
@@ -306,6 +308,56 @@ class TestChannelCompliance:
                 f"{node.__name__} writes undeclared DesignState channels: "
                 f"{sorted(undeclared_keys(result))}"
             )
+
+    @pytest.mark.parametrize("decision", ["recommend", "iterate"])
+    def test_llm_reason_branch_writes_only_declared_channels(self, monkeypatch, decision):
+        """The LLM reasoning path (_reason_with_llm) must also write only declared
+        channels — the heuristic case above never exercises it."""
+        payload = {
+            "recommend": '{"decision": "recommend", "selected_design": null, "analysis": "ok"}',
+            "iterate": (
+                '{"decision": "iterate", "analysis": "narrow it",'
+                ' "refinements": {"tighten_constraints": {"max_power_watts": 4.0}},'
+                ' "research_citations": []}'
+            ),
+        }[decision]
+
+        class _StubResponse:
+            text = payload
+
+        class _StubClient:
+            def __init__(self, *a, **kw):
+                pass
+
+            def chat(self, messages, system):
+                return _StubResponse()
+
+        import embodied_ai_architect.llm.client as llm_client_mod
+
+        monkeypatch.setattr(llm_client_mod, "LLMClient", _StubClient)
+
+        state: DesignState = {
+            "mission_description": "Drone perception",
+            "platform": "drone",
+            "iteration": 0,
+            "converged": False,
+            "hypervolume_history": [1.0, 1.5],
+            "pareto_front": [
+                {
+                    "objectives": {"capability_per_watt": 0.3, "power_watts": 5.0},
+                    "design_params": {"process_nm": 16, "clock_mhz": 1000},
+                    "metadata": {"model_family": "yolov8", "model_variant": "s"},
+                }
+            ],
+            "knee_point": None,
+            "llm_available": True,
+            "research_docs_used": [],
+        }
+        result = reason_node(state)
+        assert undeclared_keys(result) == set(), (
+            f"LLM reason branch ({decision}) writes undeclared DesignState channels: "
+            f"{sorted(undeclared_keys(result))}"
+        )
 
 
 class TestCLI:
