@@ -10,6 +10,8 @@ Tests cover:
 
 from __future__ import annotations
 
+import logging
+
 import pytest
 
 from embodied_ai_architect.graphs.design_state import DesignState, undeclared_keys
@@ -310,9 +312,14 @@ class TestChannelCompliance:
             )
 
     @pytest.mark.parametrize("decision", ["recommend", "iterate"])
-    def test_llm_reason_branch_writes_only_declared_channels(self, monkeypatch, decision):
+    def test_llm_reason_branch_writes_only_declared_channels(self, monkeypatch, caplog, decision):
         """The LLM reasoning path (_reason_with_llm) must also write only declared
-        channels — the heuristic case above never exercises it."""
+        channels — the heuristic case above never exercises it.
+
+        Guarded against silent fallback: reason_node catches exceptions from
+        _reason_with_llm and drops to _reason_heuristic with a warning, which would
+        let this test pass without ever exercising the LLM branch. We assert that
+        warning was not emitted."""
         payload = {
             "recommend": '{"decision": "recommend", "selected_design": null, "analysis": "ok"}',
             "iterate": (
@@ -353,7 +360,12 @@ class TestChannelCompliance:
             "llm_available": True,
             "research_docs_used": [],
         }
-        result = reason_node(state)
+        with caplog.at_level(logging.WARNING):
+            result = reason_node(state)
+        assert "LLM reasoning failed" not in caplog.text, (
+            "reason_node fell back to _reason_heuristic — the LLM branch was not "
+            "exercised, so this channel check is meaningless"
+        )
         assert undeclared_keys(result) == set(), (
             f"LLM reason branch ({decision}) writes undeclared DesignState channels: "
             f"{sorted(undeclared_keys(result))}"
