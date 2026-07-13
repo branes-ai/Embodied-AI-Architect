@@ -151,8 +151,12 @@ def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[DesignState], dict[
                 "pareto_results": state.get("pareto_results", {}),
                 "pareto_frontier_history": state.get("pareto_frontier_history", []),
                 "moo_results": state.get("moo_results", {}),
-                "swap_results": state.get("swap_results", {}),
+                "swap_assessment": state.get("swap_assessment", {}),
                 "system_bom": state.get("system_bom", {}),
+                "safety_analysis": state.get("safety_analysis", {}),
+                "prior_experience": state.get("prior_experience", {}),
+                "last_strategy_rationale": state.get("last_strategy_rationale", ""),
+                "rtl_testbenches": state.get("rtl_testbenches", {}),
             }
         else:
             # Full execution on first pass
@@ -187,7 +191,7 @@ def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[DesignState], dict[
                     "pareto_frontier_history", state.get("pareto_frontier_history", [])
                 ),
                 "moo_results": result.get("moo_results", state.get("moo_results", {})),
-                "swap_results": result.get("swap_results", state.get("swap_results", {})),
+                "swap_assessment": result.get("swap_assessment", state.get("swap_assessment", {})),
                 "system_bom": result.get("system_bom", state.get("system_bom", {})),
                 # Issue #35: forward KPU/RTL outputs from the inner dispatcher
                 # so the LangGraph outer state retains them. Same bug pattern
@@ -213,6 +217,17 @@ def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[DesignState], dict[
                 ),
                 "rtl_validation_results": result.get(
                     "rtl_validation_results", state.get("rtl_validation_results", {})
+                ),
+                "rtl_testbenches": result.get("rtl_testbenches", state.get("rtl_testbenches", {})),
+                # Forward safety / experience / optimizer outputs from the inner
+                # dispatcher so they survive the outer LangGraph merge (these are
+                # declared DesignState channels the specialists produce).
+                "safety_analysis": result.get("safety_analysis", state.get("safety_analysis", {})),
+                "prior_experience": result.get(
+                    "prior_experience", state.get("prior_experience", {})
+                ),
+                "last_strategy_rationale": result.get(
+                    "last_strategy_rationale", state.get("last_strategy_rationale", "")
                 ),
                 "status": DesignStatus.OPTIMIZING.value,
             }
