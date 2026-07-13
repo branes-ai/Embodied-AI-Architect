@@ -1,7 +1,7 @@
 """Dispatcher for agentic SoC design task execution.
 
 The Dispatcher walks the TaskGraph, finds ready tasks, dispatches them to
-registered specialist agents, and records results back into the SoCDesignState.
+registered specialist agents, and records results back into the DesignState.
 
 It replaces the hardcoded sequential Orchestrator with a DAG-aware scheduler
 that supports parallel-ready tasks, failure handling, and re-planning.
@@ -28,20 +28,20 @@ from typing import Any, Callable
 from embodied_ai_architect.graphs.memory import WorkingMemoryStore
 from embodied_ai_architect.graphs.soc_state import (
     DesignStatus,
-    SoCDesignState,
     get_task_graph,
     record_decision,
     set_task_graph,
 )
+from embodied_ai_architect.graphs.design_state import DesignState
 from embodied_ai_architect.graphs.task_graph import TaskGraph, TaskNode, TaskStatus
 
 logger = logging.getLogger(__name__)
 
 
 # Type for agent executor functions.
-# Signature: (task: TaskNode, state: SoCDesignState) -> dict[str, Any]
+# Signature: (task: TaskNode, state: DesignState) -> dict[str, Any]
 # Returns a result dict that gets stored as task.result.
-AgentExecutor = Callable[[TaskNode, SoCDesignState], dict[str, Any]]
+AgentExecutor = Callable[[TaskNode, DesignState], dict[str, Any]]
 
 
 class DispatchError(Exception):
@@ -77,7 +77,7 @@ class Dispatcher:
         """List of registered agent names."""
         return list(self._agents.keys())
 
-    def step(self, state: SoCDesignState) -> SoCDesignState:
+    def step(self, state: DesignState) -> DesignState:
         """Execute one batch of ready tasks.
 
         Finds all tasks that are ready (dependencies satisfied), dispatches
@@ -115,7 +115,7 @@ class Dispatcher:
         state = set_task_graph(state, graph)
         return state
 
-    def run(self, state: SoCDesignState, max_steps: int = 50) -> SoCDesignState:
+    def run(self, state: DesignState, max_steps: int = 50) -> DesignState:
         """Execute tasks until the graph is complete or dispatch is stuck.
 
         Loops calling step() until:
@@ -156,9 +156,7 @@ class Dispatcher:
         logger.warning("Dispatch hit max_steps limit (%d)", max_steps)
         return state
 
-    def _dispatch_task(
-        self, task: TaskNode, graph: TaskGraph, state: SoCDesignState
-    ) -> SoCDesignState:
+    def _dispatch_task(self, task: TaskNode, graph: TaskGraph, state: DesignState) -> DesignState:
         """Dispatch a single task to its agent and record the outcome."""
         executor = self._agents.get(task.agent)
         if executor is None:
@@ -239,7 +237,7 @@ class Dispatcher:
 
         return state
 
-    def get_dispatch_summary(self, state: SoCDesignState) -> str:
+    def get_dispatch_summary(self, state: DesignState) -> str:
         """Format a summary of the current dispatch state."""
         graph = get_task_graph(state)
         lines = [f"Status: {state.get('status', 'unknown')}"]

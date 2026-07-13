@@ -6,12 +6,13 @@ are declared channels on the state schema. Any returned key that is NOT a declar
 test enforces the invariant: **every key any loop node writes must be a declared
 DesignState channel.**
 
-Scope note: today only the unified Loop Convergence nodes (`loop_agents` /
-`loop_convergence_graph`) flow through `DesignState`. The legacy dispatcher
-(`soc_graph`/`dispatcher`) and MOO loop (`optimization_loop`) nodes still use their
-own schemas; they get folded into this audit when they migrate (issues #205 / #206,
-seams S2a/S2b). The `NODE_WRITES` table below is the machine-checked mapping the
-issue asks for; extend it as nodes migrate.
+Scope note: the unified Loop Convergence nodes (`loop_agents` /
+`loop_convergence_graph`) are audited per-node via the `NODE_WRITES` table below.
+The dispatcher loop (`soc_graph`/`dispatcher`/`specialists`) migrated to
+`DesignState` in S2b (#206) and is covered structurally by
+`test_designstate_is_superset_of_socdesignstate` — because its specialists write
+`SoCDesignState` fields, a superset guarantee means none can be dropped. The MOO
+loop (`optimization_loop`) migrates under S2a (#205). Extend as nodes migrate.
 """
 
 import ast
@@ -37,6 +38,17 @@ from embodied_ai_architect.graphs.loop_convergence_graph import (
     recommend_node,
     seed_node,
 )
+from embodied_ai_architect.graphs.soc_state import SoCDesignState
+
+
+def test_designstate_is_superset_of_socdesignstate():
+    """S2b (#206): rebinding StateGraph(SoCDesignState) -> StateGraph(DesignState) is
+    only safe if every SoCDesignState field is a declared DesignState channel — else
+    dispatcher/specialist writes to the missing fields would be silently dropped.
+    """
+    missing = set(SoCDesignState.__annotations__) - declared_channels()
+    assert not missing, f"DesignState is missing SoCDesignState channels: {sorted(missing)}"
+
 
 # ---------------------------------------------------------------------------
 # The audit table: node -> fields it may write -> (all must be DesignState channels)

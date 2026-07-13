@@ -48,9 +48,9 @@ from embodied_ai_architect.graphs.review import _make_plan_review_node
 from embodied_ai_architect.graphs.optimization_review import make_enhanced_evaluate_node
 from embodied_ai_architect.graphs.soc_state import (
     DesignStatus,
-    SoCDesignState,
     record_decision,
 )
+from embodied_ai_architect.graphs.design_state import DesignState
 from embodied_ai_architect.graphs.task_graph import TaskGraph, TaskNode
 
 logger = logging.getLogger(__name__)
@@ -61,17 +61,17 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-def _make_planner_node(planner: PlannerNode) -> Callable[[SoCDesignState], dict[str, Any]]:
+def _make_planner_node(planner: PlannerNode) -> Callable[[DesignState], dict[str, Any]]:
     """Create the planner node function."""
 
-    def planner_node(state: SoCDesignState) -> dict[str, Any]:
+    def planner_node(state: DesignState) -> dict[str, Any]:
         logger.info("Outer loop: planner node")
         return planner(state)
 
     return planner_node
 
 
-def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[SoCDesignState], dict[str, Any]]:
+def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[DesignState], dict[str, Any]]:
     """Create the dispatch node function.
 
     On iteration 0, runs the full inner DAG.
@@ -79,7 +79,7 @@ def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[SoCDesignState], di
     and runs that instead.
     """
 
-    def dispatch_node(state: SoCDesignState) -> dict[str, Any]:
+    def dispatch_node(state: DesignState) -> dict[str, Any]:
         iteration = state.get("iteration", 0)
         logger.info("Outer loop: dispatch node (iteration %d)", iteration)
 
@@ -222,14 +222,14 @@ def _make_dispatch_node(dispatcher: Dispatcher) -> Callable[[SoCDesignState], di
 
 def _make_evaluate_node(
     governance: Optional[GovernanceGuard] = None,
-) -> Callable[[SoCDesignState], dict[str, Any]]:
+) -> Callable[[DesignState], dict[str, Any]]:
     """Create the evaluate node function.
 
     Checks verdicts, governance limits, records optimization_history entry,
     and sets next_action to either 'optimize' or 'report'.
     """
 
-    def evaluate_node(state: SoCDesignState) -> dict[str, Any]:
+    def evaluate_node(state: DesignState) -> dict[str, Any]:
         iteration = state.get("iteration", 0)
         ppa = state.get("ppa_metrics", {})
         verdicts = ppa.get("verdicts", {})
@@ -285,13 +285,13 @@ def _make_evaluate_node(
     return evaluate_node
 
 
-def _make_optimize_node() -> Callable[[SoCDesignState], dict[str, Any]]:
+def _make_optimize_node() -> Callable[[DesignState], dict[str, Any]]:
     """Create the optimize node function.
 
     Calls design_optimizer to apply a strategy, then increments iteration.
     """
 
-    def optimize_node(state: SoCDesignState) -> dict[str, Any]:
+    def optimize_node(state: DesignState) -> dict[str, Any]:
         iteration = state.get("iteration", 0)
         logger.info("Outer loop: optimize node (iteration %d)", iteration)
 
@@ -361,13 +361,13 @@ def _make_optimize_node() -> Callable[[SoCDesignState], dict[str, Any]]:
 
 def _make_report_node(
     experience_cache: Any = None,
-) -> Callable[[SoCDesignState], dict[str, Any]]:
+) -> Callable[[DesignState], dict[str, Any]]:
     """Create the report node function.
 
     Generates final report. Optionally saves an experience episode.
     """
 
-    def report_node(state: SoCDesignState) -> dict[str, Any]:
+    def report_node(state: DesignState) -> dict[str, Any]:
         logger.info("Outer loop: report node")
 
         ppa = state.get("ppa_metrics", {})
@@ -416,7 +416,7 @@ def _make_report_node(
     return report_node
 
 
-def _save_experience_episode(state: SoCDesignState, report: dict, cache: Any) -> None:
+def _save_experience_episode(state: DesignState, report: dict, cache: Any) -> None:
     """Save a design episode to the experience cache."""
     from embodied_ai_architect.graphs.experience import DesignEpisode
 
@@ -459,7 +459,7 @@ def _save_experience_episode(state: SoCDesignState, report: dict, cache: Any) ->
 # ---------------------------------------------------------------------------
 
 
-def _route_after_evaluate(state: SoCDesignState) -> str:
+def _route_after_evaluate(state: DesignState) -> str:
     """Route from evaluate to either optimize or report."""
     return state.get("next_action", "report")
 
@@ -515,7 +515,7 @@ def build_soc_design_graph(
     if available_agents is None:
         available_agents = dispatcher.registered_agents
 
-    workflow = StateGraph(SoCDesignState)
+    workflow = StateGraph(DesignState)
 
     # Add nodes
     workflow.add_node("planner", _make_planner_node(planner))
