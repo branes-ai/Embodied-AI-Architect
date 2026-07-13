@@ -10,8 +10,12 @@ Tests cover:
 
 from __future__ import annotations
 
+import logging
+
+import pytest
+
+from embodied_ai_architect.graphs.design_state import DesignState, undeclared_keys
 from embodied_ai_architect.graphs.optimization_loop import (
-    OptimizationLoopState,
     _build_moo_context_block,
     _rank_design_variables,
     build_optimization_loop,
@@ -32,7 +36,7 @@ from embodied_ai_architect.graphs.optimization_loop import (
 
 class TestDecomposeNode:
     def test_decomposes_mission(self):
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "mission_description": "Drone perception at 5 m/s",
             "errors": [],
         }
@@ -42,14 +46,14 @@ class TestDecomposeNode:
         assert len(result.get("sub_capabilities", [])) > 0
 
     def test_empty_mission_returns_error(self):
-        state: OptimizationLoopState = {"mission_description": "", "errors": []}
+        state: DesignState = {"mission_description": "", "errors": []}
         result = decompose_node(state)
         assert len(result.get("errors", [])) > 0
 
 
 class TestFormulateNode:
-    def _make_state_with_plan(self) -> OptimizationLoopState:
-        state: OptimizationLoopState = {
+    def _make_state_with_plan(self) -> DesignState:
+        state: DesignState = {
             "mission_description": "Drone perception at 5 m/s",
             "errors": [],
         }
@@ -64,7 +68,7 @@ class TestFormulateNode:
         assert "constraints" in result
 
     def test_no_plan_returns_error(self):
-        state: OptimizationLoopState = {"mission_plan": {}, "errors": []}
+        state: DesignState = {"mission_plan": {}, "errors": []}
         result = formulate_node(state)
         assert len(result.get("errors", [])) > 0
 
@@ -72,7 +76,7 @@ class TestFormulateNode:
 class TestOptimizeNode:
     def test_runs_optimization(self):
         # Build state through decompose → formulate
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "mission_description": "Drone perception at 5 m/s",
             "errors": [],
             "iteration": 0,
@@ -90,7 +94,7 @@ class TestOptimizeNode:
 
 class TestEvaluateNode:
     def test_converges_at_max_iterations(self):
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "pareto_front": [{"objectives": {"capability_per_watt": 0.3}}],
             "hypervolume_history": [1.0, 1.01],
             "iteration": 2,
@@ -101,7 +105,7 @@ class TestEvaluateNode:
         assert result["converged"] is True
 
     def test_converges_on_small_hypervolume_improvement(self):
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "pareto_front": [{"objectives": {"capability_per_watt": 0.3}}],
             "hypervolume_history": [1.0, 1.005],
             "iteration": 0,
@@ -112,7 +116,7 @@ class TestEvaluateNode:
         assert result["converged"] is True
 
     def test_does_not_converge_early(self):
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "pareto_front": [{"objectives": {"capability_per_watt": 0.3}}],
             "hypervolume_history": [1.0, 1.5],
             "iteration": 0,
@@ -123,7 +127,7 @@ class TestEvaluateNode:
         assert result["converged"] is False
 
     def test_empty_pareto_converges(self):
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "pareto_front": [],
             "hypervolume_history": [],
             "iteration": 0,
@@ -135,7 +139,7 @@ class TestEvaluateNode:
 
 class TestReasonNode:
     def test_recommends_when_converged(self):
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "mission_description": "Drone perception",
             "pareto_front": [
                 {
@@ -164,7 +168,7 @@ class TestReasonNode:
         assert len(result["final_report"]) > 0
 
     def test_iterates_when_low_capability(self):
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "mission_description": "Drone perception",
             "pareto_front": [
                 {
@@ -183,21 +187,21 @@ class TestReasonNode:
 
 class TestRouting:
     def test_route_to_iterate(self):
-        state: OptimizationLoopState = {"should_iterate": True, "converged": False}
+        state: DesignState = {"should_iterate": True, "converged": False}
         assert route_after_reason(state) == "iterate"
 
     def test_route_to_recommend(self):
-        state: OptimizationLoopState = {"should_iterate": False}
+        state: DesignState = {"should_iterate": False}
         assert route_after_reason(state) == "recommend"
 
     def test_route_converged_overrides_iterate(self):
-        state: OptimizationLoopState = {"should_iterate": True, "converged": True}
+        state: DesignState = {"should_iterate": True, "converged": True}
         assert route_after_reason(state) == "recommend"
 
 
 class TestIterateNode:
     def test_increments_iteration(self):
-        state: OptimizationLoopState = {"iteration": 0}
+        state: DesignState = {"iteration": 0}
         result = iterate_node(state)
         assert result["iteration"] == 1
 
@@ -276,6 +280,98 @@ class TestEndToEnd:
 # ---------------------------------------------------------------------------
 
 
+class TestChannelCompliance:
+    """S2a (#205) migration guard: every optimization-loop node now writes to the
+    unified DesignState, so each node's return dict must contain only declared
+    DesignState channels — a key that isn't a channel is silently dropped by
+    LangGraph (Seam S1), which the other tests would not catch."""
+
+    def test_all_nodes_write_only_declared_channels(self):
+        state: DesignState = {
+            "mission_description": "Drone perception at 5 m/s within 10W",
+            "errors": [],
+            "iteration": 0,
+            "hypervolume_history": [],
+            "convergence_history": [],
+            "total_evaluations": 0,
+            "llm_available": False,
+        }
+        for node in (decompose_node, formulate_node, optimize_node, evaluate_node):
+            result = node(state)
+            assert undeclared_keys(result) == set(), (
+                f"{node.__name__} writes undeclared DesignState channels: "
+                f"{sorted(undeclared_keys(result))}"
+            )
+            state.update(result)
+
+        for node in (reason_node, iterate_node):
+            result = node(state)
+            assert undeclared_keys(result) == set(), (
+                f"{node.__name__} writes undeclared DesignState channels: "
+                f"{sorted(undeclared_keys(result))}"
+            )
+
+    @pytest.mark.parametrize("decision", ["recommend", "iterate"])
+    def test_llm_reason_branch_writes_only_declared_channels(self, monkeypatch, caplog, decision):
+        """The LLM reasoning path (_reason_with_llm) must also write only declared
+        channels — the heuristic case above never exercises it.
+
+        Guarded against silent fallback: reason_node catches exceptions from
+        _reason_with_llm and drops to _reason_heuristic with a warning, which would
+        let this test pass without ever exercising the LLM branch. We assert that
+        warning was not emitted."""
+        payload = {
+            "recommend": '{"decision": "recommend", "selected_design": null, "analysis": "ok"}',
+            "iterate": (
+                '{"decision": "iterate", "analysis": "narrow it",'
+                ' "refinements": {"tighten_constraints": {"max_power_watts": 4.0}},'
+                ' "research_citations": []}'
+            ),
+        }[decision]
+
+        class _StubResponse:
+            text = payload
+
+        class _StubClient:
+            def __init__(self, *a, **kw):
+                pass
+
+            def chat(self, messages, system):
+                return _StubResponse()
+
+        import embodied_ai_architect.llm.client as llm_client_mod
+
+        monkeypatch.setattr(llm_client_mod, "LLMClient", _StubClient)
+
+        state: DesignState = {
+            "mission_description": "Drone perception",
+            "platform": "drone",
+            "iteration": 0,
+            "converged": False,
+            "hypervolume_history": [1.0, 1.5],
+            "pareto_front": [
+                {
+                    "objectives": {"capability_per_watt": 0.3, "power_watts": 5.0},
+                    "design_params": {"process_nm": 16, "clock_mhz": 1000},
+                    "metadata": {"model_family": "yolov8", "model_variant": "s"},
+                }
+            ],
+            "knee_point": None,
+            "llm_available": True,
+            "research_docs_used": [],
+        }
+        with caplog.at_level(logging.WARNING):
+            result = reason_node(state)
+        assert "LLM reasoning failed" not in caplog.text, (
+            "reason_node fell back to _reason_heuristic — the LLM branch was not "
+            "exercised, so this channel check is meaningless"
+        )
+        assert undeclared_keys(result) == set(), (
+            f"LLM reason branch ({decision}) writes undeclared DesignState channels: "
+            f"{sorted(undeclared_keys(result))}"
+        )
+
+
 class TestCLI:
     def test_mission_command_exists(self):
         from embodied_ai_architect.cli.commands.optimize import optimize
@@ -325,7 +421,7 @@ class TestMOOContextBlock:
     """The reasoning prompt block must surface MOO evidence to Claude."""
 
     def test_includes_layers_atlas_convergence_and_sensitivity(self):
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "layers_used": ["map_elites", "bayesian"],
             "atlas": {"filled_cells": 72, "total_cells": 100, "coverage": 0.72},
             "atlas_coverage_pct": 72.0,
@@ -351,7 +447,7 @@ class TestMOOContextBlock:
         assert "Top design variables by sensitivity" in block
 
     def test_handles_missing_optional_fields_gracefully(self):
-        state: OptimizationLoopState = {}
+        state: DesignState = {}
         block = _build_moo_context_block(state)
         assert "MOO Search Evidence" in block
         assert "(none)" in block
@@ -362,7 +458,7 @@ class TestOptimizeNodeEnrichedContext:
     """optimize_node must forward sensitivity/atlas/layers_used from the engine."""
 
     def test_forwards_rich_moo_fields(self):
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "mission_description": "Drone perception at 5 m/s",
             "errors": [],
             "iteration": 0,
@@ -406,7 +502,7 @@ class TestReasonPromptIncludesMOOContext:
 
         monkeypatch.setattr(llm_client_mod, "LLMClient", _StubClient)
 
-        state: OptimizationLoopState = {
+        state: DesignState = {
             "mission_description": "Drone perception",
             "platform": "drone",
             "iteration": 0,
