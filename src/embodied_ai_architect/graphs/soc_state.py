@@ -1,7 +1,9 @@
 """State schema for the agentic SoC designer.
 
-Defines SoCDesignState — the single TypedDict that flows through the LangGraph
-design pipeline. Every specialist agent reads from and writes to this state.
+Defines the shared base models (DesignConstraints, PPAMetrics, DesignDecision,
+DesignStatus) and state-accessor helpers. The unified state TypedDict now lives
+in design_state.py as DesignState; the legacy SoCDesignState name resolves to it
+via a lazy compat alias (S2c, #207).
 
 This is the "single most important design decision" (per the implementation plan):
 everything flows from the shape of this state.
@@ -22,11 +24,13 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
-from typing_extensions import TypedDict
+from typing import TYPE_CHECKING, Any, Optional
 import uuid
 
 from pydantic import BaseModel, Field
+
+if TYPE_CHECKING:
+    from embodied_ai_architect.graphs.design_state import DesignState
 
 from embodied_ai_architect.graphs.task_graph import TaskGraph
 
@@ -232,98 +236,23 @@ class DesignDecision(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-class SoCDesignState(TypedDict, total=False):
-    """State flowing through the LangGraph SoC design pipeline.
+# The former SoCDesignState TypedDict was merged into the unified DesignState
+# (S2c, #207). `SoCDesignState` is kept as a lazy compat alias via module
+# __getattr__ below so existing `from soc_state import SoCDesignState` imports
+# keep working; there is no separate schema class anymore.
 
-    This TypedDict defines all fields that specialist agents read/write.
-    Using total=False allows optional fields while maintaining type safety
-    with LangGraph's state merging.
 
-    Organized into sections:
-    - Goal: what the user asked for
-    - Task Graph: the execution plan (DAG)
-    - Design Artifacts: intermediate and final design outputs
-    - Evaluation: PPA metrics and Pareto analysis
-    - History & Memory: decisions, rationale, iteration tracking
-    - Control: routing signals and session metadata
+def __getattr__(name: str):
+    """Lazily resolve the legacy `SoCDesignState` name to the unified DesignState.
+
+    Done lazily (PEP 562) to avoid a runtime import cycle: design_state imports the
+    base models (DesignConstraints, PPAMetrics, ...) defined in this module.
     """
+    if name == "SoCDesignState":
+        from embodied_ai_architect.graphs.design_state import DesignState
 
-    # === Goal ===
-    goal: str  # Natural language design objective
-    constraints: dict  # DesignConstraints serialized (TypedDict requires plain types)
-    use_case: str  # "delivery_drone", "warehouse_amr", "surgical_robot", etc.
-    platform: str  # "drone", "quadruped", "biped", "amr", "edge"
-    platform_context: dict  # Matched platform context from registry (architecture, pitfalls, etc.)
-
-    # === Task Graph ===
-    task_graph: dict  # TaskGraph serialized via to_dict()
-    current_task_id: str  # Task being executed now
-
-    # === Design Artifacts ===
-    workload_profile: dict  # Operator graph, compute/memory requirements
-    codebase_metadata: dict  # Source mapping when workload came from codebase analysis
-    hardware_candidates: list[dict]  # Scored hardware options
-    selected_architecture: dict  # Chosen SoC composition
-    ip_blocks: list[dict]  # CPU, NPU, ISP, memory controller configs
-    memory_map: dict  # Address space layout
-    interconnect: dict  # Bus/NoC topology
-    rtl_modules: dict[str, str]  # Module name -> Verilog source
-
-    # === KPU Micro-architecture ===
-    kpu_config: dict  # KPUMicroArchConfig serialized
-    kpu_config_overrides: dict  # Architect overrides from plan review (issue #29)
-    floorplan_estimate: dict  # FloorplanEstimate serialized
-    bandwidth_match: dict  # BandwidthMatchResult serialized
-    kpu_optimization_history: list[dict]  # Config snapshots per KPU loop iteration
-
-    # === RTL Artifacts ===
-    rtl_testbenches: dict[str, str]  # Module name -> testbench source
-    rtl_synthesis_results: dict[str, dict]  # Module name -> synthesis result
-    rtl_lint_results: dict[str, dict]  # Module name -> lint result
-    rtl_validation_results: dict[str, dict]  # Module name -> validation result
-    rtl_optimization_history: list[dict]  # RTL optimization snapshots
-    rtl_process_nm: int  # Target process node for RTL
-    rtl_enabled: bool  # Enables KPU config + floorplan + bandwidth + RTL
-    rtl_area_feedback: bool  # Issue #31: re-size KPU when synthesis area > floorplan
-    enable_moo: bool  # Enables moo_explorer task in default plan
-
-    # === Evaluation ===
-    ppa_metrics: dict  # Current PPAMetrics serialized
-    baseline_metrics: dict  # Reference point for optimization
-    pareto_points: list[dict]  # Accumulated non-dominated points across all MOO runs
-    pareto_results: dict  # Pareto front analysis results
-    pareto_frontier_history: list[dict]  # Per-iteration frontier evolution snapshots
-    moo_results: dict  # Multi-objective optimization results (rich data)
-    last_strategy_rationale: str  # Last design_optimizer's selection rationale (issue #25)
-    swap_assessment: dict  # SWaP-C optimization results (6-objective)
-    system_bom: dict  # Hierarchical system BOM data
-    safety_analysis: dict  # Safety-critical detection results
-    prior_experience: dict  # Experience retrieval results
-    cost_tracking: dict  # CostTracker serialized state
-    evaluation_scorecard: dict  # Scorecard from evaluation framework
-
-    # === History & Memory ===
-    iteration: int  # Optimization loop counter
-    max_iterations: int  # Safety bound to prevent infinite loops
-    history: list[dict]  # All DesignDecision entries serialized
-    design_rationale: list[str]  # Human-readable rationale chain
-    working_memory: dict  # WorkingMemoryStore serialized
-    optimization_history: list[dict]  # PPA snapshot per iteration
-    governance: dict  # GovernancePolicy serialized
-    audit_log: list[dict]  # AuditEntry list
-
-    # === Human Review ===
-    review_snapshot: dict  # PlanReviewSnapshot serialized (for display)
-    review_input: dict  # PlanReviewInput serialized (human edits)
-    human_review_enabled: bool  # Toggle for review nodes
-    optimization_review_snapshot: dict  # OptimizationReviewSnapshot for display
-    optimization_steering: dict  # OptimizationSteeringInput from human
-
-    # === Control ===
-    next_action: str  # Graph routing signal (node name to execute next)
-    status: str  # DesignStatus value
-    session_id: str  # Unique session identifier
-    created_at: str  # ISO timestamp
+        return DesignState
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 # ---------------------------------------------------------------------------
@@ -343,7 +272,7 @@ def create_initial_soc_state(
     rtl_area_feedback: bool = False,
     enable_moo: bool = True,
     platform_context: Optional[dict] = None,
-) -> SoCDesignState:
+) -> DesignState:
     """Create initial state for a new SoC design session.
 
     Args:
@@ -362,7 +291,7 @@ def create_initial_soc_state(
     """
     task_graph = TaskGraph()
 
-    return SoCDesignState(
+    return dict(
         # Goal
         goal=goal,
         constraints=constraints.model_dump() if constraints else {},
@@ -434,12 +363,12 @@ def create_initial_soc_state(
     )
 
 
-def get_task_graph(state: SoCDesignState) -> TaskGraph:
+def get_task_graph(state: DesignState) -> TaskGraph:
     """Deserialize the TaskGraph from state."""
     return TaskGraph.from_dict(state.get("task_graph", {"nodes": {}}))
 
 
-def set_task_graph(state: SoCDesignState, graph: TaskGraph) -> SoCDesignState:
+def set_task_graph(state: DesignState, graph: TaskGraph) -> DesignState:
     """Serialize the TaskGraph back into state.
 
     Returns a new dict with the updated task_graph (LangGraph state merge).
@@ -447,24 +376,24 @@ def set_task_graph(state: SoCDesignState, graph: TaskGraph) -> SoCDesignState:
     return {**state, "task_graph": graph.to_dict()}  # type: ignore[return-value]
 
 
-def get_constraints(state: SoCDesignState) -> DesignConstraints:
+def get_constraints(state: DesignState) -> DesignConstraints:
     """Deserialize DesignConstraints from state."""
     return DesignConstraints(**state.get("constraints", {}))
 
 
-def get_ppa_metrics(state: SoCDesignState) -> PPAMetrics:
+def get_ppa_metrics(state: DesignState) -> PPAMetrics:
     """Deserialize PPAMetrics from state."""
     return PPAMetrics(**state.get("ppa_metrics", {}))
 
 
 def record_decision(
-    state: SoCDesignState,
+    state: DesignState,
     agent: str,
     action: str,
     rationale: str,
     alternatives: Optional[list[str]] = None,
     data: Optional[dict[str, Any]] = None,
-) -> SoCDesignState:
+) -> DesignState:
     """Record a design decision in the state history.
 
     Returns a new dict with the appended decision (LangGraph state merge).
@@ -487,7 +416,7 @@ def record_decision(
     }
 
 
-def get_task_result(state: SoCDesignState, task_id: str) -> dict[str, Any]:
+def get_task_result(state: DesignState, task_id: str) -> dict[str, Any]:
     """Get the result of a completed task from state.
 
     Convenience function for specialist agents that need outputs from
@@ -507,7 +436,7 @@ def get_task_result(state: SoCDesignState, task_id: str) -> dict[str, Any]:
     return graph.get_result(task_id)
 
 
-def get_dependency_results(state: SoCDesignState, task: Any) -> dict[str, dict[str, Any]]:
+def get_dependency_results(state: DesignState, task: Any) -> dict[str, dict[str, Any]]:
     """Get results from all dependencies of a task.
 
     Args:
@@ -527,22 +456,22 @@ def get_dependency_results(state: SoCDesignState, task: Any) -> dict[str, dict[s
     return results
 
 
-def is_design_complete(state: SoCDesignState) -> bool:
+def is_design_complete(state: DesignState) -> bool:
     """Check if the design session has reached a terminal state."""
     return state.get("status", "") in (DesignStatus.COMPLETE.value, DesignStatus.FAILED.value)
 
 
-def is_over_iteration_limit(state: SoCDesignState) -> bool:
+def is_over_iteration_limit(state: DesignState) -> bool:
     """Check if the optimization loop has exceeded its safety bound."""
     return state.get("iteration", 0) >= state.get("max_iterations", 20)
 
 
-def get_working_memory(state: SoCDesignState) -> dict:
+def get_working_memory(state: DesignState) -> dict:
     """Get the working memory dict from state."""
     return state.get("working_memory", {})
 
 
-def update_working_memory(state: SoCDesignState, memory: dict) -> SoCDesignState:
+def update_working_memory(state: DesignState, memory: dict) -> DesignState:
     """Return state update with new working memory.
 
     Args:
@@ -556,14 +485,14 @@ def update_working_memory(state: SoCDesignState, memory: dict) -> SoCDesignState
 
 
 def record_audit(
-    state: SoCDesignState,
+    state: DesignState,
     agent: str,
     action: str,
     input_summary: str = "",
     output_summary: str = "",
     cost_tokens: int = 0,
     human_approved: bool = False,
-) -> SoCDesignState:
+) -> DesignState:
     """Append an audit entry to the state audit log.
 
     Returns a new dict with the appended entry (LangGraph state merge).
@@ -583,27 +512,27 @@ def record_audit(
     return {**state, "audit_log": log}  # type: ignore[return-value]
 
 
-def get_optimization_history(state: SoCDesignState) -> list[dict]:
+def get_optimization_history(state: DesignState) -> list[dict]:
     """Get the optimization history list from state."""
     return list(state.get("optimization_history", []))
 
 
-def get_kpu_config(state: SoCDesignState) -> dict:
+def get_kpu_config(state: DesignState) -> dict:
     """Get the KPU micro-architecture config from state."""
     return state.get("kpu_config", {})
 
 
-def get_floorplan(state: SoCDesignState) -> dict:
+def get_floorplan(state: DesignState) -> dict:
     """Get the floorplan estimate from state."""
     return state.get("floorplan_estimate", {})
 
 
-def get_bandwidth(state: SoCDesignState) -> dict:
+def get_bandwidth(state: DesignState) -> dict:
     """Get the bandwidth match result from state."""
     return state.get("bandwidth_match", {})
 
 
-def get_rtl_summary(state: SoCDesignState) -> dict:
+def get_rtl_summary(state: DesignState) -> dict:
     """Get a summary of RTL generation results."""
     synth = state.get("rtl_synthesis_results", {})
     total_cells = sum(r.get("area_cells", 0) for r in synth.values() if r.get("success"))
@@ -616,7 +545,7 @@ def get_rtl_summary(state: SoCDesignState) -> dict:
     }
 
 
-def get_iteration_summary(state: SoCDesignState) -> str:
+def get_iteration_summary(state: DesignState) -> str:
     """Format a human-readable summary of the current design iteration."""
     lines = []
     lines.append(f"Session: {state.get('session_id', 'unknown')}")
