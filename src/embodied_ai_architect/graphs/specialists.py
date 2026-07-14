@@ -1,11 +1,11 @@
 """Specialist agent executors for the agentic SoC designer.
 
 Each specialist conforms to the AgentExecutor protocol:
-    (task: TaskNode, state: SoCDesignState) -> dict[str, Any]
+    (task: TaskNode, state: DesignState) -> dict[str, Any]
 
 Specialists read from state (constraints, previous task results) and return
 a result dict. If the result contains a '_state_updates' key, the Dispatcher
-merges those into the top-level SoCDesignState.
+merges those into the top-level DesignState.
 
 Usage:
     from embodied_ai_architect.graphs.specialists import create_default_dispatcher
@@ -23,10 +23,10 @@ from embodied_ai_architect.graphs.dispatcher import Dispatcher
 from embodied_ai_architect.graphs.soc_state import (
     DesignConstraints,
     PPAMetrics,
-    SoCDesignState,
     get_constraints,
     get_dependency_results,
 )
+from embodied_ai_architect.graphs.design_state import DesignState
 from embodied_ai_architect.graphs.task_graph import TaskNode
 from embodied_ai_architect.graphs.manufacturing import estimate_manufacturing_cost
 from embodied_ai_architect.graphs.technology import get_technology
@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-def workload_analyzer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
+def workload_analyzer(task: TaskNode, state: DesignState) -> dict[str, Any]:
     """Analyze AI workload: operator graph, compute/memory requirements.
 
     Wraps the existing ModelAnalyzerAgent when a model path is available.
@@ -78,7 +78,7 @@ def workload_analyzer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
     }
 
 
-def _try_model_analysis(state: SoCDesignState) -> dict[str, Any] | None:
+def _try_model_analysis(state: DesignState) -> dict[str, Any] | None:
     """Try to run ModelAnalyzerAgent if a model path is in state."""
     try:
         from embodied_ai_architect.agents.model_analyzer import ModelAnalyzerAgent
@@ -371,7 +371,7 @@ def map_workloads_to_accelerators(
 # ---------------------------------------------------------------------------
 
 
-def hw_explorer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
+def hw_explorer(task: TaskNode, state: DesignState) -> dict[str, Any]:
     """Enumerate and score hardware candidates against constraints.
 
     Wraps the existing HardwareProfileAgent when available, and adds
@@ -717,7 +717,7 @@ def _filter_by_constraints(
 # ---------------------------------------------------------------------------
 
 
-def architecture_composer(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
+def architecture_composer(task: TaskNode, state: DesignState) -> dict[str, Any]:
     """Compose SoC architecture from workload analysis and hardware candidates.
 
     Maps workload operators to hardware accelerators, designs memory hierarchy,
@@ -1028,7 +1028,7 @@ def _define_interconnect(ip_blocks: list[dict[str, Any]]) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def ppa_assessor(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
+def ppa_assessor(task: TaskNode, state: DesignState) -> dict[str, Any]:
     """Evaluate a proposed architecture against PPA constraints.
 
     Estimates power, performance (latency), and area from the architecture
@@ -1335,7 +1335,7 @@ def _estimate_area(ip_blocks: list[dict[str, Any]], constraints: DesignConstrain
 # ---------------------------------------------------------------------------
 
 
-def critic(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
+def critic(task: TaskNode, state: DesignState) -> dict[str, Any]:
     """Review overall design quality and identify weaknesses.
 
     Acts as the "senior engineer" who challenges assumptions and
@@ -1424,7 +1424,7 @@ def critic(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def report_generator(task: TaskNode, state: SoCDesignState) -> dict[str, Any]:
+def report_generator(task: TaskNode, state: DesignState) -> dict[str, Any]:
     """Generate a design report summarizing all artifacts and decisions.
 
     Produces a structured report dict (no file I/O for now).

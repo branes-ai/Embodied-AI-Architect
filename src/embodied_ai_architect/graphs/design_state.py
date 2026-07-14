@@ -328,6 +328,26 @@ class DesignState(TypedDict, total=False):
     review_snapshot: dict
     optimization_review_snapshot: dict
     optimization_steering: dict
+    review_input: dict  # PlanReviewInput serialized (human edits)
+    human_review_enabled: bool  # Toggle for review nodes
+
+    # --- Dispatcher-loop fields (migrated from SoCDesignState, S2b #206) ---
+    use_case: str  # "delivery_drone", "warehouse_amr", "surgical_robot", etc.
+    current_task_id: str  # Task being executed now
+    next_action: str  # Graph routing signal (node name to execute next)
+    enable_moo: bool  # Enables moo_explorer task in default plan
+    rtl_enabled: bool  # Enables KPU config + floorplan + bandwidth + RTL
+    rtl_area_feedback: bool  # Issue #31: re-size KPU when synthesis area > floorplan
+    rtl_process_nm: int  # Target process node for RTL
+    rtl_testbenches: dict  # Module name -> testbench source
+    rtl_lint_results: dict  # Module name -> lint result
+    rtl_validation_results: dict  # Module name -> validation result
+    pareto_results: dict  # Pareto front analysis results
+    last_strategy_rationale: str  # Last design_optimizer's selection rationale (issue #25)
+    swap_assessment: dict  # SWaP-C optimization results (6-objective)
+    system_bom: dict  # Hierarchical system BOM data
+    safety_analysis: dict  # Safety-critical detection results
+    prior_experience: dict  # Experience retrieval results
 
     # --- Error tracking (OptimizationLoopState) ---
     errors: list[str]
