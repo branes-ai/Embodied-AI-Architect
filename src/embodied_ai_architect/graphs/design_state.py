@@ -28,7 +28,7 @@ from typing import Any, Optional
 from typing_extensions import TypedDict
 import uuid
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 # Reuse the existing, already-shipped models so the subsumption is real, not a copy.
 # These are re-exported (see __all__) so callers can import them from this module.
@@ -55,6 +55,13 @@ __all__ = [
     "DesignIssue",
     "DesignDelta",
     "DesignState",
+    # DesignDelta payloads (S3)
+    "DesignSpaceEditPayload",
+    "VariableBoundChangePayload",
+    "AddVariablePayload",
+    "RemoveVariablePayload",
+    "ConstraintRelaxationPayload",
+    "SpecialistRetaskPayload",
     # Lifecycle helpers
     "create_initial_design_state",
     "add_issue",
@@ -180,6 +187,72 @@ class DesignIssue(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+# --- Per-DeltaKind typed payloads (S3 #208) ------------------------------------
+# `change` is stored as a plain dict (LangGraph-checkpoint-friendly), but it is
+# validated against the payload model for its `kind` at DesignDelta construction,
+# so a malformed edit raises immediately instead of failing later in _apply_delta.
+
+
+class DesignSpaceEditPayload(BaseModel):
+    """DESIGN_SPACE_EDIT: set a variable to a new value/category."""
+
+    value: Any
+
+
+class VariableBoundChangePayload(BaseModel):
+    """VARIABLE_BOUND_CHANGE: new continuous `bounds` [lo, hi] OR categorical set."""
+
+    bounds: Optional[list[float]] = None
+    categories: Optional[list[Any]] = None
+
+    @model_validator(mode="after")
+    def _exactly_one(self) -> "VariableBoundChangePayload":
+        if (self.bounds is None) == (self.categories is None):
+            raise ValueError("provide exactly one of 'bounds' or 'categories'")
+        if self.bounds is not None and len(self.bounds) != 2:
+            raise ValueError("'bounds' must be [lo, hi]")
+        return self
+
+
+class AddVariablePayload(BaseModel):
+    """ADD_VARIABLE: a design-variable spec to add to the search space."""
+
+    variable: dict[str, Any]
+
+
+class RemoveVariablePayload(BaseModel):
+    """REMOVE_VARIABLE: no payload — `target` names the variable to freeze."""
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class ConstraintRelaxationPayload(BaseModel):
+    """CONSTRAINT_RELAXATION: relax the `target` constraint from -> to."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    to: Any
+    from_: Any = Field(default=None, alias="from")
+
+
+class SpecialistRetaskPayload(BaseModel):
+    """SPECIALIST_RETASK: re-run/redirect a specialist; extra keys pass through."""
+
+    model_config = ConfigDict(extra="allow")
+
+    reason: str = ""
+
+
+_PAYLOAD_MODELS: dict[DeltaKind, type[BaseModel]] = {
+    DeltaKind.DESIGN_SPACE_EDIT: DesignSpaceEditPayload,
+    DeltaKind.VARIABLE_BOUND_CHANGE: VariableBoundChangePayload,
+    DeltaKind.ADD_VARIABLE: AddVariablePayload,
+    DeltaKind.REMOVE_VARIABLE: RemoveVariablePayload,
+    DeltaKind.CONSTRAINT_RELAXATION: ConstraintRelaxationPayload,
+    DeltaKind.SPECIALIST_RETASK: SpecialistRetaskPayload,
+}
+
+
 class DesignDelta(BaseModel):
     """A single, applyable change to the design or the search.
 
@@ -196,12 +269,8 @@ class DesignDelta(BaseModel):
         description="What is changed: a design-space variable name, a constraint field, "
         "or a specialist/task id (dotted paths allowed, e.g. 'hardware.array_rows').",
     )
-    # Free-form because the payload shape depends on `kind`:
-    #   DESIGN_SPACE_EDIT      -> {"value": <new value>}
-    #   VARIABLE_BOUND_CHANGE  -> {"bounds": [lo, hi]} or {"categories": [...]}
-    #   ADD_VARIABLE           -> {"variable": <DesignVariable spec>}
-    #   CONSTRAINT_RELAXATION  -> {"from": <old>, "to": <new>}
-    #   SPECIALIST_RETASK      -> {"specialist": "bandwidth_validator", "reason": "..."}
+    # Stored as a dict for checkpointing, but validated against the per-kind payload
+    # model (see _PAYLOAD_MODELS) at construction. Use `typed_change()` to consume it.
     change: dict[str, Any] = Field(default_factory=dict)
 
     rationale: str = Field(..., description="Why this edit should help")
@@ -212,6 +281,20 @@ class DesignDelta(BaseModel):
 
     applied: bool = False
     applied_at_iteration: Optional[int] = None
+
+    @model_validator(mode="after")
+    def _validate_change_payload(self) -> "DesignDelta":
+        """Validate `change` against the payload model for this delta's `kind`.
+
+        Raises pydantic ValidationError at construction if the payload is malformed
+        (missing required field, wrong bound arity, forbidden extras, ...).
+        """
+        _PAYLOAD_MODELS[self.kind].model_validate(self.change)
+        return self
+
+    def typed_change(self) -> BaseModel:
+        """Return `change` parsed into its per-kind payload model (re-validated)."""
+        return _PAYLOAD_MODELS[self.kind].model_validate(self.change)
 
 
 # ---------------------------------------------------------------------------

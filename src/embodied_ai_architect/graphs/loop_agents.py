@@ -211,24 +211,28 @@ class Optimizer(ReasoningAgent):
         the dispatcher picks up (issue #35-style re-validation after a config change).
         """
         space = state.setdefault("design_space_config", {})
+        payload = delta.typed_change()  # validated per-kind payload model (S3)
 
         if delta.kind == DeltaKind.DESIGN_SPACE_EDIT:
-            _set_path(space, delta.target, delta.change.get("value"))
+            _set_path(space, delta.target, payload.value)
         elif delta.kind == DeltaKind.VARIABLE_BOUND_CHANGE:
-            # Continuous vars carry {"bounds": [lo, hi]}; categorical vars {"categories": [...]}.
-            if "categories" in delta.change:
-                _set_path(space, f"{delta.target}.categories", delta.change.get("categories"))
+            # Continuous vars carry `bounds` [lo, hi]; categorical vars `categories`.
+            if payload.categories is not None:
+                _set_path(space, f"{delta.target}.categories", payload.categories)
             else:
-                _set_path(space, f"{delta.target}.bounds", delta.change.get("bounds"))
+                _set_path(space, f"{delta.target}.bounds", payload.bounds)
         elif delta.kind == DeltaKind.ADD_VARIABLE:
-            space.setdefault("variables", {})[delta.target] = delta.change.get("variable")
+            space.setdefault("variables", {})[delta.target] = payload.variable
         elif delta.kind == DeltaKind.REMOVE_VARIABLE:
             space.get("variables", {}).pop(delta.target, None)
         elif delta.kind == DeltaKind.CONSTRAINT_RELAXATION:
-            _set_path(state.setdefault("constraints", {}), delta.target, delta.change.get("to"))
+            _set_path(state.setdefault("constraints", {}), delta.target, payload.to)
         elif delta.kind == DeltaKind.SPECIALIST_RETASK:
+            # `specialist` comes from delta.target and must win over any payload
+            # extra literally named "specialist" (SpecialistRetaskPayload allows
+            # extras), so it is spread last.
             state.setdefault("pending_specialist_tasks", []).append(
-                {"specialist": delta.target, **delta.change}
+                {**payload.model_dump(), "specialist": delta.target}
             )
 
         delta.applied = True
