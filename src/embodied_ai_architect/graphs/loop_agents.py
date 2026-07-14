@@ -228,8 +228,11 @@ class Optimizer(ReasoningAgent):
         elif delta.kind == DeltaKind.CONSTRAINT_RELAXATION:
             _set_path(state.setdefault("constraints", {}), delta.target, payload.to)
         elif delta.kind == DeltaKind.SPECIALIST_RETASK:
+            # `specialist` comes from delta.target and must win over any payload
+            # extra literally named "specialist" (SpecialistRetaskPayload allows
+            # extras), so it is spread last.
             state.setdefault("pending_specialist_tasks", []).append(
-                {"specialist": delta.target, **payload.model_dump()}
+                {**payload.model_dump(), "specialist": delta.target}
             )
 
         delta.applied = True

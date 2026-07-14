@@ -10,6 +10,7 @@ from embodied_ai_architect.graphs.design_state import (
     DesignDelta,
     DeltaKind,
     DesignSpaceEditPayload,
+    RemoveVariablePayload,
     SpecialistRetaskPayload,
     VariableBoundChangePayload,
 )
@@ -55,8 +56,8 @@ def test_valid_payloads_construct_and_type():
             DeltaKind.REMOVE_VARIABLE,
             "batch_size",
             {},
-            type(None).__class__,
-        ),  # placeholder, checked below
+            RemoveVariablePayload,
+        ),
         (
             DeltaKind.CONSTRAINT_RELAXATION,
             "max_power_watts",
@@ -70,9 +71,9 @@ def test_valid_payloads_construct_and_type():
             SpecialistRetaskPayload,
         ),
     ]
-    for kind, target, change, _ in cases:
+    for kind, target, change, expected_model in cases:
         d = _delta(kind, target, change)  # must not raise
-        assert d.typed_change() is not None
+        assert isinstance(d.typed_change(), expected_model)
 
 
 def test_typed_change_exposes_fields():
@@ -133,3 +134,18 @@ def test_apply_delta_consumes_typed_fields():
     opt._apply_delta(state, _delta(DeltaKind.SPECIALIST_RETASK, "bw", {"reason": "re-check"}))
     task = state["pending_specialist_tasks"][0]
     assert task["specialist"] == "bw" and task["reason"] == "re-check"
+
+
+def test_specialist_target_wins_over_payload_extra():
+    """A payload extra literally named 'specialist' must not override delta.target."""
+    opt = Optimizer()
+    state = {"iteration": 0}
+    opt._apply_delta(
+        state,
+        _delta(
+            DeltaKind.SPECIALIST_RETASK,
+            "bandwidth_validator",
+            {"specialist": "evil", "reason": "x"},
+        ),
+    )
+    assert state["pending_specialist_tasks"][0]["specialist"] == "bandwidth_validator"
