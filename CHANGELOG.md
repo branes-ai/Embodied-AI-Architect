@@ -8,6 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Loop Convergence epic — Phase 1: state unification** (2026-07-14, epic
+  `#203`, PRs #218–#223, v1.2.0–v1.6.0):
+  - New milestone doc `docs/plans/roadmap-loop-convergence.md` — unify the two
+    disjoint design loops (population/Pareto MOO + single-design dispatcher)
+    into one multi-agent loop over a shared `DesignState`; 4 phases, seam
+    checklist S1–S12, wired into `roadmap-v2.md` (PR #218).
+  - **Unified `DesignState`** (`graphs/design_state.py`) — a single TypedDict
+    (~92 channels) that subsumes the former `SoCDesignState` and
+    `OptimizationLoopState`, plus `DesignIssue` / `DesignDelta` — the structured
+    currency between a reasoning Critic and Optimizer.
+  - **DRAFT loop skeleton** (import-only, not yet wired): `loop_agents.py`
+    (`Critic`, `Optimizer`, node wrappers, single router) and
+    `loop_convergence_graph.py` (StateGraph assembly + MOO-engine-as-a-tool
+    adapter). `Critic._review_with_llm` is a documented `NotImplementedError`
+    pending S4.
+  - **Channel audit (S1, #204/#219)** — `declared_channels()`,
+    `undeclared_keys()`, `assert_declared_channels()` guard the LangGraph
+    invariant that any node write not declared as a channel is silently dropped;
+    `tests/test_design_state_channels.py` enforces it per node.
+  - **Typed `DesignDelta` payloads (S3, #208/#223)** — one payload model per
+    `DeltaKind`, validated at construction (malformed edits raise
+    `ValidationError`); `DesignDelta.typed_change()` returns the parsed model.
 - **Dynamic hardware catalog from `graphs` registry** (2026-05-09, PR #201,
   `graphs#136` Phase 5):
   - `llm/graphs_tools.py`: replaced the hand-maintained `HARDWARE_CATALOG`
@@ -34,7 +56,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     determinism, fallback-mode round-trip, and a regression guard for the
     fallback bucket-key contract that CodeRabbit caught in review.
 
+### Changed
+- **Both design loops now flow through the unified `DesignState`** (Loop
+  Convergence Phase 1, 2026-07-14):
+  - S2a (#205/#220): `graphs/optimization_loop.py` — the MOO loop nodes
+    (decompose/formulate/optimize/evaluate/reason) read/write `DesignState`.
+  - S2b (#206/#221): `graphs/soc_graph.py`, `dispatcher.py`, `specialists.py` —
+    the dispatcher loop binds `StateGraph(DesignState)`; `DesignState` is a
+    superset of the former `SoCDesignState`, so no specialist write is dropped.
+  - CI linters pinned in `ci.yml` (`black==25.12.0`, `ruff==0.14.10`) to match
+    the project `.venv` and stop version drift from failing the lint gate.
+
+### Removed
+- **Legacy per-loop state TypedDicts** (Loop Convergence Phase 1):
+  - `OptimizationLoopState` deleted (S2a) — merged into `DesignState`.
+  - `SoCDesignState` class deleted (S2c #207/#222); the name is kept as a lazy
+    module `__getattr__` compat alias to `DesignState`, so existing
+    `from graphs.soc_state import SoCDesignState` imports keep working without a
+    codebase-wide rename and without a runtime import cycle.
+
 ### Fixed
+- **`dispatch_node` state-forwarding bugs** surfaced by the S2b migration
+  (2026-07-14, PR #221): the outer LangGraph merge dropped SWaP-C results
+  (forwarded a phantom `swap_results` key instead of the declared
+  `swap_assessment`) and four specialist channels (`rtl_testbenches`,
+  `safety_analysis`, `prior_experience`, `last_strategy_rationale`). All now
+  forwarded in both return paths.
 - **Module docstring tool-name drift** in `llm/graphs_tools.py`: the file's
   module-level documentation referred to deprecated tool names
   (`analyze_*`, `check_constraint`) that had been renamed to `check_*`
