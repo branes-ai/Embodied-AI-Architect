@@ -172,6 +172,27 @@ def test_real_evaluate_integration_terminates() -> None:
     assert isinstance(t.final_verdicts, dict)
 
 
+def test_operator_can_steer_the_loop() -> None:
+    """The steer hook lets an operator intercept the loop: here it force-converges
+    by clearing the backlog, so the loop recommends immediately at iteration 0."""
+
+    def force_converge(state: DesignState) -> None:
+        for issue in state.get("open_issues", []):
+            issue["status"] = "wontfix"  # operator accepts the trade-off
+        state["pending_deltas"] = []
+
+    t = run_loop_traced(
+        _initial_state(),
+        moo_tool=_fake_moo(),
+        evaluate_fn=_scripted_evaluate(pass_at_iter=999),  # would never converge on its own
+        steer=force_converge,
+        max_iterations=6,
+    )
+    assert t.iterations == 0  # operator short-circuited it
+    assert any(s.node == "steer" for s in t.steps)
+    assert t.steps[-1].node == "recommend"
+
+
 def test_trace_captures_the_reasoning() -> None:
     """The trace render must surface WHY the loop made its decisions."""
     rendered = _run(CONVERGES).render()

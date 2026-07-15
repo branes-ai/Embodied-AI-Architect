@@ -88,11 +88,19 @@ class LoopTrace:
         return "\n".join(lines)
 
 
+# A steering hook is called after the critic files its issues/deltas, before the
+# router runs. The operator receives the live state and may mutate it in place —
+# relax/tighten a constraint, drop or add an issue, or edit `pending_deltas` before
+# the optimizer applies them — to intercept and steer the loop. Return value ignored.
+SteerFn = Callable[[DesignState], None]
+
+
 def run_loop_traced(
     state: DesignState,
     *,
     moo_tool: MooTool,
     evaluate_fn: Optional[EvaluateFn] = None,
+    steer: Optional[SteerFn] = None,
     max_iterations: int = 6,
 ) -> LoopTrace:
     """Drive the unified loop over the real node functions, recording each step.
@@ -102,6 +110,9 @@ def run_loop_traced(
         moo_tool: the MOO-engine boundary the optimizer calls (a fake in tests).
         evaluate_fn: the evaluate step; defaults to the real `evaluate_node`
             (ppa_assessor). Inject a scripted one to drive a known verdict path.
+        steer: optional human-in-the-loop hook, called after the critic and before
+            routing with the live state, so an operator can intercept/steer the loop
+            (edit constraints, issues, or `pending_deltas`).
         max_iterations: backstop; also the router's convergence cap.
     """
     evaluate = evaluate_fn or evaluate_node
@@ -134,6 +145,16 @@ def run_loop_traced(
             upd.get("analysis", "") or "(no analysis)",
             issues=issue_lines,
         )
+
+        if steer is not None:
+            before = len(state.get("pending_deltas", []))
+            steer(state)
+            record(
+                "steer",
+                "operator intervened",
+                f"human-in-the-loop hook ran (pending_deltas {before} → "
+                f"{len(state.get('pending_deltas', []))})",
+            )
 
         route = router(state)
         record(
