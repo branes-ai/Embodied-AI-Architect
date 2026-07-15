@@ -8,6 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Loop Convergence epic — Phase 2: agent critic + optimizer** (2026-07-15,
+  epic `#203`, PRs #225–#228, v1.7.0–v1.10.0):
+  - **LLM critic path (S4, #209)** — `Critic._review_with_llm` assembles a
+    prompt from PPA verdicts + Pareto front + `open_issues` + research context
+    (`CRITIC_SYSTEM_PROMPT` pins a strict JSON schema and the per-`DeltaKind`
+    payloads) and parses it into a `CriticVerdict` of typed `DesignIssue`s +
+    `DesignDelta`s, linked by index. Robust to model slop (skips deltas failing
+    S3 validation or with unknown kinds; unknown enum strings fall back);
+    `converged` is coerced from JSON (not Python truthiness) and refused while
+    any verdict is `FAIL`; heuristic fallback preserved for the no-key path.
+  - **Research-grounded deltas (S5, #210)** — `DesignDelta.research_refs`;
+    retrieval tags derived from the failing metrics / open issues
+    (`_research_tags_for_state`, exhaustive over `MetricAxis`), so a power-bound
+    drone and a latency-bound AMR retrieve different research; per-delta
+    citations parsed from the verdict.
+  - **Monotonic Pareto merge (S6, #211)** — the loop MOO tool's `_merge_pareto`
+    reuses `moo.specialist._merge_pareto_frontiers`; dominated points dropped,
+    no non-dominated point lost across iterations (points keep their
+    engine-native shape via `metadata`).
+  - **Pipeline-consistent evaluation (S7, #212)** — the loop's `evaluate_node`
+    delegates to the real `ppa_assessor`, so its `ppa_metrics.verdicts` equal
+    the dispatcher pipeline's for the same state (no divergent second check).
 - **Loop Convergence epic — Phase 1: state unification** (2026-07-14, epic
   `#203`, PRs #218–#223, v1.2.0–v1.6.0):
   - New milestone doc `docs/plans/roadmap-loop-convergence.md` — unify the two
