@@ -504,8 +504,16 @@ _METRIC_RESEARCH_TAGS: dict[MetricAxis, list[str]] = {
     MetricAxis.ACCURACY: ["quantization", "nas"],
     MetricAxis.BANDWIDTH: ["memory", "noc"],
     MetricAxis.MEMORY: ["memory"],
-    MetricAxis.THERMAL: ["efficiency"],
+    MetricAxis.THERMAL: ["efficiency", "packaging"],
+    MetricAxis.COST: ["cost", "manufacturing", "packaging"],
+    MetricAxis.UTILIZATION: ["dataflow", "systolic", "tiling"],
+    MetricAxis.WEIGHT: ["swap", "packaging"],
+    MetricAxis.VOLUME: ["swap", "packaging"],
+    MetricAxis.RELIABILITY: ["reliability", "safety"],
 }
+# Every MetricAxis must map to a tag set, so a bottleneck on any metric yields
+# metric-specific research (not the generic fallback). Guarded by a test.
+assert set(_METRIC_RESEARCH_TAGS) == set(MetricAxis), "research tag map missing a MetricAxis"
 
 
 def _research_tags_for_state(state: DesignState) -> list[str]:

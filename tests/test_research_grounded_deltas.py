@@ -4,8 +4,21 @@ retrieval tags vary with the mission's bottlenecks, and deltas carry research re
 import json
 from typing import Any
 
-from embodied_ai_architect.graphs.design_state import DesignState
-from embodied_ai_architect.graphs.loop_agents import Critic, _research_tags_for_state
+from embodied_ai_architect.graphs.design_state import DesignState, MetricAxis
+from embodied_ai_architect.graphs.loop_agents import (
+    _METRIC_RESEARCH_TAGS,
+    Critic,
+    _research_tags_for_state,
+)
+
+
+def test_every_metric_axis_has_research_tags() -> None:
+    """Every MetricAxis must map to tags, so any failing metric grounds retrieval
+    in metric-specific research rather than the generic fallback."""
+    missing = set(MetricAxis) - set(_METRIC_RESEARCH_TAGS)
+    assert (
+        not missing
+    ), f"MetricAxis values without research tags: {sorted(m.value for m in missing)}"
 
 
 class _StubResp:
