@@ -132,32 +132,18 @@ def _merge_pareto(existing: list[dict], new: list[dict]) -> list[dict]:
 
 
 def evaluate_node(state: DesignState) -> dict:
-    """Score the current knee/best design against constraints → ppa_metrics.verdicts.
+    """Score the current design against constraints via the real `ppa_assessor` (S7).
 
-    The critic reads `ppa_metrics.verdicts`; this node is what produces them from the
-    MOO output. Deterministic sketch — the real version reuses the ppa_assessor.
+    Delegates to `graphs.specialists.ppa_assessor` — the same assessor the dispatcher
+    pipeline uses — so the loop's `ppa_metrics.verdicts` are identical to the rest of
+    the pipeline for the same state, rather than a separate divergent constraint check.
     """
-    point = state.get("knee_point") or _first(state.get("pareto_points", []))
-    constraints = state.get("constraints", {})
-    metrics = (point or {}).get("objectives", point or {})
+    from embodied_ai_architect.graphs.specialists import ppa_assessor
+    from embodied_ai_architect.graphs.task_graph import TaskNode
 
-    verdicts: dict[str, str] = {}
-    checks = {
-        "power_watts": constraints.get("max_power_watts"),
-        "latency_ms": constraints.get("max_latency_ms"),
-        "area_mm2": constraints.get("max_area_mm2"),
-        "cost_usd": constraints.get("max_cost_usd"),
-    }
-    for field, limit in checks.items():
-        value = metrics.get(field)
-        if limit is None or value is None:
-            continue
-        verdicts[field] = "PASS" if float(value) <= float(limit) else "FAIL"
-
-    ppa = dict(state.get("ppa_metrics", {}))
-    ppa.update({k: metrics.get(k) for k in checks if metrics.get(k) is not None})
-    ppa["verdicts"] = verdicts
-    return {"ppa_metrics": ppa}
+    task = TaskNode(id="loop_evaluate", name="Evaluate PPA", agent="ppa_assessor")
+    result = ppa_assessor(task, state)
+    return {"ppa_metrics": result.get("ppa_metrics", state.get("ppa_metrics", {}))}
 
 
 # ---------------------------------------------------------------------------
