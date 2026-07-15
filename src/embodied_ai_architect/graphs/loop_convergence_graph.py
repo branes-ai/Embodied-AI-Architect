@@ -106,8 +106,24 @@ def make_moo_engine_tool(*, max_workers: int = 4) -> MooTool:
 
 
 def _merge_pareto(existing: list[dict], new: list[dict]) -> list[dict]:
-    """Monotonic accumulation stub — the real one reuses moo.specialist._merge_pareto_frontiers."""
-    return (existing or []) + list(new or [])
+    """Monotonically merge new Pareto points into the accumulated frontier (S6).
+
+    Reuses `moo.specialist._merge_pareto_frontiers`, so dominated points are dropped
+    and no non-dominated point is lost across iterations. Points flow through the
+    ParetoPoint format (top-level power/latency/cost/area) for dominance computation
+    and are recovered from `metadata` afterward, so the loop keeps its engine-native
+    point shape (nested `objectives`).
+    """
+    from embodied_ai_architect.graphs.moo.specialist import (
+        _merge_pareto_frontiers,
+        _pareto_front_to_points,
+    )
+
+    existing_pp = _pareto_front_to_points(existing or [])
+    new_pp = _pareto_front_to_points(new or [])
+    merged_pp, _added, _dominated = _merge_pareto_frontiers(existing_pp, new_pp)
+    # `metadata` holds the original engine-format point (_pareto_front_to_points).
+    return [pp.get("metadata", pp) for pp in merged_pp]
 
 
 # ---------------------------------------------------------------------------
