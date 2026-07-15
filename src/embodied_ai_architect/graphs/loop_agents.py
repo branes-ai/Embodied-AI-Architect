@@ -130,7 +130,8 @@ Respond with JSON only, in exactly this shape:
       "target": "design-space variable, constraint field, or specialist id",
       "change": { ... per-kind payload ... },
       "rationale": "why this helps",
-      "addresses_issue": 0
+      "addresses_issue": 0,
+      "research_refs": ["doc/path.md that motivates this edit", ...]
     }
   ]
 }
@@ -222,16 +223,22 @@ has converged. Respond with JSON only."""
         return self._verdict_from_data(data, state)
 
     def _retrieve_research(self, state: DesignState) -> str:
-        """Best-effort research-library context block (empty string if unavailable)."""
+        """Best-effort research context block, targeted at the current bottlenecks.
+
+        Tags are derived from the failing metrics / open issues (S5), so a
+        power-bound drone and a latency-bound AMR retrieve different research —
+        the context (and thus the deltas the LLM grounds in it) varies with the
+        mission and its bottlenecks, not just a fixed 'efficiency' query.
+        """
         try:
             from embodied_ai_architect.research.library import ResearchLibrary
 
             library = ResearchLibrary()
             docs = library.retrieve(
-                tags=[state.get("platform", "edge"), "efficiency"],
+                tags=_research_tags_for_state(state),
                 relevance="design_tradeoffs",
                 mission_type=state.get("mission_type"),
-                max_results=3,
+                max_results=4,
             )
             return library.build_context_block(docs, max_tokens=3000)
         except Exception:
@@ -271,6 +278,7 @@ has converged. Respond with JSON only."""
                     target=str(raw.get("target", "")),
                     change=raw.get("change", {}) or {},
                     rationale=raw.get("rationale", "(no rationale)"),
+                    research_refs=[str(r) for r in (raw.get("research_refs") or [])],
                     proposed_by=self.name,
                 )
             except Exception:
@@ -484,6 +492,50 @@ def route_after_critic(state: DesignState) -> str:
 # ---------------------------------------------------------------------------
 # Small helpers
 # ---------------------------------------------------------------------------
+
+
+# Which research-library tags are relevant to relieving each metric bottleneck (S5).
+_METRIC_RESEARCH_TAGS: dict[MetricAxis, list[str]] = {
+    MetricAxis.POWER: ["efficiency", "quantization", "sparsity"],
+    MetricAxis.CAPABILITY_PER_WATT: ["efficiency", "quantization"],
+    MetricAxis.LATENCY: ["dataflow", "systolic"],
+    MetricAxis.THROUGHPUT: ["dataflow", "systolic"],
+    MetricAxis.AREA: ["memory", "sparsity"],
+    MetricAxis.ACCURACY: ["quantization", "nas"],
+    MetricAxis.BANDWIDTH: ["memory", "noc"],
+    MetricAxis.MEMORY: ["memory"],
+    MetricAxis.THERMAL: ["efficiency", "packaging"],
+    MetricAxis.COST: ["cost", "manufacturing", "packaging"],
+    MetricAxis.UTILIZATION: ["dataflow", "systolic", "tiling"],
+    MetricAxis.WEIGHT: ["swap", "packaging"],
+    MetricAxis.VOLUME: ["swap", "packaging"],
+    MetricAxis.RELIABILITY: ["reliability", "safety"],
+}
+# Every MetricAxis must map to a tag set, so a bottleneck on any metric yields
+# metric-specific research (not the generic fallback). Guarded by a test.
+assert set(_METRIC_RESEARCH_TAGS) == set(MetricAxis), "research tag map missing a MetricAxis"
+
+
+def _research_tags_for_state(state: DesignState) -> list[str]:
+    """Derive research-retrieval tags from the state's bottlenecks (failing PPA
+    verdicts + open issues), so the retrieved research varies with the mission,
+    not just a fixed query. Always includes the platform; falls back to
+    'efficiency' when there is no specific bottleneck."""
+    tags: list[str] = [str(state.get("platform", "edge"))]
+    axes: list[MetricAxis] = []
+    for name, verdict in state.get("ppa_metrics", {}).get("verdicts", {}).items():
+        if verdict == "FAIL":
+            axes.append(_to_metric_axis(name))
+    for issue in state.get("open_issues", []):
+        try:
+            axes.append(MetricAxis(str(issue.get("metric", ""))))
+        except ValueError:
+            continue
+    for axis in axes:
+        tags.extend(_METRIC_RESEARCH_TAGS.get(axis, []))
+    if len(tags) == 1:  # platform only — no specific bottleneck
+        tags.append("efficiency")
+    return list(dict.fromkeys(tags))  # dedup, preserve order
 
 
 def _coerce_bool(value: Any) -> bool:

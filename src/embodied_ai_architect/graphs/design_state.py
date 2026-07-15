@@ -277,6 +277,10 @@ class DesignDelta(BaseModel):
     addresses_issue_ids: list[str] = Field(
         default_factory=list, description="Issues this delta is meant to close"
     )
+    research_refs: list[str] = Field(
+        default_factory=list,
+        description="Research-library document paths grounding this edit (S5)",
+    )
     proposed_by: str = Field(default="critic")
 
     applied: bool = False
