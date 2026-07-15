@@ -101,6 +101,53 @@ class ReasoningAgent(ABC):
 # ---------------------------------------------------------------------------
 
 
+CRITIC_SYSTEM_PROMPT = """\
+You are an embodied-AI SoC design critic. You review a design state (PPA verdicts,
+Pareto front, open issues, research context) and return a STRUCTURED verdict that a
+downstream Optimizer agent applies mechanically. Be concrete: every bottleneck is an
+issue, every fix is a delta that names a design-space variable or constraint.
+
+Respond with JSON only, in exactly this shape:
+{
+  "converged": false,
+  "analysis": "one short paragraph",
+  "research_citations": ["doc/path.md", ...],
+  "issues": [
+    {
+      "metric": "power|latency|throughput|area|cost|thermal|accuracy|capability_per_watt|utilization|bandwidth|memory|weight|volume|reliability",
+      "level": "system|subsystem|operator|kernel|hardware|physical",
+      "component": "optional operator/block name",
+      "severity": "critical|high|medium|low",
+      "summary": "one line",
+      "observed_value": 6.0,
+      "target_value": 5.0,
+      "contribution_pct": 40.0
+    }
+  ],
+  "deltas": [
+    {
+      "kind": "design_space_edit|variable_bound_change|add_variable|remove_variable|constraint_relaxation|specialist_retask",
+      "target": "design-space variable, constraint field, or specialist id",
+      "change": { ... per-kind payload ... },
+      "rationale": "why this helps",
+      "addresses_issue": 0
+    }
+  ]
+}
+
+Per-kind `change` payloads:
+- design_space_edit      -> {"value": <new value>}
+- variable_bound_change  -> {"bounds": [lo, hi]}  OR  {"categories": [...]}   (exactly one)
+- add_variable           -> {"variable": {<spec>}}
+- remove_variable        -> {}
+- constraint_relaxation  -> {"to": <new>, "from": <old>}
+- specialist_retask      -> {"reason": "..."}     (plus any extra keys)
+
+Rules: set "converged": true only when no constraint is failing AND further search
+would not help. Each delta's "addresses_issue" is the 0-based index into "issues".
+Prefer edits to high-contribution / high-severity issues first."""
+
+
 class Critic(ReasoningAgent):
     """Reviews a DesignState and produces a structured verdict.
 
@@ -122,14 +169,133 @@ class Critic(ReasoningAgent):
     # -- LLM path -----------------------------------------------------------
 
     def _review_with_llm(self, state: DesignState) -> CriticVerdict:
-        """Claude ranks bottlenecks with research context and proposes deltas.
+        """Claude ranks bottlenecks with research context and proposes typed deltas.
 
-        Implementation sketch: build a prompt from ppa_metrics + Pareto front + the
-        current open_issues backlog + retrieved research (as `_reason_with_llm` does),
-        require JSON out, and parse into CriticVerdict. Research retrieval and prompt
-        assembly are elided here — see optimization_loop._reason_with_llm for the shape.
+        Assembles a prompt from ppa_metrics + Pareto front + the open_issues backlog +
+        retrieved research (mirrors optimization_loop._reason_with_llm), requires JSON,
+        and parses it into a CriticVerdict. Raises on any client/parse error; review()
+        catches that and falls back to the heuristic path.
         """
-        raise NotImplementedError("LLM critic path — assemble prompt + parse JSON verdict")
+        import json
+        import re
+
+        client = self._client()
+        ppa = state.get("ppa_metrics", {})
+        verdicts = ppa.get("verdicts", {})
+        pareto = state.get("pareto_points") or state.get("pareto_front") or []
+        open_issues_summary = [
+            {"metric": i.get("metric"), "summary": i.get("summary"), "status": i.get("status")}
+            for i in state.get("open_issues", [])
+        ]
+        metrics_now = {
+            k: ppa.get(k)
+            for k in ("power_watts", "latency_ms", "area_mm2", "cost_usd", "accuracy_percent")
+            if ppa.get(k) is not None
+        }
+
+        prompt = f"""Review this embodied-AI SoC design state and produce a critic verdict.
+
+Mission: {state.get('mission_description', state.get('goal', 'unknown'))}
+Platform: {state.get('platform', 'unknown')}
+Iteration: {state.get('iteration', 0)}
+Constraints: {json.dumps(state.get('constraints', {}), default=str)[:1500]}
+
+PPA verdicts: {json.dumps(verdicts, default=str)}
+Current metrics: {json.dumps(metrics_now, default=str)}
+
+Top Pareto designs:
+{json.dumps(pareto[:5], default=str, indent=2)[:2000]}
+
+Already-open issues: {json.dumps(open_issues_summary, default=str)[:1500]}
+
+{self._retrieve_research(state)}
+
+Identify the top bottlenecks as structured issues, propose concrete deltas to
+resolve them (each addressing an issue by index), and decide whether the design
+has converged. Respond with JSON only."""
+
+        response = client.chat(
+            messages=[{"role": "user", "content": prompt}], system=CRITIC_SYSTEM_PROMPT
+        )
+        text = re.sub(r"^```json\s*|\s*```$", "", response.text.strip())
+        data = json.loads(text)
+        return self._verdict_from_data(data, state)
+
+    def _retrieve_research(self, state: DesignState) -> str:
+        """Best-effort research-library context block (empty string if unavailable)."""
+        try:
+            from embodied_ai_architect.research.library import ResearchLibrary
+
+            library = ResearchLibrary()
+            docs = library.retrieve(
+                tags=[state.get("platform", "edge"), "efficiency"],
+                relevance="design_tradeoffs",
+                mission_type=state.get("mission_type"),
+                max_results=3,
+            )
+            return library.build_context_block(docs, max_tokens=3000)
+        except Exception:
+            return ""
+
+    def _verdict_from_data(self, data: dict, state: DesignState) -> CriticVerdict:
+        """Parse the LLM's JSON into a validated CriticVerdict (skips malformed items)."""
+        iteration = int(state.get("iteration", 0))
+
+        # Keep the ORIGINAL LLM array index -> parsed issue, so that a delta's
+        # `addresses_issue` still resolves correctly after malformed issues are
+        # skipped (skipping would otherwise compact the list and misalign indices).
+        issues_by_orig_idx: dict[int, DesignIssue] = {}
+        for orig_idx, raw in enumerate(data.get("issues", []) or []):
+            try:
+                issues_by_orig_idx[orig_idx] = DesignIssue(
+                    metric=_to_metric_axis(str(raw.get("metric", ""))),
+                    level=_parse_level(raw.get("level")),
+                    severity=_parse_severity(raw.get("severity")),
+                    component=raw.get("component"),
+                    summary=raw.get("summary", "(no summary)"),
+                    observed_value=raw.get("observed_value"),
+                    target_value=raw.get("target_value"),
+                    contribution_pct=raw.get("contribution_pct"),
+                    raised_by=self.name,
+                    iteration_raised=iteration,
+                )
+            except Exception:
+                continue
+        issues = list(issues_by_orig_idx.values())
+
+        deltas: list[DesignDelta] = []
+        for raw in data.get("deltas", []) or []:
+            try:
+                delta = DesignDelta(
+                    kind=DeltaKind(str(raw.get("kind", ""))),
+                    target=str(raw.get("target", "")),
+                    change=raw.get("change", {}) or {},
+                    rationale=raw.get("rationale", "(no rationale)"),
+                    proposed_by=self.name,
+                )
+            except Exception:
+                # Bad kind or a payload that fails per-kind validation (S3) — skip it.
+                continue
+            target_issue = issues_by_orig_idx.get(raw.get("addresses_issue"))
+            if target_issue is not None:
+                delta.addresses_issue_ids.append(target_issue.id)
+                target_issue.delta_ids.append(delta.id)
+            deltas.append(delta)
+
+        # Convergence is a real boolean, not Python truthiness ("false"/"0" are False),
+        # and can never be claimed while any constraint verdict is still FAIL.
+        converged = _coerce_bool(data.get("converged", False))
+        verdicts = state.get("ppa_metrics", {}).get("verdicts", {})
+        if converged and any(v == "FAIL" for v in verdicts.values()):
+            converged = False
+
+        return CriticVerdict(
+            issues=issues,
+            deltas=deltas,
+            converged=converged,
+            analysis=str(data.get("analysis", "")),
+            research_citations=list(data.get("research_citations", []) or []),
+        )
 
     # -- Heuristic path -----------------------------------------------------
 
@@ -318,6 +484,36 @@ def route_after_critic(state: DesignState) -> str:
 # ---------------------------------------------------------------------------
 # Small helpers
 # ---------------------------------------------------------------------------
+
+
+def _coerce_bool(value: Any) -> bool:
+    """Coerce an LLM-supplied value to bool without Python truthiness surprises.
+
+    A JSON string "false"/"0"/"no" is falsey here (plain bool("false") would be True).
+    """
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        return value.strip().lower() in ("true", "1", "yes")
+    return False
+
+
+def _parse_level(value: Any) -> AbstractionLevel:
+    """Map an LLM-supplied level string onto AbstractionLevel (default SYSTEM)."""
+    try:
+        return AbstractionLevel(str(value).lower())
+    except ValueError:
+        return AbstractionLevel.SYSTEM
+
+
+def _parse_severity(value: Any) -> Severity:
+    """Map an LLM-supplied severity string onto Severity (default MEDIUM)."""
+    try:
+        return Severity(str(value).lower())
+    except ValueError:
+        return Severity.MEDIUM
 
 
 def _to_metric_axis(name: str) -> MetricAxis:
