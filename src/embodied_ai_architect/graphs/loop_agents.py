@@ -241,25 +241,27 @@ has converged. Respond with JSON only."""
         """Parse the LLM's JSON into a validated CriticVerdict (skips malformed items)."""
         iteration = int(state.get("iteration", 0))
 
-        issues: list[DesignIssue] = []
-        for raw in data.get("issues", []) or []:
+        # Keep the ORIGINAL LLM array index -> parsed issue, so that a delta's
+        # `addresses_issue` still resolves correctly after malformed issues are
+        # skipped (skipping would otherwise compact the list and misalign indices).
+        issues_by_orig_idx: dict[int, DesignIssue] = {}
+        for orig_idx, raw in enumerate(data.get("issues", []) or []):
             try:
-                issues.append(
-                    DesignIssue(
-                        metric=_to_metric_axis(str(raw.get("metric", ""))),
-                        level=_parse_level(raw.get("level")),
-                        severity=_parse_severity(raw.get("severity")),
-                        component=raw.get("component"),
-                        summary=raw.get("summary", "(no summary)"),
-                        observed_value=raw.get("observed_value"),
-                        target_value=raw.get("target_value"),
-                        contribution_pct=raw.get("contribution_pct"),
-                        raised_by=self.name,
-                        iteration_raised=iteration,
-                    )
+                issues_by_orig_idx[orig_idx] = DesignIssue(
+                    metric=_to_metric_axis(str(raw.get("metric", ""))),
+                    level=_parse_level(raw.get("level")),
+                    severity=_parse_severity(raw.get("severity")),
+                    component=raw.get("component"),
+                    summary=raw.get("summary", "(no summary)"),
+                    observed_value=raw.get("observed_value"),
+                    target_value=raw.get("target_value"),
+                    contribution_pct=raw.get("contribution_pct"),
+                    raised_by=self.name,
+                    iteration_raised=iteration,
                 )
             except Exception:
                 continue
+        issues = list(issues_by_orig_idx.values())
 
         deltas: list[DesignDelta] = []
         for raw in data.get("deltas", []) or []:
@@ -274,16 +276,23 @@ has converged. Respond with JSON only."""
             except Exception:
                 # Bad kind or a payload that fails per-kind validation (S3) — skip it.
                 continue
-            idx = raw.get("addresses_issue")
-            if isinstance(idx, int) and 0 <= idx < len(issues):
-                delta.addresses_issue_ids.append(issues[idx].id)
-                issues[idx].delta_ids.append(delta.id)
+            target_issue = issues_by_orig_idx.get(raw.get("addresses_issue"))
+            if target_issue is not None:
+                delta.addresses_issue_ids.append(target_issue.id)
+                target_issue.delta_ids.append(delta.id)
             deltas.append(delta)
+
+        # Convergence is a real boolean, not Python truthiness ("false"/"0" are False),
+        # and can never be claimed while any constraint verdict is still FAIL.
+        converged = _coerce_bool(data.get("converged", False))
+        verdicts = state.get("ppa_metrics", {}).get("verdicts", {})
+        if converged and any(v == "FAIL" for v in verdicts.values()):
+            converged = False
 
         return CriticVerdict(
             issues=issues,
             deltas=deltas,
-            converged=bool(data.get("converged", False)),
+            converged=converged,
             analysis=str(data.get("analysis", "")),
             research_citations=list(data.get("research_citations", []) or []),
         )
@@ -475,6 +484,20 @@ def route_after_critic(state: DesignState) -> str:
 # ---------------------------------------------------------------------------
 # Small helpers
 # ---------------------------------------------------------------------------
+
+
+def _coerce_bool(value: Any) -> bool:
+    """Coerce an LLM-supplied value to bool without Python truthiness surprises.
+
+    A JSON string "false"/"0"/"no" is falsey here (plain bool("false") would be True).
+    """
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        return value.strip().lower() in ("true", "1", "yes")
+    return False
 
 
 def _parse_level(value: Any) -> AbstractionLevel:
