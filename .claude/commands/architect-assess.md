@@ -2,6 +2,12 @@ Generate the multi-level metrics dashboard for the current design state.
 
 This is the "where am I" command — shows metrics at every level of abstraction so the architect can quickly identify what needs attention.
 
+> **Bottlenecks are now typed `DesignIssue`s.** When the state has `open_issues`
+> (filed by the loop's critic + specialist agents — see `/architect-loop`), treat
+> that as the authoritative "what needs attention" list: each issue carries
+> `metric`, `level`, `severity`, `observed_value` vs `target_value`, and
+> `contribution_pct`. Surface the open issues alongside the raw metrics.
+
 ## How to get the state
 
 Load the most recent design session from disk:

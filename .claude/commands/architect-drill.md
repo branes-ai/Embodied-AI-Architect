@@ -1,5 +1,10 @@
 Deep-dive analysis of a specific bottleneck target: $ARGUMENTS
 
+> **Pick the target from `open_issues`.** The loop's critic + specialist agents file
+> typed `DesignIssue`s (see `/architect-loop`); when the state has `open_issues`,
+> the target usually corresponds to the highest-`severity` / highest-`contribution_pct`
+> issue. Each issue names its `metric`, `level`, and `component` — start the drill there.
+
 The target can be:
 - A subsystem (perception, control)
 - An operator (yolo_detector, tracker, vio)
