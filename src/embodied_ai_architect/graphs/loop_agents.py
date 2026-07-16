@@ -455,6 +455,7 @@ def optimizer_node(state: DesignState, *, moo_tool: Optional[MooTool] = None) ->
     optimizer = Optimizer(moo_tool=moo_tool)
     pending = [DesignDelta(**d) for d in state.get("pending_deltas", []) if not d.get("applied")]
     optimizer.optimize(state, pending)
+    _run_pending_retasks(state)  # S8: consume SPECIALIST_RETASK deltas
     updates: dict = {
         "design_space_config": state.get("design_space_config", {}),
         "constraints": state.get("constraints", {}),
@@ -477,6 +478,33 @@ def optimizer_node(state: DesignState, *, moo_tool: Optional[MooTool] = None) ->
         if key in state:
             updates[key] = state[key]
     return updates
+
+
+def _run_pending_retasks(state: DesignState) -> int:
+    """S8: consume `pending_specialist_tasks` — re-run each named specialist agent
+    (from the S9 registry), file its fresh DesignIssues, and drain the queue.
+
+    A SPECIALIST_RETASK delta (applied by the Optimizer) enqueues a task; this
+    re-runs that specialist so its issues reflect the just-applied design change
+    (the loop analog of the dispatcher's #35 re-validation after a config edit).
+    Returns the number of specialists re-run.
+    """
+    tasks = state.get("pending_specialist_tasks", [])
+    if not tasks:
+        return 0
+    from embodied_ai_architect.graphs.specialist_agents import specialist_registry
+
+    registry = specialist_registry()
+    ran = 0
+    for task in tasks:
+        agent = registry.get(task.get("specialist"))
+        if agent is None:
+            continue  # unknown specialist — leave it out, don't crash the loop
+        for issue in agent.assess(state):
+            add_issue(state, issue)
+        ran += 1
+    state["pending_specialist_tasks"] = []  # drain
+    return ran
 
 
 def route_after_critic(state: DesignState) -> str:
