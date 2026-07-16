@@ -152,14 +152,53 @@ def evaluate_node(state: DesignState) -> dict:
 
 
 def seed_node(state: DesignState) -> dict:
-    """Entry: ensure a design space + one initial frontier exist before the first review.
+    """Front door (S10): NL mission → constraints → joint design space.
 
-    In the full system this also runs decompose/formulate (mission → constraints →
-    joint design space); here it just guarantees the fields the loop needs.
+    Given a `mission_description` (or `goal`), runs the `MissionDecomposer` and
+    `create_joint_design_space` so a single mission string seeds a valid DesignState
+    with no manual setup. If the state is already seeded, or no mission / decompose
+    fails, falls back to a minimal design-space stub so the loop still runs.
     """
     updates: dict = {"status": "exploring"}
-    if not state.get("design_space_config"):
-        updates["design_space_config"] = {"source": "default_joint_space"}
+    if state.get("design_space_config"):
+        return updates  # already seeded
+
+    try:
+        from embodied_ai_architect.graphs.moo.joint_design_space import create_joint_design_space
+        from embodied_ai_architect.graphs.soc_state import DesignConstraints
+
+        if state.get("constraints"):
+            # Constraints already set — just materialize a joint design space.
+            constraints = dict(state["constraints"])
+        else:
+            # No constraints: decompose the NL mission into constraints (S10).
+            mission = state.get("mission_description") or state.get("goal")
+            if not mission:
+                updates["design_space_config"] = {"source": "default_joint_space"}
+                return updates
+            from embodied_ai_architect.research.decomposer import (
+                MissionDecomposer,
+                plan_to_constraints,
+            )
+
+            plan = MissionDecomposer(llm_client=None).decompose(mission)
+            constraints = DesignConstraints(**plan_to_constraints(plan)).model_dump()
+            updates["constraints"] = constraints
+            updates["platform"] = plan.platform
+            updates["mission_type"] = plan.mission_type
+            updates["mission_plan"] = plan.model_dump()
+
+        ds = create_joint_design_space(constraints={**constraints, "include_accuracy": True})
+        updates["design_space_config"] = {
+            "num_variables": ds.n_var,
+            "num_objectives": ds.n_obj,
+            "objectives": ds.objectives,
+            "constraint_bounds": {k: list(v) for k, v in ds.constraint_bounds.items()},
+            "source": "mission_decomposer",
+        }
+    except Exception:  # pragma: no cover - decompose/joint-space best effort
+        updates.setdefault("design_space_config", {"source": "default_joint_space"})
+
     return updates
 
 

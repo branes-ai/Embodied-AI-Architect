@@ -549,3 +549,40 @@ Respond with JSON only, no markdown fences."""
             total_estimated_gflops=round(total_gflops, 2),
             end_to_end_latency_budget_ms=e2e_latency_ms,
         )
+
+
+# ---------------------------------------------------------------------------
+# MissionPlan -> DesignConstraints mapping (Seam S10)
+# ---------------------------------------------------------------------------
+
+# MissionPlan design-space constraint names -> DesignConstraints field names.
+_CONSTRAINT_FIELD = {
+    "power_watts": "max_power_watts",
+    "latency_ms": "max_latency_ms",
+    "cost_usd": "max_cost_usd",
+    "area_mm2": "max_area_mm2",
+    "accuracy_percent": "min_accuracy_percent",
+    "weight_grams": "max_weight_grams",
+    "volume_cm3": "max_volume_cm3",
+}
+
+
+def plan_to_constraints(plan: MissionPlan) -> dict[str, Any]:
+    """Map a MissionPlan's design-space constraints onto DesignConstraints fields.
+
+    Returns a plain dict (e.g. {"max_power_watts": 5.0, "max_latency_ms": 33.3,
+    "workload_type": "detection", "quantization_dtype": "int8"}) suitable for
+    constructing a DesignConstraints and for `create_joint_design_space`. Kept
+    here (graph-independent) so the loop's front door can reuse it.
+    """
+    ds = plan.design_space
+    out: dict[str, Any] = {}
+    for c in getattr(ds, "constraints", []) or []:
+        field = _CONSTRAINT_FIELD.get(c.name)
+        if field is not None and c.value is not None:
+            out[field] = c.value
+    if getattr(ds, "workload_type", None):
+        out["workload_type"] = ds.workload_type
+    if getattr(ds, "quantization_dtype", None):
+        out["quantization_dtype"] = ds.quantization_dtype
+    return out
