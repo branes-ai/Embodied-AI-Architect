@@ -357,6 +357,19 @@ def estimate_enclosure_physical(
     )
 
 
+def estimate_junction_temperature(
+    tdp_watts: float,
+    total_theta_c_per_w: float,
+    ambient_temp_c: float = 40.0,
+) -> float:
+    """Junction temperature from TDP and the thermal-path resistance.
+
+    T_junction = T_ambient + TDP * theta_total. Extracted so it can be called as a
+    lightweight thermal estimator tool (S9) when a full SystemBOM isn't available.
+    """
+    return ambient_temp_c + tdp_watts * total_theta_c_per_w
+
+
 def compute_thermal_feasibility(
     system_bom: SystemBOM,
     tdp_watts: float,
@@ -382,7 +395,7 @@ def compute_thermal_feasibility(
     for item in system_bom.flatten():
         total_theta += item.thermal_resistance_c_per_w
 
-    junction_temp_c = ambient_temp_c + tdp_watts * total_theta
+    junction_temp_c = estimate_junction_temperature(tdp_watts, total_theta, ambient_temp_c)
     margin_c = max_junction_temp_c - junction_temp_c
     feasible = junction_temp_c <= max_junction_temp_c
 
