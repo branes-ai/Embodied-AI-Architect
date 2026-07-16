@@ -69,6 +69,14 @@ def test_ppa_specialist_silent_when_within_budget() -> None:
     assert PPASpecialist().assess(_state(power_watts=4.0, latency_ms=20.0)) == []
 
 
+def test_ppa_specialist_handles_zero_limit_without_crashing() -> None:
+    """A 0.0 budget makes overshoot_pct undefined; the summary must not TypeError."""
+    state = _state(power_watts=5.0)
+    state["constraints"] = DesignConstraints(max_power_watts=0.0).model_dump()
+    issues = PPASpecialist().assess(state)
+    assert issues and issues[0].metric == MetricAxis.POWER  # FAIL, filed, no crash
+
+
 # ---------------------------------------------------------------------------
 # Thermal specialist (uses the physical_estimators junction-temp tool)
 # ---------------------------------------------------------------------------

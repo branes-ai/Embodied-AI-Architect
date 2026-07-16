@@ -21,8 +21,9 @@ folds them into the state's `open_issues` backlog.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from typing import Optional
+
+from pydantic import BaseModel
 
 from embodied_ai_architect.graphs.design_state import (
     AbstractionLevel,
@@ -40,13 +41,12 @@ from embodied_ai_architect.graphs.soc_state import get_constraints
 # ---------------------------------------------------------------------------
 
 
-@dataclass
-class EstimatorResult:
+class EstimatorResult(BaseModel):
     """A verdict-first estimate: the value, the budget, and whether it fits."""
 
     metric: MetricAxis
-    value: Optional[float]
-    limit: Optional[float]
+    value: Optional[float] = None
+    limit: Optional[float] = None
     detail: str = ""
 
     @property
@@ -82,22 +82,30 @@ def _estimated(state: DesignState, ppa_key: str) -> Optional[float]:
 
 def power_tool(state: DesignState) -> EstimatorResult:
     c = get_constraints(state)
-    return EstimatorResult(MetricAxis.POWER, _estimated(state, "power_watts"), c.max_power_watts)
+    return EstimatorResult(
+        metric=MetricAxis.POWER, value=_estimated(state, "power_watts"), limit=c.max_power_watts
+    )
 
 
 def latency_tool(state: DesignState) -> EstimatorResult:
     c = get_constraints(state)
-    return EstimatorResult(MetricAxis.LATENCY, _estimated(state, "latency_ms"), c.max_latency_ms)
+    return EstimatorResult(
+        metric=MetricAxis.LATENCY, value=_estimated(state, "latency_ms"), limit=c.max_latency_ms
+    )
 
 
 def area_tool(state: DesignState) -> EstimatorResult:
     c = get_constraints(state)
-    return EstimatorResult(MetricAxis.AREA, _estimated(state, "area_mm2"), c.max_area_mm2)
+    return EstimatorResult(
+        metric=MetricAxis.AREA, value=_estimated(state, "area_mm2"), limit=c.max_area_mm2
+    )
 
 
 def cost_tool(state: DesignState) -> EstimatorResult:
     c = get_constraints(state)
-    return EstimatorResult(MetricAxis.COST, _estimated(state, "cost_usd"), c.max_cost_usd)
+    return EstimatorResult(
+        metric=MetricAxis.COST, value=_estimated(state, "cost_usd"), limit=c.max_cost_usd
+    )
 
 
 def thermal_tool(
@@ -111,13 +119,18 @@ def thermal_tool(
     `physical_estimators.estimate_junction_temperature`."""
     power = _estimated(state, "power_watts")
     if power is None:
-        return EstimatorResult(MetricAxis.THERMAL, None, max_junction_temp_c, "no power estimate")
+        return EstimatorResult(
+            metric=MetricAxis.THERMAL,
+            value=None,
+            limit=max_junction_temp_c,
+            detail="no power estimate",
+        )
     tj = estimate_junction_temperature(power, theta_c_per_w, ambient_temp_c)
     return EstimatorResult(
-        MetricAxis.THERMAL,
-        round(tj, 1),
-        max_junction_temp_c,
-        f"T_j={tj:.0f}°C at {power:.1f}W (θ={theta_c_per_w} °C/W, ambient {ambient_temp_c}°C)",
+        metric=MetricAxis.THERMAL,
+        value=round(tj, 1),
+        limit=max_junction_temp_c,
+        detail=f"T_j={tj:.0f}°C at {power:.1f}W (θ={theta_c_per_w} °C/W, ambient {ambient_temp_c}°C)",
     )
 
 
@@ -163,7 +176,7 @@ class PPASpecialist(SpecialistAgent):
                 level=AbstractionLevel.SYSTEM,
                 severity=_severity_from(r),
                 summary=f"{r.metric.value} {r.value} exceeds budget {r.limit} "
-                f"(+{r.overshoot_pct:.0f}%)",
+                f"(+{(r.overshoot_pct or 0.0):.0f}%)",
                 observed_value=r.value,
                 target_value=r.limit,
                 contribution_pct=r.overshoot_pct,
