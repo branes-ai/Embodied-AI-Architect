@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "embodied-ai-architect"
-version = "1.13.0"
+version = "1.14.0"
 description = "Hardware/Software Codesign Space Exploration and Optimization Environment for Embodied AI systems"
 readme = "PYPI_README.md"
 requires-python = ">=3.11"
