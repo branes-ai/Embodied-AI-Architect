@@ -185,7 +185,7 @@ remaining work is filling these named seams:
 | S9 | **Specialist agents + estimator tools** — wrap `physical_estimators.py` / `specialists.py` as verdict-first tools; promote the 2–3 judgment-bearing specialists to agents. | `specialists.py`, `physical_estimators.py` | 3 | ☑ (#213) |
 | S10 | **Decompose/formulate front door** — `seed_node` stands in for the real mission → constraints → joint design space entry (reuse `MissionDecomposer` + `create_joint_design_space`). | `loop_convergence_graph.py`, `research/decomposer.py` | 4 | ☑ (#215) |
 | S11 | **Wire architect skills to the loop** — add `branes session iterate` running one code-level loop iteration; rewrite `architect-loop.md` to invoke it instead of orchestrating CLI calls. | CLI, `.claude/commands/architect-loop.md` | 4 | ☑ (#216) |
-| S12 | **Convergence tuning** — `has_converged` uses a fixed hypervolume epsilon; calibrate against real runs and add the critic's "diminishing returns" judgment as a third signal. | `design_state.py`, `loop_agents.py` | 4 | ☐ |
+| S12 | **Convergence tuning** — `has_converged` uses a fixed hypervolume epsilon; calibrate against real runs and add the critic's "diminishing returns" judgment as a third signal. | `design_state.py`, `loop_agents.py` | 4 | ☑ (#217) |
 
 ---
 
