@@ -73,12 +73,19 @@ issues/deltas, a real MOO-engine tool with monotonic Pareto accumulation,
 research-grounded S3-validated edits, pipeline-consistent evaluation, an
 observable/steerable trace, and a real `branes session iterate` entry point.
 
-## Follow-ups (non-blocking)
+## Follow-ups
 
-- **Two pre-existing flaky tests** surfaced repeatedly and deserve their own fix:
-  `tests/agents/test_deployment.py::test_preprocessing_imagenet` (random-data
-  assertion) and `tests/test_session_store.py::test_load_latest` (st_mtime
-  tiebreak).
+- **Two pre-existing flaky tests — FIXED** (2026-07-17, PR #237). Both were
+  root-cause fixes, not assertion loosening:
+  - `tests/test_session_store.py::test_load_latest` — `SessionStore.load_latest`
+    ordered by coarse filesystem `st_mtime`, so two rapid saves tied and returned
+    the wrong session. Now orders by the embedded microsecond `_saved_at`
+    (`st_mtime`, then filename, as tie-breakers). Stress-verified 15/15.
+  - `tests/agents/test_deployment.py::test_preprocessing_imagenet` — the
+    `calibration_images` fixture used unseeded `np.random`, so a random all-bright
+    first image could make ImageNet normalization produce no negatives and fail
+    `assert min < 0`. Seeded with a local `RandomState`. Stress-verified 20/20; the
+    `Test (optional deps)` CI job that had been intermittently red passed first try.
 - **The demo's `surrogate_moo`/`score_knee` are illustrative**; the real
   `make_moo_engine_tool()` + `ppa_assessor` are wired (S11 runs them). A
   productionized `branes` demo command with an LLM critic is the natural next
