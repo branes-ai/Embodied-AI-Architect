@@ -96,18 +96,31 @@ class SessionStore:
     def load_latest(self) -> Optional[SoCDesignState]:
         """Load the most recently saved session.
 
+        Ordered by the embedded ``_saved_at`` timestamp (microsecond ISO), which
+        `save()` writes on every save. Filesystem ``st_mtime`` is too coarse to
+        distinguish rapid successive saves reliably, so it is only a tie-breaker
+        (then the filename) for the essentially-impossible case of equal timestamps.
+
         Returns:
             The deserialized state dict, or None if no sessions exist.
         """
-        files = sorted(self._dir.glob("soc_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
-        if not files:
+        best_data: Optional[dict] = None
+        best_key: Optional[tuple] = None
+        for path in self._dir.glob("soc_*.json"):
+            try:
+                with open(path) as f:
+                    data = json.load(f)
+            except (OSError, json.JSONDecodeError):
+                continue
+            key = (data.get("_saved_at", ""), path.stat().st_mtime, path.name)
+            if best_key is None or key > best_key:
+                best_key, best_data = key, data
+
+        if best_data is None:
             return None
 
-        with open(files[0]) as f:
-            data = json.load(f)
-
-        data.pop("_saved_at", None)
-        return data
+        best_data.pop("_saved_at", None)
+        return best_data
 
     def list_sessions(self) -> list[dict[str, Any]]:
         """List all saved sessions with summary info.
