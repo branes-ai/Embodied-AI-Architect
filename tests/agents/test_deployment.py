@@ -94,6 +94,11 @@ def calibration_images(tmp_path):
     calib_dir = tmp_path / "calibration_images"
     calib_dir.mkdir()
 
+    # Seed so the synthetic calibration set is deterministic and reproducible —
+    # otherwise a randomly all-bright first image can make ImageNet normalization
+    # produce no negative values and flake `test_preprocessing_imagenet`.
+    rng = np.random.RandomState(20260717)
+
     image_size = (32, 32)  # Match our test model input size
     num_images = 20
 
@@ -101,9 +106,9 @@ def calibration_images(tmp_path):
         # Create varied synthetic images
         if i % 4 == 0:
             # Solid color with noise
-            base_color = np.random.randint(0, 255, 3)
+            base_color = rng.randint(0, 255, 3)
             img_array = np.full((*image_size, 3), base_color, dtype=np.uint8)
-            noise = np.random.randint(-30, 30, (*image_size, 3))
+            noise = rng.randint(-30, 30, (*image_size, 3))
             img_array = np.clip(img_array.astype(np.int16) + noise, 0, 255).astype(np.uint8)
         elif i % 4 == 1:
             # Horizontal gradient
@@ -111,22 +116,20 @@ def calibration_images(tmp_path):
             img_array = np.tile(gradient, (image_size[0], 1))
             img_array = np.stack([img_array] * 3, axis=-1)
             # Add color tint
-            tint = np.random.rand(3)
+            tint = rng.rand(3)
             img_array = (img_array * tint).astype(np.uint8)
         elif i % 4 == 2:
             # Random patches (simulates objects)
-            img_array = np.random.randint(100, 200, (*image_size, 3), dtype=np.uint8)
+            img_array = rng.randint(100, 200, (*image_size, 3), dtype=np.uint8)
             # Add random rectangles
             for _ in range(3):
-                x, y = np.random.randint(0, image_size[0] - 8), np.random.randint(
-                    0, image_size[1] - 8
-                )
-                w, h = np.random.randint(4, 12), np.random.randint(4, 12)
-                color = np.random.randint(0, 255, 3)
+                x, y = rng.randint(0, image_size[0] - 8), rng.randint(0, image_size[1] - 8)
+                w, h = rng.randint(4, 12), rng.randint(4, 12)
+                color = rng.randint(0, 255, 3)
                 img_array[x : min(x + w, image_size[0]), y : min(y + h, image_size[1])] = color
         else:
             # Pure random noise (stress test)
-            img_array = np.random.randint(0, 255, (*image_size, 3), dtype=np.uint8)
+            img_array = rng.randint(0, 255, (*image_size, 3), dtype=np.uint8)
 
         img = Image.fromarray(img_array, mode="RGB")
         img.save(calib_dir / f"calib_{i:03d}.png")
