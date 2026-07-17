@@ -8,6 +8,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Loop Convergence epic — COMPLETE: Phases 3 & 4 + tooling** (2026-07-16,
+  epic `#203` closed, PRs #230–#235):
+  - **Observable loop tracer + steerable acceptance harness** (PR #230) —
+    `graphs/loop_trace.py`: `run_loop_traced` drives the real
+    seed→critic→optimize→evaluate→recommend loop over the actual node functions,
+    recording a `LoopTrace` (one step per node with the decision and the *reason
+    why*) to the `embodied_ai_architect.loop` logger, with a human-in-the-loop
+    `steer` hook. Plus a gold-standard-style deterministic acceptance harness.
+  - **User-facing demonstration** (PR #231) — `docs/loop-convergence-demo.md` +
+    `docs/demos/loop_convergence_demo.py`: solves a drone-perception SoC
+    (≤5W/≤33ms/≤$30) end-to-end (8W/45ms → 4.6W/17.3ms autonomously; 3.8W under a
+    tightened 4W budget after an operator injects structured sparsity), with live
+    agent logging and steering.
+  - **Phase 3 — specialist agents (S9 #213, S8 #214, PR #232)** —
+    `graphs/specialist_agents.py`: verdict-first estimator tools + `PPASpecialist`
+    and `ThermalSpecialist` reasoning agents that file typed `DesignIssue`s
+    (thermal via a new `physical_estimators.estimate_junction_temperature`).
+    `SPECIALIST_RETASK` deltas now re-run the named specialist and drain
+    `pending_specialist_tasks`.
+  - **Phase 4 — wire + tune:**
+    - **S10 front door (#215, PR #233)** — `seed_node` turns an NL mission into a
+      valid `DesignState` (constraints + 17-var joint design space) via
+      `MissionDecomposer` + `create_joint_design_space` (`plan_to_constraints`).
+    - **S11 CLI + skills (#216, PR #234)** — `branes session iterate` runs real
+      loop iterations over a persisted `DesignState` (verified with the real
+      MAP-Elites engine); `architect-loop.md` rewritten to invoke it;
+      `architect-drill`/`architect-assess` read `open_issues`.
+    - **S12 convergence tuning (#217, PR #235)** — single `has_converged()`:
+      empty backlog OR critic diminishing-returns OR a *relative, windowed*
+      hypervolume plateau; the critic emits a `diminishing_returns` judgment when
+      levers are exhausted.
 - **Loop Convergence epic — Phase 2: agent critic + optimizer** (2026-07-15,
   epic `#203`, PRs #225–#228, v1.7.0–v1.10.0):
   - **LLM critic path (S4, #209)** — `Critic._review_with_llm` assembles a
