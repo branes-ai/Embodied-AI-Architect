@@ -287,3 +287,58 @@ def session_delete(ctx, session_id, yes):
 
     store.delete(session_id)
     console.print(f"[green]Deleted session {session_id}[/green]")
+
+
+@session.command("iterate")
+@click.argument("session_id", required=False)
+@click.option("--latest", is_flag=True, help="Iterate the most recent session")
+@click.option("--iterations", "-n", default=1, show_default=True, help="Loop iterations to run")
+@click.pass_context
+def session_iterate(ctx, session_id, latest, iterations):
+    """Run the unified loop-convergence loop over a saved session (S11).
+
+    Runs the critic -> optimize -> evaluate loop for N iterations, mutates the
+    persisted DesignState, and prints the reasoning trace (what each agent did and
+    why). This is the code-level iteration the `architect-loop` skill invokes.
+
+    \\b
+    Examples:
+      branes session iterate --latest
+      branes session iterate soc_abc123 -n 3
+    """
+    from embodied_ai_architect.graphs.design_state import open_issues
+    from embodied_ai_architect.graphs.loop_convergence_graph import make_moo_engine_tool
+    from embodied_ai_architect.graphs.loop_trace import run_loop_traced
+    from embodied_ai_architect.graphs.session_store import SessionStore
+
+    store = SessionStore()
+    if latest:
+        state = store.load_latest()
+    elif session_id:
+        state = store.load(session_id)
+    else:
+        console.print("[red]Provide a session ID or use --latest.[/red]")
+        return
+    if not state:
+        console.print("[yellow]No matching session. Start one first.[/yellow]")
+        return
+
+    # Real MOO engine, wrapped so an engine / optional-dependency error degrades to
+    # a no-op instead of aborting the iteration.
+    engine = make_moo_engine_tool()
+
+    def moo_tool(s):
+        try:
+            return engine(s)
+        except Exception:
+            return {}
+
+    trace = run_loop_traced(state, moo_tool=moo_tool, max_iterations=iterations)
+    sid = store.save(trace.final_state)
+
+    console.print(trace.render())
+    console.print(
+        f"[green]Session {sid} updated[/green] — converged={trace.converged}, "
+        f"iterations={trace.iterations}, open_issues={len(open_issues(trace.final_state))}, "
+        f"verdicts={trace.final_verdicts}"
+    )

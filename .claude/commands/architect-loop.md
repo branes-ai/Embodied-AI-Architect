@@ -1,100 +1,83 @@
 Run one iteration of the architect's bottleneck-hunting loop on the current design.
 
-This is the core expert skill: assess → rank bottlenecks → drill down → propose options.
+As of the Loop Convergence work (epic #203), this loop is a **real code path** — the
+`critic`, the specialist agents (PPA, thermal), the `optimizer`, and `evaluate` — not
+manual CLI orchestration. Your job is to invoke it and interpret the result for the
+user, and to steer it when domain knowledge is needed.
 
-## How to get the state
-
-Load the most recent design session:
+## 1. Run one iteration
 
 ```bash
-.venv/bin/branes session show --latest --json
+.venv/bin/branes session iterate --latest          # or: iterate <session_id> -n <N>
 ```
 
-This returns the full `SoCDesignState` JSON. The key fields you need:
-- `ppa_metrics` — current power, latency, area, cost with verdicts
-- `constraints` — target budgets
-- `optimization_review_snapshot` — constraint slackness, trajectory, strategy analysis
-- `optimization_history` — PPA snapshots across iterations
-- `workload_profile` — per-operator compute requirements
-- `selected_architecture` — hardware mapping
-- `design_rationale` — decision trail
-- `iteration` — which iteration we're on
+This runs the unified loop over the persisted `DesignState`:
 
-If no session exists, tell the user:
+- the **critic** + **specialist agents** file typed `DesignIssue`s for the bottlenecks
+  (with research-grounded rationale when an LLM key is set),
+- the **optimizer** applies concrete `DesignDelta` edits and re-runs the MOO engine
+  over the 17-variable joint design space,
+- **evaluate** re-scores the design via the same `ppa_assessor` the pipeline uses,
+- the mutated state is **saved**, and the command prints the full reasoning trace —
+  what each agent decided and *why*, step by step.
+
+If there is no session, tell the user:
 ```
 No active design session. Start one with:
   branes design qualify "your design goal"
   branes design plan "your qualified goal" --power X --latency Y
 ```
 
-## Steps
+## 2. Read back what the loop did
 
-1. **Assess current state**: From the session JSON, extract:
-   - All PPA metrics vs constraints (PASS/FAIL for each)
-   - Constraint slackness (margin %, trend direction)
-   - Current optimization iteration number
+```bash
+.venv/bin/branes session show --latest --json
+```
 
-2. **Rank the top 3 bottlenecks across ALL metrics**: Look at:
-   - Which constraints are FAIL? By how much?
-   - Which passing constraints have <10% headroom? (about to fail)
-   - Which operator/subsystem consumes the most of each resource?
-   - Is memory bandwidth saturated? (`workload_profile` has BW data)
-   - Is utilization unbalanced? (one IP block at 90%, another at 20%)
+The bottleneck analysis is now structured data (you no longer hand-derive it):
 
-   **Use MOO sensitivity to break ties** (issue #24): when `optimization_review_snapshot.sensitivity` is populated, two metrics that look equally bad are not equally easy to fix. The metric whose primary driver has high MOO sensitivity is the higher-leverage bottleneck — moving that knob will actually shift the metric. Prefer to escalate that one to the top of the ranking.
+- `open_issues` — the typed bottlenecks the critic + specialists filed: `metric`,
+  `level` (system/subsystem/operator/kernel/hardware/physical), `severity`,
+  `summary`, `observed_value` vs `target_value`, `contribution_pct`.
+- `applied_deltas` — the concrete edits the optimizer applied: `kind`, `target`,
+  `rationale`, and `research_refs` grounding them.
+- `ppa_metrics.verdicts` — PASS/FAIL per constraint; `converged`; `iteration`.
+- `optimization_review_snapshot.sensitivity` — MOO per-variable leverage (use it
+  only to add color on which knob actually moves a metric).
 
-   Example: power and cost both fail by 10%. Sensitivity says `clock_mhz` impacts power at 0.90 but `process_nm` impacts cost at only 0.20 — power is the higher-leverage bottleneck even though they're tied numerically, because there's a real knob to turn.
+## 3. Present a situation report
 
-   For each of the top 3:
-   - Name it and locate it (system/subsystem/operator/kernel level)
-   - Quantify the gap (actual vs target, % over budget)
-   - Show trend from `optimization_history` (improving, worsening, stable)
-   - Classify: compute-bound, memory-bound, thermally-limited, cost-dominated
+1. **Top bottlenecks** — from `open_issues`, ranked by `severity` then
+   `contribution_pct`. For each: the metric, its level, the gap (observed vs target,
+   % over budget), and why it's the dominant one.
+2. **What the loop did** — from `applied_deltas` and the printed trace: which edits it
+   applied, their rationale, any research it cited.
+3. **Where it stands** — the verdicts, whether it `converged`, and iteration `N`. If it
+   didn't converge, name what still fails and the loop's next lever.
+4. **Recommendation / next step** — run another iteration, or steer.
 
-3. **Drill down on bottleneck #1**: Run additional analysis:
-   - For compute: `.venv/bin/branes mcp analyze --model <model>` for kernel breakdown
-   - For cost: `.venv/bin/branes swap estimate --area X --power Y --process Z` for cost decomposition
-   - For power: check `ip_blocks` config for clock/voltage settings
-   - For latency: check per-operator latency from `workload_profile`
-   - **Use sensitivity to find the right knob**: Read
-     `optimization_review_snapshot.sensitivity` (issue #24). It maps each
-     design variable to its impact on each objective (0–1 score from the BO
-     layer). For the failing metric, sort variables by their impact on that
-     specific objective and pick the top 1-2 — those are the highest-leverage
-     knobs to turn. Example: if power is failing and `quantization_dtype` has
-     impact 0.82 on power but `noc_link_width_bits` has impact 0.04, propose
-     changing the dtype not the NoC width.
+```
+ARCHITECT LOOP — iteration N
 
-4. **Propose 3-5 concrete options** from the strategy catalog:
-   Read `optimization_review_snapshot.strategies` for what's available vs tried.
-   For each option: estimated impact on bottleneck AND side effects on other metrics.
-   Flag any option that would flip a passing constraint to FAIL.
+TOP BOTTLENECKS (from open_issues):
+  1. [metric] at [level]: [observed] vs [target] (+[contribution_pct]%, [severity])
+  2. ...
+WHAT THE LOOP DID (from applied_deltas):
+  - [kind] [target] :: [rationale]  (research: [research_refs])
+STATUS: verdicts=[...], converged=[bool]
+NEXT: [iterate again | steer]
+```
 
-5. **Summarize as situation report**:
-   ```
-   ARCHITECT LOOP — Iteration N/M
+## 4. Steer when the loop needs domain knowledge
 
-   TOP 3 BOTTLENECKS:
-     1. [name] at [level]: [metric] = [value] vs [target] ([margin]% headroom, [trend])
-     2. ...
-     3. ...
+The loop reports honestly when a lever is exhausted (e.g. INT8 alone can't hit a
+tightened power budget). When that happens — or when the user wants a different
+trade-off — steer it:
 
-   DRILL-DOWN on #1:
-     [detailed analysis from step 3]
+- **Relax/tighten a constraint** and re-run `session iterate`.
+- **Inject a design move** the critic didn't propose (e.g. structured sparsity, a
+  smaller process node) via the loop's steer hook — see
+  `docs/loop-convergence-demo.md` for a worked example.
 
-   OPTIONS:
-     A. [action] — est. [impact] on [metric], side effect: [effect]
-     B. ...
-
-   RECOMMENDATION: [which option and reasoning]
-   ```
-
-Do NOT choose or execute — present the analysis and let the architect decide.
-
-## How to apply the architect's decision
-
-When the architect picks an option, the next step depends on whether we have an active interactive session:
-
-- If running interactively: use `steer_optimization` tool in `branes chat`
-- If using the pipeline: modify the state and re-run the dispatch step
-- For quick what-if: `.venv/bin/branes swap score --area X --power Y --process Z --profile drone`
+The old manual bottleneck-ranking is now the critic + specialists' job. You are the
+interpreter and the human-in-the-loop steersman.
