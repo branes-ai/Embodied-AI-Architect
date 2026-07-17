@@ -60,6 +60,7 @@ NODE_WRITES: dict[str, set[str]] = {
         "open_issues",
         "pending_deltas",
         "converged",
+        "critic_diminishing_returns",
         "analysis",
         "research_citations",
     },

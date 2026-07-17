@@ -399,6 +399,7 @@ class DesignState(TypedDict, total=False):
     max_iterations: int
     converged: bool
     should_iterate: bool
+    critic_diminishing_returns: bool  # critic judged further iteration won't help (S12)
     llm_available: bool  # gates the reasoning agents' LLM path (read by critic_node)
 
     # --- History / governance / cost (SoCDesignState) ---
@@ -552,15 +553,36 @@ def open_issues(state: DesignState) -> list[DesignIssue]:
     return sorted((i for i in issues if i.is_open), key=lambda i: order[i.severity])
 
 
-def has_converged(state: DesignState, *, hypervolume_epsilon: float = 1e-3) -> bool:
-    """Unified stop condition (replaces the two separate ones).
+def has_converged(
+    state: DesignState,
+    *,
+    hypervolume_rel_epsilon: float = 0.01,
+    plateau_window: int = 2,
+) -> bool:
+    """Single stop condition for the loop (the iteration cap is the router's job).
 
-    Converged when EITHER the issue backlog is empty OR the Pareto hypervolume has
-    stopped improving — whichever the loop reaches first.
+    Converges when ANY of these holds (S12):
+
+    1. **Empty backlog** — no open issues left to fix.
+    2. **Critic diminishing returns** — the critic judged further iteration won't
+       help even if constraints still fail (`critic_diminishing_returns`).
+    3. **Hypervolume plateau** — the Pareto hypervolume's *relative* change stays
+       below `hypervolume_rel_epsilon` across the last `plateau_window` steps.
+
+    The relative, windowed plateau (vs. the old single-step absolute epsilon) was
+    calibrated on the loop-convergence demo / acceptance runs so that one flat step
+    doesn't prematurely stop a search that is still improving, while a genuinely
+    stalled frontier is caught.
     """
     if not open_issues(state):
         return True
-    hv = state.get("hypervolume_history", [])
-    if len(hv) >= 2 and abs(hv[-1] - hv[-2]) < hypervolume_epsilon:
+    if state.get("critic_diminishing_returns"):
         return True
+    hv = state.get("hypervolume_history", [])
+    if len(hv) > plateau_window:
+        recent = hv[-(plateau_window + 1) :]
+        base = max(abs(recent[-1]), 1.0)
+        steps = [abs(recent[i + 1] - recent[i]) / base for i in range(len(recent) - 1)]
+        if all(s < hypervolume_rel_epsilon for s in steps):
+            return True
     return False

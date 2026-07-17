@@ -63,7 +63,11 @@ class CriticVerdict(BaseModel):
         default_factory=list, description="Concrete edits proposed to close the issues"
     )
     converged: bool = Field(
-        default=False, description="Critic judges diminishing returns — stop the loop"
+        default=False, description="No failing constraints and the frontier is stable"
+    )
+    diminishing_returns: bool = Field(
+        default=False,
+        description="Critic judges further iteration won't help even if constraints fail (S12)",
     )
     analysis: str = Field(default="", description="Human-readable rationale")
     research_citations: list[str] = Field(default_factory=list)
@@ -110,6 +114,7 @@ issue, every fix is a delta that names a design-space variable or constraint.
 Respond with JSON only, in exactly this shape:
 {
   "converged": false,
+  "diminishing_returns": false,
   "analysis": "one short paragraph",
   "research_citations": ["doc/path.md", ...],
   "issues": [
@@ -145,8 +150,11 @@ Per-kind `change` payloads:
 - specialist_retask      -> {"reason": "..."}     (plus any extra keys)
 
 Rules: set "converged": true only when no constraint is failing AND further search
-would not help. Each delta's "addresses_issue" is the 0-based index into "issues".
-Prefer edits to high-contribution / high-severity issues first."""
+would not help. Set "diminishing_returns": true when further iteration is unlikely
+to help even though constraints still fail (the levers are exhausted) — this stops
+the loop and asks the operator to steer. Each delta's "addresses_issue" is the
+0-based index into "issues". Prefer edits to high-contribution / high-severity
+issues first."""
 
 
 class Critic(ReasoningAgent):
@@ -301,6 +309,7 @@ has converged. Respond with JSON only."""
             issues=issues,
             deltas=deltas,
             converged=converged,
+            diminishing_returns=_coerce_bool(data.get("diminishing_returns", False)),
             analysis=str(data.get("analysis", "")),
             research_citations=list(data.get("research_citations", []) or []),
         )
@@ -438,6 +447,7 @@ def critic_node(state: DesignState) -> dict:
         "open_issues": state.get("open_issues", []),
         "pending_deltas": state.get("pending_deltas", []),
         "converged": verdict.converged,
+        "critic_diminishing_returns": verdict.diminishing_returns,
         "analysis": verdict.analysis,
         "research_citations": verdict.research_citations,
     }
